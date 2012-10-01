@@ -36,6 +36,7 @@
 #include <nscore.h>
 #include <prlock.h>
 #include <prmon.h>
+#include <nsAutoLock.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMArray.h>
@@ -111,7 +112,7 @@ public:
    * suspected of causing a crash on a previous run.
    */
   nsresult IsURLBlacklisted(const nsACString& aURL,
-                            bool* aIsBlackListed);
+                            PRBool* aIsBlackListed);
 
   /**
    * Adds a URL to the blacklist
@@ -144,7 +145,7 @@ private:
    */                 
   static PLDHashOperator PR_CALLBACK
   WriteBlacklistURLToFile(nsCStringHashKey::KeyType aKey,
-                          bool aEntry,
+                          PRBool aEntry,
                           void* aUserData);
 
   /**
@@ -165,7 +166,7 @@ private:
 
 
   nsCOMPtr<nsIFile>                           mBlacklistFile;
-  nsDataHashtable<nsCStringHashKey, bool>   mURLBlacklist;
+  nsDataHashtable<nsCStringHashKey, PRBool>   mURLBlacklist;
 
   // Rather than log the URL for both begin and complete we
   // assign each URL a number.  This cuts the log file size in half.

@@ -232,7 +232,7 @@ public :
    *
    * \param aDeviceInfoPresent  Returned true if device info is present.
    */
-  nsresult GetDeviceInfoPresent(bool* aDeviceInfoPresent);
+  nsresult GetDeviceInfoPresent(PRBool* aDeviceInfoPresent);
 
   /**
    * Return in aDeviceInfoElement the root device info DOM element.  If no
@@ -305,7 +305,7 @@ public :
    *
    * \param aOutSupportsReformat Returned supported reformat boolean value.
    */
-  nsresult GetDoesDeviceSupportReformat(bool *aOutSupportsReformat);
+  nsresult GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat);
 
   /**
    * Return true in aOnlyMountMediaFolders if only the media folders should be
@@ -315,7 +315,7 @@ public :
    *                            True if only the media folders should be
    *                            mounted.
    */
-  nsresult GetOnlyMountMediaFolders(bool* aOnlyMountMediaFolders);
+  nsresult GetOnlyMountMediaFolders(PRBool* aOnlyMountMediaFolders);
 
   /**
    * Returns a list of excluded folders folders in the array passed in. Each
@@ -423,7 +423,7 @@ private :
    */
   nsresult DeviceMatchesDeviceNode(nsIDOMNode*      aDeviceNode,
                                    nsIPropertyBag2* aDeviceProperties,
-                                   bool*          aDeviceMatches);
+                                   PRBool*          aDeviceMatches);
 
   /**
    * Return in aNodeList the list of all device info nodes with the name space
@@ -469,7 +469,7 @@ private :
    *                            device node.
    */
   nsresult IsDeviceNodeDescendant(nsIDOMNode* aNode,
-                                  bool*     aIsDeviceNodeDescendant);
+                                  PRBool*     aIsDeviceNodeDescendant);
 
   /**
    * Logging function for device info. Controlled by mLogDeviceInfo. Inline to

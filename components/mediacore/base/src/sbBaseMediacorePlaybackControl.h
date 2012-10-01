@@ -37,6 +37,7 @@
 
 #include <nsIURI.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
 class sbBaseMediacorePlaybackControl : public sbIMediacorePlaybackControl,
@@ -62,9 +63,9 @@ public:
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnSetPosition(PRUint64 aPosition);
   // Override me, see cpp file for implementation notes.
-  virtual nsresult OnGetIsPlayingAudio(bool *aIsPlayingAudio);
+  virtual nsresult OnGetIsPlayingAudio(PRBool *aIsPlayingAudio);
   // Override me, see cpp file for implementation notes.
-  virtual nsresult OnGetIsPlayingVideo(bool *aIsPlayingVideo);
+  virtual nsresult OnGetIsPlayingVideo(PRBool *aIsPlayingVideo);
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnPlay();
   // Override me, see cpp file for implementation notes.

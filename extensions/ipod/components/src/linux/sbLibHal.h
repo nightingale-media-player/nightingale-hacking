@@ -98,7 +98,7 @@ class sbLibHalCtx
     nsresult DevicePropertyExists(
         const nsACString            &aUDI,
         const char                  *aKey,
-        bool                      *apExists);
+        PRBool                      *apExists);
 
     nsresult DeviceGetPropertyString(
         const nsACString            &aUDI,
@@ -113,7 +113,7 @@ class sbLibHalCtx
     nsresult DeviceGetPropertyBool(
         const nsACString            &aUDI,
         const char                  *aKey,
-        bool                      *aProperty);
+        PRBool                      *aProperty);
 
     nsresult DeviceGetPropertyStringList(
         const nsACString            &aUDI,
@@ -140,7 +140,7 @@ class sbLibHalCtx
     nsresult DeviceHasInterface(
         const nsACString            &aUDI,
         const char                  *aInterface,
-        bool                      *aHasInterface);
+        PRBool                      *aHasInterface);
 
 
     /*

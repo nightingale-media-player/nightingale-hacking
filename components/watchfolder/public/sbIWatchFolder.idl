@@ -134,4 +134,4 @@ interface sbIWatchFolder : nsISupports
 %{C++
 #define SB_WATCHFOLDER_CONTRACTID     \
   "@songbirdnest.com/watch-folder;1"
-%}
+%};

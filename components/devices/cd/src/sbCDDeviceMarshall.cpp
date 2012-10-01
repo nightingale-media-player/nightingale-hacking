@@ -100,7 +100,7 @@ sbCDDeviceMarshall::Init()
   nsCOMPtr<nsISimpleEnumerator> categoryEnum;
   rv = catman->EnumerateCategory("cdrip-engine", getter_AddRefs(categoryEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while (NS_SUCCEEDED(categoryEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> ptr;
     if (NS_SUCCEEDED(categoryEnum->GetNext(getter_AddRefs(ptr))) && ptr) {
@@ -148,7 +148,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
 
   // Don't bother watching this device if this marshall is already watching
   // it in mKnownDevices.
-  bool hasDevice = PR_FALSE;
+  PRBool hasDevice = PR_FALSE;
   rv = GetHasDevice(deviceName, &hasDevice);
   if (NS_FAILED(rv) || hasDevice) {
     return NS_OK;
@@ -190,7 +190,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Ensure that the device has media inserted into it.
-  bool hasDisc = PR_FALSE;
+  PRBool hasDisc = PR_FALSE;
   rv = aCDDevice->GetIsDiscInserted(&hasDisc);
   if (NS_FAILED(rv) || !hasDisc) {
     return NS_OK;
@@ -249,7 +249,7 @@ sbCDDeviceMarshall::RemoveDevice(sbIDevice* aDevice) {
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Just return if device is not in the hash of known CD devices.
-  bool hasDevice;
+  PRBool hasDevice;
   rv = GetHasDevice(deviceName, &hasDevice);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!hasDevice)
@@ -339,7 +339,7 @@ sbCDDeviceMarshall::GetDevice(nsAString const & aName, sbIDevice **aOutDevice)
 }
 
 nsresult
-sbCDDeviceMarshall::GetHasDevice(nsAString const &aName, bool *aOutHasDevice)
+sbCDDeviceMarshall::GetHasDevice(nsAString const &aName, PRBool *aOutHasDevice)
 {
   NS_ENSURE_ARG_POINTER(aOutHasDevice);
   *aOutHasDevice = PR_FALSE;  // assume false
@@ -457,7 +457,7 @@ nsresult
 sbCDDeviceMarshall::CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
                                                         nsIVariant *aData,
                                                         nsISupports *aOrigin,
-                                                        bool aAsync)
+                                                        PRBool aAsync)
 {
   nsresult rv;
 
@@ -481,7 +481,7 @@ sbCDDeviceMarshall::CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Dispatch the event.
-  bool dispatched;
+  PRBool dispatched;
   rv = eventTarget->DispatchEvent(event, aAsync, &dispatched);
   NS_ENSURE_SUCCESS(rv, rv);
 

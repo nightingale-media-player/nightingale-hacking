@@ -59,7 +59,7 @@
 //   -----------------------------------------------------------
 //   | 2.) Tree root absolute path (nsString)                  |
 //   -----------------------------------------------------------
-//   | 3.) Is tree recursive watch (bool)                    |
+//   | 3.) Is tree recursive watch (PRBool)                    |
 //   -----------------------------------------------------------
 //   | 4.) Number of nodes (PRUint32)                          |
 //   -----------------------------------------------------------
@@ -114,7 +114,7 @@ sbFileSystemTreeState::SaveTreeState(sbFileSystemTree *aTree,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // 3.) Is tree recursive watch.
-  rv = fileObjectStream->Writebool(aTree->mIsRecursiveBuild);
+  rv = fileObjectStream->WritePRBool(aTree->mIsRecursiveBuild);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // 4.) Number of nodes
@@ -192,7 +192,7 @@ sbFileSystemTreeState::SaveTreeState(sbFileSystemTree *aTree,
 nsresult 
 sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
                                      nsString & aSessionAbsolutePath,
-                                     bool *aIsRecursiveWatch,
+                                     PRBool *aIsRecursiveWatch,
                                      sbFileSystemNode **aOutRootNode)
 {
   NS_ENSURE_ARG_POINTER(aOutRootNode);
@@ -206,7 +206,7 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Ensure that the session file exists.
-  bool exists = PR_FALSE;
+  PRBool exists = PR_FALSE;
   if (NS_FAILED(savedSessionFile->Exists(&exists)) || !exists) {
     NS_WARNING("The saved session file no longer exists!");
     return NS_ERROR_UNEXPECTED;
@@ -236,7 +236,7 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
   NS_ENSURE_SUCCESS(rv, rv);
  
   // 3.) Is tree recursive watch.
-  rv = fileObjectStream->Readbool(aIsRecursiveWatch);
+  rv = fileObjectStream->ReadPRBool(aIsRecursiveWatch);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // 4.) Number of nodes
@@ -291,7 +291,7 @@ sbFileSystemTreeState::DeleteSavedTreeState(const nsID & aSessionID)
   rv = GetTreeSessionFile(aSessionID, PR_FALSE, getter_AddRefs(sessionFile));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool fileExists = PR_FALSE;
+  PRBool fileExists = PR_FALSE;
   if (NS_SUCCEEDED(sessionFile->Exists(&fileExists)) && fileExists) {
     rv = sessionFile->Remove(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -366,7 +366,7 @@ sbFileSystemTreeState::AssignRelationships(sbFileSystemNode *aChildNode,
 
 /* static */ nsresult
 sbFileSystemTreeState::GetTreeSessionFile(const nsID & aSessionID,
-                                          bool aShouldCreate,
+                                          PRBool aShouldCreate,
                                           nsIFile **aOutFile)
 {
   char idChars[NSID_LENGTH];
@@ -393,7 +393,7 @@ sbFileSystemTreeState::GetTreeSessionFile(const nsID & aSessionID,
   rv = treeFolder->Append(NS_LITERAL_STRING(TREE_FOLDER_NAME));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool folderExists = PR_FALSE;
+  PRBool folderExists = PR_FALSE;
   if (NS_SUCCEEDED(treeFolder->Exists(&folderExists)) && !folderExists) {
     rv = treeFolder->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -407,7 +407,7 @@ sbFileSystemTreeState::GetTreeSessionFile(const nsID & aSessionID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (aShouldCreate) {
-    bool exists = PR_FALSE;
+    PRBool exists = PR_FALSE;
     if (NS_SUCCEEDED(newFile->Exists(&exists)) && exists) {
       rv = newFile->Remove(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);

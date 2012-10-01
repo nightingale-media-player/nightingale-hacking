@@ -34,7 +34,7 @@
 #include "sbIPlaylistCommandsHelper.h"
 
 #include <nsIComponentManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLAYLISTCOMMANDSHELPER_CONTRACTID                 \

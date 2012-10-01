@@ -67,7 +67,7 @@
  * \return PR_TRUE              Current thread is main thread.
  */
 
-bool
+PRBool
 SB_IsMainThread(nsIThreadManager* aThreadManager)
 {
   nsresult rv;
@@ -80,7 +80,7 @@ SB_IsMainThread(nsIThreadManager* aThreadManager)
   }
 
   // Check if the current thread is the main thread.
-  bool isMainThread;
+  PRBool isMainThread;
   rv = threadManager->GetIsMainThread(&isMainThread);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
@@ -93,7 +93,7 @@ NS_IMETHODIMP
 sbRunnable::Run()
 {
   // Enter the monitor to set the done flag:
-  mozilla::sbMozHackReentrantMonitorAutoEnter lock(mMonitor);
+  mozilla::MonitorAutoEnter lock(mMonitor);
 
   // Set the done flag and notify all waiters:
   mDone = true;
@@ -104,14 +104,14 @@ sbRunnable::Run()
 
 
 
-bool
+PRBool
 sbRunnable::Wait(PRIntervalTime aTimeout)
 {
   // Compute a fixed expiration time that won't drift:
   const PRIntervalTime expiry = PR_IntervalNow() + aTimeout;
 
   // Enter the monitor to check the done flag:
-  mozilla::sbMozHackReentrantMonitorAutoEnter lock(mMonitor);
+  mozilla::MonitorAutoEnter lock(mMonitor);
 
   // Only wait for Run() to complete if asked:
   if (aTimeout != PR_INTERVAL_NO_WAIT) {

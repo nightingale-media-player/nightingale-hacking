@@ -69,7 +69,7 @@ sbDirectoryProvider::Init()
 
 NS_IMETHODIMP
 sbDirectoryProvider::GetFile(const char *aProp,
-                             bool *aPersistent,
+                             PRBool *aPersistent,
                              nsIFile **_retval)
 {
   NS_ENSURE_ARG(aProp);

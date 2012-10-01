@@ -28,6 +28,7 @@
 #define SBMEDIALISTENUMERATORWRAPPER_H_
 
 // Mozilla includes
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsISimpleEnumerator.h>

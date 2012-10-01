@@ -104,7 +104,7 @@ class sbGStreamerMessageHandler : public nsISupports {
 public:
   virtual ~sbGStreamerMessageHandler() {};
   virtual void HandleMessage(GstMessage *message) = 0;
-  virtual bool HandleSynchronousMessage(GstMessage *message) = 0;
+  virtual PRBool HandleSynchronousMessage(GstMessage *message) = 0;
 };
 GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
                                       gpointer data);

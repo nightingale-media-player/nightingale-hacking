@@ -82,11 +82,11 @@ protected:
   // Store the input format we will use to configurate.
   nsCOMPtr<sbIMediaFormat>            mInputFormat;
   // String values of encoders and muxer, and whether they're in use at all.
-  bool                              mUseMuxer;
+  PRBool                              mUseMuxer;
   nsString                            mMuxer;
-  bool                              mUseVideoEncoder;
+  PRBool                              mUseVideoEncoder;
   nsString                            mVideoEncoder;
-  bool                              mUseAudioEncoder;
+  PRBool                              mUseAudioEncoder;
   nsString                            mAudioEncoder;
   // The file extension to use
   nsCString                           mFileExtension;

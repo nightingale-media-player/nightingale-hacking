@@ -32,7 +32,7 @@
  * controllers which are no longer available
  */
 
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIObserver.h>
 #include <nsIRunnable.h>
 

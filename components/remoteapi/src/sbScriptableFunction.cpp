@@ -186,7 +186,7 @@ sbScriptableLibraryFunction::Call( nsIXPConnectWrappedNative *wrapper,
                                    PRUint32 argc,
                                    jsval *argv,
                                    jsval *vp,
-                                   bool *_retval )
+                                   PRBool *_retval )
 {
   TRACE(("sbScriptableLibraryFunction::Call()"));
   
@@ -248,7 +248,7 @@ sbScriptableMediaListFunction::Call( nsIXPConnectWrappedNative *wrapper,
                                      PRUint32 argc,
                                      jsval *argv,
                                      jsval *vp,
-                                     bool *_retval )
+                                     PRBool *_retval )
 {
   TRACE(("sbScriptableMediaListFunction::Call()"));
   return NS_OK;

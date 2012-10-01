@@ -64,6 +64,7 @@
 #include <sbVariantUtils.h>
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreError.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbErrorConsole.h>
 #include <sbIMediacorePlaybackControl.h>
@@ -349,7 +350,7 @@ sbGStreamerMediacore::ReadPreferences()
       "songbird.mediacore.normalization.enabled";
   const char *NORMALIZATION_MODE_PREF =
       "songbird.mediacore.normalization.preferredGain";
-  bool normalizationEnabled = PR_TRUE;
+  PRBool normalizationEnabled = PR_TRUE;
   rv = mPrefs->GetPrefType(NORMALIZATION_ENABLED_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_BOOL) {
@@ -830,7 +831,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   return NS_OK;
 }
 
-bool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
+PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 {
   GstMessageType msg_type;
   msg_type = GST_MESSAGE_TYPE(aMessage);
@@ -1123,7 +1124,7 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
             getter_AddRefs(finaluri));
     NS_ENSURE_SUCCESS (rv, /* void */ );
 
-    bool isEqual;
+    PRBool isEqual;
     rv = finaluri->Equals(mUri, &isEqual);
     NS_ENSURE_SUCCESS (rv, /* void */ );
 
@@ -1726,7 +1727,7 @@ sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
 }
 
 /*virtual*/ nsresult
-sbGStreamerMediacore::OnSetEqEnabled(bool aEqEnabled)
+sbGStreamerMediacore::OnSetEqEnabled(PRBool aEqEnabled)
 {
   // Not necessarily an error if we don't have an Equalizer Element.
   // The plugin may simply be missing from the user's installation.
@@ -2003,7 +2004,7 @@ sbGStreamerMediacore::OnSeek(PRUint64 aPosition, PRUint32 aFlags)
 }
 
 /*virtual*/ nsresult
-sbGStreamerMediacore::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
+sbGStreamerMediacore::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
   if (mTargetState == GST_STATE_NULL) {
     *aIsPlayingAudio = PR_FALSE;
@@ -2016,7 +2017,7 @@ sbGStreamerMediacore::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
 }
 
 /*virtual*/ nsresult
-sbGStreamerMediacore::OnGetIsPlayingVideo(bool *aIsPlayingVideo)
+sbGStreamerMediacore::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
   if (mTargetState == GST_STATE_NULL) {
     *aIsPlayingVideo = PR_FALSE;
@@ -2080,7 +2081,7 @@ sbGStreamerMediacore::SendInitialBufferingEvent()
 
   // If we're starting an HTTP stream, send an immediate buffering event,
   // since GStreamer won't do that until it's connected to the server.
-  bool schemeIsHttp;
+  PRBool schemeIsHttp;
   nsresult rv = mUri->SchemeIs("http", &schemeIsHttp);
   NS_ENSURE_SUCCESS (rv, rv);
 
@@ -2144,7 +2145,7 @@ sbGStreamerMediacore::OnInitBaseMediacoreVolumeControl()
 }
 
 /*virtual*/ nsresult
-sbGStreamerMediacore::OnSetMute(bool aMute)
+sbGStreamerMediacore::OnSetMute(PRBool aMute)
 {
   nsAutoMonitor lock(mMonitor);
 
@@ -2209,7 +2210,7 @@ sbGStreamerMediacore::VoteWithChannel(nsIChannel *aChannel, PRUint32 *_retval)
 //-----------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbGStreamerMediacore::GetFullscreen(bool *aFullscreen)
+sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
 {
   NS_ENSURE_ARG_POINTER(aFullscreen);
 
@@ -2224,7 +2225,7 @@ sbGStreamerMediacore::GetFullscreen(bool *aFullscreen)
 }
 
 NS_IMETHODIMP
-sbGStreamerMediacore::SetFullscreen(bool aFullscreen)
+sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 {
   if (mPlatformInterface) {
     mPlatformInterface->SetFullscreen(aFullscreen);
@@ -2335,8 +2336,8 @@ sbGStreamerMediacore::GetGstreamerVersion(nsAString& aGStreamerVersion)
 
 NS_IMETHODIMP
 sbGStreamerMediacore::DispatchEvent(sbIMediacoreEvent *aEvent,
-                                    bool aAsync,
-                                    bool* _retval)
+                                    PRBool aAsync,
+                                    PRBool* _retval)
 {
   return mBaseEventTarget ?
          mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) :

@@ -29,7 +29,7 @@
  * \brief Songbird Transcode Component Factory and Main Entry Point.
  */
 
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include "sbTranscodeManager.h"
 #include "sbTranscodeAlbumArt.h"
 #include "sbTranscodeError.h"

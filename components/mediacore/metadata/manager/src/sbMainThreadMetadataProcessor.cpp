@@ -154,7 +154,7 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
   TRACE(("sbMainThreadMetadataProcessor[0x%.8x] - Notify", this));
   nsresult rv;
   
-  bool finished = PR_TRUE;
+  PRBool finished = PR_TRUE;
   
   // Check on the state of our active job items.
   // Handle completed items and replace with new items.
@@ -168,7 +168,7 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
       nsCOMPtr<sbIMetadataHandler> handler;
       rv = item->GetHandler(getter_AddRefs(handler));
       NS_ENSURE_SUCCESS(rv, rv);
-      bool handlerCompleted;
+      PRBool handlerCompleted;
       rv = handler->GetCompleted(&handlerCompleted);
       NS_ENSURE_SUCCESS(rv, rv);
       
@@ -207,7 +207,7 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
 
     // If item processing hasn't started, start a new handler
     if (item) {
-      bool processingStarted;
+      PRBool processingStarted;
       rv = item->GetProcessingStarted(&processingStarted);
       NS_ENSURE_SUCCESS(rv, rv);
       if (!processingStarted) {
@@ -217,7 +217,7 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
         NS_ENSURE_SUCCESS(rv, rv);
 
         // Don't start processing until the job item is not blocked.
-        bool jobItemIsBlocked;
+        PRBool jobItemIsBlocked;
         rv = mJobManager->GetJobItemIsBlocked(item, &jobItemIsBlocked);
         NS_ENSURE_SUCCESS(rv, rv);
         if (jobItemIsBlocked) {
@@ -245,7 +245,7 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
         NS_ENSURE_SUCCESS(rv, rv);
 
         // We don't care if it is async... we're polling no matter what.
-        bool async = PR_FALSE;
+        PRBool async = PR_FALSE;
         if (jobType == sbMetadataJob::TYPE_WRITE) {
           rv = handler->Write(&async);
         }

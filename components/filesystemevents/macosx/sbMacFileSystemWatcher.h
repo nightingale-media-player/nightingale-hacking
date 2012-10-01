@@ -47,10 +47,10 @@ public:
   // sbIFileSystemWatcher
   NS_IMETHOD Init(sbIFileSystemListener *aListener, 
                   const nsAString & aRootPath, 
-                  bool aIsRecursive);
+                  PRBool aIsRecursive);
   NS_IMETHOD InitWithSession(const nsACString & aSessionGuid,
                              sbIFileSystemListener *aListener);
-  NS_IMETHOD StopWatching(bool aShouldSaveSession);
+  NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbFileSystemTreeListener
   NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,

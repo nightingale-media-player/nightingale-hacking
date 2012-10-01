@@ -27,7 +27,8 @@
 
 #include <nsIWeakReference.h>
 #include <nsIWeakReferenceUtils.h>
-#include <sbMozHackMutex.h>
+
+#include <nsAutoLock.h>
 
 class sbWeakReference;
 
@@ -42,7 +43,7 @@ public:
   sbSupportsWeakReference() 
     : mProxy(nsnull)
     , mProxyLock(nsnull) {
-    mProxyLock = new mozilla::sbMozHackMutex("sbSupportsWeakReference::mProxyLock");
+    mProxyLock = nsAutoLock::NewLock("sbSupportsWeakReference::mProxyLock");
     NS_WARN_IF_FALSE(mProxyLock, "Failed to create lock.");
   }
 
@@ -56,20 +57,20 @@ private:
 
   void NoticeProxyDestruction() {
     NS_ENSURE_TRUE(mProxyLock, /*void*/);
-    mozilla::sbMozHackMutexAutoLock lock(*mProxyLock);
+    nsAutoLock lock(mProxyLock);
     // ...called (only) by an |nsWeakReference| from _its_ dtor.
     mProxy = nsnull;
   }
 
   sbWeakReference* mProxy;
   // Lock to protect mProxy.
-  mozilla::sbMozHackMutex* mProxyLock;
+  PRLock*          mProxyLock;
 
 protected:
   void ClearWeakReferences();
-  bool HasWeakReferences() const {
+  PRBool HasWeakReferences() const {
     NS_ENSURE_TRUE(mProxyLock, PR_FALSE);
-    mozilla::sbMozHackMutexAutoLock lock(*mProxyLock);
+    nsAutoLock lock(mProxyLock);
     return mProxy != 0; 
   }
 };
@@ -82,9 +83,8 @@ sbSupportsWeakReference::~sbSupportsWeakReference() {
   ClearWeakReferences();
   
   if (mProxyLock) {
-    delete mProxyLock;
+    nsAutoLock::DestroyLock(mProxyLock);
   }
-  mProxyLock = NULL;
 }
 
 #endif // __SB_WEAKREFERENCE_H__

@@ -26,12 +26,15 @@
 #include <nsServiceManagerUtils.h>
 #include <nsCRT.h>
 #include <nsThreadUtils.h>
+#include <nsAutoLock.h>
 
 #include <nsISimpleEnumerator.h>
+#include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
 #include <nsIThreadPool.h>
 
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include "sbFileSystemChange.h"
 
@@ -100,7 +103,7 @@ sbFileSystemTree::~sbFileSystemTree()
 }
 
 nsresult
-sbFileSystemTree::Init(const nsAString & aPath, bool aIsRecursive)
+sbFileSystemTree::Init(const nsAString & aPath, PRBool aIsRecursive)
 {
   if (mIsIntialized) {
     return NS_ERROR_ALREADY_INITIALIZED;
@@ -201,7 +204,7 @@ sbFileSystemTree::RunBuildThread()
   NS_ASSERTION(NS_SUCCEEDED(rv), "Could not InitWithPath a nsILocalFile!");
 
   // Before building the tree, ensure that root file does exist.
-  bool exists = PR_FALSE;
+  PRBool exists = PR_FALSE;
   if ((NS_FAILED(mRootFile->Exists(&exists))) || !exists) {
     nsCOMPtr<nsIRunnable> runnable =
       NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, NotifyRootPathIsMissing);
@@ -362,7 +365,7 @@ sbFileSystemTree::Update(const nsAString & aPath)
     nsString curNodeFullPath = EnsureTrailingPath(aPath);
     curNodeFullPath.Append(curLeafName);
     
-    bool isDir;
+    PRBool isDir;
     rv = curChangeNode->GetIsDir(&isDir);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -466,8 +469,8 @@ sbFileSystemTree::SaveTreeSession(const nsID & aSessionID)
 nsresult
 sbFileSystemTree::AddChildren(const nsAString & aPath,
                               sbFileSystemNode *aParentNode,
-                              bool aBuildDiscoveredDirArray,
-                              bool aNotifyListeners)
+                              PRBool aBuildDiscoveredDirArray,
+                              PRBool aNotifyListeners)
 {
   std::stack<NodeContext> nodeContextStack;
   nodeContextStack.push(NodeContext(aPath, aParentNode));
@@ -495,7 +498,7 @@ sbFileSystemTree::AddChildren(const nsAString & aPath,
         continue;
       }
 
-      bool isDir = PR_FALSE;
+      PRBool isDir = PR_FALSE;
       rv = curNode->GetIsDir(&isDir);
       if (NS_FAILED(rv)) {
         continue;
@@ -539,7 +542,7 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
   rv = GetPathEntries(aPath, getter_AddRefs(pathEnum));
   NS_ENSURE_SUCCESS(rv, rv);  
   
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while ((NS_SUCCEEDED(pathEnum->HasMoreElements(&hasMore))) && hasMore) {
     nsCOMPtr<nsISupports> curItem;
     rv = pathEnum->GetNext(getter_AddRefs(curItem));
@@ -551,14 +554,14 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
       continue;
 
     // Don't track symlinks
-    bool isSymlink;
+    PRBool isSymlink;
     rv = curFile->IsSymlink(&isSymlink);
     if (NS_FAILED(rv) || isSymlink)
       continue;
 
 #if defined(XP_WIN)
     // This check only needs to be done on windows
-    bool isSpecial;
+    PRBool isSpecial;
     rv = curFile->IsSpecial(&isSpecial);
     if (NS_FAILED(rv) || isSpecial)
       continue;
@@ -624,7 +627,7 @@ sbFileSystemTree::GetNode(const nsAString & aPath,
   // Start searching at the passed in root node
   nsRefPtr<sbFileSystemNode> curSearchNode = aRootSearchNode;
   
-  bool foundTargetNode = PR_TRUE;  // assume true, prove below
+  PRBool foundTargetNode = PR_TRUE;  // assume true, prove below
   PRUint32 numComponents = pathComponents.Length();
   for (PRUint32 i = 0; i < numComponents; i++) {
     nsString curPathComponent(pathComponents[i]);
@@ -688,7 +691,7 @@ sbFileSystemTree::CreateNode(nsIFile *aFile,
   rv = aFile->GetLeafName(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool isDir;
+  PRBool isDir;
   rv = aFile->IsDirectory(&isDir);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -719,7 +722,7 @@ sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
   rv = GetPathEntries(aNodePath, getter_AddRefs(pathEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while ((NS_SUCCEEDED(pathEnum->HasMoreElements(&hasMore))) && hasMore) {
     nsCOMPtr<nsISupports> curItem;
     rv = pathEnum->GetNext(getter_AddRefs(curItem));
@@ -840,7 +843,7 @@ sbFileSystemTree::GetTreeChanges(sbFileSystemNode *aOldRootNode,
 
   // Both |mRootNode| and |aOldRootNode| are guarenteed, compare them and than
   // start the tree search.
-  bool isSame = PR_FALSE;
+  PRBool isSame = PR_FALSE;
   nsresult rv;
   rv = CompareNodes(mRootNode, aOldRootNode, &isSame);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1001,7 +1004,7 @@ sbFileSystemTree::NotifyDirRemoved(sbFileSystemNode *aRemovedDirNode,
     nsString curNodePath(fullPath);
     curNodePath.Append(curNodeLeafName);
 
-    bool isDir;
+    PRBool isDir;
     nsresult rv = curNode->GetIsDir(&isDir);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1071,7 +1074,7 @@ sbFileSystemTree::GetPathEntries(const nsAString & aPath,
 /* static */ nsresult
 sbFileSystemTree::CompareNodes(sbFileSystemNode *aNode1,
                                sbFileSystemNode *aNode2,
-                               bool *aIsSame)
+                               PRBool *aIsSame)
 {
   NS_ENSURE_ARG_POINTER(aNode1);
   NS_ENSURE_ARG_POINTER(aNode2);

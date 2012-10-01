@@ -139,7 +139,7 @@ NS_IMETHOD aMethod(const nsAString& aName, aType aValue) \
   SBIPD_FORWARD_SAFE_NSIWRITABLEPROPERTYBAG2_SET_VTYPE \
     (aObj, \
      SetPropertyAsBool, \
-     bool, \
+     PRBool, \
      nsIDataType::VTYPE_BOOL) \
   SBIPD_FORWARD_SAFE_NSIWRITABLEPROPERTYBAG2_SET(aObj, \
                                                  SetPropertyAsInterface, \

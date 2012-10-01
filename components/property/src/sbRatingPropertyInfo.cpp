@@ -42,10 +42,10 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
 sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
                                            const nsAString& aDisplayName,
                                            const nsAString& aLocalizationKey,
-                                           const bool aRemoteReadable,
-                                           const bool aRemoteWritable,
-                                           const bool aUserViewable,
-                                           const bool aUserEditable)
+                                           const PRBool aRemoteReadable,
+                                           const PRBool aRemoteWritable,
+                                           const PRBool aUserViewable,
+                                           const PRBool aUserEditable)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -185,7 +185,7 @@ sbRatingPropertyInfo::GetColumnType(nsAString& _retval)
 // sbIClickablePropertyInfo
 
 NS_IMETHODIMP
-sbRatingPropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
+sbRatingPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
   *aSuppressSelect = mSuppressSelect;
@@ -193,7 +193,7 @@ sbRatingPropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
 }
 
 NS_IMETHODIMP
-sbRatingPropertyInfo::SetSuppressSelect(bool aSuppressSelect)
+sbRatingPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
 {
   mSuppressSelect = aSuppressSelect;
   return NS_OK;
@@ -201,7 +201,7 @@ sbRatingPropertyInfo::SetSuppressSelect(bool aSuppressSelect)
 
 NS_IMETHODIMP
 sbRatingPropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                 bool* _retval)
+                                 PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -215,7 +215,7 @@ sbRatingPropertyInfo::HitTest(const nsAString& aCurrentValue,
                               PRUint32 aBoxHeight,
                               PRUint32 aMouseX,
                               PRUint32 aMouseY,
-                              bool* _retval)
+                              PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -263,7 +263,7 @@ NS_IMETHODIMP
 sbRatingPropertyInfo::OnClick(sbIMediaItem *aItem,
                               nsISupports *aEvent,
                               nsISupports *aContext,
-                              bool *_retval NS_OUTPARAM)
+                              PRBool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -289,7 +289,7 @@ sbRatingPropertyInfo::Format(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
-sbRatingPropertyInfo::Validate(const nsAString& aValue, bool* _retval)
+sbRatingPropertyInfo::Validate(const nsAString& aValue, PRBool* _retval)
 {
   // Value can only be 1 through MAX_RATING or null
   *_retval = PR_TRUE;

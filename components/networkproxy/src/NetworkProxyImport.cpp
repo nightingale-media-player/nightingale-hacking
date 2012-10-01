@@ -43,7 +43,7 @@
 
 //-----------------------------------------------------------------------------
 struct NetworkProxyImportSource {
-  nsresult (*ImportProxySettingsFunction)(bool *);
+  nsresult (*ImportProxySettingsFunction)(PRBool *);
   const char *sourceName;
 };
 
@@ -57,7 +57,7 @@ NetworkProxyImportSource networkProxyImportSources[] = {
 struct NetworkProxyData {
   char*   prefix;
   PRInt32 prefixLength;
-  bool  proxyConfigured;
+  PRBool  proxyConfigured;
   char*   hostPref;
   char*   portPref;
 };
@@ -78,7 +78,7 @@ CNetworkProxyImport::CNetworkProxyImport()
 //-----------------------------------------------------------------------------
 // Import proxy settings from the specified source
 NS_IMETHODIMP CNetworkProxyImport::ImportProxySettings(const nsAString &aSource, 
-                                                       bool *_retval) 
+                                                       PRBool *_retval) 
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -197,7 +197,7 @@ void CNetworkProxyImport::SetProxyPref(const nsAString& aHostPort,
 //-----------------------------------------------------------------------------
 // This "import" source simply sets the proxy settings to "automatic detection",
 // it should be the last source in the list as it is the least likely to succeed
-nsresult ImportProxySettings_Auto(bool *_retval)
+nsresult ImportProxySettings_Auto(PRBool *_retval)
 {
   nsCOMPtr<nsIPrefBranch> prefs;
   nsCOMPtr<nsIPrefService> pserve(do_GetService(NS_PREFSERVICE_CONTRACTID));
@@ -220,7 +220,7 @@ nsresult ImportProxySettings_Auto(bool *_retval)
 // This does not support the "automatic detection" setting (if that mode is set
 // in IE, the settings will be imported as "no proxy").
 #ifdef XP_WIN
-nsresult ImportProxySettings_IE(bool *_retval)
+nsresult ImportProxySettings_IE(PRBool *_retval)
 {
   nsCOMPtr<nsIPrefBranch> prefs;
   nsCOMPtr<nsIPrefService> pserve(do_GetService(NS_PREFSERVICE_CONTRACTID));
@@ -282,7 +282,7 @@ nsresult ImportProxySettings_IE(bool *_retval)
       };
 
       PRInt32 startIndex = 0, count = 0;
-      bool foundSpecificProxy = PR_FALSE;
+      PRBool foundSpecificProxy = PR_FALSE;
       for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(data); ++i) {
         PRInt32 offset = buf.Find(NS_ConvertASCIItoUTF16(data[i].prefix));
         if (offset >= 0) {

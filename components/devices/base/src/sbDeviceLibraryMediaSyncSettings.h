@@ -48,7 +48,7 @@ public:
   NS_DECL_SBIDEVICELIBRARYMEDIASYNCSETTINGS;
 
   nsresult Read(sbIDevice * aDevice);
-  typedef nsDataHashtable<nsISupportsHashKey, bool> PlaylistSelection;
+  typedef nsDataHashtable<nsISupportsHashKey, PRBool> PlaylistSelection;
 
 private:
   sbDeviceLibraryMediaSyncSettings(sbDeviceLibrarySyncSettings * aSyncSettings,

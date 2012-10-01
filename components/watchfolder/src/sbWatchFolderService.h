@@ -39,7 +39,7 @@
 
 #include <nsITimer.h>
 #include <nsIComponentManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIFile.h>
 #include <nsTArray.h>
 #include <nsIMutableArray.h>
@@ -219,7 +219,7 @@ protected:
   //        If found, decrements the times-to-ignore count as appropriate.
   //
   nsresult DecrementIgnoredPathCount(const nsAString & aFilePath,
-                                     bool *aIsIgnoredPath);
+                                     PRBool *aIsIgnoredPath);
 
   //----------------------------------------------------------------------------
   // Pref Changes
@@ -244,7 +244,7 @@ protected:
   //
   // \brief Callback method when the watch folder enable pref has changed.
   //
-  nsresult OnEnableWatchFolderChanged(bool aShouldEnable);
+  nsresult OnEnableWatchFolderChanged(PRBool aShouldEnable);
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
@@ -264,11 +264,11 @@ private:
   nsString                       mWatchPath;
   nsCString                      mFileSystemWatcherGUID;
   EWatchFolderState              mServiceState;
-  bool                         mHasWatcherStarted;
-  bool                         mShouldReinitWatcher;
-  bool                         mEventPumpTimerIsSet;
-  bool                         mShouldProcessEvents;
-  bool                         mChangeDelayTimerIsSet;
+  PRBool                         mHasWatcherStarted;
+  PRBool                         mShouldReinitWatcher;
+  PRBool                         mEventPumpTimerIsSet;
+  PRBool                         mShouldProcessEvents;
+  PRBool                         mChangeDelayTimerIsSet;
   EProcessType                   mCurrentProcessType;
 };
 

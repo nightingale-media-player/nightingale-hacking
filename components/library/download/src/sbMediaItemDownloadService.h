@@ -52,7 +52,7 @@
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIObserver.h>
 #include <nsTArray.h>
 
@@ -157,7 +157,7 @@ private:
   // mDownloaderList            List of media item downloaders.
   //
 
-  bool                        mInitialized;
+  PRBool                        mInitialized;
   nsCOMPtr<sbIServiceManager>   mServiceManager;
   nsTArray< nsCOMPtr<sbIMediaItemDownloader> >
                                 mDownloaderList;

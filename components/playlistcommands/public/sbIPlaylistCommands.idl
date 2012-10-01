@@ -147,7 +147,7 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return Whether to instantiate the commands for this host or not
   */
-  boolean getVisible( in AString aHost );
+  PRBool getVisible( in AString aHost );
 
   /**
   * \brief Return the current visibility callback method that determines where
@@ -270,7 +270,7 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return True if the command should display as enabled
   */
-  boolean getCommandEnabled(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  PRBool getCommandEnabled(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the visible state for the requested command element index
@@ -280,7 +280,7 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return True if the command should be visible
   */
-  boolean getCommandVisible(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  PRBool getCommandVisible(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the value of the flag for the requested command element index
@@ -292,7 +292,7 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return The value for the flag
   */
-  boolean getCommandFlag( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  PRBool getCommandFlag( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the value of the requested command element index
@@ -362,7 +362,7 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return Whether the shortcut is local or not
   */
-  boolean getCommandShortcutLocal( in AString aSubMenu,
+  PRBool getCommandShortcutLocal( in AString aSubMenu,
                                   in PRInt32 aIndex,
                                   in AString aHost );
 
@@ -584,7 +584,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
   */
-  void registerPlaylistCommandsForLibrary(in boolean          aTargetServicePane,
+  void registerPlaylistCommandsForLibrary(in PRBool          aTargetServicePane,
                                           in sbiLibrary      aLibrary,
                                           in sbIPlaylistCommands aCommandObj);
 
@@ -606,7 +606,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
   */
-  void unregisterPlaylistCommandsForLibrary(in boolean        aTargetServicePane,
+  void unregisterPlaylistCommandsForLibrary(in PRBool        aTargetServicePane,
                                             in sbiLibrary      aLibrary,
                                             in sbIPlaylistCommands aCommandObj);
  /**

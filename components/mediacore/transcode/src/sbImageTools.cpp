@@ -77,7 +77,7 @@ HelperLoader::SetImage(imgIContainer *aImage)
 
 /* Implement imgILoad::isMultiPartChannel getter */
 NS_IMETHODIMP
-HelperLoader::GetIsMultiPartChannel(bool *aIsMultiPartChannel)
+HelperLoader::GetIsMultiPartChannel(PRBool *aIsMultiPartChannel)
 {
   NS_ENSURE_ARG_POINTER(aIsMultiPartChannel);
 
@@ -116,7 +116,7 @@ HelperLoader::OnStartFrame(imgIRequest *aRequest, PRUint32 aFrame)
 
 /* Implement imgIDecoderObserver::onDataAvailable() */
 NS_IMETHODIMP
-HelperLoader::OnDataAvailable(imgIRequest *aRequest, bool aCurrentFrame,
+HelperLoader::OnDataAvailable(imgIRequest *aRequest, PRBool aCurrentFrame,
                               const nsIntRect * aRect)
 {
   return NS_OK;
@@ -147,7 +147,7 @@ PRUnichar *statusArg)
 
 /* Implement imgIDecoderObserver::onStopRequest() */
 NS_IMETHODIMP
-HelperLoader::OnStopRequest(imgIRequest *aRequest, bool aIsLastPart)
+HelperLoader::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
 {
   return NS_OK;
 }

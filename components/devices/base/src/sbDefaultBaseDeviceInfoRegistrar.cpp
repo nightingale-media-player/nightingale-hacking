@@ -43,6 +43,7 @@
 #include <sbIDeviceManager.h>
 #include <sbIMediaItem.h>
 #include <sbITranscodeManager.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
@@ -135,7 +136,7 @@ sbDefaultBaseDeviceInfoRegistrar::
 
     // Add capabilities from the device info element.
     if (deviceInfoElement) {
-      bool addedCapabilities;
+      PRBool addedCapabilities;
       rv = sbDeviceXMLCapabilities::AddCapabilities(aCapabilities,
                                                     deviceInfoElement,
                                                     &addedCapabilities,
@@ -275,7 +276,7 @@ sbDefaultBaseDeviceInfoRegistrar::GetExcludedFolders(sbIDevice * aDevice,
 NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetDoesDeviceSupportReformat(
     sbIDevice *aDevice,
-    bool *aOutSupportsReformat)
+    PRBool *aOutSupportsReformat)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
@@ -296,7 +297,7 @@ sbDefaultBaseDeviceInfoRegistrar::GetDoesDeviceSupportReformat(
 NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetOnlyMountMediaFolders
                                     (sbIDevice *aDevice,
-                                     bool    *aOnlyMountMediaFolders)
+                                     PRBool    *aOnlyMountMediaFolders)
 {
   TRACE(("%s", __FUNCTION__));
 
@@ -376,7 +377,7 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceIcon(sbIDevice* aDevice,
 
 NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
-                                                     bool *retval)
+                                                     PRBool *retval)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(retval);
@@ -402,7 +403,7 @@ sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if the device XML info is present.
-  bool infoPresent = PR_FALSE;
+  PRBool infoPresent = PR_FALSE;
   rv = xmlInfo->GetDeviceInfoPresent(&infoPresent);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -258,7 +258,7 @@ private:
   CPlaylistCommandsManager* m_CmdMgr;
 
   nsresult HandleSavedLibraryCommands
-           (bool                     aIsRegistering,
+           (PRBool                     aIsRegistering,
             libraryGuidToCommandsMap_t *aSavedCommandsMap,
             commandobjmap_t            *aRegistrationMap,
             const nsAString            &aLibraryGUID,

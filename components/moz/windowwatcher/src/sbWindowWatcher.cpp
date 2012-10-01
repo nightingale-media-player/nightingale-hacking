@@ -50,13 +50,14 @@
 #include <sbThreadUtils.h>
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
+#include <nsIProxyObjectManager.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <prlog.h>
-#include <sbMozHackReentrantMonitor.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -114,15 +115,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbWindowWatcher,
 NS_IMETHODIMP
 sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
                                 sbICallWithWindowCallback* aCallback,
-                                bool                     aWait)
-{
-  return CallWithWindow_Proxy(aWindowType,aCallback,aWait);
-}
-
-nsresult
-sbWindowWatcher::CallWithWindow_Proxy(const nsAString&           aWindowType,
-                                  sbICallWithWindowCallback* aCallback,
-                                  bool                     aWait)
+                                PRBool                     aWait)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aCallback);
@@ -132,18 +125,17 @@ sbWindowWatcher::CallWithWindow_Proxy(const nsAString&           aWindowType,
 
   // If not on main thread, call back through a proxy.
   if (!SB_IsMainThread(mThreadManager)) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
-      new sbRunnableMethod3_<nsresult,sbWindowWatcher,
-      const nsAString&,sbICallWithWindowCallback*,bool>(
-          *this,&sbWindowWatcher::CallWithWindow_Proxy,
-          aWindowType,aCallback,aWait);
+    // Get a main thread proxy to this instance.
+    nsCOMPtr<sbIWindowWatcher> proxyWindowWatcher;
+    rv = GetProxiedWindowWatcher(getter_AddRefs(proxyWindowWatcher));
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
     // Call back through the proxy.  Wait for window if specified to do so.
     rv = NS_OK;
     while (1) {
       // Call the proxied window watcher.  Exit loop on success or if not
       // waiting.
-      NS_DispatchToMainThread(job);
-      rv = job->Wait();
+      rv = proxyWindowWatcher->CallWithWindow(aWindowType, aCallback, aWait);
       if (NS_SUCCEEDED(rv) || !aWait)
         break;
       if (rv != NS_ERROR_NOT_AVAILABLE)
@@ -159,7 +151,7 @@ sbWindowWatcher::CallWithWindow_Proxy(const nsAString&           aWindowType,
   }
 
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Check if window is already available.
   nsCOMPtr<nsIDOMWindow> window;
@@ -210,14 +202,14 @@ sbWindowWatcher::GetWindow(const nsAString& aWindowType,
 
   // Function variables.
   nsCOMPtr<nsIDOMWindow> retWindow;
-  bool                 success;
+  PRBool                 success;
   nsresult               rv;
 
   // This method may only be called on the main thread.
   NS_ENSURE_TRUE(SB_IsMainThread(mThreadManager), NS_ERROR_UNEXPECTED);
 
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Get an enumerator of all windows of the specified type, sorted from oldest
   // to youngest.
@@ -230,7 +222,7 @@ sbWindowWatcher::GetWindow(const nsAString& aWindowType,
   // The enumerator enumerates from oldest to youngest (least recently focused
   // to most recently), so the last matching window is the most recently focused
   // one.
-  bool hasMoreElements;
+  PRBool hasMoreElements;
   rv = enumerator->HasMoreElements(&hasMoreElements);
   NS_ENSURE_SUCCESS(rv, rv);
   while (hasMoreElements) {
@@ -288,7 +280,7 @@ sbWindowWatcher::WaitForWindow(const nsAString& aWindowType)
   // Don't wait if this instance is shutting down.
   {
     // Check is shutting down within the monitor.
-    mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+    nsAutoMonitor autoMonitor(mMonitor);
     if (mIsShuttingDown)
       return NS_OK;
   }
@@ -316,13 +308,13 @@ sbWindowWatcher::WaitForWindow(const nsAString& aWindowType)
  */
 
 NS_IMETHODIMP
-sbWindowWatcher::GetIsShuttingDown(bool* aIsShuttingDown)
+sbWindowWatcher::GetIsShuttingDown(PRBool* aIsShuttingDown)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aIsShuttingDown);
 
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Return results.
   *aIsShuttingDown = mIsShuttingDown;
@@ -519,7 +511,7 @@ sbWindowWatcher::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a monitor.
-  mMonitor = new mozilla::sbMozHackReentrantMonitor("sbWindowWatcher::mMonitor");
+  mMonitor = nsAutoMonitor::NewMonitor("sbWindowWatcher::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   // Initialize the window information table.
@@ -555,7 +547,7 @@ sbWindowWatcher::Finalize()
 
   // Dispose of monitor.
   if (mMonitor)
-    delete mMonitor;
+    nsAutoMonitor::DestroyMonitor(mMonitor);
   mMonitor = nsnull;
 
   // Remove object references.
@@ -588,7 +580,7 @@ sbWindowWatcher::Shutdown()
 
   // Operate within the monitor.
   {
-    mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+    nsAutoMonitor autoMonitor(mMonitor);
 
     // Do nothing if already shutting down.
     if (mIsShuttingDown)
@@ -623,11 +615,11 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   NS_ASSERTION(aWindow, "aWindow is null");
 
   // Function variables.
-  bool success;
+  PRBool success;
   nsresult rv;
 
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Create the window info object.
   nsAutoPtr<WindowInfo> windowInfo;
@@ -636,10 +628,10 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   windowInfo->window = aWindow;
 
   // Get the window event target.
-  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(aWindow, &rv);
+  nsCOMPtr<nsIDOMWindow2> window2 = do_QueryInterface(aWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIDOMEventTarget> windowEventTarget;
-  rv = window->GetWindowRoot(getter_AddRefs(windowEventTarget));
+  rv = window2->GetWindowRoot(getter_AddRefs(windowEventTarget));
   NS_ENSURE_SUCCESS(rv, rv);
   windowInfo->eventTarget = windowEventTarget;
 
@@ -652,7 +644,8 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   windowInfo->eventListener = eventListener;
 
   // Add the window info to the window info table.
-  mWindowInfoTable.Put(aWindow, windowInfo.forget());
+  success = mWindowInfoTable.Put(aWindow, windowInfo.forget());
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // Add the opened window to the window list.
   success = mWindowList.AppendObject(aWindow);
@@ -686,11 +679,11 @@ sbWindowWatcher::RemoveWindow(nsIDOMWindow* aWindow)
   NS_ASSERTION(aWindow, "aWindow is null");
 
   // Function variables.
-  bool success;
+  PRBool success;
   nsresult rv;
 
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Get the removed window information.
   WindowInfo* windowInfo;
@@ -724,7 +717,7 @@ void
 sbWindowWatcher::RemoveAllWindows()
 {
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Remove all of the windows.
   PRInt32 windowCount = mWindowList.Count();
@@ -747,7 +740,7 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
   NS_ENSURE_TRUE(aWindow, /* void */);
 
   // Function variables.
-  bool   success;
+  PRBool   success;
   nsresult rv;
 
   // If window is the main Songbird window, notify observers.
@@ -766,7 +759,7 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
 
   // Operate within the monitor.
   {
-    mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+    nsAutoMonitor autoMonitor(mMonitor);
 
     // Get the window information.  Do nothing if not available.
     WindowInfo* windowInfo;
@@ -840,7 +833,7 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
   }
 
   // Operate within the monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoMonitor(*mMonitor);
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Do nothing if the call with window list is already being serviced.
   if (mServicingCallWithWindowList)
@@ -869,6 +862,39 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
 
   return NS_OK;
 }
+
+
+/**
+ * Return this instance proxied to the main thread in aWindowWatcher.
+ *
+ * \param aWindowWatcher        Returned proxied window watcher.
+ */
+
+nsresult
+sbWindowWatcher::GetProxiedWindowWatcher(sbIWindowWatcher** aWindowWatcher)
+{
+  // Validate arguments.
+  NS_ASSERTION(aWindowWatcher, "aWindowWatcher is null");
+
+  // Function variables.
+  nsresult rv;
+
+  // Create a main thread proxy for the window watcher.
+  nsCOMPtr<nsIProxyObjectManager>
+    proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = proxyObjectManager->GetProxyForObject
+                             (NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(sbIWindowWatcher),
+                              NS_ISUPPORTS_CAST(sbIWindowWatcher *, this),
+                                nsIProxyObjectManager::INVOKE_SYNC |
+                                nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                              (void**) aWindowWatcher);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -1027,9 +1053,9 @@ sbWindowWatcherEventListener::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the window event target.
-  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(mWindow, &rv);
+  nsCOMPtr<nsIDOMWindow2> window2 = do_QueryInterface(mWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = window->GetWindowRoot(getter_AddRefs(mEventTarget));
+  rv = window2->GetWindowRoot(getter_AddRefs(mEventTarget));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1134,7 +1160,7 @@ NS_IMETHODIMP
 sbWindowWatcherWaitForWindow::HandleWindowCallback(nsIDOMWindow* aWindow)
 {
   // Operate under the ready monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoReadyMonitor(*mReadyMonitor);
+  nsAutoMonitor autoReadyMonitor(mReadyMonitor);
 
   // Get the ready window.
   mWindow = aWindow;
@@ -1194,7 +1220,7 @@ sbWindowWatcherWaitForWindow::~sbWindowWatcherWaitForWindow()
 {
   // Dispose of the monitor.
   if (mReadyMonitor)
-    delete mReadyMonitor;
+    nsAutoMonitor::DestroyMonitor(mReadyMonitor);
   mReadyMonitor = nsnull;
 
   // Remove object references.
@@ -1220,7 +1246,7 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Operate under the ready monitor.
-  mozilla::sbMozHackReentrantMonitorAutoEnter autoReadyMonitor(*mReadyMonitor);
+  nsAutoMonitor autoReadyMonitor(mReadyMonitor);
 
   // Wait for a window to be ready.
   if (!mReady) {
@@ -1264,8 +1290,8 @@ sbWindowWatcherWaitForWindow::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a monitor.
-  mReadyMonitor = new mozilla::sbMozHackReentrantMonitor(
-      "sbWindowWatcherWaitForWindow::mReadyMonitor");
+  mReadyMonitor =
+    nsAutoMonitor::NewMonitor("sbWindowWatcherWaitForWindow::mReadyMonitor");
   NS_ENSURE_TRUE(mReadyMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;

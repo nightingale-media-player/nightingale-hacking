@@ -73,7 +73,7 @@ public:
                           JSObject * obj,
                           jsval id,
                           jsval * vp,
-                          bool *_retval )
+                          PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -83,7 +83,7 @@ public:
                           JSObject * obj,
                           jsval id,
                           jsval * vp,
-                          bool *_retval )
+                          PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -97,7 +97,7 @@ public:
                           JSObject * obj,
                           jsval id,
                           jsval * vp,
-                          bool *_retval )
+                          PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -107,7 +107,7 @@ public:
                           JSObject * obj,
                           jsval id,
                           jsval * vp,
-                          bool *_retval )
+                          PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -115,7 +115,7 @@ public:
   NS_IMETHOD Enumerate( nsIXPConnectWrappedNative *wrapper,
                         JSContext * cx,
                         JSObject * obj,
-                        bool *_retval )
+                        PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -130,7 +130,7 @@ public:
                            PRUint32 enum_op,
                            jsval * statep,
                            jsid *idp,
-                           bool *_retval )
+                           PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -146,7 +146,7 @@ public:
                          jsval id,
                          PRUint32 flags,
                          JSObject * *objp,
-                         bool *_retval )
+                         PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -156,7 +156,7 @@ public:
                       JSObject * obj,
                       PRUint32 type,
                       jsval * vp,
-                      bool *_retval )
+                      PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -175,7 +175,7 @@ public:
                           jsval id,
                           PRUint32 mode,
                           jsval * vp,
-                          bool *_retval )
+                          PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -189,7 +189,7 @@ public:
                    PRUint32 argc,
                    jsval * argv,
                    jsval * vp,
-                   bool *_retval )
+                   PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -200,7 +200,7 @@ public:
                         PRUint32 argc,
                         jsval * argv,
                         jsval * vp,
-                        bool *_retval )
+                        PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -209,8 +209,8 @@ public:
                           JSContext * cx,
                           JSObject * obj,
                           jsval val,
-                          bool *bp,
-                          bool *_retval )
+                          PRBool *bp,
+                          PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -226,7 +226,7 @@ public:
                        JSContext * cx,
                        JSObject * obj,
                        jsval val,
-                       bool *_retval )
+                       PRBool *_retval )
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }

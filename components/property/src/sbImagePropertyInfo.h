@@ -49,17 +49,17 @@ public:
   sbImagePropertyInfo(const nsAString& aPropertyID,
                       const nsAString& aDisplayName,
                       const nsAString& aLocalizationKey,
-                      const bool aRemoteReadable,
-                      const bool aRemoteWritable,
-                      const bool aUserViewable,
-                      const bool aUserEditable);
+                      const PRBool aRemoteReadable,
+                      const PRBool aRemoteWritable,
+                      const PRBool aUserViewable,
+                      const PRBool aUserEditable);
   virtual ~sbImagePropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 
   nsresult Init();
 private:
-  bool mSuppressSelect;
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBIMAGEPROPERTYINFO_H__ */

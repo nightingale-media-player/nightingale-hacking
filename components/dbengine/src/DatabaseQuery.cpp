@@ -41,6 +41,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
+#include <nsAutoLock.h>
 #include <nsNetUtil.h>
 
 #include <nsIServiceManager.h>
@@ -48,7 +49,9 @@
 #include <nsSupportsArray.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIProxyObjectManager.h>
 
+#include <sbProxiedComponentManager.h>
 #include <sbLockUtils.h>
 
 #ifdef DEBUG_locks
@@ -157,7 +160,7 @@ NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
   NS_ENSURE_ARG_POINTER(aDatabaseLocation);
   nsresult rv = NS_ERROR_UNEXPECTED;
   
-  bool isFile = PR_FALSE;
+  PRBool isFile = PR_FALSE;
   if(NS_SUCCEEDED(aDatabaseLocation->SchemeIs("file", &isFile)) &&
      isFile)
   {
@@ -186,16 +189,16 @@ nsresult CDatabaseQuery::GetDatabaseLocation(nsACString& aURISpec)
 } //GetDatabaseLocation
 
 //-----------------------------------------------------------------------------
-/* void SetAsyncQuery (in bool bAsyncQuery); */
-NS_IMETHODIMP CDatabaseQuery::SetAsyncQuery(bool bAsyncQuery)
+/* void SetAsyncQuery (in PRBool bAsyncQuery); */
+NS_IMETHODIMP CDatabaseQuery::SetAsyncQuery(PRBool bAsyncQuery)
 {
   m_AsyncQuery = bAsyncQuery;
   return NS_OK;
 } //SetAsyncQuery
 
 //-----------------------------------------------------------------------------
-/* bool IsAyncQuery (); */
-NS_IMETHODIMP CDatabaseQuery::IsAyncQuery(bool *_retval)
+/* PRBool IsAyncQuery (); */
+NS_IMETHODIMP CDatabaseQuery::IsAyncQuery(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_AsyncQuery;
@@ -447,8 +450,8 @@ NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
 } //WaitForCompletion
 
 //-----------------------------------------------------------------------------
-/* bool IsExecuting (); */
-NS_IMETHODIMP CDatabaseQuery::IsExecuting(bool *_retval)
+/* PRBool IsExecuting (); */
+NS_IMETHODIMP CDatabaseQuery::IsExecuting(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
@@ -472,7 +475,7 @@ NS_IMETHODIMP CDatabaseQuery::CurrentQuery(PRUint32 *_retval)
 
 //-----------------------------------------------------------------------------
 /* void Abort (); */
-NS_IMETHODIMP CDatabaseQuery::Abort(bool *_retval)
+NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

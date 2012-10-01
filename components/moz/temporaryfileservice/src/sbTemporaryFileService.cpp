@@ -212,7 +212,7 @@ sbTemporaryFileService::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Ensure the root temporary directory exists.
-  bool exists;
+  PRBool exists;
   rv = rootTemporaryDirectory->Append
          (NS_LITERAL_STRING(SB_TEMPORARY_FILE_SERVICE_ROOT_DIR_NAME));
   NS_ENSURE_SUCCESS(rv, rv);

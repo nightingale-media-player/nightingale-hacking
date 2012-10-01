@@ -64,7 +64,7 @@ public:
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid,
-                bool aOwnsLibrary = PR_TRUE);
+                PRBool aOwnsLibrary = PR_TRUE);
 
 private:
   nsresult EnsurePropertyBag();
@@ -75,7 +75,7 @@ protected:
   // Determines what kind of reference will be kept for mLibrary.  If true,
   // it will be an owning reference, if false, it will be a non-owning
   // reference.
-  bool mOwnsLibrary;
+  PRBool mOwnsLibrary;
 
   // This reference is either owning or non-owning depending on how this class
   // was initalized.  We do manual reference counting if this is to be an
@@ -87,12 +87,12 @@ protected:
   // When set, listeners will not be notified.  This is used to signal when the
   // item is not yet ready for notification (e.g. during the middle of creation)
   // and when it's already been deleted.
-  bool mSuppressNotifications;
+  PRBool mSuppressNotifications;
   
   // A reference to the mediaItemController for this item
   nsCOMPtr<sbIMediaItemController> mItemController;
   // A boolean to remember if we already tried to fetch the controller
-  bool mItemControllerFetched;
+  PRBool mItemControllerFetched;
 
 private:
   PRLock* mPropertyBagLock;

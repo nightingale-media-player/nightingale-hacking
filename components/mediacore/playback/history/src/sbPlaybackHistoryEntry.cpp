@@ -32,6 +32,7 @@
 #include <nsIStringEnumerator.h>
 
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
@@ -156,7 +157,7 @@ sbPlaybackHistoryEntry::GetAnnotation(const nsAString & aAnnotationId,
 
 NS_IMETHODIMP 
 sbPlaybackHistoryEntry::HasAnnotation(const nsAString & aAnnotationId, 
-                                      bool *_retval)
+                                      PRBool *_retval)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
 

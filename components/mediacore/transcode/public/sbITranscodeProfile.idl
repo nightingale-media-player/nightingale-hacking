@@ -165,6 +165,42 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
    */
   unsigned long getEncoderProfilePriority(in double aQuality);
 
+%{COMMENT
+  /* these live on sbITranscodeProfile for now */
+  /**
+   * \brief The container format to put the transcoded media in (if any).
+   *
+   * Examples:
+   *   "application/ogg", "audio/mpeg", "video/mp4"
+   *
+   * May be an empty string to indicate that no container is desired.
+   *
+   * Note that 'tag' formats such as id3 are considered as container formats
+   * here for simplicity.
+   */
+  attribute AString containerFormat;
+
+  /**
+   * \brief The audio codec to use (if any).
+   *
+   * Examples:
+   *   "audio/x-vorbis", "audio/mpeg", "audio/x-raw-int"
+   *
+   * May be an empty string to indicate that no audio should be stored.
+   */
+  attribute AString audioCodec;
+
+  /**
+   * \brief The video codec to use (if any).
+   *
+   * Examples:
+   *  "video/mpeg", "video/x-theora", "video/x-yuv"
+   *
+   * May be an empty string to indicate that no video should be stored.
+   */
+  attribute AString videoCodec;
+%}COMMENT
+
   /**
    * Get the desired audio bitrate for a given quality setting
    *

@@ -31,7 +31,7 @@
 #include "sbImageParser.h"
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 // Construct the sbImageParser object
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageParser)

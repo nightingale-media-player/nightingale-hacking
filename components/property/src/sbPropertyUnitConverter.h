@@ -60,7 +60,7 @@ protected:
   nsString mName;
   nsString mShortName;
   nsString mID;
-  bool mInitialized;
+  PRBool mInitialized;
 };
 
 // sbPropertyUnitConverter class - exposes the units and the conversion function
@@ -77,7 +77,7 @@ protected:
                     const nsAString &aUnitExternalID, 
                     const nsAString &aUnitName, 
                     const nsAString &aUnitShortName, 
-                    bool isNative = PR_FALSE);
+                    PRBool isNative = PR_FALSE);
 
   void SetStringBundle(const nsAString &aStringBundle);
 

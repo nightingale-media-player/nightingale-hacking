@@ -173,7 +173,7 @@ sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aIndex,
   NS_ENSURE_STATE(list);
 
   nsString guid(aGuid);
-  bool success = list->Put(aId, guid);
+  PRBool success = list->Put(aId, guid);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -309,7 +309,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   mArray = aArray;
 
   // Determine the list type
-  bool isDistinct;
+  PRBool isDistinct;
   rv = mArray->GetIsDistinct(&isDistinct);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -368,7 +368,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   rv = mArray->GetFetchSize(&mFetchSize);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool success = mSelectionList.Init();
+  PRBool success = mSelectionList.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   mHaveSavedSelection = PR_FALSE;
 
@@ -384,7 +384,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     rv = aState->mSort->GetProperty(mCurrentSortProperty);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool isAscending;
+    PRBool isAscending;
     rv = aState->mSort->GetIsAscending(&isAscending);
     NS_ENSURE_SUCCESS(rv, rv);
     mCurrentSortDirectionIsAscending = isAscending;
@@ -454,7 +454,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   rv = mMediaListView->GetMediaList(getter_AddRefs(viewList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool isViewOfQueue;
+  PRBool isViewOfQueue;
   rv = queueList->Equals(viewList, &isViewOfQueue);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -530,7 +530,7 @@ sbLocalDatabaseTreeView::Rebuild()
   rv = property->GetId(arraySortProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool arraySortDirectionIsAscending;
+  PRBool arraySortDirectionIsAscending;
   nsString direction;
   rv = property->GetValue(direction);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -582,12 +582,12 @@ sbLocalDatabaseTreeView::Rebuild()
 }
 
 void
-sbLocalDatabaseTreeView::SetShouldPreventRebuild(bool aShouldPreventRebuild)
+sbLocalDatabaseTreeView::SetShouldPreventRebuild(PRBool aShouldPreventRebuild)
 {
   mShouldPreventRebuild = aShouldPreventRebuild;
 }
 
-bool
+PRBool
 sbLocalDatabaseTreeView::GetShouldPreventRebuild()
 {
   return mShouldPreventRebuild;
@@ -664,8 +664,8 @@ sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
 }
 
 inline
-bool intersection(PRInt32 start1, PRInt32 end1, PRInt32 start2, PRInt32 end2, PRInt32 & intersectStart, PRInt32 & intersectEnd) {
-  bool const result = end1 >= start2 && start1 <= end2;
+PRBool intersection(PRInt32 start1, PRInt32 end1, PRInt32 start2, PRInt32 end2, PRInt32 & intersectStart, PRInt32 & intersectEnd) {
+  PRBool const result = end1 >= start2 && start1 <= end2;
   if (result) {
     intersectStart = start2;
     intersectEnd = end2;
@@ -733,7 +733,7 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
       PRInt32 intersectStart;
       PRInt32 intersectEnd;
       // Get the intersection between the current first and last and previous
-      bool const intersects = intersection(first, last,
+      PRBool const intersects = intersection(first, last,
                                              mFirstCachedRow, mLastCachedRow,
                                              intersectStart, intersectEnd);
       // If they intersect then remove the intersecting rows from the length
@@ -995,7 +995,7 @@ sbLocalDatabaseTreeView::GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId)
 }
 
 void
-sbLocalDatabaseTreeView::SetSelectionIsAll(bool aSelectionIsAll) {
+sbLocalDatabaseTreeView::SetSelectionIsAll(PRBool aSelectionIsAll) {
 
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetSelectionIsAll(%d)",
          this, aSelectionIsAll));
@@ -1025,7 +1025,7 @@ sbLocalDatabaseTreeView::ClearSelectionList() {
 
 nsresult
 sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
-                                                    bool aDirection)
+                                                    PRBool aDirection)
 {
   nsresult rv;
 
@@ -1134,7 +1134,7 @@ sbLocalDatabaseTreeView::GetState(sbLocalDatabaseTreeViewState** aState)
 
 // sbILocalDatabaseTreeView
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, bool aDirection)
+sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
 {
   LOG(("sbLocalDatabaseTreeView[0x%.8x] - SetSort(%s, %d)",
        this, NS_LossyConvertUTF16toASCII(aProperty).get(), aDirection));
@@ -1287,7 +1287,7 @@ sbLocalDatabaseTreeView::SetMouseState(PRInt32 aRow,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::GetSelectionIsAll(bool* aSelectionIsAll)
+sbLocalDatabaseTreeView::GetSelectionIsAll(PRBool* aSelectionIsAll)
 {
   NS_ENSURE_ARG_POINTER(aSelectionIsAll);
   NS_ASSERTION(mManageSelection,
@@ -1349,7 +1349,7 @@ sbLocalDatabaseTreeView::GetSelectedValues(nsIStringEnumerator** aValues)
 
 // sbILocalDatabaseGUIDArrayListener
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnBeforeInvalidate(bool aInvalidateLength)
+sbLocalDatabaseTreeView::OnBeforeInvalidate(PRBool aInvalidateLength)
 {
   // array modified so reset everything
   mGuidWorkArray.Reset();
@@ -1589,7 +1589,7 @@ sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex,
   if (!mediaItemController)
     return NS_OK;
 
-  bool itemDisabled;
+  PRBool itemDisabled;
   rv = mediaItemController->IsItemDisabled(mediaItem, &itemDisabled);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1627,7 +1627,7 @@ sbLocalDatabaseTreeView::GetPlayQueueStatus(PRUint32 aIndex,
 }
 
 nsresult
-sbLocalDatabaseTreeView::GetIsListReadOnly(bool *aOutIsReadOnly)
+sbLocalDatabaseTreeView::GetIsListReadOnly(PRBool *aOutIsReadOnly)
 {
   NS_ENSURE_ARG_POINTER(aOutIsReadOnly);
 
@@ -1806,7 +1806,7 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - CycleHeader %s", this,
          NS_LossyConvertUTF16toASCII(bind).get()));
 
-  bool directionIsAscending = PR_TRUE;
+  PRBool directionIsAscending = PR_TRUE;
   if (bind.Equals(mCurrentSortProperty)) {
     directionIsAscending = !mCurrentSortDirectionIsAscending;
   }
@@ -2002,7 +2002,7 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
 
   nsCOMPtr<sbIClickablePropertyInfo> cpi = do_QueryInterface(pi, &rv);
   if (NS_SUCCEEDED(rv)) {
-    bool isDisabled;
+    PRBool isDisabled;
     rv = cpi->IsDisabled(value, &isDisabled);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2013,7 +2013,7 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
   }
 
   // If the current medialist is readonly, be set the "readonly" property.
-  bool isMediaListReadOnly;
+  PRBool isMediaListReadOnly;
   rv = GetIsListReadOnly(&isMediaListReadOnly);
   if (NS_SUCCEEDED(rv) && isMediaListReadOnly) {
     rv = TokenizeProperties(NS_LITERAL_STRING("readonly"), properties);
@@ -2074,7 +2074,7 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::IsContainer(PRInt32 row, bool* _retval)
+sbLocalDatabaseTreeView::IsContainer(PRInt32 row, PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2084,7 +2084,7 @@ sbLocalDatabaseTreeView::IsContainer(PRInt32 row, bool* _retval)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::IsContainerOpen(PRInt32 row, bool* _retval)
+sbLocalDatabaseTreeView::IsContainerOpen(PRInt32 row, PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2094,7 +2094,7 @@ sbLocalDatabaseTreeView::IsContainerOpen(PRInt32 row, bool* _retval)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::IsContainerEmpty(PRInt32 row, bool* _retval)
+sbLocalDatabaseTreeView::IsContainerEmpty(PRInt32 row, PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2104,7 +2104,7 @@ sbLocalDatabaseTreeView::IsContainerEmpty(PRInt32 row, bool* _retval)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::IsSeparator(PRInt32 row, bool* _retval)
+sbLocalDatabaseTreeView::IsSeparator(PRInt32 row, PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2114,7 +2114,7 @@ sbLocalDatabaseTreeView::IsSeparator(PRInt32 row, bool* _retval)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::IsSorted(bool* _retval)
+sbLocalDatabaseTreeView::IsSorted(PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2127,7 +2127,7 @@ NS_IMETHODIMP
 sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
                                  PRInt32 orientation,
                                  nsIDOMDataTransfer* dataTransfer,
-                                 bool* _retval)
+                                 PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2187,7 +2187,7 @@ sbLocalDatabaseTreeView::GetParentIndex(PRInt32 rowIndex, PRInt32* _retval)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::HasNextSibling(PRInt32 rowIndex,
                                         PRInt32 afterIndex,
-                                        bool* _retval)
+                                        PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -2393,7 +2393,7 @@ sbLocalDatabaseTreeView::SelectionChanged()
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::IsEditable(PRInt32 row,
                                     nsITreeColumn* col,
-                                    bool* _retval)
+                                    PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -2418,7 +2418,7 @@ sbLocalDatabaseTreeView::IsEditable(PRInt32 row,
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::IsSelectable(PRInt32 row,
                                       nsITreeColumn* col,
-                                      bool* _retval)
+                                      PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -2730,7 +2730,7 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaListView *aView,
     rv = aView->GetMediaList(getter_AddRefs(playingList));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool equals;
+    PRBool equals;
     rv = viewList->Equals(playingList, &equals);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2746,7 +2746,7 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaListView *aView,
     rv = status->GetState(&state);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool isPlaying = (state == sbIMediacoreStatus::STATUS_PLAYING ||
+    PRBool isPlaying = (state == sbIMediacoreStatus::STATUS_PLAYING ||
                         state == sbIMediacoreStatus::STATUS_PAUSED ||
                         state == sbIMediacoreStatus::STATUS_BUFFERING);
 
@@ -2824,7 +2824,7 @@ sbLocalDatabaseTreeView::OnCurrentIndexChanged()
     rv = mViewSelection->GetCurrentIndex(&currentIndex);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool treeIsSelected;
+    PRBool treeIsSelected;
     rv = mRealSelection->IsSelected(currentIndex, &treeIsSelected);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2988,11 +2988,11 @@ sbLocalDatabaseTreeViewState::Read(nsIObjectInputStream* aStream)
     rv = aStream->ReadString(entry);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool success = mSelectionList.Put(key, entry);
+    PRBool success = mSelectionList.Put(key, entry);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
-  bool selectionIsAll;
+  PRBool selectionIsAll;
   rv = aStream->ReadBoolean(&selectionIsAll);
   NS_ENSURE_SUCCESS(rv, rv);
   mSelectionIsAll = selectionIsAll;
@@ -3024,7 +3024,7 @@ sbLocalDatabaseTreeViewState::Write(nsIObjectOutputStream* aStream)
 nsresult
 sbLocalDatabaseTreeViewState::Init()
 {
-  bool success = mSelectionList.Init();
+  PRBool success = mSelectionList.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   return NS_OK;

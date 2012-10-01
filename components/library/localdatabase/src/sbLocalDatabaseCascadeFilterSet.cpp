@@ -152,7 +152,7 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mProtoArray->SetDistinctWithSortableValues(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool success = mListeners.Init();
+  PRBool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   rv = mMediaListView->GetMediaList(getter_AddRefs(mMediaList));
@@ -245,7 +245,7 @@ sbLocalDatabaseCascadeFilterSet::GetProperty(PRUint16 aIndex,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::IsSearch(PRUint16 aIndex,
-                                          bool* _retval)
+                                          PRBool* _retval)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - IsSearch", this));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -343,7 +343,7 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
   nsresult rv;
 
   sbFilterSpec& fs = mFilters[aIndex];
-  bool isSearch = fs.isSearch;
+  PRBool isSearch = fs.isSearch;
 
   if (fs.arrayListener)
     fs.array->RemoveAsyncListener(fs.arrayListener);
@@ -547,7 +547,7 @@ sbLocalDatabaseCascadeFilterSet::ClearAll()
 {
   nsresult rv;
 
-  bool filterChanged = PR_FALSE, searchChanged = PR_FALSE;
+  PRBool filterChanged = PR_FALSE, searchChanged = PR_FALSE;
 
   for (PRUint32 i = 0; i < mFilters.Length(); i++) {
     sbFilterSpec& fs = mFilters[i];
@@ -657,7 +657,7 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetValueCount(PRUint16 aIndex,
-                                               bool aUseCache,
+                                               PRBool aUseCache,
                                                PRUint32 *_retval)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetValueCount", this));
@@ -786,7 +786,7 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
 
 nsresult
 sbLocalDatabaseCascadeFilterSet::AddFilters(sbILibraryConstraintBuilder* aBuilder,
-                                            bool* aChanged)
+                                            PRBool* aChanged)
 {
   NS_ENSURE_ARG_POINTER(aBuilder);
   NS_ENSURE_ARG_POINTER(aChanged);
@@ -817,7 +817,7 @@ sbLocalDatabaseCascadeFilterSet::AddFilters(sbILibraryConstraintBuilder* aBuilde
 
 nsresult
 sbLocalDatabaseCascadeFilterSet::AddSearches(sbILibraryConstraintBuilder* aBuilder,
-                                             bool* aChanged)
+                                             PRBool* aChanged)
 {
   NS_ENSURE_ARG_POINTER(aBuilder);
   NS_ENSURE_ARG_POINTER(aChanged);
@@ -1106,7 +1106,7 @@ sbLocalDatabaseCascadeFilterSet::InvalidateFilter(sbFilterSpec& aFilter)
 }
 
 nsresult
-sbLocalDatabaseCascadeFilterSet::UpdateListener(bool aRemoveListener)
+sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
 {
   NS_ENSURE_STATE(mMediaList);
 
@@ -1197,7 +1197,7 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
     rv = constraint->GetGroups(getter_AddRefs(groupEnum));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool hasMore;
+    PRBool hasMore;
     while (NS_SUCCEEDED(groupEnum->HasMoreElements(&hasMore)) && hasMore) {
       nsCOMPtr<nsISupports> groupSupports;
       rv = groupEnum->GetNext(getter_AddRefs(groupSupports));
@@ -1226,7 +1226,7 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
 
         /* Convert our valueEnum to an enum of the sortable values */
         sbStringArray valueArray;
-        bool hasMore;
+        PRBool hasMore;
         rv = valueEnum->HasMore(&hasMore);
         NS_ENSURE_SUCCESS(rv, rv);
         while (hasMore) {
@@ -1263,7 +1263,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
                                              sbIMediaItem* aMediaItem,
                                              PRUint32 aIndex,
-                                             bool* aNoMoreForBatch)
+                                             PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1301,7 +1301,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                      sbIMediaItem* aMediaItem,
                                                      PRUint32 aIndex,
-                                                     bool* aNoMoreForBatch)
+                                                     PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1317,7 +1317,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                     sbIMediaItem* aMediaItem,
                                                     PRUint32 aIndex,
-                                                    bool* aNoMoreForBatch)
+                                                    PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1353,7 +1353,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnItemUpdated(sbIMediaList* aMediaList,
                                                sbIMediaItem* aMediaItem,
                                                sbIPropertyArray* aProperties,
-                                               bool* aNoMoreForBatch)
+                                               PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1387,7 +1387,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnItemMoved(sbIMediaList* aMediaList,
                                              PRUint32 aFromIndex,
                                              PRUint32 aToIndex,
-                                             bool* aNoMoreForBatch)
+                                             PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -1400,8 +1400,8 @@ sbLocalDatabaseCascadeFilterSet::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                                     bool aExcludeLists,
-                                                     bool* aNoMoreForBatch)
+                                                     PRBool aExcludeLists,
+                                                     PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -1414,8 +1414,8 @@ sbLocalDatabaseCascadeFilterSet::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList,
-                                               bool aExcludeLists,
-                                               bool* aNoMoreForBatch)
+                                               PRBool aExcludeLists,
+                                               PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -1571,7 +1571,7 @@ sbGUIDArrayPrimarySortEnumerator::sbGUIDArrayPrimarySortEnumerator(sbILocalDatab
 }
 
 NS_IMETHODIMP
-sbGUIDArrayPrimarySortEnumerator::HasMore(bool *_retval)
+sbGUIDArrayPrimarySortEnumerator::HasMore(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
@@ -1644,7 +1644,7 @@ sbLocalDatabaseCascadeFilterSetState::Read(nsIObjectInputStream* aStream)
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    bool hasTreeViewState;
+    PRBool hasTreeViewState;
     rv = aStream->ReadBoolean(&hasTreeViewState);
     NS_ENSURE_SUCCESS(rv, rv);
 

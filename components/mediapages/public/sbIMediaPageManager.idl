@@ -151,7 +151,7 @@ interface sbIMediaListMatch: nsISupports
    * \param aList the media list to attempt to match
    * \param aConstraint (optional) A library constrain used as an additional matching criteria
    */
-  boolean match(in sbIMediaList aList,
+  PRBool match(in sbIMediaList aList,
                [optional] in sbILibraryConstraint aConstraint);
 };
 

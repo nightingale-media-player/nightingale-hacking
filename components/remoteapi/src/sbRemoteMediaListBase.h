@@ -87,7 +87,7 @@ public:
                          jsval id,
                          PRUint32 flags,
                          JSObject **objp,
-                         bool *_retval );
+                         PRBool *_retval );
 
   // sbIMediaList
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
@@ -108,12 +108,12 @@ public:
   NS_IMETHOD LastIndexOf(sbIMediaItem* aMediaItem,
                          PRUint32 aStartFrom,
                          PRUint32* _retval);
-  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, bool* _retval);
+  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
   NS_IMETHOD Add(sbIMediaItem* aMediaItem);
   NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator* aMediaItems, sbIAddMediaItemsListener* aListener, bool aAsync);
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator* aMediaItems, sbIAddMediaItemsListener* aListener, PRBool aAsync);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString &aPropertyID,
                                           nsIStringEnumerator **_retval);

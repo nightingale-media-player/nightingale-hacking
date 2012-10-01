@@ -192,7 +192,7 @@ sbTranscodeProfileLoader::LoadProfileInternal()
           PRInt32 priority = textContent.ToInteger(&rv);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          bool hasQuality = PR_FALSE;
+          PRBool hasQuality = PR_FALSE;
           rv = childElement->HasAttribute(NS_LITERAL_STRING("quality"),
                                           &hasQuality);
           NS_ENSURE_SUCCESS(rv, rv);

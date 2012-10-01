@@ -57,7 +57,7 @@ sbSQLWhereBuilder::RemoveCriterion(sbISQLBuilderCriterion *aCriterion)
 {
   NS_ENSURE_ARG_POINTER(aCriterion);
 
-  bool success = mCritera.RemoveObject(aCriterion);
+  PRBool success = mCritera.RemoveObject(aCriterion);
   if (!success) {
     return NS_ERROR_NOT_AVAILABLE;
   }

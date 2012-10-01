@@ -114,13 +114,13 @@ public:
    * Return true if the validation is complete.
    */
 
-  bool IsComplete();
+  PRBool IsComplete();
 
   /**
    * Return true if the streaming item is supported.
    */
 
-  bool IsStreamingItemSupported();
+  PRBool IsStreamingItemSupported();
 
 
   /**
@@ -159,8 +159,8 @@ private:
 
   PRMonitor*                    mCompleteNotifyMonitor;
   sbIMediaItem*                 mMediaItem;
-  bool                        mIsComplete;
-  bool                        mIsSupported;
+  PRBool                        mIsComplete;
+  PRBool                        mIsSupported;
 };
 
 

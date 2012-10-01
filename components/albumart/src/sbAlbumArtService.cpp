@@ -67,6 +67,7 @@
 #include <nsIMutableArray.h>
 #include <nsIProperties.h>
 #include <nsIProtocolHandler.h>
+#include <nsIProxyObjectManager.h>
 #include <nsIResProtocolHandler.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIUnicharLineInputStream.h>
@@ -150,7 +151,7 @@ NS_IMPL_ISUPPORTS2(sbAlbumArtService,
 
 NS_IMETHODIMP
 sbAlbumArtService::GetFetcherList(PRUint32 aType,
-                                  bool aIncludeDisabled,
+                                  PRBool aIncludeDisabled,
                                   nsIArray** _retval)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - GetFetcherList", this));
@@ -225,7 +226,7 @@ NS_IMETHODIMP
 sbAlbumArtService::ImageIsValidAlbumArt(const nsACString& aMimeType,
                                         const PRUint8*    aData,
                                         PRUint32          aDataLen,
-                                        bool*           _retval)
+                                        PRBool*           _retval)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - ImageIsValidAlbumArt", this));
   // Validate arguments.
@@ -317,7 +318,7 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If cache file already exists, return it.
-  bool exists;
+  PRBool exists;
   rv = cacheFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (exists) {
@@ -374,7 +375,7 @@ sbAlbumArtService::CacheTemporaryData(const nsAString& aKey,
   NS_ENSURE_ARG_POINTER(aData);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   
-  bool succeeded = mTemporaryCache.Put(aKey, aData);
+  PRBool succeeded = mTemporaryCache.Put(aKey, aData);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
   
   // Start a timer empty out the cache at some point
@@ -410,7 +411,7 @@ sbAlbumArtService::RetrieveTemporaryData(const nsAString& aKey,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   *_retval = nsnull;
-  bool succeeded = mTemporaryCache.Get(aKey, _retval);
+  PRBool succeeded = mTemporaryCache.Get(aKey, _retval);
   return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -565,7 +566,7 @@ sbAlbumArtService::Initialize()
   nsCOMPtr<nsIResProtocolHandler> resProtoHandler =
     do_QueryInterface(protoHandler, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  bool hasSubstitution;
+  PRBool hasSubstitution;
   rv = resProtoHandler->HasSubstitution(NS_LITERAL_CSTRING(SB_RES_PROTO_PREFIX),
                                         &hasSubstitution);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -579,7 +580,7 @@ sbAlbumArtService::Initialize()
   }
 
   // Set up the arbitrary data cache
-  bool succeeded = mTemporaryCache.Init(TEMPORARY_CACHE_SIZE);
+  PRBool succeeded = mTemporaryCache.Init(TEMPORARY_CACHE_SIZE);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   // Mark component as initialized.
@@ -657,7 +658,7 @@ sbAlbumArtService::GetAlbumArtCacheDir()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create the album art cache directory if it doesn't exist.
-  bool exists;
+  PRBool exists;
   rv = mAlbumArtCacheDir->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!exists) {
@@ -699,7 +700,7 @@ sbAlbumArtService::GetAlbumArtFetcherInfo()
   // Get each album art fetcher info.
   while (1) {
     // Check if there are any more album art fetchers.
-    bool hasMoreElements;
+    PRBool hasMoreElements;
     rv = albumArtFetcherEnum->HasMoreElements(&hasMoreElements);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasMoreElements) {
@@ -732,10 +733,10 @@ sbAlbumArtService::GetAlbumArtFetcherInfo()
     PRInt32 priority = 0;
     albumArtFetcher->GetPriority(&priority);
     
-    bool isEnabled = PR_FALSE;
+    PRBool isEnabled = PR_FALSE;
     albumArtFetcher->GetIsEnabled(&isEnabled);
 
-    bool isLocal = PR_FALSE;
+    PRBool isLocal = PR_FALSE;
     albumArtFetcher->GetIsLocal(&isLocal);
 
     // Add the album art fetcher info to the list.
@@ -774,7 +775,7 @@ sbAlbumArtService::UpdateAlbumArtFetcherInfo()
     PRInt32 priority = 0;
     albumArtFetcher->GetPriority(&priority);
     
-    bool isEnabled = PR_FALSE;
+    PRBool isEnabled = PR_FALSE;
     albumArtFetcher->GetIsEnabled(&isEnabled);
 
     mFetcherInfoList[i].priority = priority;

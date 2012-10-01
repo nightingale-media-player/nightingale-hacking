@@ -71,7 +71,7 @@ protected:
   nsCOMPtr<sbIMetadataChannel>       m_ChannelHandler;
   nsCOMPtr<nsIChannel>               m_Channel;
   nsString                           m_FilePath;
-  bool                             m_Completed;
+  PRBool                             m_Completed;
 
   /**
    * Read a single string-based metadata (for the WMF API methods)
@@ -142,7 +142,7 @@ protected:
   NS_METHOD SetImageDataInternal(PRInt32          aType,
                                  const nsAString &aURL,
                                  IWMHeaderInfo3  *aHeader,
-                                 bool          &aSuccess);
+                                 PRBool          &aSuccess);
 
 };
 

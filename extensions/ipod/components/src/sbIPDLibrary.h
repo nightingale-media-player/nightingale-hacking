@@ -107,7 +107,7 @@ private:
   //
 
   nsRefPtr<sbIPDDevice>         mDevice;
-  bool                        mPrefsInitialized;
+  PRBool                        mPrefsInitialized;
 
 
   //

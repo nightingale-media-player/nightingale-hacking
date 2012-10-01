@@ -132,7 +132,7 @@ sbIPDDevice::FPCheckTrackAuth(Itdb_Track* aTrack)
   PRUint32 userID = aTrack->drm_userid;
 
   // Check if the device is authorized for the user ID.
-  bool authorized = PR_FALSE;
+  PRBool authorized = PR_FALSE;
   for (PRUint32 i = 0; i < mFPUserIDList.Length(); i++) {
     if (mFPUserIDList[i] == userID) {
       authorized = PR_TRUE;
@@ -264,7 +264,7 @@ sbIPDDevice::FPGetKeyInfo()
 
   // Check for existence of the iPod key info file.  Do nothing more if it
   // doesn't exist.
-  bool exists;
+  PRBool exists;
   rv = iEKInfoFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!exists)

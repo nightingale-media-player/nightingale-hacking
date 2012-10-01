@@ -98,7 +98,7 @@ class sbMetadataChannel : public sbIMetadataChannel
   PRUint64 m_BufDeadZoneStart;
   PRUint64 m_BufDeadZoneEnd;
   blockmap_t m_Blocks;
-  bool   m_Completed;
+  PRBool   m_Completed;
 };
 
 class sbMetadataChannelEventSink : public nsIChannelEventSink,

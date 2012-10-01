@@ -34,7 +34,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 #include "sbDeviceProperties.h"
 #include "sbDeviceCapabilities.h"

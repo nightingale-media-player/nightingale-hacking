@@ -51,12 +51,12 @@ public:
   sbSimpleButtonPropertyInfo(const nsAString& aPropertyID,
                              const nsAString& aDisplayName,
                              const nsAString& aLocalizationKey,
-                             bool aHasLabel,
+                             PRBool aHasLabel,
                              const nsAString& aLabel,
-                             const bool aRemoteReadable,
-                             const bool aRemoteWritable,
-                             const bool aUserViewable,
-                             const bool aUserEditable);
+                             const PRBool aRemoteReadable,
+                             const PRBool aRemoteWritable,
+                             const PRBool aUserViewable,
+                             const PRBool aUserEditable);
   virtual ~sbSimpleButtonPropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
@@ -65,9 +65,9 @@ public:
 
 private:
 
-  bool mHasLabel;
+  PRBool mHasLabel;
   nsString mLabel;
-  bool mSuppressSelect;
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBSIMPLEBUTTONPROPERTYINFO_H__ */

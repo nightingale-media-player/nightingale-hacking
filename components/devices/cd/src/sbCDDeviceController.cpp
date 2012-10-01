@@ -32,7 +32,7 @@
 #include <sbDeviceCompatibility.h>
 
 #include <nsIClassInfoImpl.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
@@ -139,7 +139,7 @@ sbCDDeviceController::CreateDevice(nsIPropertyBag *aParams,
 }
 
 NS_IMETHODIMP
-sbCDDeviceController::ControlsDevice(sbIDevice *aDevice, bool *aRetVal)
+sbCDDeviceController::ControlsDevice(sbIDevice *aDevice, PRBool *aRetVal)
 {
   return ControlsDeviceInternal(aDevice, aRetVal);
 }

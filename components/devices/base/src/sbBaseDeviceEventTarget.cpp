@@ -28,6 +28,7 @@
 #include "sbBaseDeviceEventTarget.h"
 
 #include <nsIThread.h>
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDeque.h>
@@ -35,6 +36,7 @@
 
 #include "sbIDeviceEventListener.h"
 #include "sbDeviceEvent.h"
+#include <sbProxiedComponentManager.h>
 #include <sbThreadUtils.h>
 
 
@@ -75,10 +77,10 @@ sbBaseDeviceEventTarget::~sbBaseDeviceEventTarget()
   }
 }
 
-/* boolean dispatchEvent (in sbIDeviceEvent aEvent, [optional] bool aAsync); */
+/* boolean dispatchEvent (in sbIDeviceEvent aEvent, [optional] PRBool aAsync); */
 NS_IMETHODIMP sbBaseDeviceEventTarget::DispatchEvent(sbIDeviceEvent *aEvent,
-                                                     bool aAsync,
-                                                     bool* _retval)
+                                                     PRBool aAsync,
+                                                     PRBool* _retval)
 {
   nsresult rv;
 
@@ -211,7 +213,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::AddEventListener(sbIDeviceEventListener *
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  bool succeeded = mListeners.AppendObject(aListener);
+  PRBool succeeded = mListeners.AppendObject(aListener);
   return succeeded ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -245,7 +247,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::RemoveEventListener(sbIDeviceEventListene
   }
 
   // remove the listener
-  bool succeeded = mListeners.RemoveObjectAt(indexToRemove);
+  PRBool succeeded = mListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   // fix up the stack to account for the removed listener

@@ -50,8 +50,8 @@ public:
   NS_IMETHOD Close() = 0;
 
 protected:
-  bool mFileStreamIsActive;
-  bool mObjectStreamIsActive;
+  PRBool mFileStreamIsActive;
+  PRBool mObjectStreamIsActive;
 };
 
 #define SB_DECL_SBFILEOBJECTSTREAM \
@@ -72,7 +72,7 @@ public:
   NS_DECL_ISUPPORTS
   SB_DECL_SBFILEOBJECTSTREAM
 
-  nsresult WriteObject(nsISupports *aSupports, bool aIsStrongRef);
+  nsresult WriteObject(nsISupports *aSupports, PRBool aIsStrongRef);
 
   // Warning: Do not pass a NULL string into this method.
   nsresult WriteCString(const nsACString & aString);
@@ -82,7 +82,7 @@ public:
 
   nsresult WriteUint32(PRUint32 aOutInt);
 
-  nsresult Writebool(bool aBoolean);
+  nsresult WritePRBool(PRBool aBoolean);
 
   nsresult WriteBytes(const char *aData, PRUint32 aLength);
 
@@ -105,7 +105,7 @@ public:
   NS_DECL_ISUPPORTS
   SB_DECL_SBFILEOBJECTSTREAM
 
-  nsresult ReadObject(bool aIsStrongRef, nsISupports **aOutObject);
+  nsresult ReadObject(PRBool aIsStrongRef, nsISupports **aOutObject);
 
   nsresult ReadCString(nsACString & aReadString);
 
@@ -113,7 +113,7 @@ public:
 
   nsresult ReadUint32(PRUint32 *aReadInt);
 
-  nsresult Readbool(bool *aReadBoolean);
+  nsresult ReadPRBool(PRBool *aReadBoolean);
 
   nsresult ReadBytes(PRUint32 aLength, char **aString);
 
@@ -121,7 +121,7 @@ private:
   nsCOMPtr<nsIFileInputStream>     mFileInputStream;
   nsCOMPtr<nsIBufferedInputStream> mBufferedInputStream;
   nsCOMPtr<nsIObjectInputStream>   mObjectInputStream;
-  bool                           mBufferedStreamIsActive;
+  PRBool                           mBufferedStreamIsActive;
 };
 
 #endif  // sbFileObjectStreams_h_

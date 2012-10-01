@@ -50,7 +50,7 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsServiceManagerUtils.h>
 
 
@@ -62,33 +62,108 @@
 
 // Songbird temporary file service defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTemporaryFileService, Initialize)
-NS_DEFINE_NAMED_CID(SB_TEMPORARYFILESERVICE_CID);
 
+
+/**
+ * \brief Register the Songbird temporary file service component.
+ */
+
+static NS_METHOD
+sbTemporaryFileServiceRegister(nsIComponentManager*         aCompMgr,
+                               nsIFile*                     aPath,
+                               const char*                  aLoaderStr,
+                               const char*                  aType,
+                               const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add self to the device marshall category.
+  rv = categoryManager->AddCategoryEntry
+                          ("app-startup",
+                           SB_TEMPORARYFILESERVICE_CLASSNAME,
+                           "service," SB_TEMPORARYFILESERVICE_CONTRACTID,
+                           PR_TRUE,
+                           PR_TRUE,
+                           nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * \brief Unregister the Songbird temporary file service component.
+ */
+
+static NS_METHOD
+sbTemporaryFileServiceUnregister(nsIComponentManager*         aCompMgr,
+                                 nsIFile*                     aPath,
+                                 const char*                  aLoaderStr,
+                                 const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Delete self from the device marshall category.
+  rv = categoryManager->DeleteCategoryEntry("app-startup",
+                                            SB_TEMPORARYFILESERVICE_CLASSNAME,
+                                            PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird temporary file service module temporary file factory services.
+//
+//------------------------------------------------------------------------------
+
+// Songbird temporary file factory defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTemporaryFileFactory)
-NS_DEFINE_NAMED_CID(SB_TEMPORARYFILEFACTORY_CID);
 
-static const mozilla::Module::CIDEntry kTemporaryFileServiceCIDs[] = {
-  { &kSB_TEMPORARYFILESERVICE_CID, false, NULL, sbTemporaryFileServiceConstructor },
-  { &kSB_TEMPORARYFILEFACTORY_CID, false, NULL, sbTemporaryFileFactoryConstructor },
-  { NULL }
+
+//------------------------------------------------------------------------------
+//
+// Songbird temporary file service module registration services.
+//
+//------------------------------------------------------------------------------
+
+// Module component information.
+static nsModuleComponentInfo sbTemporaryFileServiceComponents[] =
+{
+  // Songbird temporary file service component info.
+  {
+    SB_TEMPORARYFILESERVICE_CLASSNAME,
+    SB_TEMPORARYFILESERVICE_CID,
+    SB_TEMPORARYFILESERVICE_CONTRACTID,
+    sbTemporaryFileServiceConstructor,
+    sbTemporaryFileServiceRegister,
+    sbTemporaryFileServiceUnregister
+  },
+
+  // Songbird temporary file factory component info.
+  {
+    SB_TEMPORARYFILEFACTORY_CLASSNAME,
+    SB_TEMPORARYFILEFACTORY_CID,
+    SB_TEMPORARYFILEFACTORY_CONTRACTID,
+    sbTemporaryFileFactoryConstructor
+  }
 };
 
-static const mozilla::Module::ContractIDEntry kTemporaryFileServiceContracts[] = {
-  { SB_TEMPORARYFILESERVICE_CONTRACTID, &kSB_TEMPORARYFILESERVICE_CID },
-  { SB_TEMPORARYFILEFACTORY_CONTRACTID, &kSB_TEMPORARYFILEFACTORY_CID },
-  { NULL }
-};
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbTemporaryFileServiceModule,
+                    sbTemporaryFileServiceComponents)
 
-static const mozilla::Module::CategoryEntry kTemporaryFileServiceCategories[] = {
-  { "app-startup", "service", SB_TEMPORARYFILESERVICE_CONTRACTID },
-  { NULL }
-};
-
-static const mozilla::Module kTemporaryFileServiceModule = {
-  mozilla::Module::kVersion,
-  kTemporaryFileServiceCIDs,
-  kTemporaryFileServiceContracts,
-  kTemporaryFileServiceCategories
-};
-
-NSMODULE_DEFN(sbTemporaryFileService) = &kTemporaryFileServiceModule;

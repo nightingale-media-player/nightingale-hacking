@@ -29,7 +29,7 @@
  * \brief Songbird Metadata Component Factory and Main Entry Point.
  */
 
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include "sbMetadataManager.h"
 #include "sbMetadataChannel.h"
 #include "sbFileMetadataService.h"

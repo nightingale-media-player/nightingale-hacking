@@ -26,6 +26,7 @@
 
 #include "sbTranscodeManager.h"
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 
@@ -66,7 +67,7 @@ sbTranscodeManager::sbTranscodeManager()
   rv = registrar->EnumerateContractIDs(getter_AddRefs(simpleEnumerator));
   NS_ENSURE_SUCCESS (rv, /* void */);
 
-  bool moreAvailable = PR_FALSE;
+  PRBool moreAvailable = PR_FALSE;
   while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK &&
         moreAvailable)
   {

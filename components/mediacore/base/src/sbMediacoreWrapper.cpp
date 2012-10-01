@@ -40,6 +40,7 @@
 
 #include <sbIPropertyArray.h>
 
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbThreadUtils.h>
 #include <sbVariantUtils.h>
@@ -247,7 +248,7 @@ sbMediacoreWrapper::OnSetPosition(PRUint64 aPosition)
 }
 
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
+sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
   nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
 
@@ -270,7 +271,7 @@ sbMediacoreWrapper::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
 }
 
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnGetIsPlayingVideo(bool *aIsPlayingVideo)
+sbMediacoreWrapper::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
   nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
 
@@ -342,7 +343,7 @@ sbMediacoreWrapper::OnInitBaseMediacoreVolumeControl()
 }
 
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnSetMute(bool aMute)
+sbMediacoreWrapper::OnSetMute(PRBool aMute)
 {
   nsresult rv = 
     SendDOMEvent(NS_LITERAL_STRING("setmute"), sbAutoString(aMute));
@@ -461,7 +462,7 @@ sbMediacoreWrapper::Initialize(const nsAString &aInstanceName,
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool processed = PR_FALSE;
+  PRBool processed = PR_FALSE;
   while(!mWindowIsReady) {
     rv = target->ProcessNextEvent(PR_FALSE, &processed);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -689,7 +690,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
                                  nsIDOMDataContainerEvent **aEvent)
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
-  bool isMainThread = NS_IsMainThread();
+  PRBool isMainThread = NS_IsMainThread();
 
   nsCOMPtr<nsIDOMDocumentEvent> documentEvent;
   if(isMainThread) {
@@ -798,7 +799,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
     eventTarget = mProxiedDOMEventTarget;
   }
 
-  bool handled = PR_FALSE;
+  PRBool handled = PR_FALSE;
   rv = eventTarget->DispatchEvent(dataEvent, &handled);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(handled, NS_ERROR_UNEXPECTED);

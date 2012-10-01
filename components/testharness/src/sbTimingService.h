@@ -31,8 +31,9 @@
 
 #include <nsIFile.h>
 #include <nsIObserver.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
@@ -88,7 +89,7 @@ public:
 
 private:
   PRLock *          mLoggingLock;
-  bool            mLoggingEnabled;
+  PRBool            mLoggingEnabled;
   nsCOMPtr<nsIFile> mLogFile;
 
   // Supplementary lock is required to ensure that a timer of the same name

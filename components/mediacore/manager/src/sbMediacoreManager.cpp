@@ -39,6 +39,7 @@
 #include <nsIThread.h>
 
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -62,6 +63,8 @@
 
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreVotingChain.h>
+
+#include <sbProxiedComponentManager.h>
 
 #include "sbMediacoreDataRemotes.h"
 #include "sbMediacoreSequencer.h"
@@ -223,7 +226,7 @@ sbMediacoreManager::Init()
     nsAutoMonitor::NewMonitor("sbMediacoreManager::mVideoWindowMonitor");
   NS_ENSURE_TRUE(mVideoWindowMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  bool success = mCores.Init(SB_CORE_HASHTABLE_SIZE);
+  PRBool success = mCores.Init(SB_CORE_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mFactories.Init(SB_FACTORY_HASHTABLE_SIZE);
@@ -242,7 +245,7 @@ sbMediacoreManager::Init()
                              getter_AddRefs(categoryEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while (NS_SUCCEEDED(categoryEnum->HasMoreElements(&hasMore)) &&
          hasMore) {
 
@@ -559,7 +562,7 @@ sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
 
-  bool success = mDataRemoteEqualizerBands.Init(10);
+  PRBool success = mDataRemoteEqualizerBands.Init(10);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mDataRemoteEqualizerEnabled =
@@ -575,7 +578,7 @@ sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
   rv = mDataRemoteEqualizerEnabled->GetStringValue(eqEnabledStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool eqEnabled = PR_FALSE;
+  PRBool eqEnabled = PR_FALSE;
   if(!eqEnabledStr.IsEmpty()) {
     rv = mDataRemoteEqualizerEnabled->GetBoolValue(&eqEnabled);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -600,7 +603,7 @@ sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
 }
 
 /*virtual*/ nsresult
-sbMediacoreManager::OnSetEqEnabled(bool aEqEnabled)
+sbMediacoreManager::OnSetEqEnabled(PRBool aEqEnabled)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
@@ -758,7 +761,7 @@ sbMediacoreManager::GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIDataRemote> bandRemote;
-  bool success = mDataRemoteEqualizerBands.Get(aBandIndex, getter_AddRefs(bandRemote));
+  PRBool success = mDataRemoteEqualizerBands.Get(aBandIndex, getter_AddRefs(bandRemote));
 
   if(!success) {
     rv = CreateDataRemoteForEqualizerBand(aBandIndex, getter_AddRefs(bandRemote));
@@ -783,7 +786,7 @@ sbMediacoreManager::SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *a
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDataRemote> bandRemote;
-  bool success = mDataRemoteEqualizerBands.Get(bandIndex, getter_AddRefs(bandRemote));
+  PRBool success = mDataRemoteEqualizerBands.Get(bandIndex, getter_AddRefs(bandRemote));
 
   if(!success) {
     rv = CreateDataRemoteForEqualizerBand(bandIndex, getter_AddRefs(bandRemote));
@@ -823,7 +826,7 @@ sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex,
   rv = bandRemote->Init(bandRemoteName, nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool success = mDataRemoteEqualizerBands.Put(aBandIndex, bandRemote);
+  PRBool success = mDataRemoteEqualizerBands.Put(aBandIndex, bandRemote);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   bandRemote.forget(aRemote);
@@ -914,7 +917,7 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
   rv = mDataRemoteFaceplateMute->GetStringValue(muteStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool mute = PR_FALSE;
+  PRBool mute = PR_FALSE;
   if(!muteStr.IsEmpty()) {
     rv = mDataRemoteFaceplateMute->GetBoolValue(&mute);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -932,7 +935,7 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
 }
 
 /*virtual*/ nsresult
-sbMediacoreManager::OnSetMute(bool aMute)
+sbMediacoreManager::OnSetMute(PRBool aMute)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
@@ -1214,7 +1217,7 @@ sbMediacoreManager::SetSequencer(
 }
 
 NS_IMETHODIMP
-sbMediacoreManager::GetPrimaryVideoWindow(bool aCreate,
+sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
                                           PRUint32 aWidthHint,
                                           PRUint32 aHeightHint,
                                           sbIMediacoreVideoWindow **aVideo)
@@ -1226,7 +1229,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(bool aCreate,
   nsresult rv = NS_ERROR_UNEXPECTED;
   *aVideo = nsnull;
 
-  bool hintValid = PR_FALSE;
+  PRBool hintValid = PR_FALSE;
   if(aWidthHint > 0 && aHeightHint > 0) {
     hintValid = PR_TRUE;
   }
@@ -1277,7 +1280,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(bool aCreate,
 
   // If we're not on the main thread, we'll have to proxy calls
   // to quite a few objects.
-  bool mainThread = NS_IsMainThread();
+  PRBool mainThread = NS_IsMainThread();
   nsCOMPtr<nsIThread> target;
 
   rv = NS_GetMainThread(getter_AddRefs(target));
@@ -1348,7 +1351,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(bool aCreate,
                                      PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool processed = PR_FALSE;
+    PRBool processed = PR_FALSE;
     while(!videoWindowListener->IsWindowReady()) {
       rv = target->ProcessNextEvent(PR_FALSE, &processed);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1451,7 +1454,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
   if(equalizer) {
     nsAutoMonitor eqMon(sbBaseMediacoreMultibandEqualizer::mMonitor);
 
-    bool eqEnabled = mEqEnabled;
+    PRBool eqEnabled = mEqEnabled;
     rv = equalizer->SetEqEnabled(mEqEnabled);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1568,7 +1571,7 @@ sbMediacoreManager::CreateMediacore(const nsAString & aContractID,
   rv = coreFactory->Create(aInstanceName, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool success = mCores.Put(aInstanceName, *_retval);
+  PRBool success = mCores.Put(aInstanceName, *_retval);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -1595,7 +1598,7 @@ sbMediacoreManager::CreateMediacoreWithFactory(sbIMediacoreFactory *aFactory,
   rv = aFactory->Create(aInstanceName, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool success = mCores.Put(aInstanceName, *_retval);
+  PRBool success = mCores.Put(aInstanceName, *_retval);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -1614,7 +1617,7 @@ sbMediacoreManager::GetMediacore(const nsAString & aInstanceName,
 
   nsAutoMonitor mon(mMonitor);
 
-  bool success = mCores.Get(aInstanceName, getter_AddRefs(core));
+  PRBool success = mCores.Get(aInstanceName, getter_AddRefs(core));
   NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
 
   core.forget(_retval);
@@ -1632,7 +1635,7 @@ sbMediacoreManager::DestroyMediacore(const nsAString & aInstanceName)
 
   nsAutoMonitor mon(mMonitor);
 
-  bool success = mCores.Get(aInstanceName, getter_AddRefs(core));
+  PRBool success = mCores.Get(aInstanceName, getter_AddRefs(core));
   NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
   NS_ENSURE_TRUE(core, NS_ERROR_UNEXPECTED);
 
@@ -1653,7 +1656,7 @@ sbMediacoreManager::RegisterFactory(sbIMediacoreFactory *aFactory)
 
   nsAutoMonitor mon(mMonitor);
 
-  bool success = mFactories.Put(aFactory, aFactory);
+  PRBool success = mFactories.Put(aFactory, aFactory);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -1679,7 +1682,7 @@ sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
 // ----------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbMediacoreManager::GetFullscreen(bool *aFullscreen)
+sbMediacoreManager::GetFullscreen(PRBool *aFullscreen)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetFullscreen", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1715,7 +1718,7 @@ sbMediacoreManager::GetFullscreen(bool *aFullscreen)
 }
 
 NS_IMETHODIMP
-sbMediacoreManager::SetFullscreen(bool aFullscreen)
+sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
 {
   TRACE(("sbMediacoreManager[0x%x] - SetFullscreen", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1907,8 +1910,8 @@ sbMediacoreManager::CreateEvent(PRUint32 aType,
 
 NS_IMETHODIMP
 sbMediacoreManager::DispatchEvent(sbIMediacoreEvent *aEvent,
-                                  bool aAsync,
-                                  bool* _retval)
+                                  PRBool aAsync,
+                                  PRBool* _retval)
 {
   return mBaseEventTarget ? mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) : NS_ERROR_NULL_POINTER;
 }
@@ -1981,7 +1984,7 @@ sbMediacoreVideoWindowListener::HandleEvent(nsIDOMEvent *aEvent)
   return NS_OK;
 }
 
-bool
+PRBool
 sbMediacoreVideoWindowListener::IsWindowReady()
 {
   return mWindowReady;

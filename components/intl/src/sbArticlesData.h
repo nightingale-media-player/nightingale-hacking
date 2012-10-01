@@ -89,7 +89,7 @@ private:
                          const sbArticle * aArticle,
                          nsAString &_retval);
   
-  bool mArticlesLoaded;
+  PRBool mArticlesLoaded;
   nsTArray<nsRefPtr<sbArticleLanguageData> > mLanguages;
 };
 

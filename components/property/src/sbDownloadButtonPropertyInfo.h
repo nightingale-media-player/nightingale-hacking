@@ -55,10 +55,10 @@ public:
                                const nsAString& aLocalizationKey,
                                const nsAString& aLabel,
                                const nsAString& aRetryLabel,
-                               const bool aRemoteReadable,
-                               const bool aRemoteWritable,
-                               const bool aUserViewable,
-                               const bool aUserEditable);
+                               const PRBool aRemoteReadable,
+                               const PRBool aRemoteWritable,
+                               const PRBool aUserViewable,
+                               const PRBool aUserEditable);
   virtual ~sbDownloadButtonPropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
@@ -69,7 +69,7 @@ private:
 
   nsString mLabel;
   nsString mRetryLabel;
-  bool   mSuppressSelect;
+  PRBool   mSuppressSelect;
 };
 
 class sbDownloadButtonPropertyValue

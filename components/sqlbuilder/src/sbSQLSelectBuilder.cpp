@@ -70,13 +70,13 @@ sbSQLSelectBuilder::SetBaseTableAlias(const nsAString& aBaseTableAlias)
 }
 
 NS_IMETHODIMP
-sbSQLSelectBuilder::GetDistinct(bool *aDistinct)
+sbSQLSelectBuilder::GetDistinct(PRBool *aDistinct)
 {
   *aDistinct = mIsDistinct;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbSQLSelectBuilder::SetDistinct(bool aDistinct)
+sbSQLSelectBuilder::SetDistinct(PRBool aDistinct)
 {
   mIsDistinct = aDistinct;
   return NS_OK;
@@ -106,7 +106,7 @@ sbSQLSelectBuilder::ClearColumns()
 NS_IMETHODIMP
 sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
                              const nsAString& aColumnName,
-                             bool aAscending)
+                             PRBool aAscending)
 {
   sbOrderInfo* oi = mOrders.AppendElement();
   NS_ENSURE_TRUE(oi, NS_ERROR_OUT_OF_MEMORY);

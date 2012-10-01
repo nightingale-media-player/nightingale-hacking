@@ -247,7 +247,7 @@ nsresult sbLibHalCtx::GetAllDevices(
 nsresult sbLibHalCtx::DevicePropertyExists(
     const nsACString            &aUDI,
     const char                  *aKey,
-    bool                      *apExists)
+    PRBool                      *apExists)
 {
     dbus_bool_t                 exists;
     DBusError                   dBusError;
@@ -399,7 +399,7 @@ nsresult sbLibHalCtx::DeviceGetPropertyInt(
 nsresult sbLibHalCtx::DeviceGetPropertyBool(
     const nsACString            &aUDI,
     const char                  *aKey,
-    bool                      *aProperty)
+    PRBool                      *aProperty)
 {
     dbus_bool_t                 property;
     DBusError                   dBusError;
@@ -623,11 +623,11 @@ nsresult sbLibHalCtx::DevicePropertyWatchAll()
 nsresult sbLibHalCtx::DeviceHasInterface(
     const nsACString            &aUDI,
     const char                  *aInterface,
-    bool                      *aHasInterface)
+    PRBool                      *aHasInterface)
 {
     nsTArray<nsCString>         interfaceList;
     PRUint32                    interfaceCount;
-    bool                      exists;
+    PRBool                      exists;
     PRUint32                    i;
     nsresult                    rv;
 

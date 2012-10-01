@@ -45,14 +45,14 @@ public:
 
   // Returns true if the queue service's sbIMediaListListener methods should
   // ignore notifications.
-  bool ShouldIgnore();
+  PRBool ShouldIgnore();
 
 private:
   virtual ~sbPlayQueueLibraryListener();
 
   // Keep track of whether or not the services list listener should ignore
   // notifications.
-  bool mShouldIgnore;
+  PRBool mShouldIgnore;
 
 };
 

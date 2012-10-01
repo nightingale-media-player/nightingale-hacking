@@ -29,7 +29,7 @@
 #include <nsIClassInfoImpl.h>
 #include <nsICryptoHash.h>
 #include <nsIFileURL.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIPropertyBag2.h>
 #include <nsIWritablePropertyBag2.h>
 #include <nsIProgrammingLanguage.h>
@@ -50,6 +50,7 @@
 #include <sbDeviceContent.h>
 #include <sbDeviceUtils.h>
 #include <sbDeviceStatusHelper.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbVariantUtils.h>
@@ -502,7 +503,7 @@ sbCDDevice::DeviceSpecificDisconnect()
 
 /* readonly attribute boolean connected; */
 NS_IMETHODIMP
-sbCDDevice::GetConnected(bool *aConnected)
+sbCDDevice::GetConnected(PRBool *aConnected)
 {
   NS_ENSURE_ARG_POINTER(aConnected);
   sbAutoReadLock autoConnectLock(mConnectLock);
@@ -512,7 +513,7 @@ sbCDDevice::GetConnected(bool *aConnected)
 
 /* readonly attribute boolean threaded; */
 NS_IMETHODIMP
-sbCDDevice::GetThreaded(bool *aThreaded)
+sbCDDevice::GetThreaded(PRBool *aThreaded)
 {
   NS_ENSURE_ARG_POINTER(aThreaded);
   *aThreaded = PR_TRUE;
@@ -635,21 +636,21 @@ sbCDDevice::GetProperties(sbIDeviceProperties * *aProperties)
 
 /* readonly attribute boolean isDirectTranscoding; */
 NS_IMETHODIMP
-sbCDDevice::GetIsDirectTranscoding(bool* aIsDirect)
+sbCDDevice::GetIsDirectTranscoding(PRBool* aIsDirect)
 {
   return sbBaseDevice::GetIsDirectTranscoding(aIsDirect);
 }
 
 /* readonly attribute boolean isBusy; */
 NS_IMETHODIMP
-sbCDDevice::GetIsBusy(bool *aIsBusy)
+sbCDDevice::GetIsBusy(PRBool *aIsBusy)
 {
   return sbBaseDevice::GetIsBusy(aIsBusy);
 }
 
 /* readonly attribute boolean canDisconnect; */
 NS_IMETHODIMP
-sbCDDevice::GetCanDisconnect(bool *aCanDisconnect)
+sbCDDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 {
   return sbBaseDevice::GetCanDisconnect(aCanDisconnect);
 }
@@ -664,7 +665,7 @@ sbCDDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 
 /* readonly attribute boolean supportsReformat; */
 NS_IMETHODIMP
-sbCDDevice::GetSupportsReformat(bool *aSupportsReformat)
+sbCDDevice::GetSupportsReformat(PRBool *aSupportsReformat)
 {
   NS_ENSURE_ARG_POINTER(aSupportsReformat);
   *aSupportsReformat = PR_FALSE;
@@ -716,7 +717,7 @@ sbCDDevice::CancelRequests()
   rv = status->GetCurrentState(&currentState);
   NS_ENSURE_SUCCESS(rv, rv);
   if (currentState == sbIDevice::STATE_TRANSCODE) {
-    bool abortRip;
+    PRBool abortRip;
     rv = sbDeviceUtils::QueryUserAbortRip(&abortRip);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!abortRip) {
@@ -768,7 +769,7 @@ sbCDDevice::Format()
 /* void setWarningDialogEnabled (in AString aWarning, in boolean aEnabled); */
 NS_IMETHODIMP
 sbCDDevice::SetWarningDialogEnabled(const nsAString & aWarning,
-                                    bool aEnabled)
+                                    PRBool aEnabled)
 {
   return sbBaseDevice::SetWarningDialogEnabled(aWarning, aEnabled);
 }
@@ -776,7 +777,7 @@ sbCDDevice::SetWarningDialogEnabled(const nsAString & aWarning,
 /* boolean getWarningDialogEnabled (in AString aWarning); */
 NS_IMETHODIMP
 sbCDDevice::GetWarningDialogEnabled(const nsAString & aWarning,
-                                    bool *_retval)
+                                    PRBool *_retval)
 {
   return sbBaseDevice::GetWarningDialogEnabled(aWarning, _retval);
 }
@@ -823,7 +824,7 @@ sbCDDevice::Mount(sbBaseDeviceVolume* aVolume)
   NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
 
   // Do nothing if volume has already been mounted.
-  bool isMounted;
+  PRBool isMounted;
   rv = aVolume->GetIsMounted(&isMounted);
   NS_ENSURE_SUCCESS(rv, rv);
   if (isMounted)
@@ -974,14 +975,14 @@ sbCDDevice::Unmount(sbBaseDeviceVolume* aVolume)
   return NS_OK;
 }
 
-bool
+PRBool
 sbCDDevice::IsRequestAborted()
 {
-  bool aborted = sbBaseDevice::IsRequestAborted();
+  PRBool aborted = sbBaseDevice::IsRequestAborted();
 
   // Abort requests if disc is not inserted.
   if (!aborted) {
-    bool isDiscInserted;
+    PRBool isDiscInserted;
     nsresult rv = mCDDevice->GetIsDiscInserted(&isDiscInserted);
     aborted = NS_SUCCEEDED(rv) && !isDiscInserted ? PR_TRUE : PR_FALSE;
   }
@@ -1054,7 +1055,7 @@ sbCDDevice::ProxyHandleRipEnd()
       do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
-  bool hasErrors;
+  PRBool hasErrors;
   rv = errMonitor->DeviceHasErrors(this, EmptyString(), 0, &hasErrors);
   NS_ENSURE_SUCCESS(rv, /* void */);
 

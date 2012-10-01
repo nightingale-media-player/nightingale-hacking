@@ -174,7 +174,7 @@ NS_IMETHODIMP
 sbMediaItemWatcher::OnItemAdded(sbIMediaList* aMediaList,
                                 sbIMediaItem* aMediaItem,
                                 PRUint32      aIndex,
-                                bool*       _retval)
+                                PRBool*       _retval)
 {
   TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
@@ -197,7 +197,7 @@ NS_IMETHODIMP
 sbMediaItemWatcher::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                         sbIMediaItem* aMediaItem,
                                         PRUint32      aIndex,
-                                        bool*       _retval)
+                                        PRBool*       _retval)
 {
   TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
@@ -220,7 +220,7 @@ NS_IMETHODIMP
 sbMediaItemWatcher::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                        sbIMediaItem* aMediaItem,
                                        PRUint32      aIndex,
-                                       bool*       _retval)
+                                       PRBool*       _retval)
 {
   TRACE_FUNCTION("");
   // Validate arguments.
@@ -259,7 +259,7 @@ NS_IMETHODIMP
 sbMediaItemWatcher::OnItemUpdated(sbIMediaList*     aMediaList,
                                   sbIMediaItem*     aMediaItem,
                                   sbIPropertyArray* aProperties,
-                                  bool*           _retval)
+                                  PRBool*           _retval)
 {
   TRACE_FUNCTION("");
   // Validate arguments.
@@ -318,7 +318,7 @@ NS_IMETHODIMP
 sbMediaItemWatcher::OnItemMoved(sbIMediaList* aMediaList,
                                 PRUint32      aFromIndex,
                                 PRUint32      aToIndex,
-                                bool*       _retval)
+                                PRBool*       _retval)
 {
   TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
@@ -339,8 +339,8 @@ sbMediaItemWatcher::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbMediaItemWatcher::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                        bool        aExcludeLists,
-                                        bool*       _retval)
+                                        PRBool        aExcludeLists,
+                                        PRBool*       _retval)
 {
   TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
@@ -361,8 +361,8 @@ sbMediaItemWatcher::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbMediaItemWatcher::OnListCleared(sbIMediaList* aMediaList,
-                                  bool        aExcludeLists,
-                                  bool*       _retval)
+                                  PRBool        aExcludeLists,
+                                  PRBool*       _retval)
 {
   TRACE_FUNCTION("");
   // Validate arguments.
@@ -447,7 +447,7 @@ sbMediaItemWatcher::OnBatchEnd(sbIMediaList* aMediaList)
   }
 
   // Handle item removed events.
-  bool contains;
+  PRBool contains;
   rv = mWatchedLibraryML->Contains(mWatchedMediaItem, &contains);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!contains)

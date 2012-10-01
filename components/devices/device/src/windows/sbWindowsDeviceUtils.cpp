@@ -186,7 +186,7 @@ sbWinCreateAncestorDeviceFile(HANDLE*               aDevFile,
       return NS_ERROR_NOT_AVAILABLE;
 
     // Check if the ancestor has the interface.
-    bool hasInterface;
+    PRBool hasInterface;
     rv = sbWinDeviceHasInterface(ancestorDevInst, aGUID, &hasInterface);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasInterface)
@@ -222,7 +222,7 @@ sbWinCreateAncestorDeviceFile(HANDLE*               aDevFile,
 nsresult
 sbWinDeviceHasInterface(DEVINST     aDevInst,
                         const GUID* aGUID,
-                        bool*     aHasInterface)
+                        PRBool*     aHasInterface)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aGUID);
@@ -347,13 +347,13 @@ static nsresult _sbWinFindDevicesByInterface
                   (nsTArray<DEVINST>& aDevInstList,
                    DEVINST            aRootDevInst,
                    const GUID*        aGUID,
-                   bool             aSearchAncestors);
+                   PRBool             aSearchAncestors);
 
 nsresult
 sbWinFindDevicesByInterface(nsTArray<DEVINST>& aDevInstList,
                             DEVINST            aRootDevInst,
                             const GUID*        aGUID,
-                            bool             aSearchAncestors)
+                            PRBool             aSearchAncestors)
 {
   // Clear device instance list.
   aDevInstList.Clear();
@@ -368,7 +368,7 @@ nsresult
 _sbWinFindDevicesByInterface(nsTArray<DEVINST>& aDevInstList,
                              DEVINST            aRootDevInst,
                              const GUID*        aGUID,
-                             bool             aSearchAncestors)
+                             PRBool             aSearchAncestors)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aGUID);
@@ -378,7 +378,7 @@ _sbWinFindDevicesByInterface(nsTArray<DEVINST>& aDevInstList,
   nsresult  rv;
 
   // Check if the root device has the specified interface.
-  bool hasInterface;
+  PRBool hasInterface;
   rv = sbWinDeviceHasInterface(aRootDevInst, aGUID, &hasInterface);
   NS_ENSURE_SUCCESS(rv, rv);
   if (hasInterface) {
@@ -432,7 +432,7 @@ _sbWinFindDevicesByInterface(nsTArray<DEVINST>& aDevInstList,
 
 nsresult
 sbWinFindDeviceByClass(DEVINST*         aDevInst,
-                       bool*          aFound,
+                       PRBool*          aFound,
                        DEVINST          aRootDevInst,
                        const nsAString& aClass)
 {
@@ -441,7 +441,7 @@ sbWinFindDeviceByClass(DEVINST*         aDevInst,
   NS_ENSURE_ARG_POINTER(aFound);
 
   // Function variables.
-  bool    found = PR_FALSE;
+  PRBool    found = PR_FALSE;
   CONFIGRET cr;
   nsresult  rv;
 
@@ -779,7 +779,7 @@ sbWinDeviceEject(DEVINST aDevInst)
   // Try ejecting the device three times.
   WCHAR         vetoName[MAX_PATH];
   PNP_VETO_TYPE vetoType;
-  bool        ejected = PR_FALSE;
+  PRBool        ejected = PR_FALSE;
   for (int i = 0; i < 3; i++) {
     // Try ejecting using CM_Request_Device_Eject.
     cfgRet = CM_Request_Device_EjectW(aDevInst,
@@ -940,13 +940,13 @@ sbWinDeviceEject(nsAString const & aMountPath)
 nsresult
 sbWinDeviceIsDescendantOf(DEVINST aDevInst,
                           DEVINST aDescendantDevInst,
-                          bool* aIsDescendant)
+                          PRBool* aIsDescendant)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aIsDescendant);
 
   // Function variables.
-  bool    isDescendant = PR_FALSE;
+  PRBool    isDescendant = PR_FALSE;
   CONFIGRET cfgRet;
 
   // Search ancestors for target device.

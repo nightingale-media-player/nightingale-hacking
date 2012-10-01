@@ -38,7 +38,7 @@
 class NS_COM_GLUE sbAutoReadLock {
 private:
     PRRWLock* mLock;
-    bool mLocked;
+    PRBool mLocked;
 
     // Not meant to be implemented. This makes it a compiler error to
     // construct or assign an nsAutoLock object incorrectly.
@@ -129,7 +129,7 @@ public:
 class NS_COM_GLUE sbAutoWriteLock {
 private:
     PRRWLock* mLock;
-    bool mLocked;
+    PRBool mLocked;
 
     // Not meant to be implemented. This makes it a compiler error to
     // construct or assign an nsAutoLock object incorrectly.

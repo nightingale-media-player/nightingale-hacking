@@ -47,8 +47,8 @@
 
 #define NS_FORWARD_SOME_SBIDATAREMOTE_METHODS(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(const nsAString & aKey, const nsAString & aRoot) { return !_to ? NS_ERROR_NULL_POINTER : _to->Init(aKey, aRoot); } \
-  NS_SCRIPTABLE NS_IMETHOD BindProperty(nsIDOMElement *aElement, const nsAString & aProperty, bool aIsBool, bool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindProperty(aElement, aProperty, aIsBool, aIsNot, aEvalString); } \
-  NS_SCRIPTABLE NS_IMETHOD BindAttribute(nsIDOMElement *aElement, const nsAString & aProperty, bool aIsBool, bool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindAttribute(aElement, aProperty, aIsBool, aIsNot, aEvalString); } \
+  NS_SCRIPTABLE NS_IMETHOD BindProperty(nsIDOMElement *aElement, const nsAString & aProperty, PRBool aIsBool, PRBool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindProperty(aElement, aProperty, aIsBool, aIsNot, aEvalString); } \
+  NS_SCRIPTABLE NS_IMETHOD BindAttribute(nsIDOMElement *aElement, const nsAString & aProperty, PRBool aIsBool, PRBool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindAttribute(aElement, aProperty, aIsBool, aIsNot, aEvalString); } \
   NS_SCRIPTABLE NS_IMETHOD DeleteBranch() { return !_to ? NS_ERROR_NULL_POINTER : _to->DeleteBranch(); }
 
 
@@ -88,12 +88,12 @@ public:
     NS_FORWARD_SOME_SBIDATAREMOTE_METHODS(mInnerDataRemote)
 
     NS_SCRIPTABLE NS_IMETHOD Unbind(void);
-    NS_SCRIPTABLE NS_IMETHOD BindObserver(nsIObserver *aObserver, bool aSuppressFirst);
-    NS_SCRIPTABLE NS_IMETHOD BindRemoteObserver(sbIRemoteObserver *aObserver, bool aSuppressFirst); 
+    NS_SCRIPTABLE NS_IMETHOD BindObserver(nsIObserver *aObserver, PRBool aSuppressFirst);
+    NS_SCRIPTABLE NS_IMETHOD BindRemoteObserver(sbIRemoteObserver *aObserver, PRBool aSuppressFirst); 
     NS_SCRIPTABLE NS_IMETHOD GetStringValue(nsAString & aStringValue); 
     NS_SCRIPTABLE NS_IMETHOD SetStringValue(const nsAString & aStringValue); 
-    NS_SCRIPTABLE NS_IMETHOD GetBoolValue(bool *aBoolValue); 
-    NS_SCRIPTABLE NS_IMETHOD SetBoolValue(bool aBoolValue); 
+    NS_SCRIPTABLE NS_IMETHOD GetBoolValue(PRBool *aBoolValue); 
+    NS_SCRIPTABLE NS_IMETHOD SetBoolValue(PRBool aBoolValue); 
     NS_SCRIPTABLE NS_IMETHOD GetIntValue(PRInt64 *aIntValue); 
     NS_SCRIPTABLE NS_IMETHOD SetIntValue(PRInt64 aIntValue);
 

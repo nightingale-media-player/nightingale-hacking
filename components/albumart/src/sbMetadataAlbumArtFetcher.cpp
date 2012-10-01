@@ -115,7 +115,7 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItem
   rv = aMediaItems->Enumerate(getter_AddRefs(listEnum));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  bool hasMore;
+  PRBool hasMore;
   rv = listEnum->HasMoreElements(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!hasMore) {
@@ -243,7 +243,7 @@ sbMetadataAlbumArtFetcher::GetDescription(nsAString& aDescription)
  */
 
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::GetIsLocal(bool* aIsLocal)
+sbMetadataAlbumArtFetcher::GetIsLocal(PRBool* aIsLocal)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsLocal);
@@ -256,7 +256,7 @@ sbMetadataAlbumArtFetcher::GetIsLocal(bool* aIsLocal)
  */
 
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::GetIsEnabled(bool* aIsEnabled)
+sbMetadataAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsEnabled);
@@ -272,7 +272,7 @@ sbMetadataAlbumArtFetcher::GetIsEnabled(bool* aIsEnabled)
 }
 
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::SetIsEnabled(bool aIsEnabled)
+sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mPrefService);
@@ -337,7 +337,7 @@ sbMetadataAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  */
 
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::GetIsFetching(bool* aIsFetching)
+sbMetadataAlbumArtFetcher::GetIsFetching(PRBool* aIsFetching)
 {
   NS_ENSURE_ARG_POINTER(aIsFetching);
   // This fetcher operates synchronously, so indicate that it's not fetching.

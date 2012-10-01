@@ -56,9 +56,6 @@
  * This class implements the Songbird prompter interface.
  */
 
-namespace mozilla {
-  class sbMozHackMutex;
-}
 class sbPrompter : public sbIPrompter,
                    public nsIObserver
 {
@@ -90,6 +87,7 @@ public:
 
   nsresult Init();
 
+
   //----------------------------------------------------------------------------
   //
   // Private interface.
@@ -114,13 +112,13 @@ private:
   //   mRenderHTML
   //
 
-  mozilla::sbMozHackMutex*      mPrompterLock;
+  PRLock*                       mPrompterLock;
   nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
   nsCOMPtr<nsIPromptService>    mPromptService;
   nsString                      mParentWindowType;
-  bool                        mWaitForWindow;
-  bool                        mRenderHTML;
+  PRBool                        mWaitForWindow;
+  PRBool                        mRenderHTML;
   nsCOMPtr<nsIDOMWindow>        mCurrentWindow;
 
 
@@ -132,100 +130,10 @@ private:
 
   nsresult GetParent(nsIDOMWindow** aParent);
 
+  nsresult GetProxiedPrompter(sbIPrompter** aPrompter);
+
   nsresult PresentPrompterDialog(nsIDOMWindow*        aParent,
                                  nsIDialogParamBlock* aParamBlock);
-
-  nsresult
-  sbPrompter::OpenDialogImpl(nsIDOMWindow*    aParent,
-                         const nsAString& aUrl,
-                         const nsAString& aName,
-                         const nsAString& aOptions,
-                         nsISupports*     aExtraArgument,
-                         nsIDOMWindow**   _retval);
-  nsresult
-  sbPrompter::OpenWindowImpl(nsIDOMWindow*    aParent,
-                         const nsAString& aUrl,
-                         const nsAString& aName,
-                         const nsAString& aOptions,
-                         nsISupports*     aExtraArgument,
-                         nsIDOMWindow**   _retval);
-  nsresult
-  sbPrompter::CancelImpl();
-
-  nsresult
-  sbPrompter::AlertImpl(nsIDOMWindow*    aParent,
-                    const PRUnichar* aDialogTitle,
-                    const PRUnichar* aText);
-
-  nsresult
-  sbPrompter::AlertCheckImpl(nsIDOMWindow*    aParent,
-                         const PRUnichar* aDialogTitle,
-                         const PRUnichar* aText,
-                         const PRUnichar* aCheckMsg,
-                         bool*          aCheckState);
-
-  nsresult
-  sbPrompter::ConfirmImpl(nsIDOMWindow*    aParent,
-                      const PRUnichar* aDialogTitle,
-                      const PRUnichar* aText,
-                      bool*          _retval);
-
-  nsresult
-  sbPrompter::ConfirmCheckImpl(nsIDOMWindow*    aParent,
-                           const PRUnichar* aDialogTitle,
-                           const PRUnichar* aText,
-                           const PRUnichar* aCheckMsg,
-                           bool*          aCheckState,
-                           bool*          _retval);
-  nsresult
-  sbPrompter::ConfirmExImpl(nsIDOMWindow*    aParent,
-                        const PRUnichar* aDialogTitle,
-                        const PRUnichar* aText,
-                        PRUint32         aButtonFlags,
-                        const PRUnichar* aButton0Title,
-                        const PRUnichar* aButton1Title,
-                        const PRUnichar* aButton2Title,
-                        const PRUnichar* aCheckMsg,
-                        bool*          aCheckState,
-                        PRInt32*         _retval);
-
-  nsresult
-  sbPrompter::PromptImpl(nsIDOMWindow*    aParent,
-                     const PRUnichar* aDialogTitle,
-                     const PRUnichar* aText,
-                     PRUnichar**      aValue,
-                     const PRUnichar* aCheckMsg,
-                     bool*          aCheckState,
-                     bool*          _retval);
-
-  nsresult
-  sbPrompter::PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
-                                        const PRUnichar* aDialogTitle,
-                                        const PRUnichar* aText,
-                                        PRUnichar**      aUsername,
-                                        PRUnichar**      aPassword,
-                                        const PRUnichar* aCheckMsg,
-                                        bool*          aCheckState,
-                                        bool*          _retval);
-
-  nsresult
-  sbPrompter::PromptPasswordImpl(nsIDOMWindow*    aParent,
-                             const PRUnichar* aDialogTitle,
-                             const PRUnichar* aText,
-                             PRUnichar**      aPassword,
-                             const PRUnichar* aCheckMsg,
-                             bool*          aCheckState,
-                             bool*          _retval);
-
-  nsresult
-  sbPrompter::SelectImpl(nsIDOMWindow*     aParent,
-                     const PRUnichar*  aDialogTitle,
-                     const PRUnichar*  aText,
-                     PRUint32          aCount,
-                     const PRUnichar** aSelectList,
-                     PRInt32*          aOutSelection,
-                     bool*           _retval);
-
 };
 
 

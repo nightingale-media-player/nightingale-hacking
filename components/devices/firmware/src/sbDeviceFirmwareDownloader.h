@@ -75,7 +75,7 @@ public:
   static nsresult CreateDirInCacheRoot(const nsAString &aDirName,
                                        nsIFile **aNewDir);
 
-  bool   IsAlreadyInCache();
+  PRBool   IsAlreadyInCache();
   nsresult GetCachedFile(nsIFile **aFile);
  
   nsresult Start();
@@ -87,10 +87,10 @@ public:
   nsresult CreateDeviceEvent(PRUint32 aType, 
                              nsIVariant *aData, 
                              sbIDeviceEvent **aEvent);
-  nsresult SendDeviceEvent(sbIDeviceEvent *aEvent, bool aAsync = PR_TRUE);
+  nsresult SendDeviceEvent(sbIDeviceEvent *aEvent, PRBool aAsync = PR_TRUE);
   nsresult SendDeviceEvent(PRUint32 aType,
                            nsIVariant *aData,
-                           bool aAsync = PR_TRUE);
+                           PRBool aAsync = PR_TRUE);
 protected:
   virtual ~sbDeviceFirmwareDownloader();
 

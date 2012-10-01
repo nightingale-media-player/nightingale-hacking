@@ -49,6 +49,7 @@
 #include "sbProcess.h"
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsThreadUtils.h>
 
@@ -398,7 +399,7 @@ sbProcess::GetStdoutString(nsAString& aStdoutString)
  */
 
 nsresult
-sbProcess::GetPipeStdoutString(bool* aPipeStdoutString)
+sbProcess::GetPipeStdoutString(PRBool* aPipeStdoutString)
 {
   NS_ENSURE_ARG_POINTER(aPipeStdoutString);
 
@@ -413,7 +414,7 @@ sbProcess::GetPipeStdoutString(bool* aPipeStdoutString)
 }
 
 nsresult
-sbProcess::SetPipeStdoutString(bool aPipeStdoutString)
+sbProcess::SetPipeStdoutString(PRBool aPipeStdoutString)
 {
   // Operate under the process lock.
   NS_ENSURE_TRUE(mProcessLock, NS_ERROR_NOT_INITIALIZED);
@@ -469,7 +470,7 @@ sbProcess::SetDoneMonitor(PRMonitor* aDoneMonitor)
  */
 
 nsresult
-sbProcess::GetIsDone(bool* aIsDone)
+sbProcess::GetIsDone(PRBool* aIsDone)
 {
   NS_ENSURE_ARG_POINTER(aIsDone);
 
@@ -676,7 +677,7 @@ sbProcess::HandleDone()
 nsresult SB_RunProcess(sbProcess**         aProcess,
                        nsTArray<nsString>& aArgList,
                        const nsAString*    aStdin,
-                       bool              aPipeStdoutString,
+                       PRBool              aPipeStdoutString,
                        PRMonitor*          aDoneMonitor)
 {
   nsresult rv;

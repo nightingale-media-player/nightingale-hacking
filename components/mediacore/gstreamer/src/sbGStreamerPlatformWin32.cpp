@@ -89,11 +89,11 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
       nsCOMPtr<nsIDOMKeyEvent> keyEvent;
       nsresult rv = platform->CreateDOMKeyEvent(getter_AddRefs(keyEvent));
       if(NS_SUCCEEDED(rv)) {
-        bool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
-        bool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
-        bool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
-        bool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
-        bool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
 
         PRInt32 keyCode = wParam;
         PRInt32 charCode = LOWORD(MapVirtualKey(wParam, MAPVK_VK_TO_CHAR));
@@ -122,11 +122,11 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
       nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
       nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
       if(NS_SUCCEEDED(rv)) {
-        bool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
-        bool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
-        bool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
-        bool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
-        bool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
 
         PRInt32 clientX = GET_X_LPARAM(lParam);
         PRInt32 clientY = GET_Y_LPARAM(lParam);
@@ -169,11 +169,11 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
       nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
       nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
       if(NS_SUCCEEDED(rv)) {
-        bool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
-        bool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
-        bool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
-        bool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
-        bool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
 
         PRInt32 screenX = GET_X_LPARAM(lParam);
         PRInt32 screenY = GET_Y_LPARAM(lParam);
@@ -260,11 +260,11 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
         nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
         if(NS_SUCCEEDED(rv)) {
-          bool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
-          bool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
-          bool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
-          bool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
-          bool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+          PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+          PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+          PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+          PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+          PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
 
           POINT point = {0};
           point.x = clientX;
@@ -603,10 +603,10 @@ Win32PlatformInterface::SelectParentWindow(HWND hWnd)
   return retWnd;
 }
 
-bool
+PRBool
 Win32PlatformInterface::HasMouseMoved(PRInt32 aX, PRInt32 aY)
 {
-  bool hasMoved = PR_FALSE;
+  PRBool hasMoved = PR_FALSE;
 
   if(mLastMouseX != aX) {
     mLastMouseX = aX;

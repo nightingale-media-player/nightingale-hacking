@@ -48,10 +48,12 @@
 
 // Songbird imports.
 #include <sbPropertiesCID.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 
@@ -301,7 +303,7 @@ sbBaseMediaItemDownloadJob::GetStatus(PRUint16* aStatus)
 //
 
 NS_IMETHODIMP
-sbBaseMediaItemDownloadJob::GetBlocked(bool* aBlocked)
+sbBaseMediaItemDownloadJob::GetBlocked(PRBool* aBlocked)
 {
   NS_ENSURE_ARG_POINTER(aBlocked);
   *aBlocked = PR_FALSE;
@@ -430,13 +432,13 @@ sbBaseMediaItemDownloadJob::GetErrorCount(PRUint32* aErrorCount)
   }
 
   // Check if the file download is complete.
-  bool complete;
+  PRBool complete;
   rv = mFileDownloader->GetComplete(&complete);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check for error.
   if (complete) {
-    bool succeeded;
+    PRBool succeeded;
     rv = mFileDownloader->GetSucceeded(&succeeded);
     NS_ENSURE_SUCCESS(rv, rv);
     if (complete && !succeeded)
@@ -497,7 +499,7 @@ sbBaseMediaItemDownloadJob::GetErrorMessages(nsIStringEnumerator** retval)
 // \see sbIJobCancelable
 //
 NS_IMETHODIMP
-sbBaseMediaItemDownloadJob::GetCanCancel(bool *aCanCancel)
+sbBaseMediaItemDownloadJob::GetCanCancel(PRBool *aCanCancel)
 {
   // Always cancelable.
   *aCanCancel = PR_TRUE;
@@ -584,7 +586,7 @@ sbBaseMediaItemDownloadJob::OnComplete()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if the file download succeeded.
-  bool succeeded;
+  PRBool succeeded;
   rv = fileDownloader->GetSucceeded(&succeeded);
   NS_ENSURE_SUCCESS(rv, rv);
 

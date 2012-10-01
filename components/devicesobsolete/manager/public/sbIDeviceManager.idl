@@ -61,7 +61,7 @@ interface sbIDeviceManager : nsIObserver
    *
    * @param aCategory - a category string to test
    */
-  boolean hasDeviceForCategory(in AString aCategory);
+  PRBool hasDeviceForCategory(in AString aCategory);
 
   /**
    * Returns a registered and initialized device.

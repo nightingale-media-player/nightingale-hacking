@@ -96,7 +96,7 @@ public:
   /**
    * Greater than operator.
    */
-  bool operator > (const sbFraction & aFraction)
+  PRBool operator > (const sbFraction & aFraction)
   {
     return (PRInt64)mNumerator * aFraction.mDenominator >
            (PRInt64)aFraction.mNumerator * mDenominator;
@@ -105,7 +105,7 @@ public:
   /**
    * Less than operator.
    */
-  bool operator < (const sbFraction & aFraction)
+  PRBool operator < (const sbFraction & aFraction)
   {
     return (PRInt64)mNumerator * aFraction.mDenominator <
            (PRInt64)aFraction.mNumerator * mDenominator;
@@ -114,7 +114,7 @@ public:
   /**
    * Greater than or equal operator.
    */
-  bool operator >= (const sbFraction & aFraction)
+  PRBool operator >= (const sbFraction & aFraction)
   {
     return (PRInt64)mNumerator * aFraction.mDenominator >=
            (PRInt64)aFraction.mNumerator * mDenominator;
@@ -123,7 +123,7 @@ public:
   /**
    * Less than or equal operator.
    */
-  bool operator <= (const sbFraction & aFraction)
+  PRBool operator <= (const sbFraction & aFraction)
   {
     return (PRInt64)mNumerator * aFraction.mDenominator <=
            (PRInt64)aFraction.mNumerator * mDenominator;

@@ -33,7 +33,7 @@
 #include <nsIClassInfo.h>
 #include <nsIComponentManager.h>
 #include <nsIFile.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIObserver.h>
 #include <nsIWeakReference.h>
 

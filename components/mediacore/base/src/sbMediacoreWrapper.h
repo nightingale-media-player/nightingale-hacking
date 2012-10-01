@@ -54,6 +54,7 @@
 #include "sbBaseMediacoreVolumeControl.h"
 #include "sbMediacoreEvent.h"
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -89,8 +90,8 @@ public:
   virtual nsresult OnGetDuration(PRUint64 *aDuration);
   virtual nsresult OnGetPosition(PRUint64 *aPosition);
   virtual nsresult OnSetPosition(PRUint64 aPosition);
-  virtual nsresult OnGetIsPlayingAudio(bool *aIsPlayingAudio);
-  virtual nsresult OnGetIsPlayingVideo(bool *aIsPlayingVideo);
+  virtual nsresult OnGetIsPlayingAudio(PRBool *aIsPlayingAudio);
+  virtual nsresult OnGetIsPlayingVideo(PRBool *aIsPlayingVideo);
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
@@ -98,7 +99,7 @@ public:
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();
-  virtual nsresult OnSetMute(bool aMute);
+  virtual nsresult OnSetMute(PRBool aMute);
   virtual nsresult OnSetVolume(PRFloat64 aVolume);
 
 private:

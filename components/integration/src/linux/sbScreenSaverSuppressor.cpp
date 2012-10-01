@@ -78,7 +78,7 @@ NS_IMPL_ISUPPORTS_INHERITED0(sbScreenSaverSuppressor,
 //
 
 /*virtual*/ nsresult
-sbScreenSaverSuppressor::OnSuppress(bool aSuppress)
+sbScreenSaverSuppressor::OnSuppress(PRBool aSuppress)
 {
   nsresult rv;
 

@@ -267,7 +267,7 @@ sbImmutablePropertyInfo::SetLocalizationKey(const nsAString & aLocalizationKey)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetUserViewable(bool *aUserViewable)
+sbImmutablePropertyInfo::GetUserViewable(PRBool *aUserViewable)
 {
   NS_ENSURE_ARG_POINTER(aUserViewable);
   *aUserViewable = mUserViewable;
@@ -275,13 +275,13 @@ sbImmutablePropertyInfo::GetUserViewable(bool *aUserViewable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetUserViewable(bool aUserViewable)
+sbImmutablePropertyInfo::SetUserViewable(PRBool aUserViewable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetUserEditable(bool* aUserEditable)
+sbImmutablePropertyInfo::GetUserEditable(PRBool* aUserEditable)
 {
   NS_ENSURE_ARG_POINTER(aUserEditable);
   *aUserEditable = mUserEditable;
@@ -289,13 +289,13 @@ sbImmutablePropertyInfo::GetUserEditable(bool* aUserEditable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetUserEditable(bool aUserEditable)
+sbImmutablePropertyInfo::SetUserEditable(PRBool aUserEditable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetRemoteReadable(bool* aRemoteReadable)
+sbImmutablePropertyInfo::GetRemoteReadable(PRBool* aRemoteReadable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteReadable);
   *aRemoteReadable = mRemoteReadable;
@@ -303,13 +303,13 @@ sbImmutablePropertyInfo::GetRemoteReadable(bool* aRemoteReadable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetRemoteReadable(bool aRemoteReadable)
+sbImmutablePropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetRemoteWritable(bool* aRemoteWritable)
+sbImmutablePropertyInfo::GetRemoteWritable(PRBool* aRemoteWritable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteWritable);
   *aRemoteWritable = mRemoteWritable;
@@ -317,7 +317,7 @@ sbImmutablePropertyInfo::GetRemoteWritable(bool* aRemoteWritable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetRemoteWritable(bool aRemoteWritable)
+sbImmutablePropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -338,7 +338,7 @@ sbImmutablePropertyInfo::SetOperators(nsISimpleEnumerator* aOperators)
   sbSimpleAutoLock lock(mOperatorsLock);
   mOperators.Clear();
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   nsCOMPtr<nsISupports> object;
 
   while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) &&
@@ -348,7 +348,7 @@ sbImmutablePropertyInfo::SetOperators(nsISimpleEnumerator* aOperators)
     nsCOMPtr<sbIPropertyOperator> po = do_QueryInterface(object, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool success = mOperators.AppendObject(po);
+    PRBool success = mOperators.AppendObject(po);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -380,7 +380,7 @@ sbImmutablePropertyInfo::GetOperator(const nsAString& aOperator,
 
 NS_IMETHODIMP
 sbImmutablePropertyInfo::Validate(const nsAString& aValue,
-                                  bool* _retval)
+                                  PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -438,7 +438,7 @@ sbImmutablePropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitConvert
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetUsedInIdentity(bool *aUsedInIdentity)
+sbImmutablePropertyInfo::GetUsedInIdentity(PRBool *aUsedInIdentity)
 {
   NS_ENSURE_ARG_POINTER(aUsedInIdentity);
 
@@ -447,7 +447,7 @@ sbImmutablePropertyInfo::GetUsedInIdentity(bool *aUsedInIdentity)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetUsedInIdentity(bool aUsedInIdentity)
+sbImmutablePropertyInfo::SetUsedInIdentity(PRBool aUsedInIdentity)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

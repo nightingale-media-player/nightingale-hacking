@@ -99,7 +99,7 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Is this a media item list
-    bool itemIsList;
+    PRBool itemIsList;
     rv = change->GetItemIsList(&itemIsList);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -135,7 +135,7 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
         if (destItemAsList) {
           // If the change is to a media list, add it to the media list change
           // list.
-          bool success = mediaListsToUpdate->AppendElement(change, PR_FALSE);
+          PRBool success = mediaListsToUpdate->AppendElement(change, PR_FALSE);
           NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
 
         }

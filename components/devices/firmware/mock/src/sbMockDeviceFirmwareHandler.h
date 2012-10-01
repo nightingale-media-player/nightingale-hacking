@@ -46,7 +46,7 @@ public:
   virtual nsresult OnInit();
   virtual nsresult OnGetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion);
   virtual nsresult OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion);
-  virtual nsresult OnGetRecoveryMode(bool *aRecoveryMode);
+  virtual nsresult OnGetRecoveryMode(PRBool *aRecoveryMode);
 
   virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
   virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
@@ -55,10 +55,10 @@ public:
   virtual nsresult OnCanUpdate(sbIDevice *aDevice,
                                PRUint32 aDeviceVendorID,
                                PRUint32 aDeviceProductID,
-                               bool *_retval);
+                               PRBool *_retval);
   virtual nsresult OnRebind(sbIDevice *aDevice,
                           sbIDeviceEventListener *aListener,
-                          bool *_retval);
+                          PRBool *_retval);
   virtual nsresult OnCancel();
   virtual nsresult OnRefreshInfo();
   virtual nsresult OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);

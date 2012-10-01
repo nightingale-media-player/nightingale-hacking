@@ -104,7 +104,7 @@ sbBaseMediacoreVolumeControl::InitBaseMediacoreVolumeControl()
 }
 
 NS_IMETHODIMP 
-sbBaseMediacoreVolumeControl::GetMute(bool *aMute)
+sbBaseMediacoreVolumeControl::GetMute(PRBool *aMute)
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - GetMute", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -117,7 +117,7 @@ sbBaseMediacoreVolumeControl::GetMute(bool *aMute)
 }
 
 NS_IMETHODIMP 
-sbBaseMediacoreVolumeControl::SetMute(bool aMute)
+sbBaseMediacoreVolumeControl::SetMute(PRBool aMute)
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - SetMute", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -171,7 +171,7 @@ sbBaseMediacoreVolumeControl::OnInitBaseMediacoreVolumeControl()
 }
 
 /*virtual*/ nsresult 
-sbBaseMediacoreVolumeControl::OnSetMute(bool aMute)
+sbBaseMediacoreVolumeControl::OnSetMute(PRBool aMute)
 {
   /**
    *  This is where you would set the actual mute flag on the mediacore 

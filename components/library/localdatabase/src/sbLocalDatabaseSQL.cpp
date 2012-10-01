@@ -65,7 +65,7 @@ nsString sbStaticPropertyColumns()
   return result;
 }
 
-nsString sbLocalDatabaseSQL::MediaItemColumns(bool aIncludeMediaItem)
+nsString sbLocalDatabaseSQL::MediaItemColumns(PRBool aIncludeMediaItem)
 {
   if (mMediaItemColumns.IsEmpty()) {
     mMediaItemColumns= sbStaticPropertyColumns();

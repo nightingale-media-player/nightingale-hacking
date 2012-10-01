@@ -151,7 +151,7 @@ sbMediaExportITunesAgentService::UnregisterExportAgent()
 }
 
 nsresult 
-sbMediaExportITunesAgentService::RunAgent(bool aShouldUnregister)
+sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
 {
   nsresult rv;
   nsCOMPtr<nsIURI> agentParentFolderURI;
@@ -263,7 +263,7 @@ sbMediaExportITunesAgentService::RunAgent(bool aShouldUnregister)
 }
 
 NS_IMETHODIMP
-sbMediaExportITunesAgentService::GetIsAgentRunning(bool *aIsRunning)
+sbMediaExportITunesAgentService::GetIsAgentRunning(PRBool *aIsRunning)
 {
   NS_ENSURE_ARG_POINTER(aIsRunning);
   *aIsRunning = PR_FALSE;

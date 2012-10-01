@@ -155,10 +155,10 @@ sbGStreamerService::Init()
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
   NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
-  bool noSystemPlugins;
-  bool systemGst;
-  bool hasMore;
-  bool first = PR_TRUE;
+  PRBool noSystemPlugins;
+  PRBool systemGst;
+  PRBool hasMore;
+  PRBool first = PR_TRUE;
   nsString pluginPaths;
   nsString systemPluginPaths;
 
@@ -205,7 +205,7 @@ sbGStreamerService::Init()
     pluginPaths = EmptyString();
 #else
     // 1. Read the existing GST_PLUGIN_PATH (if any)
-    bool pluginPathExists;
+    PRBool pluginPathExists;
     rv = envSvc->Exists(kGstPluginPath, &pluginPathExists);
     NS_ENSURE_SUCCESS(rv, rv);
     if (pluginPathExists) {
@@ -224,7 +224,7 @@ sbGStreamerService::Init()
     NS_ENSURE_SUCCESS(rv, rv);
 
     while (NS_SUCCEEDED(dirList->HasMoreElements(&hasMore)) && hasMore) {
-      bool dirExists;
+      PRBool dirExists;
       nsCOMPtr<nsISupports> supports;
       rv = dirList->GetNext(getter_AddRefs(supports));
       if (NS_FAILED(rv))
@@ -251,7 +251,7 @@ sbGStreamerService::Init()
         // The extension might also provide dependent libraries that it needs
         // for the plugin(s) to work. So, load those if there's a special
         // text file listing what we need to load.
-        bool fileExists;
+        PRBool fileExists;
         nsCOMPtr<nsIFile> dependencyListFile;
         rv = extensionDir->Clone(getter_AddRefs(dependencyListFile));
         NS_ENSURE_SUCCESS(rv, rv);
@@ -323,7 +323,7 @@ sbGStreamerService::Init()
       rv = badFile->InitWithPath(badFilePath);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      bool badFileExists;
+      PRBool badFileExists;
       rv = badFile->Exists(&badFileExists);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -569,7 +569,7 @@ sbGStreamerService::UpdateGStreamerRegistryFile()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if the component registry file exists.
-  bool exists;
+  PRBool exists;
   rv = mozRegFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 

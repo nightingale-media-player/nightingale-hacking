@@ -10,8 +10,8 @@ ID=songbird@songbirdnest.com
 Profile=@SB_APPNAME@@SB_PROFILE_VERSION@
 
 [Gecko]
-MinVersion=15.0.1
-MaxVersion=15.0.1.*
+MinVersion=1.9.2
+MaxVersion=1.9.2.*
 
 [XRE]
 EnableExtensionManager=true

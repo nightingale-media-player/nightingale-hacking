@@ -29,6 +29,7 @@
 
 #include <sbIPropertyArray.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
@@ -60,16 +61,16 @@ public:
 
 private:
   nsresult PropertyIsValid(sbIProperty* aProperty,
-                           bool* _retval);
+                           PRBool* _retval);
   nsresult ValueIsValid(const nsAString& aID,
                         const nsAString& aValue,
-                        bool* _retval);
+                        PRBool* _retval);
 
 private:
   nsCOMArray<sbIProperty> mArray;
   nsCOMPtr<sbIPropertyManager> mPropManager;
   PRLock* mArrayLock;
-  bool mStrict;
+  PRBool mStrict;
 };
 
 #endif /* __SB_PROPERTYARRAY_H__ */

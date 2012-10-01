@@ -246,7 +246,7 @@ sbIPDDevice::SetMgmtType(PRUint32 aMgmtType)
  */
 
 nsresult
-sbIPDDevice::GetIsSetUp(bool* aIsSetUp)
+sbIPDDevice::GetIsSetUp(PRBool* aIsSetUp)
 {
   // Validate arguments.
   NS_ASSERTION(aIsSetUp, "aIsSetUp is null");
@@ -269,7 +269,7 @@ sbIPDDevice::GetIsSetUp(bool* aIsSetUp)
  */
 
 nsresult
-sbIPDDevice::SetIsSetUp(bool aIsSetUp)
+sbIPDDevice::SetIsSetUp(PRBool aIsSetUp)
 {
   nsresult rv;
 
@@ -355,7 +355,7 @@ sbIPDDevice::SetSyncPlaylistList(nsIArray* aPlaylistList)
   NS_ASSERTION(aPlaylistList, "aPlaylistList is null");
 
   // Function variables.
-  bool   success;
+  PRBool   success;
   nsresult rv;
 
   // Operate under the preference lock.
@@ -516,7 +516,7 @@ nsresult
 sbIPDDevice::PrefConnectIPodPrefs()
 {
   GError*  gError = NULL;
-  bool   success;
+  PRBool   success;
   nsresult rv;
 
   // Set up to auto-disconnect on error.

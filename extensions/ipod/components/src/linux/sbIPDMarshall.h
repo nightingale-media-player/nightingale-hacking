@@ -53,6 +53,7 @@
 #include "sbLibHal.h"
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsClassHashtable.h>
 #include <nsIClassInfo.h>
@@ -194,9 +195,9 @@ private:
 
   nsresult ProbeDev(nsACString &aDeviceUDI);
 
-  bool IsIPod(nsACString& aDeviceUDI);
+  PRBool IsIPod(nsACString& aDeviceUDI);
 
-  bool IsMediaPartition(nsACString& aDeviceUDI);
+  PRBool IsMediaPartition(nsACString& aDeviceUDI);
 };
 
 

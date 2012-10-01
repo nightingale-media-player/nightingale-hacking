@@ -59,7 +59,7 @@ public:
   nsresult ScanImages(nsIFile *aScanDir,
                       nsIFile *aBaseDir,
                       const nsTArray<nsString> &aFileExtensionList,
-                      bool recursive,
+                      PRBool recursive,
                       nsIArray **retImageArray);
 
   // Create and return in aMediaItem a temporary media item for the local file
@@ -74,8 +74,8 @@ public:
   // file's parent directory rather than at the file itself.
   nsresult MakeFile(sbIDeviceImage* aImage,
                     nsIFile*        aBaseDir,
-                    bool          aWithFilename,
-                    bool          aCreateDirectories,
+                    PRBool          aWithFilename,
+                    PRBool          aCreateDirectories,
                     nsIFile**       retFile);
 
   static nsresult GetImagesRootFolder(sbIDeviceLibrary * aDevLib,
@@ -90,7 +90,7 @@ private:
     AddLocalImages(nsIFile *baseDir,
                    nsIFile *subDir,
                    const nsTArray<nsString> aFileExtensionList,
-                   bool recursive,
+                   PRBool recursive,
                    nsIMutableArray *localImageArray);
 
   // search for each item that is in searchItem in the searchableImageArray.
@@ -102,7 +102,7 @@ private:
   // perform the actual image scanning of a directory using a filescan object
   nsresult ScanForImageFiles(nsIURI *aImageFilesPath,
                              const nsTArray<nsString> &aFileExtensionList,
-                             bool recursive,
+                             PRBool recursive,
                              sbIFileScanQuery** aFileScanQuery);
 
   // A pointer to our parent base device
@@ -129,9 +129,9 @@ private:
 class sbDeviceImageComparator {
 public:
   // Defined for the Sort function on nsTArray
-  bool LessThan(const sbIDeviceImage *a, const sbIDeviceImage *b) const;
+  PRBool LessThan(const sbIDeviceImage *a, const sbIDeviceImage *b) const;
   // This has to be defined for Sort as well, but is used for Searching.
-  bool Equals(const sbIDeviceImage *a, const sbIDeviceImage *b) const;
+  PRBool Equals(const sbIDeviceImage *a, const sbIDeviceImage *b) const;
 };
 
 #endif

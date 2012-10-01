@@ -137,8 +137,8 @@ private:
   // mObserverService           Observer service.
   //
 
-  bool                        mInitialized;
-  nsDataHashtableMT<nsStringHashKey, bool>
+  PRBool                        mInitialized;
+  nsDataHashtableMT<nsStringHashKey, PRBool>
                                 mReadyServiceTable;
   nsCOMPtr<nsIObserverService>  mObserverService;
 };

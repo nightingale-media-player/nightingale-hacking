@@ -106,7 +106,7 @@ sbScriptableFilter::ReadEnumerator()
   NS_ENSURE_SUCCESS( rv, rv );
   
   while (true) {
-    bool hasMore;
+    PRBool hasMore;
 
     rv = enumerator->HasMore(&hasMore);
     NS_ENSURE_SUCCESS( rv, rv );
@@ -135,7 +135,7 @@ sbScriptableFilter::ReadEnumerator()
 
 
 /* boolean hasMore (); */
-NS_IMETHODIMP sbScriptableFilter::HasMore(bool *_retval)
+NS_IMETHODIMP sbScriptableFilter::HasMore(PRBool *_retval)
 {
   TRACE(("sbScriptableFilter::HasMore()"));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -210,7 +210,7 @@ NS_IMETHODIMP sbScriptableFilter::GetProperty( nsIXPConnectWrappedNative *wrappe
                                                JSObject * obj,
                                                jsval id,
                                                jsval * vp,
-                                               bool *_retval)
+                                               PRBool *_retval)
 {
   TRACE(("sbScriptableFilter::GetProperty()"));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -312,7 +312,7 @@ NS_IMETHODIMP sbScriptableFilter::NewEnumerate( nsIXPConnectWrappedNative *wrapp
                                                 PRUint32 enum_op,
                                                 jsval * statep,
                                                 jsid *idp,
-                                                bool *_retval)
+                                                PRBool *_retval)
 {
   TRACE(("sbScriptableFilter::NewEnumerate()"));
   
@@ -404,7 +404,7 @@ NS_IMETHODIMP sbScriptableFilter::NewResolve( nsIXPConnectWrappedNative *wrapper
                                               jsval id,
                                               PRUint32 flags,
                                               JSObject * *objp,
-                                              bool *_retval)
+                                              PRBool *_retval)
 {
   TRACE(("sbScriptableFilter::NewResolve()"));
   NS_ENSURE_ARG_POINTER(_retval);

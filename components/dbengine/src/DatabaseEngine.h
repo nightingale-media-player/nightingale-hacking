@@ -46,6 +46,7 @@
 #include <prmon.h>
 #include <prlog.h>
 
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsRefPtrHashtable.h>
@@ -120,7 +121,7 @@ protected:
 
   nsresult CloseDB(sqlite3 *pHandle);
 
-  already_AddRefed<QueryProcessorQueue> GetQueueByQuery(CDatabaseQuery *pQuery, bool bCreate = PR_FALSE);
+  already_AddRefed<QueryProcessorQueue> GetQueueByQuery(CDatabaseQuery *pQuery, PRBool bCreate = PR_FALSE);
   already_AddRefed<QueryProcessorQueue> CreateQueueFromQuery(CDatabaseQuery *pQuery);
 
   PRInt32 SubmitQueryPrivate(CDatabaseQuery *pQuery);
@@ -182,13 +183,13 @@ private:
   PRMonitor* m_pThreadMonitor;
   PRMonitor* m_CollationBuffersMapMonitor;
 
-  bool m_AttemptShutdownOnDestruction;
-  bool m_IsShutDown;
+  PRBool m_AttemptShutdownOnDestruction;
+  PRBool m_IsShutDown;
 
-  bool m_MemoryConstraintsSet;
+  PRBool m_MemoryConstraintsSet;
 
-  bool m_PromptForDelete;
-  bool m_DeleteDatabases;
+  PRBool m_PromptForDelete;
+  PRBool m_DeleteDatabases;
 
   typedef std::map<nsString, nsRefPtr<CDatabaseQuery> > deleteDatabaseMap_t;
   deleteDatabaseMap_t m_DatabasesToDelete;
@@ -281,7 +282,7 @@ public:
   }
 
   nsresult PushQueryToQueue(CDatabaseQuery *pQuery, 
-                            bool bPushToFront = PR_FALSE) {
+                            PRBool bPushToFront = PR_FALSE) {
     NS_ENSURE_ARG_POINTER(pQuery);
 
     nsAutoMonitor mon(m_pQueueMonitor);

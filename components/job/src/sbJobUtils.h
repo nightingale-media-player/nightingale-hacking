@@ -89,7 +89,7 @@ public:
    * @param aArray
    * @return
    */
-  bool Adopt(ArrayType& aArray)
+  PRBool Adopt(ArrayType& aArray)
   {
     mIndex = 0;
     mArray.Clear();
@@ -97,7 +97,7 @@ public:
   }
 
   ///// nsIStringEnumerator
-  NS_IMETHODIMP HasMore(bool *_retval)
+  NS_IMETHODIMP HasMore(PRBool *_retval)
   {
     NS_ENSURE_ARG_POINTER(_retval);
     *_retval = mIndex < mArray.Length();
@@ -125,7 +125,7 @@ public:
   }
 
   ///// nsISimpleEnumerator
-  NS_IMETHODIMP HasMoreElements(bool *_retval)
+  NS_IMETHODIMP HasMoreElements(PRBool *_retval)
   {
     return HasMore(_retval);
   }

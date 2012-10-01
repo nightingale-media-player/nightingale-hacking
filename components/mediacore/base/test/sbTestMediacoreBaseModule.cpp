@@ -33,7 +33,7 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 #include "sbTestDummyMediacoreManager.h"
 #include "sbTestMediacoreEventCreator.h"

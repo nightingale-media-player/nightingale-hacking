@@ -66,13 +66,13 @@
 nsresult
 sbUSBDeviceImplementsClass(sbUSBDescriptorList& aDescriptorList,
                            PRUint8              aUSBClass,
-                           bool*              aImplementsClass)
+                           PRBool*              aImplementsClass)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aImplementsClass);
 
   // Function variables.
-  bool implementsClass = PR_FALSE;
+  PRBool implementsClass = PR_FALSE;
 
   // Check all device and interface descriptors for the specified class.
   for (PRUint32 i = 0; i < aDescriptorList.Length(); i++) {
@@ -83,7 +83,7 @@ sbUSBDeviceImplementsClass(sbUSBDescriptorList& aDescriptorList,
     // Get the class from device and interface descriptors.  Skip other
     // descriptors.
     PRUint8 usbClass;
-    bool  hasClass = PR_TRUE;
+    PRBool  hasClass = PR_TRUE;
     switch (descriptorHeader->bDescriptorType) {
       case SB_USB_DESCRIPTOR_TYPE_DEVICE :
         {

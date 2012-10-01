@@ -207,9 +207,9 @@ class sbSeekableChannel : public sbISeekableChannel,
     PRUint64                        mContentLength;
     PRUint64                        mPos;
     PRUint64                        mBasePos;
-    bool                          mRestarting;
-    bool                          mCompleted;
-    bool                          mDataReceivedSinceStart;
+    PRBool                          mRestarting;
+    PRBool                          mCompleted;
+    PRBool                          mDataReceivedSinceStart;
 
 
     /*
@@ -228,7 +228,7 @@ class sbSeekableChannel : public sbISeekableChannel,
         Segment                     *pSegment2,
         Segment                     **ppMergedSegment);
 
-    bool AllDataRead();
+    PRBool AllDataRead();
 
     nsresult Restart(
         PRUint64                    pos);

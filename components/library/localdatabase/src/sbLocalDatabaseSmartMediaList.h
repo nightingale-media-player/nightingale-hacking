@@ -34,6 +34,7 @@
 #include <nsCOMArray.h>
 #include <nsDataHashtable.h>
 #include <nsStringGlue.h>
+#include <nsAutoLock.h>
 
 #include <nsIClassInfo.h>
 #include <nsIObserver.h>
@@ -68,19 +69,19 @@ typedef nsDataHashtable<nsStringHashKey, nsString> sbStringMap;
   NS_IMETHOD GetItemsByProperties(sbIPropertyArray *aProperties, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsByProperties(aProperties, _retval); } \
   NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->IndexOf(aMediaItem, aStartFrom, _retval); } \
   NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->LastIndexOf(aMediaItem, aStartFrom, _retval); } \
-  NS_IMETHOD Contains(sbIMediaItem *aMediaItem, bool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Contains(aMediaItem, _retval); } \
-  NS_IMETHOD GetIsEmpty(bool *aIsEmpty) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsEmpty(aIsEmpty); } \
-  NS_IMETHOD GetUserEditableContent(bool *aUserEditableContent) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditableContent(aUserEditableContent); } \
+  NS_IMETHOD Contains(sbIMediaItem *aMediaItem, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Contains(aMediaItem, _retval); } \
+  NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsEmpty(aIsEmpty); } \
+  NS_IMETHOD GetUserEditableContent(PRBool *aUserEditableContent) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditableContent(aUserEditableContent); } \
   NS_IMETHOD Add(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Add(aMediaItem); } \
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddItem(aMediaItem, aNewMediaItem); } \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddAll(aMediaList); } \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSome(aMediaItems); } \
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, bool aAsync) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddMediaItems(aMediaItems, aListener, aAsync); } \
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddMediaItems(aMediaItems, aListener, aAsync); } \
   NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveByIndex(aIndex); } \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveSome(aMediaItems); } \
   NS_IMETHOD Clear(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Clear(); } \
-  NS_IMETHOD AddListener(sbIMediaListListener *aListener, bool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
+  NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListViewState* aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(aState, _retval); } \
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString& aPropertyID, nsIStringEnumerator** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } \
@@ -91,7 +92,7 @@ typedef nsDataHashtable<nsStringHashKey, nsString> sbStringMap;
   NS_SCRIPTABLE NS_IMETHOD GetMediaItemId(PRUint32 *aMediaItemId) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItemId(aMediaItemId); } \
   NS_SCRIPTABLE NS_IMETHOD GetPropertyBag(sbILocalDatabaseResourcePropertyBag * *aPropertyBag) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyBag(aPropertyBag); } \
   NS_SCRIPTABLE NS_IMETHOD SetPropertyBag(sbILocalDatabaseResourcePropertyBag * aPropertyBag) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPropertyBag(aPropertyBag); } \
-  NS_IMETHOD_(void) SetSuppressNotifications(bool aSuppress) { if (_to) _to->SetSuppressNotifications(aSuppress); }
+  NS_IMETHOD_(void) SetSuppressNotifications(PRBool aSuppress) { if (_to) _to->SetSuppressNotifications(aSuppress); }
 
 class sbLocalDatabaseSmartMediaListCondition : public sbILocalDatabaseSmartMediaListCondition
 {
@@ -177,7 +178,7 @@ private:
                            PRUint32* aRow);
 
   nsresult CreateSQLForCondition(sbRefPtrCondition& aCondition,
-                                 bool aIsLastCondition,
+                                 PRBool aIsLastCondition,
                                  nsAString& _retval);
 
   nsresult AddCriterionForCondition(sbISQLSelectBuilder* aBuilder,
@@ -186,7 +187,7 @@ private:
 
   nsresult AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuilder,
                                   const nsAString& aBaseTableAlias,
-                                  bool aAddOrderBy);
+                                  PRBool aAddOrderBy);
 
   nsresult AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuilder,
                                  const nsAString& aBaseTableAlias);
@@ -214,7 +215,7 @@ private:
 
   nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition,
                                  sbIPropertyInfo* aInfo,
-                                 bool &bNeedIsNull);
+                                 PRBool &bNeedIsNull);
 
   nsresult MediaListGuidToDB(nsAString &val, PRUint32 &v);
 
@@ -243,8 +244,8 @@ private:
   PRUint32    mLimitType;
   PRUint64    mLimit;
   nsString    mSelectPropertyID;
-  bool      mSelectDirection;
-  bool      mRandomSelection;
+  PRBool      mSelectDirection;
+  PRBool      mRandomSelection;
   PRMonitor * mAutoUpdateMonitor;
   PRUint32    mAutoUpdate;
   PRUint32    mNotExistsMode;

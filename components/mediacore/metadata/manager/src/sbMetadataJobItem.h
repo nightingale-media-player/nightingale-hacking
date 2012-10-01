@@ -75,10 +75,10 @@ public:
   nsresult GetMediaItem(sbIMediaItem** aMediaItem);
   nsresult GetOwningJob(sbMetadataJob** aJob);
   nsresult GetJobType(sbMetadataJob::JobType* aJobType);  
-  nsresult GetProcessingStarted(bool* aProcessingStarted);
-  nsresult SetProcessingStarted(bool aProcessingStarted);
-  nsresult GetProcessed(bool* aProcessed);
-  nsresult SetProcessed(bool aProcessed);
+  nsresult GetProcessingStarted(PRBool* aProcessingStarted);
+  nsresult SetProcessingStarted(PRBool aProcessingStarted);
+  nsresult GetProcessed(PRBool* aProcessed);
+  nsresult SetProcessed(PRBool aProcessed);
   nsresult GetURL(nsACString& aURL);
   nsresult SetURL(const nsACString& aURL);
   nsresult GetProperties(sbIMutablePropertyArray** aPropertyArray);
@@ -93,10 +93,10 @@ protected:
   nsStringArray*                     mPropertyList;
 
   // Flag to indicate that a handler was started for this item
-  bool                             mProcessingStarted;
+  PRBool                             mProcessingStarted;
 
   // Flag to indicate that a handler was run for this item
-  bool                             mProcessingComplete;
+  PRBool                             mProcessingComplete;
 };
 
 #endif // SBMETADATAJOBITEM_H_

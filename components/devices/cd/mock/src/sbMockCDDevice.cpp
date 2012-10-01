@@ -32,7 +32,7 @@
 #include <nsCOMArray.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 
 //==============================================================================
@@ -226,7 +226,7 @@ sbMockCDTOC::AddTocEntry(PRInt32 frameOffset,
                                                    NS_LITERAL_STRING("f:"));
   NS_ENSURE_TRUE(entry, NS_ERROR_OUT_OF_MEMORY);
 
-  bool const added = mTracks.AppendObject(entry);
+  PRBool const added = mTracks.AppendObject(entry);
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -256,9 +256,9 @@ public:
   NS_DECL_SBIMOCKCDDEVICE
 
   static sbMockCDDevice * New(nsAString const & aName,
-                              bool aReadable,
-                              bool aWritable,
-                              bool aDiscInserted,
+                              PRBool aReadable,
+                              PRBool aWritable,
+                              PRBool aDiscInserted,
                               PRUint32 aDiscType)
   {
     return new sbMockCDDevice(aName,
@@ -282,9 +282,9 @@ public:
 
 protected:
   sbMockCDDevice(nsAString const & aName,
-                 bool aReadable,
-                 bool aWritable,
-                 bool aDiscInserted,
+                 PRBool aReadable,
+                 PRBool aWritable,
+                 PRBool aDiscInserted,
                  PRUint32 aDiscType) :
                    mName(aName),
                    mReadable(aReadable),
@@ -294,12 +294,12 @@ protected:
                    mEjected(PR_FALSE) {}
 private:
   nsString mName;
-  bool mReadable;
-  bool mWritable;
-  bool mDiscInserted;
-  bool mIsDeviceLocked;
+  PRBool mReadable;
+  PRBool mWritable;
+  PRBool mDiscInserted;
+  PRBool mIsDeviceLocked;
   PRUint32 mDiscType;
-  bool mEjected;
+  PRBool mEjected;
   nsCOMPtr<sbICDTOC> mTOC;
 };
 
@@ -313,21 +313,21 @@ sbMockCDDevice::GetName(nsAString & aName)
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::GetReadable(bool *aReadable)
+sbMockCDDevice::GetReadable(PRBool *aReadable)
 {
   *aReadable = mReadable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::GetWriteable(bool *aWritable)
+sbMockCDDevice::GetWriteable(PRBool *aWritable)
 {
   *aWritable = mWritable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::GetIsDiscInserted(bool *aDiscInserted)
+sbMockCDDevice::GetIsDiscInserted(PRBool *aDiscInserted)
 {
   *aDiscInserted = mDiscInserted;
   return NS_OK;
@@ -380,11 +380,11 @@ sbMockCDDevice::Eject()
 
 NS_IMETHODIMP
 sbMockCDDevice::Initialize(nsAString const & aName,
-                           bool aReadable,
-                           bool aWritable,
-                           bool aDiscInserted,
+                           PRBool aReadable,
+                           PRBool aWritable,
+                           PRBool aDiscInserted,
                            PRUint32 aDiscType,
-                           bool aEjected)
+                           PRBool aEjected)
 {
   mName = aName;
   mReadable = aReadable;
@@ -397,7 +397,7 @@ sbMockCDDevice::Initialize(nsAString const & aName,
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::GetEjected(bool * aEjected)
+sbMockCDDevice::GetEjected(PRBool * aEjected)
 {
   NS_ENSURE_ARG_POINTER(aEjected);
 
@@ -407,7 +407,7 @@ sbMockCDDevice::GetEjected(bool * aEjected)
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::SetEjected(bool aEjected)
+sbMockCDDevice::SetEjected(PRBool aEjected)
 {
   mEjected = aEjected;
 
@@ -423,7 +423,7 @@ sbMockCDDevice::SetDiscTOC(sbICDTOC * aDiscTOC)
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::GetIsDeviceLocked(bool *aIsLocked)
+sbMockCDDevice::GetIsDeviceLocked(PRBool *aIsLocked)
 {
   NS_ENSURE_ARG_POINTER(aIsLocked);
 
@@ -806,7 +806,7 @@ sbMockCDService::InsertMedia(sbICDDevice *aCDDevice, PRUint16 aMediaDisc)
 
   // Don't insert media twice.
   nsresult rv;
-  bool isDiscInserted = PR_FALSE;
+  PRBool isDiscInserted = PR_FALSE;
   rv = aCDDevice->GetIsDiscInserted(&isDiscInserted);
   if (NS_FAILED(rv) || isDiscInserted) {
     return NS_OK;
@@ -862,7 +862,7 @@ sbMockCDService::EjectMedia(sbICDDevice *aCDDevice)
   nsCOMPtr<sbIMockCDDevice> mockDevice = do_QueryInterface(aCDDevice, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool isDiscInserted = PR_FALSE;
+  PRBool isDiscInserted = PR_FALSE;
   rv = aCDDevice->GetIsDiscInserted(&isDiscInserted);
   if (NS_FAILED(rv) || !isDiscInserted) {
     return NS_OK;

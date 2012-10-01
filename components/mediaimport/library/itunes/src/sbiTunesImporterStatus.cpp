@@ -26,8 +26,10 @@
 
 #include "sbiTunesImporterStatus.h"
 
+#include <nsIProxyObjectManager.h>
 #include <nsIObserverService.h>
 
+#include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 
 #include "sbiTunesImporterJob.h"
@@ -49,9 +51,9 @@ sbiTunesImporterStatus::New(sbiTunesImporterJob * aJobProgress) {
   return new sbiTunesImporterStatus(aJobProgress);
 }
 
-bool sbiTunesImporterStatus::CancelRequested() {
+PRBool sbiTunesImporterStatus::CancelRequested() {
   // If there's no job progress, then we've been canceled
-  bool canceled = PR_TRUE;
+  PRBool canceled = PR_TRUE;
   if (mJobProgress) {
     canceled = mJobProgress->CancelRequested();
   }

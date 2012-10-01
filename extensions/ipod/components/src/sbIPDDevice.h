@@ -655,7 +655,7 @@ private:
 
   void RemoveTrackFromAllPlaylists(Itdb_Track* aTrack);
 
-  bool IsMediaSupported(sbIMediaItem* aMediaItem);
+  PRBool IsMediaSupported(sbIMediaItem* aMediaItem);
 
   void AddUnsupportedMediaItem(sbIMediaItem* aMediaItem);
 
@@ -819,11 +819,11 @@ private:
   //
 
   PRLock*                       mPrefLock;
-  bool                        mPrefConnected;
+  PRBool                        mPrefConnected;
   Itdb_Prefs*                   mIPodPrefs;
-  bool                        mIPodPrefsDirty;
+  PRBool                        mIPodPrefsDirty;
   nsTArray<guint64>             mSyncPlaylistList;
-  bool                        mSyncPlaylistListDirty;
+  PRBool                        mSyncPlaylistListDirty;
 
 
   //
@@ -847,9 +847,9 @@ private:
 
   nsresult SetMgmtType(PRUint32 aMgmtType);
 
-  nsresult GetIsSetUp(bool* aIsSetUp);
+  nsresult GetIsSetUp(PRBool* aIsSetUp);
 
-  nsresult SetIsSetUp(bool aIsSetUp);
+  nsresult SetIsSetUp(PRBool aIsSetUp);
 
   nsresult GetSyncPlaylistList(nsIArray** aPlaylistList);
 
@@ -921,7 +921,7 @@ private:
 
   void StatsFinalize();
 
-  void StatsUpdate(bool aForceUpdate);
+  void StatsUpdate(PRBool aForceUpdate);
 
 
   //----------------------------------------------------------------------------
@@ -946,7 +946,7 @@ private:
                                           nsAString&    aAccountName,
                                           nsAString&    aUserName,
                                           sbIMediaItem* aMediaItem = nsnull,
-                                          bool        aAsync = PR_TRUE);
+                                          PRBool        aAsync = PR_TRUE);
 
 
   //----------------------------------------------------------------------------
@@ -1005,7 +1005,7 @@ private:
                                 mCapabilities;
 
   Itdb_iTunesDB*                mITDB;
-  bool                        mITDBDirty;
+  PRBool                        mITDBDirty;
   Itdb_Device*                  mITDBDevice;
   Itdb_Playlist*                mMasterPlaylist;
 
@@ -1015,7 +1015,7 @@ private:
   nsCOMPtr<sbILibraryManager>   mLibraryManager;
   nsCOMPtr<nsIStringBundle>     mLocale;
 
-  bool                        mConnected;
+  PRBool                        mConnected;
   nsString                      mFirewireGUID;
   sbIPDStatus*                  mIPDStatus;
   nsString                      mMountPath;
@@ -1043,7 +1043,7 @@ private:
                        nsIPropertyBag2* aPropBag,
                        const nsAString& aProp);
 
-  bool IsFileSystemSupported();
+  PRBool IsFileSystemSupported();
 
   nsresult SetUpIfNeeded();
 };
@@ -1149,7 +1149,7 @@ SB_AUTO_CLASS(sbIPDAutoStopIgnoreMediaLists,
               mValue = nsnull);
 
 SB_AUTO_CLASS(sbIPDAutoFalse,
-              bool*,
+              PRBool*,
               mValue,
               *mValue = PR_FALSE,
               mValue = nsnull);

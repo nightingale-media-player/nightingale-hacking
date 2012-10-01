@@ -214,7 +214,7 @@ MakeCapsFromAttributes(enum sbGstCapsMapType aType,
   NS_ENSURE_TRUE(caps, NS_ERROR_FAILURE);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(rv = attrsEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> attrSupports;
     rv = attrsEnum->GetNext(getter_AddRefs(attrSupports));
@@ -351,7 +351,7 @@ sbGStreamerTranscodeAudioConfigurator::EnsureProfileAvailable(sbITranscodeProfil
     elementNames.audioEncoder = audioEncoder;
   }
 
-  bool success = mElementNames.Put(aProfile, elementNames);
+  PRBool success = mElementNames.Put(aProfile, elementNames);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -471,8 +471,8 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
   nsCOMPtr<sbITranscodeProfile> prefProfile;
   nsCOMPtr<sbITranscodeProfile> globalPrefProfile;
   nsCOMPtr<sbITranscodeProfile> bestProfile;
-  bool hasProfilePref = PR_FALSE;
-  bool hasGlobalProfilePref = PR_FALSE;
+  PRBool hasProfilePref = PR_FALSE;
+  PRBool hasGlobalProfilePref = PR_FALSE;
   PRUint32 bestPriority = 0;
   nsresult rv;
 
@@ -522,7 +522,7 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Find the profile from the pref, or otherwise the highest-ranked one.
-  bool hasMoreProfiles;
+  PRBool hasMoreProfiles;
   while (NS_SUCCEEDED(profilesEnum->HasMoreElements(&hasMoreProfiles)) &&
          hasMoreProfiles)
   {
@@ -654,7 +654,7 @@ sbGStreamerTranscodeAudioConfigurator::SelectOutputAudioFormat()
 
   // Otherwise, we have a selected format: force these in range.
 
-  bool isInRange;
+  PRBool isInRange;
 
   nsCOMPtr<sbIDevCapRange> sampleRateRange;
   rv = mSelectedFormat->GetSupportedSampleRates(getter_AddRefs(sampleRateRange));
@@ -817,7 +817,7 @@ sbGStreamerTranscodeAudioConfigurator::ApplyPreferencesToPropertyArray(
 nsresult
 sbGStreamerTranscodeAudioConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcProps,
                                                               nsIWritablePropertyBag * aDstBag,
-                                                              bool aIsVideo)
+                                                              PRBool aIsVideo)
 {
   NS_ENSURE_ARG_POINTER(aSrcProps);
   NS_ENSURE_ARG_POINTER(aDstBag);
@@ -827,7 +827,7 @@ sbGStreamerTranscodeAudioConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcProp
   nsCOMPtr<nsISimpleEnumerator> propsEnum;
   rv = aSrcProps->Enumerate(getter_AddRefs(propsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(rv = propsEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = propsEnum->GetNext(getter_AddRefs(supports));
@@ -835,7 +835,7 @@ sbGStreamerTranscodeAudioConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcProp
     nsCOMPtr<sbITranscodeProfileProperty> prop =
       do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    bool hidden;
+    PRBool hidden;
     rv = prop->GetHidden(&hidden);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hidden) {
@@ -870,12 +870,12 @@ sbGStreamerTranscodeAudioConfigurator::GetAvailableProfiles(nsIArray * *aAvailab
   /* If we haven't already cached it, then figure out what we have */
 
   if (!mElementNames.IsInitialized()) {
-    bool initSuccess = mElementNames.Init();
+    PRBool initSuccess = mElementNames.Init();
     NS_ENSURE_TRUE(initSuccess, NS_ERROR_OUT_OF_MEMORY);
   }
 
   nsresult rv;
-  bool hasMoreElements;
+  PRBool hasMoreElements;
   nsCOMPtr<nsISimpleEnumerator> dirEnum;
 
   nsCOMPtr<nsIURI> profilesDirURI;
@@ -977,7 +977,7 @@ sbGStreamerTranscodeAudioConfigurator::DetermineOutputType()
   NS_ENSURE_SUCCESS(rv, rv);
 
   EncoderProfileData elementNames;
-  bool success = mElementNames.Get(mSelectedProfile, &elementNames);
+  PRBool success = mElementNames.Get(mSelectedProfile, &elementNames);
   NS_ENSURE_TRUE (success, NS_ERROR_UNEXPECTED);
   CopyASCIItoUTF16(elementNames.muxer, mMuxer);
   CopyASCIItoUTF16(elementNames.audioEncoder, mAudioEncoder);

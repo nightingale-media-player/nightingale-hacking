@@ -28,6 +28,7 @@
 #define SBIDEFAULTBASEDEVICEINFOREGISTRAR_H_
 
 // Mozilla includes
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 
@@ -59,7 +60,7 @@ protected:
 
   sbIDevice*                 mDevice;
   nsAutoPtr<sbDeviceXMLInfo> mDeviceXMLInfo;
-  bool                     mDeviceXMLInfoPresent;
+  PRBool                     mDeviceXMLInfoPresent;
 
   /**
    * Return in aDeviceXMLInfo the device XML info for the device specified by

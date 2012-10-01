@@ -34,6 +34,7 @@
 
 #include <sbIMediacoreCapabilities.h>
 
+#include <nsAutoLock.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 
@@ -58,26 +59,26 @@ public:
   nsresult SetImageExtensions(
     const sbStringArray &aImageExtensions);
 
-  nsresult SetSupportsAudioPlayback(bool aSupportsAudioPlayback);
-  nsresult SetSupportsVideoPlayback(bool aSupportsVideoPlayback);
-  nsresult SetSupportsImagePlayback(bool aSupportsImagePlayback);
+  nsresult SetSupportsAudioPlayback(PRBool aSupportsAudioPlayback);
+  nsresult SetSupportsVideoPlayback(PRBool aSupportsVideoPlayback);
+  nsresult SetSupportsImagePlayback(PRBool aSupportsImagePlayback);
 
-  nsresult SetSupportsAudioTranscode(bool aSupportsAudioTranscode);
-  nsresult SetSupportsVideoTranscode(bool aSupportsVideoTranscode);
-  nsresult SetSupportsImageTranscode(bool aSupportsImageTranscode);
+  nsresult SetSupportsAudioTranscode(PRBool aSupportsAudioTranscode);
+  nsresult SetSupportsVideoTranscode(PRBool aSupportsVideoTranscode);
+  nsresult SetSupportsImageTranscode(PRBool aSupportsImageTranscode);
 
 protected:
   virtual ~sbMediacoreCapabilities();
 
   PRLock *mLock;
 
-  bool mSupportsAudioPlayback;
-  bool mSupportsVideoPlayback;
-  bool mSupportsImagePlayback;
+  PRBool mSupportsAudioPlayback;
+  PRBool mSupportsVideoPlayback;
+  PRBool mSupportsImagePlayback;
 
-  bool mSupportsAudioTranscode;
-  bool mSupportsVideoTranscode;
-  bool mSupportsImageTranscode;
+  PRBool mSupportsAudioTranscode;
+  PRBool mSupportsVideoTranscode;
+  PRBool mSupportsImageTranscode;
 
   sbStringArray mAudioExtensions;
   sbStringArray mVideoExtensions;

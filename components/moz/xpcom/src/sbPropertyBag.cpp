@@ -80,12 +80,14 @@ NS_INTERFACE_MAP_END
 nsresult
 sbPropertyBag::Init()
 {
-    mPropertyHash.Init();
+    // we can only assume that Init will fail only due to OOM.
+    if (!mPropertyHash.Init())
+        return NS_ERROR_OUT_OF_MEMORY;
     return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPropertyBag::HasKey(const nsAString& name, bool *aResult)
+sbPropertyBag::HasKey(const nsAString& name, PRBool *aResult)
 {
     *aResult = mPropertyHash.Get(name, nsnull);
 
@@ -103,7 +105,7 @@ sbPropertyBag::Get(const nsAString& name, nsIVariant* *_retval)
 NS_IMETHODIMP
 sbPropertyBag::GetProperty(const nsAString& name, nsIVariant* *_retval)
 {
-    bool isFound = mPropertyHash.Get(name, _retval);
+    PRBool isFound = mPropertyHash.Get(name, _retval);
     if (!isFound)
         return NS_ERROR_FAILURE;
 
@@ -115,7 +117,10 @@ sbPropertyBag::SetProperty(const nsAString& name, nsIVariant *value)
 {
     NS_ENSURE_ARG_POINTER(value);
 
-    mPropertyHash.Put(name, value);
+    PRBool success = mPropertyHash.Put(name, value);
+    if (!success)
+        return NS_ERROR_FAILURE;
+
     return NS_OK;
 }
 
@@ -125,7 +130,7 @@ sbPropertyBag::DeleteProperty(const nsAString& name)
     // is it too much to ask for ns*Hashtable to return
     // a boolean indicating whether RemoveEntry succeeded
     // or not?!?!
-    bool isFound = mPropertyHash.Get(name, nsnull);
+    PRBool isFound = mPropertyHash.Get(name, nsnull);
     if (!isFound)
         return NS_ERROR_FAILURE;
 
@@ -230,7 +235,7 @@ IMPL_GETSETPROPERTY_AS(Uint32, PRUint32)
 IMPL_GETSETPROPERTY_AS(Int64, PRInt64)
 IMPL_GETSETPROPERTY_AS(Uint64, PRUint64)
 IMPL_GETSETPROPERTY_AS(Double, double)
-IMPL_GETSETPROPERTY_AS(Bool, bool)
+IMPL_GETSETPROPERTY_AS(Bool, PRBool)
 
 
 NS_IMETHODIMP

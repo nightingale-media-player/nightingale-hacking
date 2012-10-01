@@ -62,7 +62,7 @@ struct nsDiscriminatedUnion
     PRUint64       mUint64Value;
     float          mFloatValue;
     double         mDoubleValue;
-    bool         mBoolValue;
+    PRBool         mBoolValue;
     char           mCharValue;
     PRUnichar      mWCharValue;
     nsIID          mIDValue;
@@ -100,9 +100,6 @@ struct nsDiscriminatedUnion
  * This class is threadsafe.
  */
 
-namespace mozilla {
-  class sbMozHackMutex;
-}
 class sbVariant : public nsIWritableVariant
 {
 public:
@@ -125,7 +122,7 @@ public:
   static nsresult ConvertToUint64(const nsDiscriminatedUnion& data, PRUint64 *_retval);
   static nsresult ConvertToFloat(const nsDiscriminatedUnion& data, float *_retval);
   static nsresult ConvertToDouble(const nsDiscriminatedUnion& data, double *_retval);
-  static nsresult ConvertToBool(const nsDiscriminatedUnion& data, bool *_retval);
+  static nsresult ConvertToBool(const nsDiscriminatedUnion& data, PRBool *_retval);
   static nsresult ConvertToChar(const nsDiscriminatedUnion& data, char *_retval);
   static nsresult ConvertToWChar(const nsDiscriminatedUnion& data, PRUnichar *_retval);
   static nsresult ConvertToID(const nsDiscriminatedUnion& data, nsID * _retval);
@@ -160,7 +157,7 @@ public:
   static nsresult SetFromUint64(nsDiscriminatedUnion* data, PRUint64 aValue);
   static nsresult SetFromFloat(nsDiscriminatedUnion* data, float aValue);
   static nsresult SetFromDouble(nsDiscriminatedUnion* data, double aValue);
-  static nsresult SetFromBool(nsDiscriminatedUnion* data, bool aValue);
+  static nsresult SetFromBool(nsDiscriminatedUnion* data, PRBool aValue);
   static nsresult SetFromChar(nsDiscriminatedUnion* data, char aValue);
   static nsresult SetFromWChar(nsDiscriminatedUnion* data, PRUnichar aValue);
   static nsresult SetFromID(nsDiscriminatedUnion* data, const nsID & aValue);
@@ -184,9 +181,9 @@ private:
 
 protected:
   nsDiscriminatedUnion mData;
-  mozilla::sbMozHackMutex* mDataLock;
+  PRLock*              mDataLock;
 
-  bool               mWritable;
+  PRBool               mWritable;
 };
 
 #define SONGBIRD_VARIANT_CID \

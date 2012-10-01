@@ -57,7 +57,7 @@
 //
 
 nsresult
-sbBaseIgnore::SetIgnoreListener(bool aIgnoreListener) {
+sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
   if (aIgnoreListener) {
     PR_AtomicIncrement(&mIgnoreListenerCounter);
   } else {
@@ -89,7 +89,7 @@ nsresult sbBaseIgnore::IgnoreMediaItem(sbIMediaItem * aItem) {
 /**
  * Returns PR_TRUE if the item is currently being ignored
  */
-bool sbBaseIgnore::MediaItemIgnored(sbIMediaItem * aItem) {
+PRBool sbBaseIgnore::MediaItemIgnored(sbIMediaItem * aItem) {
   NS_ENSURE_ARG_POINTER(aItem);
 
   nsString guid;
@@ -251,7 +251,7 @@ NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
                                          PRUint32 aIndex,
-                                         bool *aNoMoreForBatch)
+                                         PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -310,7 +310,7 @@ NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                  sbIMediaItem *aMediaItem,
                                                  PRUint32 aIndex,
-                                                 bool *aNoMoreForBatch)
+                                                 PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -325,7 +325,7 @@ NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                                 sbIMediaItem *aMediaItem,
                                                 PRUint32 aIndex,
-                                                bool *aNoMoreForBatch)
+                                                PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -364,8 +364,8 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
-                                           bool aExcludeLists,
-                                           bool* aNoMoreForBatch)
+                                           PRBool aExcludeLists,
+                                           PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -377,8 +377,8 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
 }
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                                 bool aExcludeLists,
-                                                 bool *_retval)
+                                                 PRBool aExcludeLists,
+                                                 PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -434,7 +434,7 @@ NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
                                            sbIPropertyArray* aProperties,
-                                           bool* aNoMoreForBatch)
+                                           PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -486,7 +486,7 @@ NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
                                          PRUint32 aFromIndex,
                                          PRUint32 aToIndex,
-                                         bool *aNoMoreForBatch)
+                                         PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -527,8 +527,8 @@ sbBaseDeviceLibraryListener::OnItemCopied(sbIMediaItem *aSourceItem,
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeCreateMediaItem(nsIURI *aContentUri,
                                                      sbIPropertyArray *aProperties,
-                                                     bool aAllowDuplicates,
-                                                     bool *_retval)
+                                                     PRBool aAllowDuplicates,
+                                                     PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aContentUri);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -539,7 +539,7 @@ sbBaseDeviceLibraryListener::OnBeforeCreateMediaItem(nsIURI *aContentUri,
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeCreateMediaList(const nsAString & aType,
                                                      sbIPropertyArray *aProperties,
-                                                     bool *_retval)
+                                                     PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
@@ -548,7 +548,7 @@ sbBaseDeviceLibraryListener::OnBeforeCreateMediaList(const nsAString & aType,
 
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeAdd(sbIMediaItem *aMediaItem,
-                                         bool *_retval)
+                                         PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -557,7 +557,7 @@ sbBaseDeviceLibraryListener::OnBeforeAdd(sbIMediaItem *aMediaItem,
 }
 
 NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeAddAll(sbIMediaList *aMediaList,
-                                                          bool *_retval)
+                                                          PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -566,7 +566,7 @@ NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeAddAll(sbIMediaList *aMediaLi
 }
 
 NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeAddSome(nsISimpleEnumerator *aMediaItems,
-                                                           bool *_retval)
+                                                           PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -574,7 +574,7 @@ NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeAddSome(nsISimpleEnumerator *
   return NS_OK;
 }
 
-NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeClear(bool *_retval)
+NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeClear(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
@@ -676,7 +676,7 @@ NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
                                            PRUint32 aIndex,
-                                           bool *_retval)
+                                           PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -715,7 +715,7 @@ NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                    sbIMediaItem *aMediaItem,
                                                    PRUint32 aIndex,
-                                                   bool *_retval)
+                                                   PRBool *_retval)
 {
   return NS_OK;
 }
@@ -724,7 +724,7 @@ NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                                   sbIMediaItem *aMediaItem,
                                                   PRUint32 aIndex,
-                                                  bool *_retval)
+                                                  PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -751,7 +751,7 @@ NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnItemUpdated(sbIMediaList *aMediaList,
                                              sbIMediaItem *aMediaItem,
                                              sbIPropertyArray *aProperties,
-                                             bool *_retval)
+                                             PRBool *_retval)
 {
   return NS_OK;
 }
@@ -760,7 +760,7 @@ NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
                                            PRUint32 aFromIndex,
                                            PRUint32 aToIndex,
-                                           bool *_retval)
+                                           PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
@@ -783,16 +783,16 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                                   bool aExcludeLists,
-                                                   bool *_retval)
+                                                   PRBool aExcludeLists,
+                                                   PRBool *_retval)
 {
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
-                                             bool aExcludeLists,
-                                             bool * /* aNoMoreForBatch */)
+                                             PRBool aExcludeLists,
+                                             PRBool * /* aNoMoreForBatch */)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 

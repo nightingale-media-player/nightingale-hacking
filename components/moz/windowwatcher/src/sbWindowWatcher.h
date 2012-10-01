@@ -40,7 +40,7 @@
 #include <nsCOMArray.h>
 #include <nsIDOMEventListener.h>
 #include <nsIDOMEventTarget.h>
-#include <nsIDOMWindow.h>
+#include <nsIDOMWindowInternal.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
 #include <nsIThreadManager.h>
@@ -58,10 +58,6 @@
  */
 
 class sbWindowWatcherEventListener;
-
-namespace mozilla {
-  class sbMozHackReentrantMonitor;
-}
 
 class sbWindowWatcher : public sbIWindowWatcher,
                         public nsIObserver,
@@ -146,9 +142,9 @@ private:
   nsCOMPtr<nsIWindowMediator>   mWindowMediator;
   nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIThreadManager>    mThreadManager;
-  bool                          mSentMainWinPresentedNotification;
-  mozilla::sbMozHackReentrantMonitor* mMonitor;
-  bool                          mIsShuttingDown;
+  PRBool                        mSentMainWinPresentedNotification;
+  PRMonitor*                    mMonitor;
+  PRBool                        mIsShuttingDown;
   nsCOMArray<nsIDOMWindow>      mWindowList;
 
   class WindowInfo
@@ -167,7 +163,7 @@ private:
     nsCOMPtr<nsIDOMEventTarget> eventTarget;
     nsRefPtr<sbWindowWatcherEventListener>
                                 eventListener;
-    bool                      isReady;
+    PRBool                      isReady;
   };
   nsClassHashtable<nsISupportsHashKey, WindowInfo>
                                 mWindowInfoTable;
@@ -178,7 +174,7 @@ private:
     nsCOMPtr<sbICallWithWindowCallback> callback;
   } CallWithWindowInfo;
   nsTArray<CallWithWindowInfo>  mCallWithWindowList;
-  bool                        mServicingCallWithWindowList;
+  PRBool                        mServicingCallWithWindowList;
 
 
   //
@@ -213,11 +209,7 @@ private:
 
   nsresult InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow);
 
-  nsresult
-  CallWithWindow_Proxy(const nsAString&           aWindowType,
-                                  sbICallWithWindowCallback* aCallback,
-                                  bool                     aWait);
-
+  nsresult GetProxiedWindowWatcher(sbIWindowWatcher** aWindowWatcher);
 };
 
 
@@ -386,9 +378,9 @@ private:
   //
 
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
-  mozilla::sbMozHackReentrantMonitor*    mReadyMonitor;
+  PRMonitor*                    mReadyMonitor;
   nsCOMPtr<nsIDOMWindow>        mWindow;
-  bool                        mReady;
+  PRBool                        mReady;
 
   //
   // Internal wait for window services.
@@ -397,7 +389,6 @@ private:
   nsresult Initialize();
 
   sbWindowWatcherWaitForWindow();
-
 };
 
 

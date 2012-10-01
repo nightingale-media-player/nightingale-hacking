@@ -61,11 +61,11 @@ protected:
 
     PRInt32 IndexOfObject(nsISupports* aObject) const;
 
-    bool EnumerateForwards(nsVoidArrayEnumFunc aFunc, void* aData) {
+    PRBool EnumerateForwards(nsVoidArrayEnumFunc aFunc, void* aData) {
         return mArray.EnumerateForwards(aFunc, aData);
     }
     
-    bool EnumerateBackwards(nsVoidArrayEnumFunc aFunc, void* aData) {
+    PRBool EnumerateBackwards(nsVoidArrayEnumFunc aFunc, void* aData) {
         return mArray.EnumerateBackwards(aFunc, aData);
     }
     
@@ -77,17 +77,17 @@ protected:
     // avoid inline bodies, so that the compiler doesn't inline them
     // all over the place
     void Clear();
-    bool InsertObjectAt(nsISupports* aObject, PRInt32 aIndex);
-    bool InsertObjectsAt(const sbCOMArray_base& aObjects, PRInt32 aIndex);
-    bool ReplaceObjectAt(nsISupports* aObject, PRInt32 aIndex);
-    bool AppendObject(nsISupports *aObject) {
+    PRBool InsertObjectAt(nsISupports* aObject, PRInt32 aIndex);
+    PRBool InsertObjectsAt(const sbCOMArray_base& aObjects, PRInt32 aIndex);
+    PRBool ReplaceObjectAt(nsISupports* aObject, PRInt32 aIndex);
+    PRBool AppendObject(nsISupports *aObject) {
         return InsertObjectAt(aObject, Count());
     }
-    bool AppendObjects(const sbCOMArray_base& aObjects) {
+    PRBool AppendObjects(const sbCOMArray_base& aObjects) {
         return InsertObjectsAt(aObjects, Count());
     }
-    bool RemoveObject(nsISupports *aObject);
-    bool RemoveObjectAt(PRInt32 aIndex);
+    PRBool RemoveObject(nsISupports *aObject);
+    PRBool RemoveObjectAt(PRInt32 aIndex);
 
 public:
     // override nsVoidArray stuff so that they can be accessed by
@@ -110,7 +110,7 @@ public:
 
     // Ensures there is enough space to store a total of aCapacity objects.
     // This method never deletes any objects.
-    bool SetCapacity(PRUint32 aCapacity) {
+    PRBool SetCapacity(PRUint32 aCapacity) {
       return aCapacity > 0 ? mArray.SizeTo(static_cast<PRInt32>(aCapacity))
                            : PR_TRUE;
     }

@@ -34,7 +34,7 @@
 #include <sbTArrayStringEnumerator.h>
 
 static inline
-bool IsValidRadix(PRUint32 aRadix)
+PRBool IsValidRadix(PRUint32 aRadix)
 {
   if(aRadix == 8 ||
      aRadix == 10 ||
@@ -223,7 +223,7 @@ sbNumberPropertyInfo::InitializeOperators()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
+NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 

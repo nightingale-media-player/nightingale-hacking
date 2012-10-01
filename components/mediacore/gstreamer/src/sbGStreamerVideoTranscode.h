@@ -25,6 +25,7 @@
 #ifndef _SB_GSTREAMER_VIDEO_TRANSCODE_H_
 #define _SB_GSTREAMER_VIDEO_TRANSCODE_H_
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsITimer.h>
@@ -239,8 +240,8 @@ private:
   nsCOMArray<sbIJobProgressListener>      mProgressListeners;
   nsCOMPtr<nsITimer>                      mProgressTimer;
 
-  bool                                  mPipelineBuilt;
-  bool                                  mWaitingForCaps;
+  PRBool                                  mPipelineBuilt;
+  PRBool                                  mWaitingForCaps;
 
   GstPad                                 *mAudioSrc;
   GstPad                                 *mVideoSrc;
@@ -248,9 +249,9 @@ private:
   GstPad                                 *mVideoQueueSrc;
 
   // Booleans to track whether we'll use audio/video/muxer
-  bool                                  mUseAudio;
-  bool                                  mUseVideo;
-  bool                                  mUseMuxer;
+  PRBool                                  mUseAudio;
+  PRBool                                  mUseVideo;
+  PRBool                                  mUseMuxer;
 
   // Lock to prevent trying to build the pipeline concurrently from multiple
   // threads.

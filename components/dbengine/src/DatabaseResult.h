@@ -62,7 +62,7 @@ class CDatabaseResult : public sbIDatabaseResult
 friend class CDatabaseQuery;
 friend class QueryProcessorThread;
 public:
-  explicit CDatabaseResult(bool aRequiresLocking = PR_FALSE);
+  explicit CDatabaseResult(PRBool aRequiresLocking = PR_FALSE);
   virtual ~CDatabaseResult();
 
   NS_DECL_ISUPPORTS

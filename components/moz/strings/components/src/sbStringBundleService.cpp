@@ -371,7 +371,7 @@ sbStringBundle::GetStringFromID(PRInt32   aID,
 
   // Get the string from the bundle list.
   nsAutoString bundleString;
-  bool       bundleAvailable = PR_FALSE;
+  PRBool       bundleAvailable = PR_FALSE;
   PRUint32     bundleCount = mStringBundleList.Count();
   for (PRUint32 i = 0; i < bundleCount; i++) {
     nsCOMPtr<nsIStringBundle> stringBundle = mStringBundleList[i];
@@ -414,7 +414,7 @@ sbStringBundle::GetStringFromName(const PRUnichar *aName,
 
   // Get the string from the bundle list.
   nsAutoString bundleString;
-  bool       bundleAvailable = PR_FALSE;
+  PRBool       bundleAvailable = PR_FALSE;
   PRUint32     bundleCount = mStringBundleList.Count();
   for (PRUint32 i = 0; i < bundleCount; i++) {
     nsCOMPtr<nsIStringBundle> stringBundle = mStringBundleList[i];
@@ -460,7 +460,7 @@ sbStringBundle::FormatStringFromID(PRInt32         aID,
 
   // Get the string from the bundle list.
   nsAutoString bundleString;
-  bool       bundleAvailable = PR_FALSE;
+  PRBool       bundleAvailable = PR_FALSE;
   PRUint32     bundleCount = mStringBundleList.Count();
   for (PRUint32 i = 0; i < bundleCount; i++) {
     nsCOMPtr<nsIStringBundle> stringBundle = mStringBundleList[i];
@@ -510,7 +510,7 @@ sbStringBundle::FormatStringFromName(const PRUnichar *aName,
 
   // Get the string from the bundle list.
   nsAutoString bundleString;
-  bool       bundleAvailable = PR_FALSE;
+  PRBool       bundleAvailable = PR_FALSE;
   PRUint32     bundleCount = mStringBundleList.Count();
   for (PRUint32 i = 0; i < bundleCount; i++) {
     nsCOMPtr<nsIStringBundle> stringBundle = mStringBundleList[i];

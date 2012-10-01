@@ -65,7 +65,7 @@ interface sbIMediaPage : nsISupports
    * \brief Should be true if the media page is the only allowed view for
    *        the data.
    */
-  readonly attribute boolean isOnlyView;
+  readonly attribute PRBool isOnlyView;
 
   /**
    * \brief Tell the page to make the MediaItem at the given index visible and highlighted.
@@ -73,7 +73,7 @@ interface sbIMediaPage : nsISupports
    *        MediaItems may appear multiple times in a list)
    * \return True if the page is able to show the corresponding item
    */
-  boolean highlightItem(in unsigned long aViewIndex);
+  PRBool highlightItem(in unsigned long aViewIndex);
 
   /** 
    * \brief Called when something is dragged over the tabbrowser tab for this page
@@ -81,7 +81,7 @@ interface sbIMediaPage : nsISupports
    * \param aSession The items to be dropped  
    * \return True if the drop can proceed
    */
-  boolean canDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+  PRBool canDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
   
   /** 
    * \brief Called when something is dropped on the tabbrowser tab for this page
@@ -89,7 +89,7 @@ interface sbIMediaPage : nsISupports
    * \param aSession The items to be dropped  
    * \return True if the drop succeeded
    */
-  boolean onDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+  PRBool onDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
 };
 
 

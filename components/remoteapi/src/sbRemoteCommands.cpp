@@ -294,7 +294,7 @@ sbRemoteCommands::SetContext( sbIPlaylistCommandsContext *aContext)
 }
 
 NS_IMETHODIMP
-sbRemoteCommands::GetVisible( const nsAString &aHost, bool *_retval)
+sbRemoteCommands::GetVisible( const nsAString &aHost, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -418,7 +418,7 @@ NS_IMETHODIMP
 sbRemoteCommands::GetCommandEnabled( const nsAString &aSubMenu,
                                      PRInt32 aIndex,
                                      const nsAString &aHost,
-                                     bool *_retval)
+                                     PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -429,7 +429,7 @@ NS_IMETHODIMP
 sbRemoteCommands::GetCommandVisible( const nsAString &aSubMenu,
                                      PRInt32 aIndex,
                                      const nsAString &aHost,
-                                     bool *_retval)
+                                     PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -448,7 +448,7 @@ NS_IMETHODIMP
 sbRemoteCommands::GetCommandFlag( const nsAString &aSubMenu,
                                   PRInt32 aIndex,
                                   const nsAString &aHost,
-                                  bool *_retval)
+                                  PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -499,7 +499,7 @@ NS_IMETHODIMP
 sbRemoteCommands::GetCommandShortcutLocal( const nsAString &aSubMenu,
                                            PRInt32 aIndex,
                                            const nsAString &aHost,
-                                           bool *_retval)
+                                           PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;

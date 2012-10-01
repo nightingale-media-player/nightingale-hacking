@@ -171,7 +171,7 @@ class sbTagLibChannelFileIOManager : public sbITagLibChannelFileIOManager
 
         nsCOMPtr<sbISeekableChannel>
                                     pSeekableChannel;
-        bool                      restart;
+        PRBool                      restart;
     };
 
 

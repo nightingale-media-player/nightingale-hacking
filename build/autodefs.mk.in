@@ -108,7 +108,7 @@ HAVE_FLUENDO_MP3 = @HAVE_FLUENDO_MP3@
 #
 
 DEPS_DIR = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
-XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-15.0.1/@SB_CONFIGURATION@
+XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-1.9.2/@SB_CONFIGURATION@
 SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 
 #
@@ -123,7 +123,7 @@ SB_MACOSX_SDK_10_6 = $(SB_MACOSX_SDK_10_5:%.5.sdk=%.6.sdk)
 SB_MACOSX_SDK_10_7 = $(SB_MACOSX_SDK_10_6:%.6.sdk=%.7.sdk)
 SB_MACOSX_SDK = @SB_MACOSX_SDK@
 
-MOZSDK_DIR = $(DEPS_DIR)/mozilla-15.0.1/@SB_CONFIGURATION@
+MOZSDK_DIR = $(DEPS_DIR)/mozilla-1.9.2/@SB_CONFIGURATION@
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
 MOZSDK_LIB_DIR = $(MOZSDK_DIR)/lib
 MOZSDK_BIN_DIR = $(MOZSDK_DIR)/bin
@@ -251,10 +251,8 @@ TOUCH = @TOUCH@
 UNZIP = @UNZIP@
 ZIP = @ZIP@
 
-XPIDL = $(PYTHON) $(MOZSDK_DIR)/sdk/bin/xpidl.py
-XPIDL_HEADERS_CMD = $(PYTHON) $(MOZSDK_DIR)/sdk/bin/header.py
-XPIDL_TYPELIBS_CMD = $(PYTHON) $(MOZSDK_DIR)/sdk/bin/typelib.py
-XPTLINK = $(PYTHON) $(MOZSDK_DIR)/sdk/bin/xpt.py link
+XPIDL = $(MOZSDK_DIR)/bin/xpidl
+XPTLINK = $(MOZSDK_DIR)/bin/xpt_link
 MAR = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 

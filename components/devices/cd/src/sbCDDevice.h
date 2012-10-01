@@ -169,7 +169,7 @@ public:
                       nsIPropertyBag *aProperties,
                       sbCDDevice **aOutCDDevice);
 
-  virtual bool IsRequestAborted();
+  virtual PRBool IsRequestAborted();
 private:
   /**
    * Protects the mProperites member and updating it's contents
@@ -240,8 +240,8 @@ private:
   /**
    * Snapshotted values of the CD Rip preferences
    */
-  bool mPrefAutoEject;
-  bool mPrefNotifySound;
+  PRBool mPrefAutoEject;
+  PRBool mPrefNotifySound;
 
   /* Initialize request handler */
   void InitRequestHandler();
@@ -353,7 +353,7 @@ private:
    */
   nsresult ShowMetadataLookupDialog(const char *aLookupDialogURI,
                                     nsISimpleEnumerator *aLookupResultsEnum,
-                                    bool aShouldReportEvents);
+                                    PRBool aShouldReportEvents);
 
   /**
    * This method performs any cleanup work and informs the user if there were

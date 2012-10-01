@@ -48,7 +48,7 @@
 static nsresult
 SB_IsFromLibName( sbIMediaItem *aMediaItem,
                   const nsAString &aLibName,
-                  bool *aIsFromLib )
+                  PRBool *aIsFromLib )
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aIsFromLib);
@@ -96,12 +96,12 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Find out if this is a default or site library
-  bool isMain;
+  PRBool isMain;
   nsCOMPtr<sbIMediaItem> item( do_QueryInterface( aMediaList, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
   rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isMain );
   NS_ENSURE_SUCCESS( rv, rv );
-  bool isWeb;
+  PRBool isWeb;
   rv = SB_IsFromLibName( item, NS_LITERAL_STRING("web"), &isWeb );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -156,10 +156,10 @@ SB_WrapMediaItem( sbRemotePlayer *aRemotePlayer,
   }
   else {
     // Find out if this is a default or site library
-    bool isMain;
+    PRBool isMain;
     rv = SB_IsFromLibName( aMediaItem, NS_LITERAL_STRING("main"), &isMain );
     NS_ENSURE_SUCCESS( rv, rv );
-    bool isWeb;
+    PRBool isWeb;
     rv = SB_IsFromLibName( aMediaItem, NS_LITERAL_STRING("web"), &isWeb );
     NS_ENSURE_SUCCESS( rv, rv );
 
@@ -231,10 +231,10 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
   NS_ENSURE_SUCCESS( rv, rv );
 
   // Find out if this is a default or site library
-  bool isMain;
+  PRBool isMain;
   rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isMain );
   NS_ENSURE_SUCCESS( rv, rv );
-  bool isWeb;
+  PRBool isWeb;
   rv = SB_IsFromLibName( item, NS_LITERAL_STRING("web"), &isWeb );
   NS_ENSURE_SUCCESS( rv, rv );
 

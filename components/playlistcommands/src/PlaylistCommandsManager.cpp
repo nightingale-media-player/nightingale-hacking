@@ -298,7 +298,7 @@ LibraryPlaylistCommandsListener::~LibraryPlaylistCommandsListener()
  * unregistration is performed is determined by aIsRegistering */
 nsresult
 LibraryPlaylistCommandsListener::HandleSavedLibraryCommands
-                                (bool                     aIsRegistering,
+                                (PRBool                     aIsRegistering,
                                  libraryGuidToCommandsMap_t *aSavedCommandsMap,
                                  commandobjmap_t            *aRegistrationMap,
                                  const nsAString            &aLibraryGUID,
@@ -387,7 +387,7 @@ NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnItemAdded(sbIMediaList *aMediaList,
                                              sbIMediaItem *aMediaItem,
                                              PRUint32 aIndex,
-                                             bool *_retval)
+                                             PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -437,7 +437,7 @@ NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                      sbIMediaItem *aMediaItem,
                                                      PRUint32 aIndex,
-                                                     bool *_retval)
+                                                     PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -490,33 +490,33 @@ NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                                     sbIMediaItem *aMediaItem,
                                                     PRUint32 aIndex,
-                                                    bool *_retval)
+                                                    PRBool *_retval)
 { return NS_OK; }
 
 NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnItemUpdated(sbIMediaList *aMediaList,
                                                sbIMediaItem *aMediaItem,
                                                sbIPropertyArray *aProperties,
-                                               bool *aRetVal)
+                                               PRBool *aRetVal)
 { return NS_OK; }
 
 NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnItemMoved(sbIMediaList *aMediaList,
                                              PRUint32 aFromIndex,
                                              PRUint32 aToIndex,
-                                             bool *aRetVal)
+                                             PRBool *aRetVal)
 { return NS_OK; }
 
 NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                                     bool aExcludeLists,
-                                                     bool *aRetVal)
+                                                     PRBool aExcludeLists,
+                                                     PRBool *aRetVal)
 { return NS_OK; }
 
 NS_IMETHODIMP
 LibraryPlaylistCommandsListener::OnListCleared(sbIMediaList *aMediaList,
-                                               bool aExcludeLists,
-                                               bool *aRetVal)
+                                               PRBool aExcludeLists,
+                                               PRBool *aRetVal)
 { return NS_OK; }
 
 NS_IMETHODIMP
@@ -568,7 +568,7 @@ CPlaylistCommandsManager::GetAllMediaListsForLibrary
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
 CPlaylistCommandsManager::RegisterPlaylistCommandsForLibrary
-                          (bool              aTargetServicePane,
+                          (PRBool              aTargetServicePane,
                            sbILibrary          *aLibrary,
                            sbIPlaylistCommands *aCommandObj)
 {
@@ -656,7 +656,7 @@ CPlaylistCommandsManager::RegisterPlaylistCommandsForLibrary
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
 CPlaylistCommandsManager::UnregisterPlaylistCommandsForLibrary
-                          (bool              aTargetServicePane,
+                          (PRBool              aTargetServicePane,
                            sbILibrary          *aLibrary,
                            sbIPlaylistCommands *aCommandObj)
 {
@@ -904,7 +904,7 @@ CPlaylistCommandsManager::AddListenerForMediaList(sbIMediaList *aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // for each root command that we found, add the listener
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(cmdEnum->HasMoreElements(&hasMore)) && hasMore)
   {
     nsCOMPtr<sbIPlaylistCommands> rootCommand;
@@ -934,7 +934,7 @@ CPlaylistCommandsManager::RemoveListenerFromRootCommands
   NS_ENSURE_SUCCESS(rv, rv);
 
   // for each root command found, remove the param aListener
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(rootCmdEnum->HasMoreElements(&hasMore)) && hasMore)
   {
     nsCOMPtr<sbIPlaylistCommands> rootCommand;

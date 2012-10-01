@@ -26,6 +26,7 @@
 
 #include <sbIDatabaseResult.h>
 
+#include <nsAutoLock.h>
 #include <nsICategoryManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
@@ -109,7 +110,7 @@ protected:
 
   static nsresult ContainsConcertList(const nsAString & aID,
                                       const sbConcertInfoList & aConcertList,
-                                      bool *aHasEntry);
+                                      PRBool *aHasEntry);
 
   sbConcertInfoList     mConcertInfoList;
   sbConcertInfoListIter mConcertInfoListIter;
@@ -145,7 +146,7 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // If this record has already been recorded, just continue.
-    bool hasRecord = PR_FALSE;
+    PRBool hasRecord = PR_FALSE;
     rv = ContainsConcertList(id, mConcertInfoList, &hasRecord);
     if (NS_FAILED(rv) || hasRecord) {
       continue;
@@ -275,7 +276,7 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
 sbSongkickResultEnumerator::ContainsConcertList(
     const nsAString & aID,
     const sbConcertInfoList & aConcertList,
-    bool *aHasEntry)
+    PRBool *aHasEntry)
 {
   NS_ENSURE_ARG_POINTER(aHasEntry);
   *aHasEntry = PR_FALSE;
@@ -293,7 +294,7 @@ sbSongkickResultEnumerator::ContainsConcertList(
 }
 
 NS_IMETHODIMP
-sbSongkickResultEnumerator::HasMoreElements(bool *aHasMore)
+sbSongkickResultEnumerator::HasMoreElements(PRBool *aHasMore)
 {
   NS_ENSURE_ARG_POINTER(aHasMore);
   *aHasMore = mConcertInfoListIter != mConcertInfoList.end();
@@ -338,7 +339,7 @@ protected:
   nsresult LoadLocationCityInfo();
 
   // Shared members:
-  bool                        mGotLocationInfo;
+  PRBool                        mGotLocationInfo;
   nsCOMPtr<nsIMutableArray>     mCountriesProps;
   nsCOMPtr<nsIMutableArray>     mStateProps;
   nsCOMPtr<nsIMutableArray>     mCityProps;
@@ -908,7 +909,7 @@ sbSongkickDBService::GetDatabaseQuery(sbIDatabaseQuery **aOutDBQuery)
   rv = dbFile->Append(NS_LITERAL_STRING("concerts.db"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool exists = PR_FALSE;
+  PRBool exists = PR_FALSE;
   rv = dbFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -969,7 +970,7 @@ sbSongkickDBService::RegisterSelf(nsIComponentManager *aCompMgr,
 // sbPISongkickDBService
 
 NS_IMETHODIMP
-sbSongkickDBService::GetHasLocationInfo(bool *aOutHasLocationInfo)
+sbSongkickDBService::GetHasLocationInfo(PRBool *aOutHasLocationInfo)
 {
   NS_ENSURE_ARG_POINTER(aOutHasLocationInfo);
   NS_ENSURE_TRUE(mDBInfo, NS_ERROR_UNEXPECTED);
@@ -1016,7 +1017,7 @@ sbSongkickDBService::GetLocationStates(const nsAString & aCountry,
   rv = mDBInfo->mStateProps->Enumerate(getter_AddRefs(statesEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while (NS_SUCCEEDED(statesEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> curItem;
     rv = statesEnum->GetNext(getter_AddRefs(curItem));
@@ -1058,7 +1059,7 @@ sbSongkickDBService::GetLocationCities(const nsAString & aState,
   rv = mDBInfo->mCityProps->Enumerate(getter_AddRefs(cityEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while (NS_SUCCEEDED(cityEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> curItem;
     rv = cityEnum->GetNext(getter_AddRefs(curItem));
@@ -1086,7 +1087,7 @@ sbSongkickDBService::GetLocationCities(const nsAString & aState,
 
 NS_IMETHODIMP
 sbSongkickDBService::StartAristConcertLookup(
-    bool aFilter,
+    PRBool aFilter,
     sbISongkickEnumeratorCallback *aCallback)
 {
   NS_ENSURE_ARG_POINTER(aCallback);
@@ -1120,7 +1121,7 @@ sbSongkickDBService::StartAristConcertLookup(
 NS_IMETHODIMP
 sbSongkickDBService::StartConcertLookup(
     const nsAString & aSort,
-    bool aFilter,
+    PRBool aFilter,
     sbISongkickEnumeratorCallback *aCallback)
 {
   NS_ENSURE_ARG_POINTER(aCallback);
@@ -1166,8 +1167,8 @@ sbSongkickDBService::StartConcertLookup(
 
 NS_IMETHODIMP
 sbSongkickDBService::StartConcertCountLookup(
-    bool aFilter,
-    bool aGroupByArtist,
+    PRBool aFilter,
+    PRBool aGroupByArtist,
     const nsAString & aDateProperty,
     const nsAString & aCeilingProperty,
     sbISongkickConcertCountCallback *aCallback)

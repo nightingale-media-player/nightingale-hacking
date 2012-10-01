@@ -44,7 +44,7 @@ public:
   sbLinuxFileSystemWatcher();
   virtual ~sbLinuxFileSystemWatcher();
 
-  NS_IMETHOD StopWatching(bool aShouldSaveSession);
+  NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   nsresult OnInotifyEvent();
   

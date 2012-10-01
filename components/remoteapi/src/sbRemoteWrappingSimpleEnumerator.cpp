@@ -101,7 +101,7 @@ sbRemoteWrappingSimpleEnumerator::GetRemotePlayer(sbIRemotePlayer * *aRemotePlay
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::HasMoreElements(bool* _retval)
+sbRemoteWrappingSimpleEnumerator::HasMoreElements(PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 

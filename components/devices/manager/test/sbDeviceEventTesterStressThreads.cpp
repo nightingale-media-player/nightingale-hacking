@@ -27,10 +27,11 @@
 
 #include "sbDeviceEventTesterStressThreads.h"
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
@@ -91,7 +92,7 @@ NS_IMETHODIMP sbDeviceEventTesterStressThreads::Run()
   // and wait for them
   while (mThreads.Count()) {
     nsCOMPtr<nsIThread> thread = mThreads[0];
-    bool succeeded = mThreads.RemoveObjectAt(0);
+    PRBool succeeded = mThreads.RemoveObjectAt(0);
     NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
     rv = thread->Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);

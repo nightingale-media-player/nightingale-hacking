@@ -68,9 +68,9 @@ public:
 /** nsIPrivateDOMEvent - this is non-XPCOM so no forward macro **/
   NS_IMETHOD DuplicatePrivateData();
   NS_IMETHOD SetTarget(nsIDOMEventTarget* aTarget);
-  NS_IMETHOD_(bool) IsDispatchStopped();
+  NS_IMETHOD_(PRBool) IsDispatchStopped();
   NS_IMETHOD_(nsEvent*) GetInternalNSEvent();
-  NS_IMETHOD SetTrusted(bool aTrusted);
+  NS_IMETHOD SetTrusted(PRBool aTrusted);
 
 public:
   sbRemoteMediaItemStatusEvent( sbRemotePlayer* aRemotePlayer );

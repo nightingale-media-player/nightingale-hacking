@@ -164,7 +164,7 @@ private:
   nsCOMPtr<sbIAlbumArtFetcherSet>          mFetcherSet;
 
   // sbIAlbumArtScanner variables
-  bool                                     mUpdateArtwork;
+  PRBool                                   mUpdateArtwork;
 
   // sbIJobProgress variables
   PRUint16                                 mStatus;
@@ -180,7 +180,7 @@ private:
   nsAutoString                             mCurrentAlbumName;
 
   // Flag to indicate when we are ready to process the next album
-  bool                                     mProcessNextAlbum;
+  PRBool                                   mProcessNextAlbum;
 
   // List of items to scan that make up an album
   nsCOMPtr<nsIMutableArray>                mCurrentAlbumItemList;

@@ -91,8 +91,8 @@ public:
   nsresult Init(const nsAString &aDeviceIdentifier,
                 sbIDeviceBase* aDevice);
 
-  nsresult SetIgnoreListener(bool aIgnoreListener);
-  nsresult SetManagePlaylists(bool aManagePlaylists);
+  nsresult SetIgnoreListener(PRBool aIgnoreListener);
+  nsresult SetManagePlaylists(PRBool aManagePlaylists);
 
 protected:
   static PLDHashOperator PR_CALLBACK
@@ -104,8 +104,8 @@ protected:
   sbIDeviceBase* mDevice;
   nsString mDeviceIdentifier;
 
-  bool mIgnoreListener;
-  bool mManagePlaylists;
+  PRBool mIgnoreListener;
+  PRBool mManagePlaylists;
 
   typedef nsDataHashtable<nsISupportsHashKey, PRUint32> sbRemovedItemIndexes;
   nsClassHashtable<nsISupportsHashKey, sbRemovedItemIndexes> mBeforeRemoveIndexes;
@@ -306,7 +306,7 @@ public:
   nsresult ClearTransferQueue(const nsAString &aDeviceIdentifier);
 
   nsresult IsTransferQueueEmpty(const nsAString &aDeviceIdentifier, 
-                                bool &aEmpty);
+                                PRBool &aEmpty);
 
   /**
    *

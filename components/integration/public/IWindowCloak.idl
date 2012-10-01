@@ -66,5 +66,5 @@ interface sbIWindowCloak : nsISupports
    * \param aDOMWindow The xul window to test
    * \sa cloak
    */
-  boolean isCloaked(in nsIDOMWindow aDOMWindow);
+  PRBool isCloaked(in nsIDOMWindow aDOMWindow);
 };

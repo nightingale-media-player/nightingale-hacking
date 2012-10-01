@@ -108,7 +108,7 @@ NS_IMETHODIMP sbMetadataChannel::Close()
 {
   if(m_Channel)
   {
-    bool pendingRequest = PR_FALSE;
+    PRBool pendingRequest = PR_FALSE;
     m_Channel->IsPending(&pendingRequest);
     if(pendingRequest)
       m_Channel->Cancel(NS_ERROR_ABORT);
@@ -319,8 +319,8 @@ NS_IMETHODIMP sbMetadataChannel::ReadInt64(PRInt64 *_retval)
   return NS_OK;
 }
 
-/* bool GetSeekable (); */
-NS_IMETHODIMP sbMetadataChannel::GetSeekable(bool *_retval)
+/* PRBool GetSeekable (); */
+NS_IMETHODIMP sbMetadataChannel::GetSeekable(PRBool *_retval)
 {
   if ( ! _retval )
     return NS_ERROR_NULL_POINTER;
@@ -330,8 +330,8 @@ NS_IMETHODIMP sbMetadataChannel::GetSeekable(bool *_retval)
   return NS_OK;
 }
 
-/* bool GetSeekable (); */
-NS_IMETHODIMP sbMetadataChannel::GetCompleted(bool *_retval)
+/* PRBool GetSeekable (); */
+NS_IMETHODIMP sbMetadataChannel::GetCompleted(PRBool *_retval)
 {
   if ( ! _retval )
     return NS_ERROR_NULL_POINTER;
@@ -375,7 +375,7 @@ sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
     if ( handler.get() )
     {
       handler->OnChannelData( this );
-      bool complete = PR_FALSE;
+      PRBool complete = PR_FALSE;
       nsresult rv = handler->GetCompleted( &complete );
       if ( NS_FAILED( rv ) || complete )
       {

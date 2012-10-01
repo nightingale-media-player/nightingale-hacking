@@ -48,7 +48,7 @@
 #include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsIDOMEventListener.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIIOService.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsIWeakReference.h>
@@ -114,23 +114,23 @@ public:
   static nsresult DispatchEvent( nsIDOMDocument *aDocument,
                                  const nsAString &aClass,
                                  const nsAString &aType,
-                                 bool aIsTrusted );
+                                 PRBool aIsTrusted );
   static nsresult DispatchSecurityEvent( nsIDOMDocument *aDoc,
                                          sbIRemotePlayer *aPlayer,
                                          const nsAString &aClass,
                                          const nsAString &aType,
                                          const nsAString &aCategoryID,
-                                         bool aHasAccess,
-                                         bool aIsTrusted);
+                                         PRBool aHasAccess,
+                                         PRBool aIsTrusted);
 
-  bool IsPrivileged();
+  PRBool IsPrivileged();
 
   static nsresult GetJSScopeNameFromScope( const nsACString &aScopeName,
                                            nsAString &aJSScopeName );
 
   sbRemoteNotificationManager* GetNotificationManager();
 
-  static bool GetUserApprovalForHost( nsIURI *aURI,
+  static PRBool GetUserApprovalForHost( nsIURI *aURI,
                                         const nsAString &aTitleKey,
                                         const nsAString &aMessageKey,
                                         const char* aScopedName = nsnull );
@@ -149,7 +149,7 @@ protected:
   // Helper Methods
   nsresult InitInternal(nsPIDOMWindow* aWindow);
   nsresult InitRemoteWebPlaylist();
-  nsresult RegisterCommands( bool aUseDefaultCommands );
+  nsresult RegisterCommands( PRBool aUseDefaultCommands );
   nsresult UnregisterCommands();
   nsresult ConfirmPlaybackControl();
   nsresult GetBrowser( nsIDOMElement** aElement );
@@ -161,8 +161,8 @@ protected:
                            const nsAString& aDisplayName,
                            const nsAString& aButtonLabel,
                            PRInt32 aTimeType,
-                           bool aReadonly,
-                           bool aUserViewable,
+                           PRBool aReadonly,
+                           PRBool aUserViewable,
                            PRUint32 aNullSort );
 
   // Event handlers for mediacore 
@@ -176,9 +176,9 @@ protected:
   nsresult OnViewChange(sbIMediacoreEvent *aEvent);
 
   // Data members
-  bool mInitialized;
-  bool mUseDefaultCommands;
-  bool mPrivileged;
+  PRBool mInitialized;
+  PRBool mUseDefaultCommands;
+  PRBool mPrivileged;
   nsCOMPtr<nsIWeakReference> mMM;
   nsCOMPtr<nsIIOService> mIOService;
 

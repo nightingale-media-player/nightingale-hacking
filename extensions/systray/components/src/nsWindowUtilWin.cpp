@@ -156,7 +156,7 @@ nsWindowUtil::Minimize()
 
 /* readonly attribute boolean hidden; */
 NS_IMETHODIMP
-nsWindowUtil::GetHidden(bool* _retval)
+nsWindowUtil::GetHidden(PRBool* _retval)
 {
   NS_ENSURE_STATE(mWnd);
 
@@ -300,9 +300,9 @@ nsWindowUtil::WindowProc(HWND hwnd,
     }
   }
   
-  bool ctrlArg = PR_FALSE;
-  bool altArg = PR_FALSE;
-  bool shiftArg = PR_FALSE;
+  PRBool ctrlArg = PR_FALSE;
+  PRBool altArg = PR_FALSE;
+  PRBool shiftArg = PR_FALSE;
 
   if (handled) {
     // check modifier key states
@@ -314,7 +314,7 @@ nsWindowUtil::WindowProc(HWND hwnd,
       shiftArg = PR_TRUE;
     
     // dispatch the event
-    bool ret = TRUE;
+    PRBool ret = TRUE;
     nsresult rv;
     
     nsCOMPtr<nsIDOMEventTarget> eventTarget(do_QueryInterface(self->mDOMWindow, &rv));

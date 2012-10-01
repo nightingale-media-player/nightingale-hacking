@@ -59,7 +59,7 @@ private:
   nsCOMPtr<sbIMediaList> mList;
   PRTime mTimestamp;
   PRInt64 mCurrentProgress;
-  bool mNewBatch;
+  PRBool mNewBatch;
   
   nsresult GetDataRemote(nsIProxyObjectManager* aProxyObjectManager,
                          const nsAString& aDataRemoteName,

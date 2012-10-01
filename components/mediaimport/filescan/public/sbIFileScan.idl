@@ -140,7 +140,7 @@ interface sbIFileScanQuery : nsISupports
    * \param bRecurse If true, scan subdirectories
    * \sa setDirectory, getDirectory, getRecurse
    */
-  void setRecurse(in boolean bRecurse); /**/
+  void setRecurse(in PRBool bRecurse); /**/
 
   /**
    * \brief Whether or not the scan will run recursively
@@ -148,7 +148,7 @@ interface sbIFileScanQuery : nsISupports
    * \return If true, scan subdirectories
    * \sa setDirectory, getDirectory, setRecurse
    */
-  boolean getRecurse(); /**/
+  PRBool getRecurse(); /**/
 
   void addFileExtension(in AString strExtension);
 
@@ -225,12 +225,12 @@ interface sbIFileScanQuery : nsISupports
    * \return True, if the scan is executing
    * \sa sbIDatabaseQuery
    */
-  boolean isScanning();
+  PRBool isScanning();
 
   /**
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
-  void setIsScanning(in boolean bIsScanning);
+  void setIsScanning(in PRBool bIsScanning);
 
   /**
    * \brief Returns the most recent file found by the scan
@@ -273,7 +273,7 @@ interface sbIFileScanQuery : nsISupports
   /**
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
-  boolean isCancelled();
+  PRBool isCancelled();
 
   /**
    * If true, URLs are preprocessed to become library content URIs (ie,

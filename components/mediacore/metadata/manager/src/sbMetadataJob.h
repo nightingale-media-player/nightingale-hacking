@@ -36,6 +36,7 @@
 
 #include <nscore.h>
 #include <prlock.h>
+#include <nsAutoLock.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMArray.h>
@@ -151,7 +152,7 @@ public:
    * \param aJobItem The job item to be processed
    * \return NS_ERROR_NOT_AVAILABLE if there are no more items in the queue
    */
-  nsresult GetQueuedItem(bool aMainThreadOnly, sbMetadataJobItem** aJobItem);
+  nsresult GetQueuedItem(PRBool aMainThreadOnly, sbMetadataJobItem** aJobItem);
   
   /**
    * Give back a job item after processing has been attempted.
@@ -173,7 +174,7 @@ public:
    *
    * \param aBlocked Job blocked status.
    */
-  nsresult SetBlocked(bool aBlocked);
+  nsresult SetBlocked(PRBool aBlocked);
   
   
 private:
@@ -222,7 +223,7 @@ private:
    * *** MAIN THREAD ONLY ***
    */
   nsresult CopyPropertiesToMediaItem(sbMetadataJobItem* aJobItem,
-                                     bool* aWillRetry);
+                                     PRBool* aWillRetry);
   
   /**
    * Trigger an album art scan for the given job item.
@@ -242,8 +243,8 @@ private:
    *                   never be null if aShouldRetry is true!
    */
   nsresult HandleFailedItem(sbMetadataJobItem* aJobItem, 
-                            bool aShouldRetry = PR_FALSE, 
-                            bool *aWillRetry = nsnull);
+                            PRBool aShouldRetry = PR_FALSE, 
+                            PRBool *aWillRetry = nsnull);
 
   /**
    * Empty mProcessedBackgroundThreadItems in a library batch.  
@@ -302,7 +303,7 @@ private:
   
   // sbIJobProgress variables
   PRUint16                                 mStatus;
-  bool                                   mBlocked;
+  PRBool                                   mBlocked;
   PRUint32                                 mCompletedItemCount;
   PRUint32                                 mTotalItemCount;
   nsTArray<nsString>                       mErrorMessages;
@@ -343,7 +344,7 @@ private:
   
   // Indicates that we've started a library batch, and need
   // to close it before we complete
-  bool                                   mInLibraryBatch;
+  PRBool                                   mInLibraryBatch;
 
   // Cached art fetcher instance
   nsCOMPtr<sbIAlbumArtFetcherSet>          mArtFetcher;

@@ -68,7 +68,7 @@ public:
   // \param aIsRecursive If the tree should watch recursively from the 
   //        given path.
   //
-  nsresult Init(const nsAString & aPath, bool aIsRecursive);
+  nsresult Init(const nsAString & aPath, PRBool aIsRecursive);
 
   //
   // \brief Init a tree from a saved session.
@@ -127,8 +127,8 @@ protected:
   //
   nsresult AddChildren(const nsAString & aPath,
                        sbFileSystemNode *aParentNode,
-                       bool aBuildDiscoveredDirArray,
-                       bool aNotifyListener);
+                       PRBool aBuildDiscoveredDirArray,
+                       PRBool aNotifyListener);
 
   //
   // \brief Get the children that are currently at the given path and 
@@ -231,7 +231,7 @@ protected:
   //
   static nsresult CompareNodes(sbFileSystemNode *aNode1,
                                sbFileSystemNode *aNode2,
-                               bool *aIsSame);
+                               PRBool *aIsSame);
 
   //
   // \brief Report all nodes and their children that are contained in a node 
@@ -299,9 +299,9 @@ private:
   nsCOMPtr<nsILocalFile>               mRootFile;
   sbFileSystemTreeListener             *mListener;
   nsString                             mRootPath;
-  bool                               mIsRecursiveBuild;
-  bool                               mShouldLoadSession; 
-  bool                               mIsIntialized;
+  PRBool                               mIsRecursiveBuild;
+  PRBool                               mShouldLoadSession; 
+  PRBool                               mIsIntialized;
   PRLock                               *mRootNodeLock;
   PRLock                               *mListenerLock;
   sbStringArray                        mDiscoveredDirs;

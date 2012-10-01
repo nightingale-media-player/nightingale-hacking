@@ -26,6 +26,7 @@
 #define SBDEVICELIBRARYSYNCSETTINGS_H_
 
 // Mozilla includes
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsIArray.h>
 #include <nsInterfaceHashtable.h>
@@ -87,7 +88,7 @@ private:
    */
   nsresult GetImportPref(sbIDevice * aDevice,
                          PRUint32 aMediaType,
-                         bool & aImport);
+                         PRBool & aImport);
 
   static nsresult ReadAString(sbIDevice * aDevice,
                               nsAString const & aPrefKey,

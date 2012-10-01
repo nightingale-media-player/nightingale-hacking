@@ -114,27 +114,27 @@ nsresult sbMetadataJobItem::GetJobType(sbMetadataJob::JobType* aJobType)
   return NS_OK;
 }
 
-nsresult sbMetadataJobItem::GetProcessingStarted(bool* aProcessingStarted)
+nsresult sbMetadataJobItem::GetProcessingStarted(PRBool* aProcessingStarted)
 {
   NS_ENSURE_ARG_POINTER(aProcessingStarted);
   *aProcessingStarted = mProcessingStarted;
   return NS_OK;
 }
 
-nsresult sbMetadataJobItem::SetProcessingStarted(bool aProcessingStarted)
+nsresult sbMetadataJobItem::SetProcessingStarted(PRBool aProcessingStarted)
 {
   mProcessingStarted = aProcessingStarted;
   return NS_OK;
 }
 
-nsresult sbMetadataJobItem::GetProcessed(bool* aProcessed)
+nsresult sbMetadataJobItem::GetProcessed(PRBool* aProcessed)
 {
   NS_ENSURE_ARG_POINTER(aProcessed);
   *aProcessed = mProcessingComplete;
   return NS_OK;
 }
 
-nsresult sbMetadataJobItem::SetProcessed(bool aProcessed)
+nsresult sbMetadataJobItem::SetProcessed(PRBool aProcessed)
 {
   mProcessingComplete = aProcessed;
   return NS_OK;

@@ -44,8 +44,10 @@
 /* mozilla headers */
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
+#include <sbProxiedComponentManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
 #include <nsIFile.h>
@@ -79,6 +81,7 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbPropertiesCID.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
@@ -203,7 +206,7 @@ sbDeviceLibrary::Initialize(const nsAString& aLibraryId)
   NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
   mMonitor = nsAutoMonitor::NewMonitor(__FILE__ "sbDeviceLibrary::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-  bool succeeded = mListeners.Init();
+  PRBool succeeded = mListeners.Init();
   NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
   return CreateDeviceLibrary(aLibraryId, nsnull);
 }
@@ -435,7 +438,7 @@ sbDeviceLibrary::GetDefaultDeviceLibraryDatabaseFile
   rv = libraryFile->Append(NS_LITERAL_STRING("db"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool exists = PR_FALSE;
+  PRBool exists = PR_FALSE;
   rv = libraryFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if(!exists) {
@@ -455,7 +458,7 @@ sbDeviceLibrary::GetDefaultDeviceLibraryDatabaseFile
 }
 
 nsresult
-sbDeviceLibrary::GetIsMgmtTypeSyncList(bool* aIsMgmtTypeSyncList)
+sbDeviceLibrary::GetIsMgmtTypeSyncList(PRBool* aIsMgmtTypeSyncList)
 {
   NS_ASSERTION(aIsMgmtTypeSyncList, "aIsMgmtTypeSyncList is null");
   nsresult rv;
@@ -464,7 +467,7 @@ sbDeviceLibrary::GetIsMgmtTypeSyncList(bool* aIsMgmtTypeSyncList)
   rv = GetSyncSettings(getter_AddRefs(syncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool isSyncList = PR_FALSE;
+  PRBool isSyncList = PR_FALSE;
   PRUint32 mgmtType;
   for (PRUint32 mediaType = 0;
        mediaType <= sbIDeviceLibrary::MEDIATYPE_COUNT;
@@ -498,7 +501,7 @@ sbDeviceLibrary::GetIsMgmtTypeSyncList(bool* aIsMgmtTypeSyncList)
 }
 
 nsresult
-sbDeviceLibrary::GetIsMgmtTypeSyncAll(bool* aIsMgmtTypeSyncAll)
+sbDeviceLibrary::GetIsMgmtTypeSyncAll(PRBool* aIsMgmtTypeSyncAll)
 {
   NS_ASSERTION(aIsMgmtTypeSyncAll, "aIsMgmtTypeSyncAll is null");
   nsresult rv;
@@ -682,8 +685,8 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
   *aNoMoreForBatch = PR_FALSE;                                                \
 
 #define SB_NOTIFY_LISTENERS_ASK_PERMISSION(call)                              \
-  bool mShouldProcceed = PR_TRUE;                                           \
-  bool mPerformAction = PR_TRUE;                                            \
+  PRBool mShouldProcceed = PR_TRUE;                                           \
+  PRBool mPerformAction = PR_TRUE;                                            \
                                                                               \
   nsCOMArray<sbIDeviceLibraryListener> listeners;                             \
   {                                                                           \
@@ -930,7 +933,7 @@ sbDeviceLibrary::Sync()
       rv = libraries->GetLength(&libraryCount);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      bool found = PR_FALSE;
+      PRBool found = PR_FALSE;
       for (PRUint32 index = 0; index < libraryCount; ++index) {
         nsCOMPtr<sbIDeviceLibrary> library =
           do_QueryElementAt(libraries, index, &rv);
@@ -998,7 +1001,7 @@ sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
   nsAutoMonitor monitor(mMonitor);
 
   // Add the proxy to the hash table, using the listener as the key.
-  bool success = mListeners.Put(aListener, proxy);
+  PRBool success = mListeners.Put(aListener, proxy);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -1043,7 +1046,7 @@ sbDeviceLibrary::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey
   nsCOMArray<sbIDeviceLibraryListener>* array =
     static_cast<nsCOMArray<sbIDeviceLibraryListener>*>(aUserData);
 
-  bool success = array->AppendObject(aEntry);
+  PRBool success = array->AppendObject(aEntry);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
@@ -1071,7 +1074,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnItemAdded(sbIMediaList* aMediaList,
                              sbIMediaItem* aMediaItem,
                              PRUint32 aIndex,
-                             bool* aNoMoreForBatch)
+                             PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemAdded", this));
 
@@ -1087,7 +1090,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                      sbIMediaItem* aMediaItem,
                                      PRUint32 aIndex,
-                                     bool* aNoMoreForBatch)
+                                     PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnBeforeItemRemoved", this));
 
@@ -1102,7 +1105,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                     sbIMediaItem* aMediaItem,
                                     PRUint32 aIndex,
-                                    bool* aNoMoreForBatch)
+                                    PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnAfterItemRemoved", this));
 
@@ -1117,7 +1120,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnItemUpdated(sbIMediaList *aMediaList,
                                sbIMediaItem *aMediaItem,
                                sbIPropertyArray* aProperties,
-                               bool* aNoMoreForBatch)
+                               PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemUpdated", this));
 
@@ -1132,7 +1135,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnItemMoved(sbIMediaList *aMediaList,
                              PRUint32 aFromIndex,
                              PRUint32 aToIndex,
-                             bool* aNoMoreForBatch)
+                             PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemMoved", this));
 
@@ -1145,8 +1148,8 @@ sbDeviceLibrary::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbDeviceLibrary::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                     bool aExcludeLists,
-                                     bool* aNoMoreForBatch)
+                                     PRBool aExcludeLists,
+                                     PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
 
@@ -1158,8 +1161,8 @@ sbDeviceLibrary::OnBeforeListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbDeviceLibrary::OnListCleared(sbIMediaList *aMediaList,
-                               bool aExcludeLists,
-                               bool* aNoMoreForBatch)
+                               PRBool aExcludeLists,
+                               PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
 
@@ -1198,7 +1201,7 @@ NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
 NS_IMETHODIMP
 sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
                                  sbIPropertyArray *aProperties,
-                                 bool aAllowDuplicates,
+                                 PRBool aAllowDuplicates,
                                  sbIMediaItem **_retval)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
@@ -1224,7 +1227,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
                                            sbIPropertyArray *aProperties,
                                            sbIMediaItem **aResultItem,
-                                           bool *_retval)
+                                           PRBool *_retval)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeCreateMediaItem(aContentUri,
@@ -1349,7 +1352,7 @@ sbDeviceLibrary::AddSome(nsISimpleEnumerator * aMediaItems)
 NS_IMETHODIMP
 sbDeviceLibrary::AddMediaItems(nsISimpleEnumerator *aMediaItems,
                                sbIAddMediaItemsListener * aListener,
-                               bool aAsync)
+                               PRBool aAsync)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,

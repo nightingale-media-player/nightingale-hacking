@@ -50,20 +50,20 @@ public:
   sbRatingPropertyInfo(const nsAString& aPropertyID,
                        const nsAString& aDisplayName,
                        const nsAString& aLocalizationKey,
-                       const bool aRemoteReadable,
-                       const bool aRemoteWritable,
-                       const bool aUserViewable,
-                       const bool aUserEditable);
+                       const PRBool aRemoteReadable,
+                       const PRBool aRemoteWritable,
+                       const PRBool aUserViewable,
+                       const PRBool aUserEditable);
   virtual ~sbRatingPropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
-  NS_IMETHOD Validate(const nsAString& aValue, bool* _retval);
+  NS_IMETHOD Validate(const nsAString& aValue, PRBool* _retval);
 
   nsresult Init();
 
   nsresult InitializeOperators();
 private:
-  bool mSuppressSelect;
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBRATINGPROPERTYINFO_H__ */

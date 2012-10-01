@@ -51,7 +51,7 @@ public:
  /**
   * Returns PR_TRUE if a cancel has been requested
   */
- bool CancelRequested();
+ PRBool CancelRequested();
   /**
    * Initializes the dataremote and job progress member 
    */
@@ -92,7 +92,7 @@ private:
   /**
    * Flag denoting if we're done or not
    */
-  bool mDone;
+  PRBool mDone;
   /**
    * Our job progress object for notifications
    */
@@ -128,7 +128,7 @@ private:
   /**
    * Denotes whether we've set the total for the job progress object
    */
-  bool mTotalSet;
+  PRBool mTotalSet;
   
   // Prevent copying and assignment
   sbiTunesImporterStatus(sbiTunesImporterStatus const &);

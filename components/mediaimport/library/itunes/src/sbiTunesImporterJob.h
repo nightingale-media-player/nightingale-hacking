@@ -55,7 +55,7 @@ public:
   /**
    * Request cancel
    */
-  bool CancelRequested() const {
+  PRBool CancelRequested() const {
     return mCancelRequested;
   }
   /**
@@ -100,11 +100,11 @@ private:
   /**
    * Holds whether we can cancel or not
    */
-  bool mCanCancel;
+  PRBool mCanCancel;
   /**
    * Cancel requested indicator
    */
-  bool mCancelRequested;
+  PRBool mCancelRequested;
   /**
    * Collection of error messages
    */

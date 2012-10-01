@@ -67,7 +67,7 @@ sbPlayQueueLibraryListener::~sbPlayQueueLibraryListener()
   TRACE(("%s[%p]", __FUNCTION__, this));
 }
 
-bool
+PRBool
 sbPlayQueueLibraryListener::ShouldIgnore()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -76,8 +76,8 @@ sbPlayQueueLibraryListener::ShouldIgnore()
 
 NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                                bool aExcludeLists,
-                                                bool *aNoMoreForBatch)
+                                                PRBool aExcludeLists,
+                                                PRBool *aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -90,8 +90,8 @@ sbPlayQueueLibraryListener::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnListCleared(sbIMediaList* aMediaList,
-                                          bool aExcludeLists,
-                                          bool* aNoMoreForBatch)
+                                          PRBool aExcludeLists,
+                                          PRBool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   mShouldIgnore = PR_FALSE;
@@ -117,7 +117,7 @@ NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnItemAdded(sbIMediaList* aMediaList,
                                         sbIMediaItem* aMediaItem,
                                         PRUint32 aIndex,
-                                        bool* aNoMoreForBatch)
+                                        PRBool* aNoMoreForBatch)
 {
   if (aNoMoreForBatch) {
     *aNoMoreForBatch = PR_TRUE;
@@ -129,7 +129,7 @@ NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                 sbIMediaItem* aMediaItem,
                                                 PRUint32 aIndex,
-                                                bool* aNoMoreForBatch)
+                                                PRBool* aNoMoreForBatch)
 {
   if (aNoMoreForBatch) {
     *aNoMoreForBatch = PR_TRUE;
@@ -141,7 +141,7 @@ NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                sbIMediaItem* aMediaItem,
                                                PRUint32 aIndex,
-                                               bool* aNoMoreForBatch)
+                                               PRBool* aNoMoreForBatch)
 {
   if (aNoMoreForBatch) {
     *aNoMoreForBatch = PR_TRUE;
@@ -153,7 +153,7 @@ NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnItemUpdated(sbIMediaList* aMediaList,
                                           sbIMediaItem* aMediaItem,
                                           sbIPropertyArray* aProperties,
-                                          bool* aNoMoreForBatch)
+                                          PRBool* aNoMoreForBatch)
 {
   if (aNoMoreForBatch) {
     *aNoMoreForBatch = PR_TRUE;
@@ -165,7 +165,7 @@ NS_IMETHODIMP
 sbPlayQueueLibraryListener::OnItemMoved(sbIMediaList* aMediaList,
                                         PRUint32 aFromIndex,
                                         PRUint32 aToIndex,
-                                        bool* aNoMoreForBatch)
+                                        PRBool* aNoMoreForBatch)
 {
   if (aNoMoreForBatch) {
     *aNoMoreForBatch = PR_TRUE;

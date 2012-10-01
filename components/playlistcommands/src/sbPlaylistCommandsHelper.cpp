@@ -80,7 +80,7 @@ sbPlaylistCommandsVisibility::HandleCallback
                               (sbIPlaylistCommandsBuilderContext *aContext,
                                const nsAString &aHost,
                                const nsAString &aData,
-                               bool *_retval)
+                               PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aContext);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -434,7 +434,7 @@ sbPlaylistCommandsHidden::HandleCallback
                           (sbIPlaylistCommandsBuilderContext *aContext,
                            const nsAString &aHost,
                            const nsAString &aData,
-                           bool *_retval)
+                           PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aContext);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -523,15 +523,15 @@ sbPlaylistCommandsHelper::RemoveCommandObject
     do_GetService(SONGBIRD_PlaylistCommandsManager_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool removeFromServicePane =
+  PRBool removeFromServicePane =
          (aTargetFlags &
           sbIPlaylistCommandsHelper::TARGET_SERVICEPANE_MENU);
 
-  bool removeFromContextMenu =
+  PRBool removeFromContextMenu =
          (aTargetFlags &
           sbIPlaylistCommandsHelper::TARGET_MEDIAITEM_CONTEXT_MENU);
 
-  bool removeFromToolbar =
+  PRBool removeFromToolbar =
          (aTargetFlags &
           sbIPlaylistCommandsHelper::TARGET_TOOLBAR);
 
@@ -625,11 +625,11 @@ sbPlaylistCommandsHelper::RemoveCommandObject
   else {
     // The command object being removed knows where it is and will help us.
     // The service pane was handled first, so we don't worry about that here.
-    bool isInContextMenu =
+    PRBool isInContextMenu =
            (commandsLocation &
             sbIPlaylistCommandsHelper::TARGET_MEDIAITEM_CONTEXT_MENU);
 
-    bool isInToolbar =
+    PRBool isInToolbar =
            (commandsLocation &
             sbIPlaylistCommandsHelper::TARGET_TOOLBAR);
 
@@ -761,7 +761,7 @@ sbPlaylistCommandsHelper::GetChildCommandWithId
                                 (getter_AddRefs(cmdEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(cmdEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<sbIPlaylistCommands> next;
     if (NS_SUCCEEDED(cmdEnum->GetNext(getter_AddRefs(next))) && next) {

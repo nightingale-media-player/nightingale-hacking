@@ -27,7 +27,7 @@
 #include <nsICategoryManager.h>
 #include <nsIAppStartup.h>
 #include <nsIFile.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsILocalFile.h>
 #include <nsIObserverService.h>
 #include <nsIIOService.h>
@@ -172,7 +172,7 @@ sbLocalDatabaseLibraryLoader::Init()
 
   sbAutoFreeXPCOMArray<char**> autoFree(libraryKeysCount, libraryKeys);
 
-  bool success =
+  PRBool success =
     mLibraryInfoTable.Init(PR_MAX(MINIMUM_LIBRARY_COUNT,
                                   libraryKeysCount / LOADERINFO_VALUE_COUNT));
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
@@ -223,7 +223,7 @@ sbLocalDatabaseLibraryLoader::Init()
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 {
-  bool databasesOkay = PR_TRUE;
+  PRBool databasesOkay = PR_TRUE;
   nsresult retval = NS_OK;
   
   nsresult rv =
@@ -817,7 +817,7 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
 
 NS_IMETHODIMP
 sbLocalDatabaseLibraryLoader::OnLibraryStartupModified(sbILibrary* aLibrary,
-                                                       bool aLoadAtStartup)
+                                                       PRBool aLoadAtStartup)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
 
@@ -909,11 +909,11 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
                            getter_AddRefs(prefFile));
       NS_ENSURE_SUCCESS(rv, rv);
       
-      bool prefExists;
+      PRBool prefExists;
       /* if the pref file is missing we go through the normal first-run process
        * and therefore don't need to care about this
        */
-      bool prefWritable = PR_TRUE;
+      PRBool prefWritable = PR_TRUE;
       rv = prefFile->Exists(&prefExists);
       if (NS_SUCCEEDED(rv) && prefExists) {
         rv = prefFile->IsWritable(&prefWritable);
@@ -955,7 +955,7 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
 
       nsString metricsdb = NS_LITERAL_STRING("metrics.db");
 
-      bool hasMore;
+      PRBool hasMore;
       dirEnumerator->HasMoreElements(&hasMore);
       while (hasMore && NS_SUCCEEDED(rv)) {
         nsCOMPtr<nsISupports> aSupport;
@@ -1017,7 +1017,7 @@ sbLibraryLoaderInfo::Init(const nsACString& aPrefKey)
   mResourceGUIDKey.Assign(PREF_RESOURCE_GUID);
 
   // Now ensure that the key exists.
-  bool exists;
+  PRBool exists;
   rv = mPrefBranch->PrefHasUserValue(mStartupKey.get(), &exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1103,7 +1103,7 @@ sbLibraryLoaderInfo::GetDatabaseLocation()
 }
 
 nsresult
-sbLibraryLoaderInfo::SetLoadAtStartup(bool aLoadAtStartup)
+sbLibraryLoaderInfo::SetLoadAtStartup(PRBool aLoadAtStartup)
 {
   nsresult rv = mPrefBranch->SetBoolPref(mStartupKey.get(), aLoadAtStartup);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1111,10 +1111,10 @@ sbLibraryLoaderInfo::SetLoadAtStartup(bool aLoadAtStartup)
   return NS_OK;
 }
 
-bool
+PRBool
 sbLibraryLoaderInfo::GetLoadAtStartup()
 {
-  bool loadAtStartup;
+  PRBool loadAtStartup;
   nsresult rv = mPrefBranch->GetBoolPref(mStartupKey.get(), &loadAtStartup);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 

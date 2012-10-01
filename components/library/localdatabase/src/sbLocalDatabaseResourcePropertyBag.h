@@ -62,7 +62,7 @@ public:
   nsresult PutValue(PRUint32 aPropertyID,
                     const nsAString& aValue);
 
-  bool IsPropertyDirty(PRUint32 aPropertyDBID);
+  PRBool IsPropertyDirty(PRUint32 aPropertyDBID);
   nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
   nsresult ClearDirty();
 

@@ -40,14 +40,14 @@
   NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
   NS_IMETHOD GetDisplayNameKey(nsAString & aDisplayNameKey) { return _to GetDisplayNameKey(aDisplayNameKey); } \
   NS_IMETHOD SetDisplayNameKey(const nsAString & aDisplayNameKey) { return _to SetDisplayNameKey(aDisplayNameKey); } \
-  NS_IMETHOD GetUserViewable(bool * aUserViewable) { return _to GetUserViewable(aUserViewable); } \
-  NS_IMETHOD SetUserViewable(bool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
-  NS_IMETHOD GetUserEditable(bool * aUserEditable) { return _to GetUserEditable(aUserEditable); } \
-  NS_IMETHOD SetUserEditable(bool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
-  NS_IMETHOD GetRemoteReadable(bool * aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
-  NS_IMETHOD SetRemoteReadable(bool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
-  NS_IMETHOD GetRemoteWritable(bool * aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
-  NS_IMETHOD SetRemoteWritable(bool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } 
+  NS_IMETHOD GetUserViewable(PRBool * aUserViewable) { return _to GetUserViewable(aUserViewable); } \
+  NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
+  NS_IMETHOD GetUserEditable(PRBool * aUserEditable) { return _to GetUserEditable(aUserEditable); } \
+  NS_IMETHOD SetUserEditable(PRBool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
+  NS_IMETHOD GetRemoteReadable(PRBool * aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
+  NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
+  NS_IMETHOD GetRemoteWritable(PRBool * aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
+  NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } 
 
 class sbAbstractPropertyBuilder : public sbIPropertyBuilder
 {

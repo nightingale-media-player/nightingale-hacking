@@ -208,7 +208,7 @@ sbTimingService::Init() {
   mResultsLock = nsAutoLock::NewLock("sbTimingService::mResultsLock");
   NS_ENSURE_TRUE(mResultsLock, NS_ERROR_OUT_OF_MEMORY);
 
-  bool success = mTimers.Init();
+  PRBool success = mTimers.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mResults.Init();
@@ -228,7 +228,7 @@ sbTimingService::Init() {
 }
 
 NS_IMETHODIMP 
-sbTimingService::GetEnabled(bool *aEnabled)
+sbTimingService::GetEnabled(PRBool *aEnabled)
 {
   NS_ENSURE_ARG_POINTER(aEnabled);
 
@@ -238,7 +238,7 @@ sbTimingService::GetEnabled(bool *aEnabled)
   return NS_OK;
 }
 NS_IMETHODIMP 
-sbTimingService::SetEnabled(bool aEnabled)
+sbTimingService::SetEnabled(PRBool aEnabled)
 {
   nsAutoLock lock(mLoggingLock);
   mLoggingEnabled = aEnabled;
@@ -283,7 +283,7 @@ sbTimingService::StartPerfTimer(const nsAString & aTimerName)
     return NS_ERROR_ALREADY_INITIALIZED;
   }
 
-  bool success = mTimers.Put(aTimerName, timer);
+  PRBool success = mTimers.Put(aTimerName, timer);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -318,7 +318,7 @@ sbTimingService::StopPerfTimer(const nsAString & aTimerName, PRInt64 *_retval)
     nsAutoLock lockResults(mResultsLock);
     PRUint32 resultCount = mResults.Count();
     
-    bool success = mResults.Put(resultCount, timer);
+    PRBool success = mResults.Put(resultCount, timer);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -411,7 +411,7 @@ nsresult sbTimingService::FormatResultsToString(nsACString &aOutput)
   output.AppendLiteral("\n\n\t\tsbTimingService Results\n\n");
 
   for(PRUint32 current = 0; current < resultCount; ++current) {
-    bool success = mResults.Get(current, getter_AddRefs(timer));
+    PRBool success = mResults.Get(current, getter_AddRefs(timer));
     NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
 
     rv = timer->GetStartTime(&startTime);

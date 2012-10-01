@@ -137,9 +137,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
      aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS ||
      aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM ||
      aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE) {
-    bool leadingOnly = aTransformFlags & 
+    PRBool leadingOnly = aTransformFlags & 
                          sbIStringTransform::TRANSFORM_IGNORE_LEADING;
-    bool bypassTest = PR_FALSE;
+    PRBool bypassTest = PR_FALSE;
     LPWSTR wszJunk = {0};
     int requiredBufferSize = ::FoldStringW(MAP_COMPOSITE, 
                                            inStr.BeginReading(), 
@@ -200,7 +200,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
     LPWORD charTypes[NTYPES] = {ct1, ct2, ct3};
 
     for(int current = 0; current < requiredBufferSize; ++current) {
-      bool validChar = PR_TRUE;
+      PRBool validChar = PR_TRUE;
       PRInt32 skipChars = 0;
 
       if (!bypassTest) {
@@ -229,8 +229,8 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
         }
         // next, check if the char is in the included chars arrays. if all
         // arrays are empty, allow all chars instead of none
-        bool found = PR_FALSE;
-        bool testedAnything = PR_FALSE;
+        PRBool found = PR_FALSE;
+        PRBool testedAnything = PR_FALSE;
         for (int type = FIRSTTYPE; 
              type <= LASTTYPE && validChar && !found; 
              type++) {

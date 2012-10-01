@@ -68,6 +68,7 @@
 #include <sbIPrompter.h>
 #include <sbMemoryUtils.h>
 #include <sbStringBundle.h>
+#include <sbProxiedComponentManager.h>
 #include <sbDebugUtils.h>
 
 #if defined(_WIN32)
@@ -639,7 +640,7 @@ protected:
   nsCOMPtr<nsIFile>              mOutputFile;
   nsRefPtr<CDatabaseEngine>      mEngineCallback;
   nsRefPtr<QueryProcessorQueue>  mQueryProcessorQueue;
-  bool                         writeableSchema;  // true if PRAGMA writable_schema=on
+  PRBool                         writeableSchema;  // true if PRAGMA writable_schema=on
 };
 
 
@@ -1016,7 +1017,7 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   LOG("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
        this, sqlite3_libversion());
 
-  bool success = m_QueuePool.Init();
+  PRBool success = m_QueuePool.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   m_pThreadMonitor =
@@ -1582,7 +1583,7 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
 
   // If the query is already executing, do not add it.  This is to prevent
   // the same query from getting executed simultaneously
-  bool isExecuting = PR_FALSE;
+  PRBool isExecuting = PR_FALSE;
   pQuery->IsExecuting(&isExecuting);
   if(isExecuting) {
     //Release grip.
@@ -1604,7 +1605,7 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
   rv = pQueue->RunQueue();
   NS_ENSURE_SUCCESS(rv, 1);
 
-  bool bAsyncQuery = PR_FALSE;
+  PRBool bAsyncQuery = PR_FALSE;
   pQuery->IsAyncQuery(&bAsyncQuery);
 
   PRInt32 result = 0;
@@ -1702,7 +1703,7 @@ NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
 
 //-----------------------------------------------------------------------------
 already_AddRefed<QueryProcessorQueue> CDatabaseEngine::GetQueueByQuery(CDatabaseQuery *pQuery,
-                                                         bool bCreate /*= PR_FALSE*/)
+                                                         PRBool bCreate /*= PR_FALSE*/)
 {
   NS_ENSURE_TRUE(pQuery, nsnull);
 
@@ -1745,7 +1746,7 @@ already_AddRefed<QueryProcessorQueue> CDatabaseEngine::CreateQueueFromQuery(CDat
   rv = pQueue->Init(this, strGUID, pHandle);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  bool success = m_QueuePool.Put(strGUID, pQueue);
+  PRBool success = m_QueuePool.Put(strGUID, pQueue);
   NS_ENSURE_TRUE(success, nsnull);
 
   QueryProcessorQueue *p = pQueue.get();
@@ -2127,7 +2128,7 @@ CDatabaseEngine::RunAnalyze()
       PR_GetCurrentThread(), pQuery);
 
     PRUint32 nQueryCount = 0;
-    bool bFirstRow = PR_TRUE;
+    PRBool bFirstRow = PR_TRUE;
 
     //Default return error.
     pQuery->SetLastError(SQLITE_ERROR);
@@ -2238,7 +2239,7 @@ CDatabaseEngine::RunAnalyze()
       pQuery->GetRollingLimit(&rollingLimit);
       pQuery->GetRollingLimitColumnIndex(&rollingLimitColumnIndex);
 
-      bool finishEarly = PR_FALSE;
+      PRBool finishEarly = PR_FALSE;
       do
       {
         retDB = sqlite3_step(pStmt);
@@ -2490,7 +2491,7 @@ nsresult CDatabaseEngine::CreateDBStorePath()
   rv = f->Append(NS_LITERAL_STRING("db"));
   if(NS_FAILED(rv)) return rv;
 
-  bool dirExists = PR_FALSE;
+  PRBool dirExists = PR_FALSE;
   rv = f->Exists(&dirExists);
   if(NS_FAILED(rv)) return rv;
 
@@ -2547,14 +2548,14 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery
   return NS_OK;
 } //GetDBStorePath
 
-NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationEnabled(bool *aEnabled)
+NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationEnabled(PRBool *aEnabled)
 {
   NS_ENSURE_ARG_POINTER(aEnabled);
-  *aEnabled = (bool)gLocaleCollationEnabled;
+  *aEnabled = (PRBool)gLocaleCollationEnabled;
   return NS_OK;
 }
 
-NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(bool aEnabled)
+NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(PRBool aEnabled)
 {
   PR_AtomicSet(&gLocaleCollationEnabled, (PRInt32)aEnabled);
   return NS_OK;
@@ -2630,8 +2631,8 @@ PRInt32 CDatabaseEngine::CollateWithLeadingNumbers(collationBuffers *aCollationB
                                                    PRInt32 *number1Length,
                                                    const NATIVE_CHAR_TYPE *aStr2,
                                                    PRInt32 *number2Length) {
-  bool hasLeadingNumberA = PR_FALSE;
-  bool hasLeadingNumberB = PR_FALSE;
+  PRBool hasLeadingNumberA = PR_FALSE;
+  PRBool hasLeadingNumberB = PR_FALSE;
   
   PRFloat64 leadingNumberA;
   PRFloat64 leadingNumberB;

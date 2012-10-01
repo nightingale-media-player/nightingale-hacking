@@ -73,9 +73,9 @@ private:
   nsresult Init();
   nsresult Intersect();
   nsresult AddToCurrent(const nsAString& aProperty, sbStringArray* aArray);
-  bool IsValid();
+  PRBool IsValid();
 
-  bool mInitialized;
+  PRBool mInitialized;
   sbConstraintArray mConstraint;
 };
 
@@ -91,7 +91,7 @@ public:
 
 private:
   nsresult Init();
-  bool IsEmpty();
+  PRBool IsEmpty();
   nsresult Add(const nsAString& aProperty, sbStringArray* aArray);
   nsresult Read(nsIObjectInputStream* aStream);
   nsresult Write(nsIObjectOutputStream* aStream);
@@ -101,7 +101,7 @@ private:
                            sbStringArray* aEntry,
                            void* aUserData);
 
-  bool mInitialized;
+  PRBool mInitialized;
   sbConstraintGroup mConstraintGroup;
 };
 
@@ -118,9 +118,9 @@ public:
   sbLibrarySort();
 
 private:
-  bool mInitialized;
+  PRBool mInitialized;
   nsString mProperty;
-  bool mIsAscending;
+  PRBool mIsAscending;
 };
 
 #endif /* __SB_LIBRARY_CONSTRAINTS_H__ */

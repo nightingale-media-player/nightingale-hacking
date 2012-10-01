@@ -40,9 +40,11 @@
 #include <nsIVariant.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
+#include <nsIProxyObjectManager.h>
 
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
@@ -112,6 +114,7 @@
 #include <sbPrefBranch.h>
 #include <sbPropertiesCID.h>
 #include <sbPropertyBagUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
@@ -266,11 +269,11 @@ NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumerationEnd(sbIMediaLis
 class ShowMediaListEnumerator : public sbIMediaListEnumerationListener
 {
 public:
-  explicit ShowMediaListEnumerator(bool aHideMediaLists);
+  explicit ShowMediaListEnumerator(PRBool aHideMediaLists);
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 private:
-  bool    mHideMediaLists;
+  PRBool    mHideMediaLists;
   nsString  mHideMediaListsStringValue;
 };
 
@@ -278,7 +281,7 @@ NS_IMPL_ISUPPORTS1(ShowMediaListEnumerator ,
                    sbIMediaListEnumerationListener)
 
 
-ShowMediaListEnumerator::ShowMediaListEnumerator(bool aHideMediaLists)
+ShowMediaListEnumerator::ShowMediaListEnumerator(PRBool aHideMediaLists)
 : mHideMediaLists(aHideMediaLists)
 {
   mHideMediaListsStringValue = (mHideMediaLists == PR_TRUE) ?
@@ -371,7 +374,7 @@ sbBaseDevice::TransferRequest::New(PRUint32 aType,
   return request;
 }
 
-bool sbBaseDevice::TransferRequest::IsPlaylist() const
+PRBool sbBaseDevice::TransferRequest::IsPlaylist() const
 {
   if (!list)
     return PR_FALSE;
@@ -419,9 +422,9 @@ sbBaseDevice::sbBaseDevice() :
 #endif /* PR_LOGGING */
 
   #if defined(__GNUC__) && !defined(DEBUG)
-    bool __attribute__((unused)) success;
+    PRBool __attribute__((unused)) success;
   #else
-    bool success;
+    PRBool success;
   #endif
 
   mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
@@ -695,7 +698,7 @@ public:
         if (NS_SUCCEEDED(rv) && errors) {
           rv = mDownloadJob->GetErrorMessages(getter_AddRefs(errorEnumerator));
           if (NS_SUCCEEDED(rv)) {
-            bool more;
+            PRBool more;
             rv = errorEnumerator->HasMore(&more);
             if (NS_SUCCEEDED(rv) && more) {
               nsString message;
@@ -845,7 +848,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Wait for the download job to complete.
-  bool isComplete = PR_FALSE;
+  PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
     nsAutoMonitor monitor(stopWaitMonitor);
@@ -872,7 +875,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   rv = downloadJob->GetErrorMessages(getter_AddRefs(errorMessages));
   NS_ENSURE_SUCCESS(rv, rv);
   if (errorMessages) {
-    bool hasMore;
+    PRBool hasMore;
     rv = errorMessages->HasMore(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasMore) {
@@ -963,7 +966,7 @@ nsresult sbBaseDevice::GetPreferenceInternal(nsIPrefBranch *aPrefBranch,
       break;
     }
     case nsIPrefBranch::PREF_BOOL: {
-      bool value;
+      PRBool value;
       rv = aPrefBranch->GetBoolPref(prefNameUTF8.get(), &value);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1019,7 +1022,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch *aPrefBranch,
   NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
   nsresult rv;
 
-  bool hasChanged = PR_FALSE;
+  PRBool hasChanged = PR_FALSE;
   rv = SetPreferenceInternal(aPrefBranch, aPrefName, aPrefValue, &hasChanged);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1044,7 +1047,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch *aPrefBranch,
 nsresult sbBaseDevice::SetPreferenceInternalNoNotify(
                          const nsAString& aPrefName,
                          nsIVariant*      aPrefValue,
-                         bool*          aHasChanged)
+                         PRBool*          aHasChanged)
 {
   // get the pref branch for this device
   nsCOMPtr<nsIPrefBranch> prefBranch;
@@ -1057,7 +1060,7 @@ nsresult sbBaseDevice::SetPreferenceInternalNoNotify(
 nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
                                              const nsAString& aPrefName,
                                              nsIVariant*      aPrefValue,
-                                             bool*          aHasChanged)
+                                             PRBool*          aHasChanged)
 {
   NS_ENSURE_ARG_POINTER(aPrefValue);
   NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -1075,7 +1078,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
   rv = aPrefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasChanged = PR_FALSE;
+  PRBool hasChanged = PR_FALSE;
 
   switch (dataType) {
     case nsIDataType::VTYPE_INT8:
@@ -1112,7 +1115,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
     case nsIDataType::VTYPE_BOOL:
     {
       // a bool pref
-      bool oldValue, value;
+      PRBool oldValue, value;
       rv = aPrefValue->GetAsBool(&value);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1179,7 +1182,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
 }
 
 nsresult sbBaseDevice::HasPreference(nsAString& aPrefName,
-                                     bool*    aHasPreference)
+                                     PRBool*    aHasPreference)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aHasPreference);
@@ -1213,14 +1216,14 @@ nsresult sbBaseDevice::HasPreference(nsAString& aPrefName,
 }
 
 /* readonly attribute boolean isDirectTranscoding; */
-NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(bool *aIsDirect)
+NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
 {
   *aIsDirect = PR_TRUE;
   return NS_OK;
 }
 
 /* readonly attribute boolean isBusy; */
-NS_IMETHODIMP sbBaseDevice::GetIsBusy(bool *aIsBusy)
+NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 {
   NS_ENSURE_ARG_POINTER(aIsBusy);
   NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
@@ -1241,7 +1244,7 @@ NS_IMETHODIMP sbBaseDevice::GetIsBusy(bool *aIsBusy)
 }
 
 /* readonly attribute boolean canDisconnect; */
-NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(bool *aCanDisconnect)
+NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
   NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
@@ -1299,7 +1302,7 @@ NS_IMETHODIMP sbBaseDevice::SetState(PRUint32 aState)
 {
 
   nsresult rv;
-  bool stateChanged = PR_FALSE;
+  PRBool stateChanged = PR_FALSE;
   PRUint32 prevState;
 
   // set state, checking if it changed
@@ -1558,7 +1561,7 @@ nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Determine whether the access can be changed.
-  bool canChangeAccess = PR_FALSE;
+  PRBool canChangeAccess = PR_FALSE;
   rv = deviceProperties->GetPropertyAsBool
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY_MUTABLE),
           &canChangeAccess);
@@ -1810,7 +1813,7 @@ PLDHashOperator sbBaseDevice::EnumerateFinalizeMediaListListeners
 
   // Do nothing if media list is contained in another library.
   nsCOMPtr<sbILibrary> mediaListLibrary;
-  bool               equals;
+  PRBool               equals;
   rv = mediaList->GetLibrary(getter_AddRefs(mediaListLibrary));
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
   rv = mediaListLibrary->Equals(library, &equals);
@@ -1829,7 +1832,7 @@ PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKe
                                                                 void* aClosure)
 {
   nsresult rv;
-  bool *ignore = static_cast<bool *>(aClosure);
+  PRBool *ignore = static_cast<PRBool *>(aClosure);
 
   rv = aData->SetIgnoreListener(*ignore);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
@@ -1838,7 +1841,7 @@ PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKe
 }
 
 nsresult
-sbBaseDevice::SetIgnoreMediaListListeners(bool aIgnoreListener)
+sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
 {
   NS_ENSURE_TRUE(mMediaListListeners.IsInitialized(), NS_ERROR_UNEXPECTED);
 
@@ -1853,14 +1856,14 @@ sbBaseDevice::SetIgnoreMediaListListeners(bool aIgnoreListener)
 }
 
 nsresult
-sbBaseDevice::SetIgnoreLibraryListener(bool aIgnoreListener)
+sbBaseDevice::SetIgnoreLibraryListener(PRBool aIgnoreListener)
 {
   NS_ENSURE_STATE(mLibraryListener);
   return mLibraryListener->SetIgnoreListener(aIgnoreListener);
 }
 
 nsresult
-sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, bool aHidden)
+sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
 
@@ -2039,7 +2042,7 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequestType,
 nsresult sbBaseDevice::CreateAndDispatchEvent
                          (PRUint32 aType,
                           nsIVariant *aData,
-                          bool aAsync /*= PR_TRUE*/,
+                          PRBool aAsync /*= PR_TRUE*/,
                           sbIDeviceEventTarget* aTarget /*= nsnull*/)
 {
   nsresult rv;
@@ -2067,7 +2070,7 @@ nsresult sbBaseDevice::CreateAndDispatchEvent
                             getter_AddRefs(deviceEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool dispatched;
+  PRBool dispatched;
   if (aTarget)
     return aTarget->DispatchEvent(deviceEvent, aAsync, &dispatched);
   return DispatchEvent(deviceEvent, aAsync, &dispatched);
@@ -2076,7 +2079,7 @@ nsresult sbBaseDevice::CreateAndDispatchEvent
 nsresult sbBaseDevice::CreateAndDispatchDeviceManagerEvent
                          (PRUint32 aType,
                           nsIVariant *aData,
-                          bool aAsync /*= PR_TRUE*/)
+                          PRBool aAsync /*= PR_TRUE*/)
 {
   nsresult rv;
 
@@ -2158,7 +2161,7 @@ sbBaseDevice::CreateUniqueMediaFile(nsIURI  *aURI,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if file already exists.
-  bool alreadyExists;
+  PRBool alreadyExists;
   rv = uniqueFile->Exists(&alreadyExists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2249,7 +2252,7 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
   rv = mediaPath->GetParent(getter_AddRefs(parentDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool fileExists = PR_FALSE;
+  PRBool fileExists = PR_FALSE;
   rv = parentDir->Exists(&fileExists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!fileExists) {
@@ -2334,7 +2337,7 @@ sbBaseDevice::CancelRequests()
   return NS_OK;
 }
 
-bool
+PRBool
 sbBaseDevice::IsRequestAborted()
 {
   bool aborted = mRequestThreadQueue->CheckAndResetRequestAbort();
@@ -2534,8 +2537,8 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
 
 nsresult
 sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
-                                   bool        aReportErrors,
-                                   bool*       _retval)
+                                   PRBool        aReportErrors,
+                                   PRBool*       _retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -2586,7 +2589,7 @@ sbBaseDevice::AddVolume(sbBaseDeviceVolume* aVolume)
   rv = GetProperties(getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool isHidden = PR_FALSE;
+  PRBool isHidden = PR_FALSE;
   rv = deviceProperties->GetHidden(&isHidden);
   if (NS_SUCCEEDED(rv) && isHidden) {
     rv = deviceProperties->SetHidden(PR_FALSE);
@@ -2604,7 +2607,7 @@ sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
 
   // Function variables.
   nsresult rv;
-  bool isVolumeListEmpty = PR_FALSE;
+  PRBool isVolumeListEmpty = PR_FALSE;
 
   // If the device volume has a device library, get the library GUID.
   nsAutoString               libraryGUID;
@@ -2666,7 +2669,7 @@ sbBaseDevice::GetVolumeForItem(sbIMediaItem*        aItem,
   nsRefPtr<sbBaseDeviceVolume> volume;
   {
     nsAutoLock autoVolumeLock(mVolumeLock);
-    bool present = mVolumeLibraryGUIDTable.Get(libraryGUID,
+    PRBool present = mVolumeLibraryGUIDTable.Get(libraryGUID,
                                                  getter_AddRefs(volume));
     NS_ENSURE_TRUE(present, NS_ERROR_NOT_AVAILABLE);
   }
@@ -2706,7 +2709,7 @@ sbBaseDevice::GetDeviceSettingsDocument
   nsresult rv;
 
   // If the device settings file does not exist, just return null.
-  bool exists;
+  PRBool exists;
   rv = aDeviceSettingsFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!exists) {
@@ -2898,14 +2901,14 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
 
   // Function variables.
   nsAutoPtr<nsString> folderURL;
-  bool              needMediaFolderUpdate = PR_FALSE;
-  bool              success;
+  PRBool              needMediaFolderUpdate = PR_FALSE;
+  PRBool              success;
   nsresult            rv;
 
   // Get the device info from the device settings document.  Do nothing if no
   // device info present.
   nsAutoPtr<sbDeviceXMLInfo> deviceXMLInfo(new sbDeviceXMLInfo(this));
-  bool                     present;
+  PRBool                     present;
   NS_ENSURE_TRUE(deviceXMLInfo, NS_ERROR_OUT_OF_MEMORY);
   rv = deviceXMLInfo->Read(aDeviceSettingsDocument);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2980,7 +2983,7 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
   LogDeviceFolders();
 
   // Determine if the device supports format.
-  bool supportsFormat;
+  PRBool supportsFormat;
   rv = deviceXMLInfo->GetDoesDeviceSupportReformat(&supportsFormat);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3089,7 +3092,7 @@ sbBaseDevice::UpdateStatisticsProperties()
     nsRefPtr<sbBaseDeviceVolume> volume = volumeList[i];
 
     // Skip volume if it's not mounted.
-    bool isMounted;
+    PRBool isMounted;
     rv = volume->GetIsMounted(&isMounted);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!isMounted) {
@@ -3262,7 +3265,7 @@ sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
   }
 
   // Check if the volume is removable.
-  bool storageRemovable = PR_FALSE;
+  PRBool storageRemovable = PR_FALSE;
   PRInt32 removable;
   rv = aVolume->GetRemovable(&removable);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3325,7 +3328,7 @@ sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
 //
 //------------------------------------------------------------------------------
 
-NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, bool aEnabled)
+NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)
 {
   nsresult rv;
 
@@ -3347,7 +3350,7 @@ NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, 
   return NS_OK;
 }
 
-NS_IMETHODIMP sbBaseDevice::GetWarningDialogEnabled(const nsAString & aWarning, bool *_retval)
+NS_IMETHODIMP sbBaseDevice::GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -3411,7 +3414,7 @@ nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
   nsresult rv;
 
   // If we're not on the main thread proxy the service
-  bool const isMainThread = NS_IsMainThread();
+  PRBool const isMainThread = NS_IsMainThread();
 
   // get the prefs service
   nsCOMPtr<nsIPrefService> prefService;
@@ -3520,7 +3523,7 @@ nsresult sbBaseDevice::ApplyPreference(const nsAString& aPrefName,
   nsresult rv;
 
   // Check if it's a library preference.
-  bool isLibraryPreference = GetIsLibraryPreference(aPrefName);
+  PRBool isLibraryPreference = GetIsLibraryPreference(aPrefName);
 
   // Apply preference.
   if (isLibraryPreference) {
@@ -3543,7 +3546,7 @@ nsresult sbBaseDevice::ApplyPreference(const nsAString& aPrefName,
   return NS_OK;
 }
 
-bool sbBaseDevice::GetIsLibraryPreference(const nsAString& aPrefName)
+PRBool sbBaseDevice::GetIsLibraryPreference(const nsAString& aPrefName)
 {
   return StringBeginsWith(aPrefName,
                           NS_LITERAL_STRING(PREF_DEVICE_LIBRARY_BASE));
@@ -3639,7 +3642,7 @@ nsresult sbBaseDevice::ApplyLibraryPreference
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If no preference name is specified, read and apply all library preferences.
-  bool applyAll = PR_FALSE;
+  PRBool applyAll = PR_FALSE;
   if (aLibraryPrefName.IsEmpty())
     applyAll = PR_TRUE;
 
@@ -3649,7 +3652,7 @@ nsresult sbBaseDevice::ApplyLibraryPreference
       aLibraryPrefName.EqualsLiteral("use_music_limit_percent"))
   {
     // First ensure that the music limit percentage pref is enabled.
-    bool shouldLimitMusicSpace = PR_FALSE;
+    PRBool shouldLimitMusicSpace = PR_FALSE;
     rv = GetShouldLimitMusicSpace(prefBase, &shouldLimitMusicSpace);
     if (NS_SUCCEEDED(rv) && shouldLimitMusicSpace) {
       PRUint32 musicLimitPercent = 100;
@@ -3678,7 +3681,7 @@ nsresult sbBaseDevice::ApplyLibraryOrganizePreference
                           nsIVariant*       aPrefValue)
 {
   nsresult rv;
-  bool applyAll = aLibraryPrefName.IsEmpty();
+  PRBool applyAll = aLibraryPrefName.IsEmpty();
 
   if (!applyAll && !StringBeginsWith(aLibraryPrefName,
                                      NS_LITERAL_STRING(PREF_ORGANIZE_PREFIX)))
@@ -3697,13 +3700,13 @@ nsresult sbBaseDevice::ApplyLibraryOrganizePreference
   rv = aLibrary->GetGuid(guidString);
   NS_ENSURE_SUCCESS(rv, rv);
   nsID libraryGuid;
-  bool success =
+  PRBool success =
     libraryGuid.Parse(NS_LossyConvertUTF16toASCII(guidString).get());
   NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
 
   nsAutoPtr<OrganizeData> libraryDataReleaser;
   OrganizeData* libraryData;
-  bool found = mOrganizeLibraryPrefs.Get(libraryGuid, &libraryData);
+  PRBool found = mOrganizeLibraryPrefs.Get(libraryGuid, &libraryData);
   if (!found) {
     libraryData = new OrganizeData;
     libraryDataReleaser = libraryData;
@@ -3872,7 +3875,7 @@ sbBaseDevice::GetCapabilitiesPreference(nsIVariant** aCapabilities)
 nsresult sbBaseDevice::GetLocalDeviceDir(nsIFile** aLocalDeviceDir)
 {
   NS_ENSURE_ARG_POINTER(aLocalDeviceDir);
-  bool   exists;
+  PRBool   exists;
   nsresult rv;
 
   // Get the root of all local device directories, creating it if needed.
@@ -4047,7 +4050,7 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if the device supports images
-  bool isSupported;
+  PRBool isSupported;
   rv = capabilities->SupportsContent(
                        sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY,
                        sbIDeviceCapabilities::CONTENT_IMAGE,
@@ -4068,7 +4071,7 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = imageSyncSettings->GetMgmtType(&imageMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool imageSyncEnabled = (imageMgmtType !=
+  PRBool imageSyncEnabled = (imageMgmtType !=
                              sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE);
 
   // Do not proceed to image sync request submission if image is not supported
@@ -4313,7 +4316,7 @@ sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*       aSrcLib,
       // the operation, create another smart list and sync to it that will fit
       // in the available space.  Otherwise, set the management type to manual
       // and return.
-      bool abort;
+      PRBool abort;
       rv = sbDeviceUtils::QueryUserSpaceExceeded(this,
                                                  aDstLib,
                                                  totalSyncSize,
@@ -4581,7 +4584,7 @@ sbBaseDevice::SyncGetSyncItemSizes(sbIDeviceLibrary * aDestLibrary,
     // Don't count lists
     // TODO: There probably is some size associated with storing a list at
     // sometime we might want to investigate that add some best estimate.
-    bool isList;
+    PRBool isList;
     rv = change->GetItemIsList(&isList);
     NS_ENSURE_SUCCESS(rv, 0);
     if (isList) {
@@ -4666,7 +4669,7 @@ namespace {
   nsresult GetMediaSettingsValues(sbIDeviceLibrarySyncSettings * aSyncSettings,
                                   PRUint32 aMediaType,
                                   PRUint32 * aMgmtType,
-                                  bool * aImport,
+                                  PRBool * aImport,
                                   nsIMutableArray * aSelectedPlaylists)
   {
     NS_ENSURE_ARG_POINTER(aSyncSettings);
@@ -4727,7 +4730,7 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
 
   PRUint32 audioMgmtType;
-  bool audioImport;
+  PRBool audioImport;
   rv = GetMediaSettingsValues(syncSettings,
                               sbIDeviceLibrary::MEDIATYPE_AUDIO,
                               &audioMgmtType,
@@ -4736,7 +4739,7 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 videoMgmtType;
-  bool videoImport;
+  PRBool videoImport;
   rv = GetMediaSettingsValues(syncSettings,
                               sbIDeviceLibrary::MEDIATYPE_VIDEO,
                               &videoMgmtType,
@@ -4953,7 +4956,7 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Add item to add media list list or add item list.
-    bool itemIsList;
+    PRBool itemIsList;
     rv = change->GetItemIsList(&itemIsList);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -4981,7 +4984,7 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
             NS_ENSURE_SUCCESS(rv, rv);
 
             // Do not add empty media lists.
-            bool isEmpty;
+            PRBool isEmpty;
             rv = mediaList->GetIsEmpty(&isEmpty);
             NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5009,7 +5012,7 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
             nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(srcItem, &rv);
             NS_ENSURE_SUCCESS(rv, rv);
 
-            bool isEmpty;
+            PRBool isEmpty;
             rv = mediaList->GetIsEmpty(&isEmpty);
             NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5037,7 +5040,7 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
             rv = properties->Enumerate(getter_AddRefs(propEnum));
             NS_ENSURE_SUCCESS(rv, rv);
 
-            bool hasMoreElements;
+            PRBool hasMoreElements;
             while (NS_SUCCEEDED(propEnum->HasMoreElements(&hasMoreElements)) &&
                    hasMoreElements) {
               nsCOMPtr<sbIPropertyChange> propertyChange;
@@ -5153,7 +5156,7 @@ sbBaseDevice::SyncMainLibraryFlag(sbIMediaItem * aMediaItem)
 }
 
 nsresult
-sbBaseDevice::PromptForEjectDuringPlayback(bool* aEject)
+sbBaseDevice::PromptForEjectDuringPlayback(PRBool* aEject)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aEject);
@@ -5163,7 +5166,7 @@ sbBaseDevice::PromptForEjectDuringPlayback(bool* aEject)
   sbPrefBranch prefBranch("songbird.device.dialog.", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hide_dialog = prefBranch.GetBoolPref("eject_while_playing", PR_FALSE);
+  PRBool hide_dialog = prefBranch.GetBoolPref("eject_while_playing", PR_FALSE);
 
   if (hide_dialog) {
     // if the dialog is disabled, continue as if the user had said yes
@@ -5203,7 +5206,7 @@ sbBaseDevice::PromptForEjectDuringPlayback(bool* aEject)
     bundle.Get("device.dialog.eject_while_playing.dontask");
 
   // show the dialog box
-  bool accept;
+  PRBool accept;
   rv = prompter->ConfirmEx(nsnull, title.get(), message.get(),
       (nsIPromptService::BUTTON_POS_0 *
        nsIPromptService::BUTTON_TITLE_IS_STRING) +
@@ -5274,7 +5277,7 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Now check to make sure the source file actually exists
-    bool fileExists = PR_FALSE;
+    PRBool fileExists = PR_FALSE;
     rv = writeSrcFile->Exists(&fileExists);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!fileExists) {
@@ -5303,7 +5306,7 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
   rv = destLibrary->GetGuid(destLibGuidStr);
   NS_ENSURE_SUCCESS(rv, rv);
   nsID destLibGuid;
-  bool success =
+  PRBool success =
     destLibGuid.Parse(NS_LossyConvertUTF16toASCII(destLibGuidStr).get());
   OrganizeData* organizeData = nsnull;
   if (success) {
@@ -5398,7 +5401,7 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
   }
 
   // Check if the content source file already exists.
-  bool exists;
+  PRBool exists;
   rv = contentSrcFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5527,7 +5530,7 @@ sbBaseDevice::ProcessInfoRegistrars()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Enumerate the registrars and find the highest scoring one (Greatest type)
-  bool hasMore;
+  PRBool hasMore;
   rv = enumerator->HasMoreElements(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5553,7 +5556,7 @@ sbBaseDevice::ProcessInfoRegistrars()
       do_CreateInstance(contractId.get(), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool interested;
+    PRBool interested;
     rv = infoRegistrar->InterestedInDevice(this, &interested);
     NS_ENSURE_SUCCESS(rv, rv);
     if (interested) {
@@ -5577,7 +5580,7 @@ sbBaseDevice::RegisterDeviceInfo()
 {
   TRACE(("%s", __FUNCTION__));
 
-  bool   success;
+  PRBool   success;
   nsresult rv;
 
   // Process the device info registrars.
@@ -5658,7 +5661,7 @@ sbBaseDevice::RegisterDeviceInfo()
   LogDeviceFolders();
 
   // Determine if the device supports format.
-  bool supportsFormat;
+  PRBool supportsFormat;
   rv = mInfoRegistrar->GetDoesDeviceSupportReformat(this, &supportsFormat);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5727,8 +5730,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
 nsresult
 sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                 sbDeviceSupportsItemHelper*    aCallback,
-                                bool                         aReportErrors,
-                                bool*                        _retval)
+                                PRBool                         aReportErrors,
+                                PRBool*                        _retval)
 {
   // we will always need the aMediaItem and retval
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -5894,7 +5897,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
     if (trackType.IsEmpty())
       continue;
 
-    bool isSupported = PR_FALSE;
+    PRBool isSupported = PR_FALSE;
     if (!mTrackSourceTable.Get(trackType, &isSupported)) {
       PRMonitor * stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
 
@@ -5909,7 +5912,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
       NS_ENSURE_SUCCESS(rv, rv);
 
       // Wait for the transferable check to complete.
-      bool isComplete = PR_FALSE;
+      PRBool isComplete = PR_FALSE;
       while (!isComplete) {
         // Operate within the request wait monitor.
         nsAutoMonitor monitor(stopWaitMonitor);
@@ -6045,7 +6048,7 @@ sbBaseDevice::GetDeviceTranscodingProperty(PRUint32         aTranscodeType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Search for property.
-  bool more = PR_FALSE;
+  PRBool more = PR_FALSE;
   rv = propEnumerator->HasMoreElements(&more);
   NS_ENSURE_SUCCESS(rv, rv);
   while (more) {
@@ -6187,7 +6190,7 @@ sbBaseDevice::GetSupportedAlbumArtFormats(nsIArray * *aFormats)
 
 nsresult
 sbBaseDevice::GetShouldLimitMusicSpace(const nsAString & aPrefBase,
-                                       bool *aOutShouldLimitSpace)
+                                       PRBool *aOutShouldLimitSpace)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aOutShouldLimitSpace);
@@ -6257,7 +6260,7 @@ NS_IMETHODIMP sbBaseDevice::Eject()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Is that library our device library?
-  bool equal;
+  PRBool equal;
   rv = mDefaultLibrary->Equals(library, &equal);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -6277,7 +6280,7 @@ NS_IMETHODIMP sbBaseDevice::Eject()
     }
 
     // Confirm with user on whether to stop the playback and eject.
-    bool eject;
+    PRBool eject;
     PromptForEjectDuringPlayback(&eject);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -6303,7 +6306,7 @@ NS_IMETHODIMP sbBaseDevice::Format()
 }
 
 /* readonly attribute boolean supportsReformat; */
-NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(bool *_retval)
+NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -6326,7 +6329,7 @@ nsresult
 sbBaseDevice::GetNameBase(nsAString& aName)
 {
   TRACE(("%s", __FUNCTION__));
-  bool   hasKey;
+  PRBool   hasKey;
   nsresult rv;
 
   nsCOMPtr<nsIPropertyBag2> properties;
@@ -6367,7 +6370,7 @@ sbBaseDevice::GetProductNameBase(char const * aDefaultModelNumberString,
   NS_ENSURE_ARG_POINTER(aDefaultModelNumberString);
 
   nsAutoString productName;
-  bool       hasKey;
+  PRBool       hasKey;
   nsresult     rv;
 
   nsCOMPtr<nsIPropertyBag2> properties;

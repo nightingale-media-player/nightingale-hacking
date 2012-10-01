@@ -49,6 +49,7 @@
 // Songbird imports.
 #include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -225,7 +226,7 @@ sbFileAlbumArtFetcher::GetDescription(nsAString& aDescription)
  */
 
 NS_IMETHODIMP
-sbFileAlbumArtFetcher::GetIsLocal(bool* aIsLocal)
+sbFileAlbumArtFetcher::GetIsLocal(PRBool* aIsLocal)
 {
   NS_ENSURE_ARG_POINTER(aIsLocal);
   *aIsLocal = PR_TRUE;
@@ -237,7 +238,7 @@ sbFileAlbumArtFetcher::GetIsLocal(bool* aIsLocal)
  */
 
 NS_IMETHODIMP
-sbFileAlbumArtFetcher::GetIsEnabled(bool* aIsEnabled)
+sbFileAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
 {
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   NS_ENSURE_STATE(mPrefService);
@@ -252,7 +253,7 @@ sbFileAlbumArtFetcher::GetIsEnabled(bool* aIsEnabled)
 }
 
 NS_IMETHODIMP
-sbFileAlbumArtFetcher::SetIsEnabled(bool aIsEnabled)
+sbFileAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
   NS_ENSURE_STATE(mPrefService);
   return mPrefService->SetBoolPref("songbird.albumart.file.enabled",
@@ -311,7 +312,7 @@ sbFileAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  */
 
 NS_IMETHODIMP
-sbFileAlbumArtFetcher::GetIsFetching(bool* aIsFetching)
+sbFileAlbumArtFetcher::GetIsFetching(PRBool* aIsFetching)
 {
   NS_ENSURE_ARG_POINTER(aIsFetching);
   // This fetcher operates synchronously, so indicate that it's not fetching.
@@ -409,7 +410,7 @@ sbFileAlbumArtFetcher::Initialize()
 nsresult
 sbFileAlbumArtFetcher::GetURLDirEntries
                          (nsIURL*               aURL,
-                          bool*               aIsLocalFile,
+                          PRBool*               aIsLocalFile,
                           nsISimpleEnumerator** contentSrcDirEntries)
 {
   // Validate arguments.
@@ -541,7 +542,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   } else {
     
     // Get the media item content source directory entries.
-    bool isLocalFile = PR_FALSE;
+    PRBool isLocalFile = PR_FALSE;
     rv = GetURLDirEntries(contentSrcURL,
                           &isLocalFile,
                           getter_AddRefs(contentSrcDirEntries));
@@ -560,7 +561,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   // file.
   while (!(*aAlbumArtFile) && entriesToBeCached) {
     // Get the next directory entry.
-    bool hasMoreElements;
+    PRBool hasMoreElements;
     rv = contentSrcDirEntries->HasMoreElements(&hasMoreElements);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasMoreElements)
@@ -570,7 +571,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Skip file if it's not a regular file (e.g., a directory).
-    bool isFile;
+    PRBool isFile;
     rv = file->IsFile(&isFile);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!isFile)
@@ -590,7 +591,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     // Check if file extension matches any album art file extension.  Skip file
     // if it doesn't.
     nsDependentSubstring fileExtension(leafName, fileExtensionIndex + 1);
-    bool fileExtensionMatched = PR_FALSE;
+    PRBool fileExtensionMatched = PR_FALSE;
     for (PRUint32 i = 0; i < mFileExtensionList.Length(); i++) {
       if (fileExtension.Equals(mFileExtensionList[i])) {
         fileExtensionMatched = PR_TRUE;

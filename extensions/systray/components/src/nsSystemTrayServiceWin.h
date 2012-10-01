@@ -113,8 +113,8 @@ protected:
   static nsresult CreateMouseEvent(nsIDOMDocumentEvent* documentEvent,
     const nsAString& typeArg, nsIDOMAbstractView* viewArg, PRInt32 detailArg,
     PRInt32 screenXArg, PRInt32 screenYArg, PRInt32 clientXArg,
-    PRInt32 clientYArg, bool ctrlKeyArg, bool altKeyArg,
-    bool shiftKeyArg, bool metkeyArg, PRUint16 buttonArg,
+    PRInt32 clientYArg, PRBool ctrlKeyArg, PRBool altKeyArg,
+    PRBool shiftKeyArg, PRBool metkeyArg, PRUint16 buttonArg,
     nsIDOMEvent** _retval);
 
   static LRESULT CALLBACK WindowProc(

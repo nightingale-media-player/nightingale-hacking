@@ -34,6 +34,7 @@
 
 #include <sbIMediacoreFactory.h>
 
+#include <nsAutoLock.h>
 #include <nsStringGlue.h>
 
 class sbBaseMediacoreFactory : public sbIMediacoreFactory

@@ -49,8 +49,8 @@ struct PRMonitor;
 // These are the methods from sbLibrary that we're going to
 // override in sbDeviceLibrary.
 #define SB_DECL_SBILIBRARY_OVERRIDES  \
-  NS_IMETHOD CreateMediaItem(nsIURI *aContentUri, sbIPropertyArray *aProperties, bool aAllowDuplicates, sbIMediaItem **_retval); \
-  NS_IMETHOD CreateMediaItemIfNotExist(nsIURI *aContentUri, sbIPropertyArray *aProperties, sbIMediaItem **aResultItem, bool *_retval); \
+  NS_IMETHOD CreateMediaItem(nsIURI *aContentUri, sbIPropertyArray *aProperties, PRBool aAllowDuplicates, sbIMediaItem **_retval); \
+  NS_IMETHOD CreateMediaItemIfNotExist(nsIURI *aContentUri, sbIPropertyArray *aProperties, sbIMediaItem **aResultItem, PRBool *_retval); \
   NS_IMETHOD CreateMediaList(const nsAString & aType, sbIPropertyArray *aProperties, sbIMediaList **_retval);  \
   NS_IMETHOD GetDevice(sbIDevice * *aDevice); \
   NS_IMETHOD ClearItems(); \
@@ -59,22 +59,22 @@ struct PRMonitor;
 // Use this macro to declare functions that forward the behavior of this
 // interface to another object in a safe way.
 #define SB_FORWARD_SAFE_SBILIBRARY(_to) \
-  NS_IMETHOD GetSupportsForeignMediaItems(bool *aSupportsForeignMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSupportsForeignMediaItems(aSupportsForeignMediaItems); } \
+  NS_IMETHOD GetSupportsForeignMediaItems(PRBool *aSupportsForeignMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSupportsForeignMediaItems(aSupportsForeignMediaItems); } \
   NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
   NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
-  NS_IMETHOD ContainsItemWithSameIdentity(sbIMediaItem* aMediaItem, bool* _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ContainsItemWithSameIdentity(aMediaItem, _retval); } \
+  NS_IMETHOD ContainsItemWithSameIdentity(sbIMediaItem* aMediaItem, PRBool* _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ContainsItemWithSameIdentity(aMediaItem, _retval); } \
   NS_IMETHOD GetItemsWithSameIdentity(sbIMediaItem* aMediaItem, nsIArray** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsWithSameIdentity(aMediaItem, _retval); } \
   NS_IMETHOD Resolve(nsIURI *aUri, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Resolve(aUri, _retval); } \
-  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, bool aDontCopyContent, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, aDontCopyContent, _retval); } \
+  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, PRBool aDontCopyContent, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, aDontCopyContent, _retval); } \
   NS_IMETHOD GetMediaItem(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItem(aGuid, _retval); } \
   NS_IMETHOD GetDuplicate(sbIMediaItem *aMediaItem, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuplicate(aMediaItem, _retval); } \
   NS_IMETHOD GetMediaListTypes(nsIStringEnumerator * *aMediaListTypes) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaListTypes(aMediaListTypes); } \
   NS_IMETHOD RegisterMediaListFactory(sbIMediaListFactory *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterMediaListFactory(aFactory); } \
-  NS_IMETHOD Optimize(bool aAnalyzeOnly) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(aAnalyzeOnly); } \
+  NS_IMETHOD Optimize(PRBool aAnalyzeOnly) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(aAnalyzeOnly); } \
   NS_IMETHOD Flush(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Flush(); } \
-  NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, bool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
+  NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
   NS_IMETHOD BatchCreateMediaItemsIfNotExist(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, nsIArray **aResultItemArray, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsIfNotExist(aURIArray, aPropertyArrayArray, aResultItemArray, _retval); } \
-  NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, bool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); }
+  NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); }
 
 // These are the methods from sbLibrary that we're going to
 // override in sbDeviceLibrary.
@@ -83,7 +83,7 @@ struct PRMonitor;
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem); \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList); \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems); \
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, bool aAsync); \
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync); \
   NS_IMETHOD Clear(void);
 
 #define SB_FORWARD_SAFE_SBIMEDIALIST(_to) \
@@ -91,8 +91,8 @@ struct PRMonitor;
   NS_IMETHOD SetName(const nsAString & aName) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetName(aName); } \
   NS_IMETHOD GetType(nsAString & aType) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetType(aType); } \
   NS_IMETHOD GetLength(PRUint32 *aLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetLength(aLength); } \
-  NS_IMETHOD GetIsEmpty(bool *aIsEmpty) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsEmpty(aIsEmpty); } \
-  NS_IMETHOD GetUserEditableContent(bool *aUserEditableContent) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditableContent(aUserEditableContent); } \
+  NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsEmpty(aIsEmpty); } \
+  NS_IMETHOD GetUserEditableContent(PRBool *aUserEditableContent) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditableContent(aUserEditableContent); } \
   NS_IMETHOD GetItemByGuid(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByGuid(aGuid, _retval); } \
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByIndex(aIndex, _retval); } \
   NS_IMETHOD GetListContentType(PRUint16 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetListContentType(_retval); } \
@@ -104,18 +104,18 @@ struct PRMonitor;
   NS_IMETHOD GetItemsByProperties(sbIPropertyArray *aProperties, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsByProperties(aProperties, _retval); } \
   NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->IndexOf(aMediaItem, aStartFrom, _retval); } \
   NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->LastIndexOf(aMediaItem, aStartFrom, _retval); } \
-  NS_IMETHOD Contains(sbIMediaItem *aMediaItem, bool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Contains(aMediaItem, _retval); } \
+  NS_IMETHOD Contains(sbIMediaItem *aMediaItem, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Contains(aMediaItem, _retval); } \
   NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveByIndex(aIndex); } \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveSome(aMediaItems); } \
-  NS_IMETHOD AddListener(sbIMediaListListener *aListener, bool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
+  NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListViewState *aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(aState, _retval); } \
   NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to->RunInBatchMode(aCallback, aUserData); } \
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); }
 
 #define SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(_to) \
-  NS_SCRIPTABLE NS_IMETHOD GetIsMutable(bool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
+  NS_SCRIPTABLE NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
   NS_SCRIPTABLE NS_IMETHOD GetItemController(sbIMediaItemController **aMediaItemController) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemController(aMediaItemController); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMediaCreated(aMediaCreated); } \
@@ -279,7 +279,7 @@ private:
    * \param aIsMgmtTypeSyncAll Set to true if the device is configured to
    *                           auto sync and syncing all.
    */
-  nsresult GetIsMgmtTypeSyncAll(bool* aIsMgmtTypeSyncAll);
+  nsresult GetIsMgmtTypeSyncAll(PRBool* aIsMgmtTypeSyncAll);
 
   /**
    * \brief Return true if the device is configured to auto sync and syncing
@@ -288,7 +288,7 @@ private:
    * \param aIsMgmtTypeSyncList Set to true if the device is configured to
    *                            auto sync and syncing playlist.
    */
-  nsresult GetIsMgmtTypeSyncList(bool* aIsMgmtTypeSyncList);
+  nsresult GetIsMgmtTypeSyncList(PRBool* aIsMgmtTypeSyncList);
 
   /**
    * \brief Sets the sync management settings but does not lock our lock.

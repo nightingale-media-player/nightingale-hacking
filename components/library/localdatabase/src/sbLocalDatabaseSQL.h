@@ -93,7 +93,7 @@ private:
   nsString mMediaItemColumnsWithID;
   nsString mLibraryMediaItemSelect;
 
-  nsString MediaItemColumns(bool aIncludeMediaItem);
+  nsString MediaItemColumns(PRBool aIncludeMediaItem);
 };
 
 #endif /* SBLOCALDATABASEPRIMARYPROPERTYSELECT_H_ */

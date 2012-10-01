@@ -37,7 +37,7 @@
 
 #include <nsITimer.h>
 #include <nsIComponentManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIFile.h>
 #include <nsTArray.h>
 #include <nsIMutableArray.h>
@@ -214,7 +214,7 @@ protected:
   //        If found, decrements the times-to-ignore count as appropriate.
   //
   nsresult DecrementIgnoredPathCount(const nsAString & aFilePath,
-                                     bool *aIsIgnoredPath);
+                                     PRBool *aIsIgnoredPath);
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
@@ -233,15 +233,15 @@ private:
   nsString                       mWatchPath;
   nsCString                      mFileSystemWatcherGUID;
   EWatchFolderState              mServiceState;
-  bool                         mHasWatcherStarted;
-  bool                         mShouldReinitWatcher;
-  bool                         mEventPumpTimerIsSet;
-  bool                         mShouldProcessEvents;
-  bool                         mChangeDelayTimerIsSet;
+  PRBool                         mHasWatcherStarted;
+  PRBool                         mShouldReinitWatcher;
+  PRBool                         mEventPumpTimerIsSet;
+  PRBool                         mShouldProcessEvents;
+  PRBool                         mChangeDelayTimerIsSet;
   EProcessType                   mCurrentProcessType;
   
-  bool                                mCanInteract;
-  bool                                mShouldSynchronize;
+  PRBool                                mCanInteract;
+  PRBool                                mShouldSynchronize;
   nsCOMPtr<sbIDirectoryImportService>   mCustomImporter;
   nsCOMPtr<sbIMediacoreTypeSniffer>     mTypeSniffer;
   nsCOMPtr<sbIFileMetadataService>      mMetadataScanner;

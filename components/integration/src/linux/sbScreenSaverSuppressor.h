@@ -87,7 +87,7 @@ public:
   // sbBaseScreenSaverSuppressor implemenation.
   //
 
-  virtual nsresult OnSuppress(bool aSuppress);
+  virtual nsresult OnSuppress(PRBool aSuppress);
 
 
   //
@@ -118,7 +118,7 @@ private:
   //   mInhibitCookie           Cookie returned from inhibiting screen saver.
   //
 
-  bool                        mSuppressed;
+  PRBool                        mSuppressed;
   dbus_uint32_t                 mInhibitCookie;
 
 

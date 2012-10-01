@@ -402,13 +402,13 @@ sbIPDDevice::Eject()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // is that library our device library?
-  bool equal;
+  PRBool equal;
   rv = mDeviceLibrary->Equals(library, &equal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (equal) {
     // ask the user if we should eject
-    bool eject;
+    PRBool eject;
     rv = PromptForEjectDuringPlayback(&eject);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -484,7 +484,7 @@ NS_IMETHODIMP
 sbIPDDevice::GetProductName(nsAString& aProductName)
 {
   nsAutoString productName;
-  bool       hasKey;
+  PRBool       hasKey;
   nsresult     rv;
 
   // Get the vendor name.
@@ -583,7 +583,7 @@ sbIPDDevice::GetId(nsID** aId)
  */
 
 NS_IMETHODIMP
-sbIPDDevice::GetConnected(bool* aConnected)
+sbIPDDevice::GetConnected(PRBool* aConnected)
 {
   NS_ENSURE_ARG_POINTER(aConnected);
   *aConnected = mConnected;
@@ -597,7 +597,7 @@ sbIPDDevice::GetConnected(bool* aConnected)
  */
 
 NS_IMETHODIMP
-sbIPDDevice::GetThreaded(bool* aThreaded)
+sbIPDDevice::GetThreaded(PRBool* aThreaded)
 {
   NS_ENSURE_ARG_POINTER(aThreaded);
   *aThreaded = PR_TRUE;
@@ -732,31 +732,31 @@ sbIPDDevice::GetPreviousState(PRUint32* aState)
 
 /* pass through to the base class */
 NS_IMETHODIMP
-sbIPDDevice::GetIsDirectTranscoding(bool* aIsDirect)
+sbIPDDevice::GetIsDirectTranscoding(PRBool* aIsDirect)
 {
   return sbBaseDevice::GetIsDirectTranscoding(aIsDirect);
 }
 
 /* pass through to the base class */
 NS_IMETHODIMP
-sbIPDDevice::GetIsBusy(bool* aIsBusy)
+sbIPDDevice::GetIsBusy(PRBool* aIsBusy)
 {
   return sbBaseDevice::GetIsBusy(aIsBusy);
 }
 
 /* pass through to the base class */
 NS_IMETHODIMP
-sbIPDDevice::GetCanDisconnect(bool* aCanDisconnect)
+sbIPDDevice::GetCanDisconnect(PRBool* aCanDisconnect)
 {
   return sbBaseDevice::GetCanDisconnect(aCanDisconnect);
 }
 
-NS_IMETHODIMP sbIPDDevice::SetWarningDialogEnabled(const nsAString & aWarning, bool aEnabled)
+NS_IMETHODIMP sbIPDDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)
 {
   return sbBaseDevice::SetWarningDialogEnabled(aWarning, aEnabled);
 }
 
-NS_IMETHODIMP sbIPDDevice::GetWarningDialogEnabled(const nsAString & aWarning, bool *_retval)
+NS_IMETHODIMP sbIPDDevice::GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval)
 {
   return sbBaseDevice::GetWarningDialogEnabled(aWarning, _retval);
 }
@@ -866,7 +866,7 @@ sbIPDDevice::DBConnect()
 
   // If we've got an HFSPlus filesystem that's read-only we special case
   // that
-  bool hfsplusro;
+  PRBool hfsplusro;
   rv = mCreationProperties2->HasKey(NS_LITERAL_STRING("HFSPlusReadOnly"),
       &hfsplusro);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1016,7 +1016,7 @@ nsresult
 sbIPDDevice::InitSysInfo()
 {
   GError*  gError = nsnull;
-  bool   success;
+  PRBool   success;
 
   // Set the Firewire GUID value if not set.
   if (!mFirewireGUID.IsEmpty()) {
@@ -1094,7 +1094,7 @@ sbIPDDevice::StatsFinalize()
  */
 
 void
-sbIPDDevice::StatsUpdate(bool aForceUpdate)
+sbIPDDevice::StatsUpdate(PRBool aForceUpdate)
 {
   // Function variables.
   PRUint64 musicSpace = 0;
@@ -1103,7 +1103,7 @@ sbIPDDevice::StatsUpdate(bool aForceUpdate)
   guint64  capacity;
   guint64  free;
   guint64  totalUsed;
-  bool   success;
+  PRBool   success;
 
   // Do nothing if update is not needed.
   PRIntervalTime lastUpdateInterval;
@@ -1180,7 +1180,7 @@ sbIPDDevice::CreateAndDispatchFairPlayEvent(PRUint32      aType,
                                             nsAString&    aAccountName,
                                             nsAString&    aUserName,
                                             sbIMediaItem* aMediaItem,
-                                            bool        aAsync)
+                                            PRBool        aAsync)
 {
   nsresult rv;
 
@@ -1636,7 +1636,7 @@ sbIPDDevice::AddNSIDHash(unsigned char*   aBuffer,
  * \return                      True if device file system is supported.
  */
 
-bool
+PRBool
 sbIPDDevice::IsFileSystemSupported()
 {
   // If the device storage information is available, the file system is
@@ -1654,7 +1654,7 @@ sbIPDDevice::SetUpIfNeeded()
   nsresult rv;
 
   // is the ipod already set up?
-  bool isSetUp;
+  PRBool isSetUp;
   rv = GetIsSetUp(&isSetUp);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1680,7 +1680,7 @@ NS_IMETHODIMP sbIPDDevice::Format()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP sbIPDDevice::GetSupportsReformat(bool *aCanReformat) {
+NS_IMETHODIMP sbIPDDevice::GetSupportsReformat(PRBool *aCanReformat) {
   NS_ENSURE_ARG_POINTER(aCanReformat);
   *aCanReformat = PR_FALSE;
   return NS_OK;

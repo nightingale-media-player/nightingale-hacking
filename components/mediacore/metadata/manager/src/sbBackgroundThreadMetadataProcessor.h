@@ -83,7 +83,7 @@ protected:
   nsCOMPtr<nsIThread>                     mThread;
     
   // Flag to indicate that the thread should stop processing
-  bool                                  mShouldShutdown;
+  PRBool                                  mShouldShutdown;
   
   // Monitor used to wake up the thread when more items
   // are added, or when it is time to shut down

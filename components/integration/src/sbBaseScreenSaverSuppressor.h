@@ -29,6 +29,7 @@
 
 #include <nsIObserver.h>
 
+#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -57,7 +58,7 @@ public:
 
   nsresult Init();
 
-  virtual nsresult OnSuppress(bool aSuppress) = 0;
+  virtual nsresult OnSuppress(PRBool aSuppress) = 0;
 
 protected:
   PRInt32       mSuppress;

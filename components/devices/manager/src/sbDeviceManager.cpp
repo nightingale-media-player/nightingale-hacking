@@ -35,6 +35,7 @@
 #include <nsISupportsPrimitives.h>
 
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -154,7 +155,7 @@ NS_IMETHODIMP sbDeviceManager::GetMarshallByID(const nsID * aIDPtr,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  bool succeded = mMarshalls.Get(*aIDPtr, _retval);
+  PRBool succeded = mMarshalls.Get(*aIDPtr, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -301,7 +302,7 @@ NS_IMETHODIMP sbDeviceManager::RegisterController(sbIDeviceController *aControll
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_ARG_POINTER(id);
 
-  bool succeeded = mControllers.Put(*id, aController);
+  PRBool succeeded = mControllers.Put(*id, aController);
   NS_Free(id);
   return succeeded ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
@@ -345,7 +346,7 @@ NS_IMETHODIMP sbDeviceManager::GetController(const nsID * aControllerId,
   }
 
 
-  bool succeded = mControllers.Get(*aControllerId, _retval);
+  PRBool succeded = mControllers.Get(*aControllerId, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -397,7 +398,7 @@ NS_IMETHODIMP sbDeviceManager::RegisterDevice(sbIDevice *aDevice)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_ARG_POINTER(id);
 
-  bool succeeded = mDevices.Put(*id, aDevice);
+  PRBool succeeded = mDevices.Put(*id, aDevice);
   NS_Free(id);
   if (!succeeded) {
     return NS_ERROR_OUT_OF_MEMORY;
@@ -450,7 +451,7 @@ NS_IMETHODIMP sbDeviceManager::GetDevice(const nsID * aDeviceId,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  bool succeeded = mDevices.Get(*aDeviceId, _retval);
+  PRBool succeeded = mDevices.Get(*aDeviceId, _retval);
   return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -503,12 +504,12 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     // Usually (but not always!) we'll get a quit-application-requested
     // notification - if we do, use it to show a dialog to the user to let them
     // cancel if device operations are in progress.
-    bool shouldQuit = PR_FALSE;
+    PRBool shouldQuit = PR_FALSE;
     rv = this->QuitApplicationRequested(&shouldQuit);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (!shouldQuit) {
-      nsCOMPtr<nsISupportsbool> stopShutdown =
+      nsCOMPtr<nsISupportsPRBool> stopShutdown =
           do_QueryInterface(aSubject, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = stopShutdown->SetData(PR_TRUE);
@@ -580,7 +581,7 @@ nsresult sbDeviceManager::Init()
   nsAutoMonitor mon(mMonitor);
 
   // initialize the hashtables
-  bool succeeded;
+  PRBool succeeded;
   succeeded = mControllers.Init();
   NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
 
@@ -600,7 +601,7 @@ nsresult sbDeviceManager::Init()
                                  getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore;
+  PRBool hasMore;
   rv = enumerator->HasMoreElements(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -660,7 +661,7 @@ nsresult sbDeviceManager::Init()
   return NS_OK;
 }
 
-nsresult sbDeviceManager::GetCanDisconnect(bool* aCanDisconnect)
+nsresult sbDeviceManager::GetCanDisconnect(PRBool* aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -678,7 +679,7 @@ nsresult sbDeviceManager::GetCanDisconnect(bool* aCanDisconnect)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // for each of them, can we disconnect?
-  bool canDisconnect = PR_TRUE;
+  PRBool canDisconnect = PR_TRUE;
   for (PRUint32 i = 0; i < length; ++i) {
     nsCOMPtr<sbIDevice> device;
     rv = devices->QueryElementAt(i, NS_GET_IID(sbIDevice),
@@ -736,7 +737,7 @@ nsresult sbDeviceManager::BeginMarshallMonitoring()
   return NS_OK;
 }
 
-nsresult sbDeviceManager::QuitApplicationRequested(bool *aShouldQuit)
+nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   nsAutoMonitor mon(mMonitor);
@@ -745,7 +746,7 @@ nsresult sbDeviceManager::QuitApplicationRequested(bool *aShouldQuit)
 
   // There has been a request to shutdown, let's check with the devices and if
   // they are busy then query the user if they wish to force them to quit
-  bool canDisconnect;
+  PRBool canDisconnect;
   rv = GetCanDisconnect(&canDisconnect);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -806,7 +807,7 @@ nsresult sbDeviceManager::QuitApplicationGranted()
     // Only do this if we _didn't_ show the cancelable dialog (see
     // QuitApplicationRequested) - which would happen if the
     // quit-application-requested notification wasn't sent for some reason.
-    bool canDisconnect;
+    PRBool canDisconnect;
     rv = GetCanDisconnect(&canDisconnect);
     NS_ENSURE_SUCCESS(rv, rv);
 

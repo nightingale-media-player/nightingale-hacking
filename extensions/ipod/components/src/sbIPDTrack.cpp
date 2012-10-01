@@ -726,7 +726,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Validate the property value.
-  bool valid;
+  PRBool valid;
   rv = propertyInfo->Validate(aProp, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(valid, NS_ERROR_INVALID_ARG);
@@ -775,7 +775,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
   // Convert and validate the property value.
   nsAutoString prop;
   if (aProp) {
-    bool valid;
+    PRBool valid;
     prop.Assign(NS_ConvertUTF8toUTF16(aProp));
     rv = propertyInfo->Validate(prop, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -898,7 +898,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
   // Convert and validate the property value.  Do not set the property if not
   // valid.
   sbAutoString prop(aProp);
-  bool       valid;
+  PRBool       valid;
   rv = propertyInfo->Validate(prop, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!valid)
@@ -1020,7 +1020,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
   // Convert and validate the property value.
   sbAutoString prop(aProp);
-  bool       valid;
+  PRBool       valid;
   rv = propertyInfo->Validate(prop, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(valid, NS_ERROR_INVALID_ARG);
@@ -1141,7 +1141,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
   // Convert and validate the property value.
   sbAutoString prop(aProp);
-  bool       valid;
+  PRBool       valid;
   rv = propertyInfo->Validate(prop, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(valid, NS_ERROR_INVALID_ARG);
@@ -1280,7 +1280,7 @@ sbIPDDevice::SetTrackPropDur(sbIMutablePropertyArray* aPropertyArray,
 
   // Convert and validate the property value.
   nsAutoString prop;
-  bool       valid;
+  PRBool       valid;
   prop.AssignLiteral(durationStr);
   rv = propertyInfo->Validate(prop, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1420,7 +1420,7 @@ sbIPDDevice::SetTrackPropRating(sbIMutablePropertyArray* aPropertyArray,
 
   // Convert and validate the property value.
   nsAutoString prop;
-  bool       valid;
+  PRBool       valid;
   prop.AssignLiteral(ratingStr);
   rv = propertyInfo->Validate(prop, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1758,7 +1758,7 @@ sbIPDDevice::RemoveTrackFromAllPlaylists(Itdb_Track* aTrack)
  * \return True if media format is supported.
  */
 
-bool
+PRBool
 sbIPDDevice::IsMediaSupported(sbIMediaItem* aMediaItem)
 {
   // Validate arguments.

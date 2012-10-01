@@ -54,7 +54,7 @@ void sbBaseDeviceMarshall::RegisterControllers(sbIDeviceControllerRegistrar *reg
   if (controllers
       && NS_SUCCEEDED(controllers->Enumerate(getter_AddRefs(enumerator)))
       && enumerator) {
-    bool more;
+    PRBool more;
     while (NS_SUCCEEDED(enumerator->HasMoreElements(&more)) && more) {
       nsCOMPtr<nsISupports> comPtr;
       if (NS_SUCCEEDED(enumerator->GetNext(getter_AddRefs(comPtr))) && comPtr) {
@@ -107,7 +107,7 @@ static nsresult CopyCategoriesToArray(nsCOMPtr<nsISimpleEnumerator> & enumerator
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Enumerate the category entries
-  bool more;
+  PRBool more;
   while (NS_SUCCEEDED(enumerator->HasMoreElements(&more)) && more) {
     nsCOMPtr<nsISupports> ptr;
     if (NS_SUCCEEDED(enumerator->GetNext(getter_AddRefs(ptr))) && ptr) {
@@ -148,7 +148,7 @@ nsresult sbBaseDeviceMarshall::GetCategoryManagerEnumerator(nsCOMPtr<nsISimpleEn
  * Returns true if comp2 is not incompatible and is "more" compatible than comp1
  */
 inline
-bool CompareCompatibility(sbIDeviceCompatibility * comp1,
+PRBool CompareCompatibility(sbIDeviceCompatibility * comp1,
                             sbIDeviceCompatibility * comp2)
 {
   PRUint32 compVal1 = sbIDeviceCompatibility::INCOMPATIBLE;
@@ -160,7 +160,7 @@ bool CompareCompatibility(sbIDeviceCompatibility * comp1,
           compVal2 != sbIDeviceCompatibility::INCOMPATIBLE);
 }
 
-bool sbBaseDeviceMarshall::CompatibilityComparer::Compare(sbIDeviceController * controller,
+PRBool sbBaseDeviceMarshall::CompatibilityComparer::Compare(sbIDeviceController * controller,
                                                             nsIPropertyBag * deviceParameters)
 {
   nsCOMPtr<sbIDeviceCompatibility> compatibility;
@@ -184,7 +184,7 @@ sbIDeviceController* sbBaseDeviceMarshall::FindCompatibleControllers(nsIProperty
       && NS_SUCCEEDED(controllers->Enumerate(getter_AddRefs(enumerator)))
       && enumerator) {
     // Enumerate the list of controllers
-    bool more;
+    PRBool more;
     while (NS_SUCCEEDED(enumerator->HasMoreElements(&more)) && more) {
       nsCOMPtr<sbIDeviceController> controller;
       if (NS_SUCCEEDED(enumerator->GetNext(getter_AddRefs(controller)))

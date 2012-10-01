@@ -27,6 +27,7 @@
 
 #include "sbDeviceEventBeforeAddedData.h"
 
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceEventBeforeAddedData,
@@ -82,7 +83,7 @@ sbDeviceEventBeforeAddedData::CreateEventBeforeAddedData(
 }
 
 NS_IMETHODIMP
-sbDeviceEventBeforeAddedData::GetContinueAddingDevice(bool *aContinueAddingDevice)
+sbDeviceEventBeforeAddedData::GetContinueAddingDevice(PRBool *aContinueAddingDevice)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aContinueAddingDevice);
@@ -94,7 +95,7 @@ sbDeviceEventBeforeAddedData::GetContinueAddingDevice(bool *aContinueAddingDevic
 }
 
 NS_IMETHODIMP
-sbDeviceEventBeforeAddedData::SetContinueAddingDevice(bool aContinueAddingDevice)
+sbDeviceEventBeforeAddedData::SetContinueAddingDevice(PRBool aContinueAddingDevice)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
 

@@ -47,10 +47,11 @@
 #include "sbServiceManager.h"
 
 // Songbird imports.
-#include <sbThreadUtilsXPCOM.h>
+#include <sbProxiedComponentManager.h>
 
 // Mozilla imports.
 #include <nsServiceManagerUtils.h>
+
 
 //------------------------------------------------------------------------------
 //
@@ -101,7 +102,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbServiceManager, sbIServiceManager)
 
 NS_IMETHODIMP
 sbServiceManager::IsServiceReady(const char* aServiceContractID,
-                                 bool*     retval)
+                                 PRBool*     retval)
 {
   // Validate state and arguments.
   NS_ENSURE_STATE(mInitialized);
@@ -123,7 +124,7 @@ sbServiceManager::IsServiceReady(const char* aServiceContractID,
 
 NS_IMETHODIMP
 sbServiceManager::SetServiceReady(const char* aServiceContractID,
-                                  bool      aServiceReady)
+                                  PRBool      aServiceReady)
 {
   TRACE(("%s[%.8x] %s %d",
          __FUNCTION__, this, aServiceContractID, aServiceReady));
@@ -132,11 +133,12 @@ sbServiceManager::SetServiceReady(const char* aServiceContractID,
   NS_ENSURE_STATE(mInitialized);
 
   // Function variables.
-  bool   serviceReady = !!aServiceReady;
+  PRBool   serviceReady = !!aServiceReady;
+  PRBool   success;
   nsresult rv;
 
   // Get the current service ready state.
-  bool currentServiceReady;
+  PRBool currentServiceReady;
   rv = IsServiceReady(aServiceContractID, &currentServiceReady);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -148,28 +150,20 @@ sbServiceManager::SetServiceReady(const char* aServiceContractID,
   nsAutoString serviceContractID = NS_ConvertUTF8toUTF16(aServiceContractID);
   if (aServiceReady) {
     // Add the service to the ready service table.
-    mReadyServiceTable.Put(serviceContractID, PR_TRUE);
+    success = mReadyServiceTable.Put(serviceContractID, PR_TRUE);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     // Send notification that the service is ready.
-
-    nsRefPtr<sbRunnable_<nsresult>> job =
-      new sbRunnableXPCOMMethod3_<nsresult,nsIObserverService,
-        nsISupports*,const char*,const PRUnichar*>(
-          mObserverService,&nsIObserverService::NotifyObservers,
-          this,"service-ready",serviceContractID.get());
-    NS_DispatchToMainThread(job);
-    rv = job->Wait();
+    rv = mObserverService->NotifyObservers(this,
+                                           "service-ready",
+                                           serviceContractID.get());
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     // Send notification that the service is about to be shut down.
-    nsRefPtr<sbRunnable_<nsresult>> job =
-      new sbRunnableXPCOMMethod3_<nsresult,nsIObserverService,
-        nsISupports*,const char*,const PRUnichar*>(
-          mObserverService,&nsIObserverService::NotifyObservers,
-          this,"before-service-shutdown",serviceContractID.get());
-    NS_DispatchToMainThread(job);
-    rv = job->Wait();
+    rv = mObserverService->NotifyObservers(this,
+                                           "before-service-shutdown",
+                                           serviceContractID.get());
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Remove the service from the ready service table.
@@ -240,10 +234,11 @@ sbServiceManager::Initialize()
     return NS_OK;
 
   // Initialize the table of ready services.
-  mReadyServiceTable.Init();
+  PRBool success = mReadyServiceTable.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // Get a proxied observer service.
-  mObserverService = do_GetService("@mozilla.org/observer-service;1",
+  mObserverService = do_ProxiedGetService("@mozilla.org/observer-service;1",
                                           &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 

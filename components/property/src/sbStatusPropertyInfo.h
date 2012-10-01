@@ -49,10 +49,10 @@ public:
                        const nsAString& aLabel,
                        const nsAString& aCompletedLabel,
                        const nsAString& aFailedLabel,
-                       const bool aRemoteReadable,
-                       const bool aRemoteWritable,
-                       const bool aUserViewable,
-                       const bool aUserEditable);
+                       const PRBool aRemoteReadable,
+                       const PRBool aRemoteWritable,
+                       const PRBool aUserViewable,
+                       const PRBool aUserEditable);
   virtual ~sbStatusPropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);

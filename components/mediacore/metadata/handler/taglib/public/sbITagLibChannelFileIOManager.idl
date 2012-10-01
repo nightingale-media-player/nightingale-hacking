@@ -89,5 +89,5 @@ interface sbITagLibChannelFileIOManager : nsISupports
     * \param aChannelID Identifier for channel for which to set restart flag.
     * \param aRestart Restart flag value.
     */
-    void setChannelRestart( in ACString aChannelID, in boolean aRestart );
+    void setChannelRestart( in ACString aChannelID, in PRBool aRestart );
 };

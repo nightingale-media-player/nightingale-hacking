@@ -33,6 +33,7 @@
 #include "sbIMediaListListener.h"
 #include <sbStandardProperties.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 
@@ -50,7 +51,7 @@ public:
   /**
    * Ignores all items. This obviously will supersede item specific ignores
    */
-  nsresult SetIgnoreListener(bool aIgnoreListener);
+  nsresult SetIgnoreListener(PRBool aIgnoreListener);
   /**
    * Sets an ignore for a given item. Returns PR_FALSE if the item is already
    * being ignored
@@ -64,7 +65,7 @@ protected:
   /**
    * Returns PR_TRUE if the item is currently being ignored
    */
-  bool MediaItemIgnored(sbIMediaItem * aItem);
+  PRBool MediaItemIgnored(sbIMediaItem * aItem);
   /**
    * Initializes the lock and ignore listener count
    */

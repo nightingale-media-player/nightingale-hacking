@@ -103,7 +103,7 @@ public:
   nsresult HandleVolumeChangeEvent(sbIMediacoreEvent *aEvent);
   nsresult UpdateVolumeDataRemote(PRFloat64 aVolume);
   nsresult HandleMuteChangeEvent(sbIMediacoreEvent *aEvent);
-  nsresult UpdateMuteDataRemote(bool aMuted);
+  nsresult UpdateMuteDataRemote(PRBool aMuted);
 
   // Metadata Event & DataRemote
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
@@ -133,7 +133,7 @@ public:
   nsresult ProcessNewPosition();
   nsresult Setup(nsIURI *aURI = nsnull);
   nsresult CoreHandleNextSetup();
-  bool   HandleAbort();
+  PRBool   HandleAbort();
 
   // Set view with optional view position
   nsresult SetViewWithViewPosition(sbIMediaListView *aView,
@@ -153,13 +153,13 @@ protected:
   virtual ~sbMediacoreSequencer();
 
   nsresult DispatchMediacoreEvent(sbIMediacoreEvent *aEvent,
-                                  bool aAsync = PR_FALSE);
+                                  PRBool aAsync = PR_FALSE);
 
   nsresult StartPlayback();
 
-  bool   CheckPropertiesInfluenceView(sbIPropertyArray *aProperties);
+  PRBool   CheckPropertiesInfluenceView(sbIPropertyArray *aProperties);
 
-  bool IsPropertyInPropertyArray(sbIPropertyArray *aPropArray,
+  PRBool IsPropertyInPropertyArray(sbIPropertyArray *aPropArray,
                                    const nsAString &aPropName);
 
 
@@ -186,9 +186,9 @@ protected:
    * return true or false depending on whether the item should
    * be skipped by the sequencer
    */
-  nsresult ValidateMediaItemControllerPlayback(bool aFromUserAction, 
+  nsresult ValidateMediaItemControllerPlayback(PRBool aFromUserAction, 
                                                PRInt32 aOnHoldStatus,
-                                               bool *_proceed);
+                                               PRBool *_proceed);
 
 protected:
   PRMonitor *mMonitor;
@@ -290,14 +290,14 @@ protected:
     ONHOLD_PREVIOUS
   };
   nsCOMPtr<sbIMediaItem> mValidatingItem;
-  bool mValidationFromUserAction;
+  PRBool mValidationFromUserAction;
 };
 
 class sbScopedBoolToggle
 {
 public:
   explicit
-  sbScopedBoolToggle(PRPackedBool *aBool, bool aValue = PR_TRUE) {
+  sbScopedBoolToggle(PRPackedBool *aBool, PRBool aValue = PR_TRUE) {
     mBool = aBool;
     *mBool = aValue;
   }

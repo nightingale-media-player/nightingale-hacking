@@ -41,6 +41,7 @@
 
 #include <sbIMediacoreError.h>
 
+#include <nsAutoLock.h>
 #include <nsStringGlue.h>
 
 class sbMediacoreError : public sbIMediacoreError

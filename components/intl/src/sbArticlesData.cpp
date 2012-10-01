@@ -383,7 +383,7 @@ nsresult sbArticlesData::_RemoveArticles(const nsAString & aInput,
   nsString val;
   val = aInput;
   PRUint32 nlang = mLanguages.Length();
-  bool abort = PR_FALSE;
+  PRBool abort = PR_FALSE;
   for (PRUint32 i=0;i<nlang && !abort;i++) {
     sbArticleLanguageData *lang = mLanguages[i];
     if (aLanguage.IsEmpty() ||

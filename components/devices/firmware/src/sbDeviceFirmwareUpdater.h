@@ -70,7 +70,7 @@ public:
                       PRUint32 aVendorID,
                       PRUint32 aProductID,
                       sbIDeviceEventListener *aListener,
-                      bool aCreate);
+                      PRBool aCreate);
 
   nsresult PutRunningHandler(sbIDevice *aDevice, 
                              sbIDeviceFirmwareHandler *aHandler);
@@ -174,7 +174,7 @@ public:
   nsresult Init(sbIDevice *aDevice,
                 sbIDeviceFirmwareUpdate *aUpdate, 
                 sbIDeviceFirmwareHandler *aHandler,
-                bool aRecovery = PR_FALSE);
+                PRBool aRecovery = PR_FALSE);
 
 private:
   virtual ~sbDeviceFirmwareUpdaterRunner();

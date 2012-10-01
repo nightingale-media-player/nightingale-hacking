@@ -174,7 +174,7 @@ sbURIChecker::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
     // If the user didn't specify a host
     // if the URI host is empty, make sure we're file://
     if ( host.IsEmpty() ) {
-      bool isFileURI;
+      PRBool isFileURI;
       rv = aSiteURI->SchemeIs( "file", &isFileURI );
       NS_ENSURE_SUCCESS( rv, rv );
 

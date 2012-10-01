@@ -96,7 +96,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::AddChannel(
     sbISeekableChannel          *aChannel)
 {
     nsAutoPtr<sbTagLibChannelFileIOManager::Channel> pChannel;
-    bool                                           success;
+    PRBool                                           success;
 
     /* Validate parameters. */
     NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -209,10 +209,10 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelSize(
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelRestart(
     const nsACString            &aChannelID,
-    bool                      *_retval)
+    PRBool                      *_retval)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
-    bool                                  restart;
+    PRBool                                  restart;
     nsresult                                rv;
 
     /* Validate parameters. */
@@ -240,7 +240,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelRestart(
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::SetChannelRestart(
     const nsACString            &aChannelID,
-    bool                      aRestart)
+    PRBool                      aRestart)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
     nsresult                                rv;
@@ -304,7 +304,7 @@ sbTagLibChannelFileIOManager::~sbTagLibChannelFileIOManager()
 
 nsresult sbTagLibChannelFileIOManager::FactoryInit()
 {
-    bool                          success;
+    PRBool                          success;
 
     /* Add nsIChannel file I/O type resolver. */
     mpResolver = new TagLibChannelFileIOTypeResolver();
@@ -377,7 +377,7 @@ nsresult sbTagLibChannelFileIOManager::GetChannel(
                                 **appChannel)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
-    bool                                  success;
+    PRBool                                  success;
 
     /* Validate parameters. */
     NS_ASSERTION(!aChannelID.IsEmpty(), "aChannelID is empty");

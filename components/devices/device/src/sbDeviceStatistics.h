@@ -44,6 +44,7 @@
 #include <sbIMediaListListener.h>
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
 
@@ -204,7 +205,7 @@ private:
   nsresult ClearLibraryStatistics(sbIDeviceLibrary* aLibrary);
 
   nsresult UpdateForItem(sbIMediaItem* aMediaItem,
-                         bool        aItemAdded);
+                         PRBool        aItemAdded);
 
 
   // Prevent derivation.

@@ -66,7 +66,7 @@ protected:
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
-  bool mInitialized;
+  PRBool mInitialized;
 
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbIPlaylistWidget> mPlaylistWidget;

@@ -137,7 +137,7 @@ sbIPDDevice::ImportPlaylist(sbILibrary*    aLibrary,
   FIELD_LOG(("Importing playlist %s\n", aPlaylist->name));
 
   // Check if importing into the device library.
-  bool inDeviceLibrary;
+  PRBool inDeviceLibrary;
   rv = aLibrary->Equals(mDeviceLibrary, &inDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -297,7 +297,7 @@ sbIPDDevice::ImportPlaylistTrackBatch(sbIMediaList* aMediaList,
 
   // Get the target library and check if it's the device library.
   nsCOMPtr<sbILibrary> tgtLibrary;
-  bool               inDeviceLibrary;
+  PRBool               inDeviceLibrary;
   rv = aMediaList->GetLibrary(getter_AddRefs(tgtLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = tgtLibrary->Equals(mDeviceLibrary, &inDeviceLibrary);
@@ -658,7 +658,7 @@ sbIPDDevice::ProcessOTGPlaylists()
   nsresult                    rv;
 
   // Check for on-the-go playlists and process them.
-  bool otgPlaylistsPresent = PR_FALSE;
+  PRBool otgPlaylistsPresent = PR_FALSE;
   PRUint32 otgPlaylistIndex = 1;
   GList* playlistList = mITDB->playlists;
   while (playlistList) {

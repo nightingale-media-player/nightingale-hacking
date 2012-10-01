@@ -50,6 +50,7 @@
 #include "sbDeviceStatusHelper.h"
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 
 
@@ -158,7 +159,7 @@ sbDeviceProgressListener::New
 // IsComplete
 //
 
-bool
+PRBool
 sbDeviceProgressListener::IsComplete()
 {
   return mIsComplete;

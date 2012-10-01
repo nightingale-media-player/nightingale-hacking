@@ -51,6 +51,7 @@
 
 // Songbird imports.
 #include <sbFileUtils.h>
+#include <sbProxiedComponentManager.h>
 
 // Mozilla imports.
 #include <nsAutoPtr.h>
@@ -195,7 +196,7 @@ sbHTTPMediaItemDownloader::GetDownloadSize(sbIMediaItem* aMediaItem,
 
   // Get the content length.
   PRUint64 contentLength = 0;
-  bool   gotContentLength = PR_FALSE;
+  PRBool   gotContentLength = PR_FALSE;
   nsCOMPtr<nsIPropertyBag2>
     properties = do_MainThreadQueryInterface(mainThreadChannel, &rv);
   if (NS_SUCCEEDED(rv)) {

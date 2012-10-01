@@ -185,7 +185,7 @@ NS_IMETHODIMP sbScriptableFilterResult::Equality( nsIXPConnectWrappedNative *wra
                                                   JSContext * cx,
                                                   JSObject * obj,
                                                   jsval val,
-                                                  bool *_retval )
+                                                  PRBool *_retval )
 {
   LOG(("sbScriptableFilterResult::Equality()"));
   nsresult rv;

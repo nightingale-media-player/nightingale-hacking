@@ -31,12 +31,15 @@
 #include <nsIScriptSecurityManager.h>
 
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEventTarget.h>
+
+#include <sbProxiedComponentManager.h>
 
 #include "sbDeviceFirmwareSupport.h"
 #include "sbDeviceFirmwareUpdate.h"
@@ -346,7 +349,7 @@ sbBaseDeviceFirmwareHandler::CreateDeviceEvent(PRUint32 aType,
 
 nsresult
 sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
-                                             bool aAsync /*= PR_TRUE*/)
+                                             PRBool aAsync /*= PR_TRUE*/)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -387,7 +390,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
 
   mon.Exit();
 
-  bool dispatched = PR_FALSE;
+  PRBool dispatched = PR_FALSE;
   rv = target->DispatchEvent(aEvent, aAsync, &dispatched);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -404,7 +407,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
 nsresult
 sbBaseDeviceFirmwareHandler::SendDeviceEvent(PRUint32 aType,
                                              nsIVariant *aData,
-                                             bool aAsync /*= PR_TRUE*/)
+                                             PRBool aAsync /*= PR_TRUE*/)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -509,7 +512,7 @@ sbBaseDeviceFirmwareHandler::OnGetCurrentFirmwareReadableVersion(nsAString &aCur
 }
 
 /*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnGetRecoveryMode(bool *aRecoveryMode)
+sbBaseDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
 {
   /**
    * You should return if the bound device is in recovery mode or not.
@@ -585,7 +588,7 @@ sbBaseDeviceFirmwareHandler::OnGetSupportedDevices(nsISimpleEnumerator **aSuppor
 sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
                                          PRUint32 aDeviceVendorID,
                                          PRUint32 aDeviceProductID,
-                                         bool *_retval)
+                                         PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
   /**
@@ -632,7 +635,7 @@ sbBaseDeviceFirmwareHandler::OnEndRecoveryModeSwitch()
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
                                       sbIDeviceEventListener *aListener,
-                                      bool *_retval)
+                                      PRBool *_retval)
 {
   /**
    * When a handler is already active and the device it is bound to
@@ -1008,7 +1011,7 @@ sbBaseDeviceFirmwareHandler::GetRegisterLocation(nsIURI * *aRegisterLocation)
 }
 
 NS_IMETHODIMP
-sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(bool *aNeedsRecoveryMode)
+sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(PRBool *aNeedsRecoveryMode)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1021,7 +1024,7 @@ sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(bool *aNeedsRecoveryMode)
 }
 
 NS_IMETHODIMP
-sbBaseDeviceFirmwareHandler::GetRecoveryMode(bool *aRecoveryMode)
+sbBaseDeviceFirmwareHandler::GetRecoveryMode(PRBool *aRecoveryMode)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1049,12 +1052,12 @@ sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **
   // No default firmware available. Return nsnull.
   NS_ENSURE_TRUE(mDefaultFirmwareLocation, NS_OK);
 
-  bool schemeIsChrome = PR_FALSE;
+  PRBool schemeIsChrome = PR_FALSE;
   nsresult rv = mDefaultFirmwareLocation->SchemeIs("chrome",
                                                    &schemeIsChrome);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool schemeIsFile = PR_FALSE;
+  PRBool schemeIsFile = PR_FALSE;
   rv = mDefaultFirmwareLocation->SchemeIs("file",
                                           &schemeIsFile);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1163,7 +1166,7 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
                                        PRUint32 aDeviceVendorID,
                                        PRUint32 aDeviceProductID,
-                                       bool *_retval)
+                                       PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1224,7 +1227,7 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
 NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Rebind(sbIDevice *aDevice,
                                     sbIDeviceEventListener *aListener,
-                                    bool *_retval)
+                                    PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);

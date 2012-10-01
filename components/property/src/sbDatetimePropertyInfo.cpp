@@ -228,7 +228,7 @@ sbDatetimePropertyInfo::InitializeOperators()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, bool *_retval)
+NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 

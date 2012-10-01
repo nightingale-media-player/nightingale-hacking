@@ -30,6 +30,7 @@
 #include <nsComponentManagerUtils.h>
 #include <sbIDataRemote.h>
 #include <sbIDevice.h>
+#include <nsIProxyObjectManager.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 
@@ -223,12 +224,12 @@ NS_IMETHODIMP sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
 }
 
 /* attribute boolean isNewBatch; */
-NS_IMETHODIMP sbDeviceStatus::GetIsNewBatch(bool *aIsNewBatch)
+NS_IMETHODIMP sbDeviceStatus::GetIsNewBatch(PRBool *aIsNewBatch)
 {
   *aIsNewBatch = mNewBatch;
   return NS_OK;
 }
-NS_IMETHODIMP sbDeviceStatus::SetIsNewBatch(bool aIsNewBatch)
+NS_IMETHODIMP sbDeviceStatus::SetIsNewBatch(PRBool aIsNewBatch)
 {
   mNewBatch = aIsNewBatch;
   if (aIsNewBatch)

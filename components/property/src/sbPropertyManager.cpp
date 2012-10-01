@@ -26,10 +26,11 @@
 #include "sbPropertiesCID.h"
 
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsIObserverService.h>
 #include <nsIStringBundle.h>
 
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -114,7 +115,7 @@ sbPropertyManager::sbPropertyManager()
   }
 #endif
 
-  bool success = mPropInfoHashtable.Init(100);
+  PRBool success = mPropInfoHashtable.Init(100);
   NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
@@ -182,7 +183,7 @@ NS_IMETHODIMP sbPropertyManager::AddPropertyInfo(sbIPropertyInfo *aPropertyInfo)
 
   nsresult rv;
   nsAutoString id;
-  bool success = PR_FALSE;
+  PRBool success = PR_FALSE;
 
   rv = aPropertyInfo->GetId(id);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -242,7 +243,7 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
 }
 
 NS_IMETHODIMP sbPropertyManager::HasProperty(const nsAString &aID,
-                                             bool *_retval)
+                                             PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -306,7 +307,7 @@ NS_IMETHODIMP sbPropertyManager::GetDependentProperties(const nsAString & aId,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv = NS_OK;
-  bool success = PR_FALSE;
+  PRBool success = PR_FALSE;
 
   sbSimpleAutoLock lock(mPropIDsLock);
 
@@ -1483,13 +1484,13 @@ nsresult
 sbPropertyManager::RegisterBlob(const nsAString& aPropertyID,
                                 const nsAString& aDisplayKey,
                                 nsIStringBundle* aStringBundle,
-                                bool aUserViewable,
-                                bool aUserEditable,
-                                bool aUsedInIdentity,
+                                PRBool aUserViewable,
+                                PRBool aUserEditable,
+                                PRBool aUsedInIdentity,
                                 PRUint32 aNullSort,
-                                bool aHasNullSort,
-                                bool aRemoteReadable,
-                                bool aRemoteWritable)
+                                PRBool aHasNullSort,
+                                PRBool aRemoteReadable,
+                                PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1545,14 +1546,14 @@ nsresult
 sbPropertyManager::RegisterText(const nsAString& aPropertyID,
                                 const nsAString& aDisplayKey,
                                 nsIStringBundle* aStringBundle,
-                                bool aUserViewable,
-                                bool aUserEditable,
-                                bool aUsedInIdentity,
+                                PRBool aUserViewable,
+                                PRBool aUserEditable,
+                                PRBool aUsedInIdentity,
                                 PRUint32 aNullSort,
-                                bool aHasNullSort,
-                                bool aRemoteReadable,
-                                bool aRemoteWritable,
-                                bool aCompressWhitespace,
+                                PRBool aHasNullSort,
+                                PRBool aRemoteReadable,
+                                PRBool aRemoteWritable,
+                                PRBool aCompressWhitespace,
                                 sbIPropertyArray* aSecondarySort)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
@@ -1619,10 +1620,10 @@ nsresult
 sbPropertyManager::RegisterTrackTypeImageLabel(const nsAString& aPropertyID,
                                                const nsAString& aDisplayKey,
                                                nsIStringBundle* aStringBundle,
-                                               bool aUserViewable,
-                                               bool aUserEditable,
-                                               bool aRemoteReadable,
-                                               bool aRemoteWritable,
+                                               PRBool aUserViewable,
+                                               PRBool aUserEditable,
+                                               PRBool aRemoteReadable,
+                                               PRBool aRemoteWritable,
                                                const nsAString& aUrlPropertyID)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
@@ -1673,10 +1674,10 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
                                     const nsAString& aDisplayKey,
                                     PRInt32 aType,
                                     nsIStringBundle* aStringBundle,
-                                    bool aUserViewable,
-                                    bool aUserEditable,
-                                    bool aRemoteReadable,
-                                    bool aRemoteWritable)
+                                    PRBool aUserViewable,
+                                    PRBool aUserEditable,
+                                    PRBool aRemoteReadable,
+                                    PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1728,10 +1729,10 @@ nsresult
 sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
                                     const nsAString& aDisplayKey,
                                     nsIStringBundle* aStringBundle,
-                                    bool aUserViewable,
-                                    bool aUserEditable,
-                                    bool aRemoteReadable,
-                                    bool aRemoteWritable)
+                                    PRBool aUserViewable,
+                                    PRBool aUserEditable,
+                                    PRBool aRemoteReadable,
+                                    PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1784,10 +1785,10 @@ nsresult
 sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
                                const nsAString& aDisplayKey,
                                nsIStringBundle* aStringBundle,
-                               bool aUserViewable,
-                               bool aUserEditable,
-                               bool aRemoteReadable,
-                               bool aRemoteWritable)
+                               PRBool aUserViewable,
+                               PRBool aUserEditable,
+                               PRBool aRemoteReadable,
+                               PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1835,10 +1836,10 @@ nsresult
 sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
                                  const nsAString& aDisplayKey,
                                  nsIStringBundle* aStringBundle,
-                                 bool aUserViewable,
-                                 bool aUserEditable,
-                                 bool aRemoteReadable,
-                                 bool aRemoteWritable)
+                                 PRBool aUserViewable,
+                                 PRBool aUserEditable,
+                                 PRBool aRemoteReadable,
+                                 PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
   nsresult rv;
@@ -1866,10 +1867,10 @@ nsresult
 sbPropertyManager::RegisterImageLink(const nsAString& aPropertyID,
                                      const nsAString& aDisplayKey,
                                      nsIStringBundle* aStringBundle,
-                                     bool aUserViewable,
-                                     bool aUserEditable,
-                                     bool aRemoteReadable,
-                                     bool aRemoteWritable,
+                                     PRBool aUserViewable,
+                                     PRBool aUserEditable,
+                                     PRBool aRemoteReadable,
+                                     PRBool aRemoteWritable,
                                      const nsAString& aUrlPropertyID)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
@@ -1898,14 +1899,14 @@ nsresult
 sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
                                   const nsAString& aDisplayKey,
                                   nsIStringBundle* aStringBundle,
-                                  bool aUserViewable,
-                                  bool aUserEditable,
+                                  PRBool aUserViewable,
+                                  PRBool aUserEditable,
                                   PRInt32 aMinValue,
-                                  bool aHasMinValue,
+                                  PRBool aHasMinValue,
                                   PRInt32 aMaxValue,
-                                  bool aHasMaxValue,
-                                  bool aRemoteReadable,
-                                  bool aRemoteWritable,
+                                  PRBool aHasMaxValue,
+                                  PRBool aRemoteReadable,
+                                  PRBool aRemoteWritable,
                                   sbIPropertyUnitConverter *aUnitConverter,
                                   sbIPropertyArray* aSecondarySort)
 {
@@ -1973,11 +1974,11 @@ nsresult
 sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
                                    const nsAString &aDisplayKey,
                                    nsIStringBundle* aStringBundle,
-                                   bool aUserViewable,
-                                   bool aUserEditable,
-                                   bool aRemoteReadable,
-                                   bool aRemoteWritable,
-                                   bool aShouldSuppress)
+                                   PRBool aUserViewable,
+                                   PRBool aUserEditable,
+                                   PRBool aRemoteReadable,
+                                   PRBool aRemoteWritable,
+                                   PRBool aShouldSuppress)
 {
   LOG(( "sbPropertyManager::RegisterBoolean(%s)",
         NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
@@ -2061,8 +2062,8 @@ sbPropertyManager::RegisterDummy(sbDummyPropertyInfo *dummyProperty,
 
 nsresult
 sbPropertyManager::SetRemoteAccess(sbIPropertyInfo* aProperty,
-                                   bool aRemoteReadable,
-                                   bool aRemoteWritable)
+                                   PRBool aRemoteReadable,
+                                   PRBool aRemoteWritable)
 {
   nsresult rv = NS_OK;
 

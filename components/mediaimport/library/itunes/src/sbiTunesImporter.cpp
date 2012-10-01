@@ -371,7 +371,7 @@ sbiTunesImporter::GetLibraryDefaultFilePath(nsAString & aLibraryDefaultFilePath)
   NS_ENSURE_SUCCESS(rv, rv);
   
   /* If the library file exists, get its path. */
-  bool exists = PR_FALSE;
+  PRBool exists = PR_FALSE;
   rv = libraryFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -399,7 +399,7 @@ sbiTunesImporter::GetLibraryFileExtensionList(
 /* readonly attribute boolean libraryPreviouslyImported; */
 NS_IMETHODIMP 
 sbiTunesImporter::GetLibraryPreviouslyImported(
-    bool *aLibraryPreviouslyImported)
+    PRBool *aLibraryPreviouslyImported)
 {
   nsresult rv;
   sbPrefBranch prefs(SB_ITUNES_LIBRARY_IMPORT_PREF_PREFIX , &rv);
@@ -469,7 +469,7 @@ sbiTunesImporter::Initialize()
     rv = resultsFile->Append(NS_LITERAL_STRING("itunesexportresults.txt"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool success;
+    PRBool success;
     rv = resultsFile->Exists(&success);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -545,7 +545,7 @@ sbiTunesImporter::Finalize()
 
 nsresult sbiTunesImporter::DBModified(sbPrefBranch & aPrefs,
                                        nsAString const & aLibPath,
-                                       bool * aModified) {
+                                       PRBool * aModified) {
   *aModified = PR_TRUE;
   nsresult rv;
   
@@ -585,7 +585,7 @@ nsresult sbiTunesImporter::DBModified(sbPrefBranch & aPrefs,
 NS_IMETHODIMP 
 sbiTunesImporter::Import(const nsAString & aLibFilePath, 
                           const nsAString & aGUID, 
-                          bool aCheckForChanges, 
+                          PRBool aCheckForChanges, 
                           sbIJobProgress ** aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
@@ -618,7 +618,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
 
   mDataFormatVersion = prefs.GetIntPref("version", DATA_FORMAT_VERSION);
   // If we're checking for changes and the db wasn't modified, just exit
-  bool modified;
+  PRBool modified;
   if (!mImport && NS_SUCCEEDED(DBModified(prefs, 
                                          mLibraryPath, 
                                          &modified)) && !modified) {
@@ -795,7 +795,7 @@ sbiTunesImporter::OnTracksComplete() {
   return NS_OK;
 }
 
-bool 
+PRBool 
 sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
   
   nsString playlistName;
@@ -837,7 +837,7 @@ sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
 /**
  * Determines if this is the special Songbird folder for playlists
  */
-static bool 
+static PRBool 
 IsSongbirdFolder(sbIStringMap * aProperties) {
   
   nsString playlistName;
@@ -981,7 +981,7 @@ ComputePlaylistSignature(sbiTunesSignature & aSignature,
 
 static nsresult
 IsPlaylistDirty(sbIMediaList * aMediaList, 
-                bool & aIsDirty) {
+                PRBool & aIsDirty) {
   sbiTunesSignature signature;
   nsresult rv = signature.Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1013,7 +1013,7 @@ sbiTunesImporter::GetDirtyPlaylistAction(nsAString const & aPlaylistName,
   // If the user hasn't given an action for all yet, ask them again
   if (mPlaylistAction.IsEmpty()) { 
   
-    bool applyAll;
+    PRBool applyAll;
     nsresult rv = mListener->OnDirtyPlaylist(aPlaylistName,
                                               &applyAll, 
                                               aAction);
@@ -1124,7 +1124,7 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
   nsresult rv;
   
   nsCOMPtr<sbIMediaList> mediaList(aMediaList);
-  bool isDirty = PR_TRUE;
+  PRBool isDirty = PR_TRUE;
   if (mediaList) {
     rv = IsPlaylistDirty(mediaList, isDirty);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1279,7 +1279,7 @@ sbiTunesImporter::OnPlaylistsComplete() {
 }
 
 NS_IMETHODIMP
-sbiTunesImporter::OnError(const nsAString & aErrorMessage, bool *_retval)
+sbiTunesImporter::OnError(const nsAString & aErrorMessage, PRBool *_retval)
 {
   LOG(("XML Parsing error: %s\n", 
       ::NS_LossyConvertUTF16toASCII(aErrorMessage).get()));
@@ -1440,7 +1440,7 @@ sbiTunesImporter::ProcessNewItems(
                                &name);
 
       nsString persistentID;
-      bool ok = 
+      PRBool ok = 
         (*iter)->mProperties.Get(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID), 
                                  &persistentID);
       NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
@@ -1455,7 +1455,7 @@ sbiTunesImporter::ProcessNewItems(
                                 getter_AddRefs(uri));
       if (NS_SUCCEEDED(rv)) {
         nsCOMPtr<nsIFileURL> trackFile = do_QueryInterface(uri, &rv);
-        bool trackExists = PR_FALSE;
+        PRBool trackExists = PR_FALSE;
         if (NS_SUCCEEDED(rv)) {
           rv = trackFile->GetFile(getter_AddRefs(file));
           if (NS_SUCCEEDED(rv)) {
@@ -1474,7 +1474,7 @@ sbiTunesImporter::ProcessNewItems(
         // Check if the track media is supported and add result to the iTunes
         // library signature.  This ensures the signature changes if support 
         // for the track media is added (e.g., by installing an extension).
-        bool supported = PR_FALSE;
+        PRBool supported = PR_FALSE;
         // Ignore errors, default to not supported
         mTypeSniffer->IsValidMediaURL(uri, &supported);
         
@@ -1664,7 +1664,7 @@ sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Track ID"), mTrackID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool ok = mProperties.Init(32);
+  PRBool ok = mProperties.Init(32);
   NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
     
   NS_NAMED_LITERAL_STRING(location, "Location");

@@ -40,6 +40,7 @@
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 

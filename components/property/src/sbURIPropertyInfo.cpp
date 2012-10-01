@@ -146,7 +146,7 @@ sbURIPropertyInfo::InitializeOperators()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbURIPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
+NS_IMETHODIMP sbURIPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -164,7 +164,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Validate(const nsAString & aValue, bool *_retva
   sbSimpleAutoLock lock(mURISchemeConstraintLock);
   if(!mURISchemeConstraint.IsEmpty()) {
     NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
-    bool valid = PR_FALSE;
+    PRBool valid = PR_FALSE;
 
     rv = uri->SchemeIs(narrow.get(), &valid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -182,7 +182,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Sanitize(const nsAString & aValue, nsAString & 
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-bool sbURIPropertyInfo::IsInvalidEmpty(const nsAString &aValue) {
+PRBool sbURIPropertyInfo::IsInvalidEmpty(const nsAString &aValue) {
   // search for ":", ":/" and "://" with no trailing chars
   if (aValue.IsEmpty()) 
     return PR_FALSE;
@@ -221,7 +221,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
       sbSimpleAutoLock lock(mURISchemeConstraintLock);
       if (!mURISchemeConstraint.IsEmpty()) {
         NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
-        bool valid = PR_FALSE;
+        PRBool valid = PR_FALSE;
 
         rv = uri->SchemeIs(narrow.get(), &valid);
         NS_ENSURE_SUCCESS(rv, rv);

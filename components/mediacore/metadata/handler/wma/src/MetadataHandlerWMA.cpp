@@ -35,6 +35,7 @@
 #include "sbIPropertyArray.h"
 #include "sbPropertiesCID.h"
 #include "sbMemoryUtils.h"
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbFileUtils.h>
 #include <sbAutoCOMInitializer.h>
@@ -241,7 +242,7 @@ sbMetadataHandlerWMA::OnChannelData(nsISupports* aChannel)
 }
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::GetCompleted(bool* _retval)
+sbMetadataHandlerWMA::GetCompleted(PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_Completed;
@@ -355,7 +356,7 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   rv = propArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                                    value);
   if (NS_UNLIKELY(NS_SUCCEEDED(rv))) {
-    bool success;
+    PRBool success;
     rv = SetImageDataInternal(sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
                               value,
                               header,
@@ -521,7 +522,7 @@ sbMetadataHandlerWMA::SetImageData(PRInt32 aType,
   hr = editor->QueryInterface(&header);
   COM_ENSURE_SUCCESS(hr);
   
-  bool success;
+  PRBool success;
   rv = SetImageDataInternal(aType, aURL, header, success);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -540,7 +541,7 @@ NS_IMETHODIMP
 sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
                                            const nsAString &aURL,
                                            IWMHeaderInfo3 *aHeader,
-                                           bool &aSuccess)
+                                           PRBool &aSuccess)
 {
   NS_ENSURE_ARG_POINTER(aHeader);
 
@@ -714,7 +715,7 @@ sbMetadataHandlerWMA::SetProps(sbIMutablePropertyArray *props)
 }
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::GetRequiresMainThread(bool *_retval)
+sbMetadataHandlerWMA::GetRequiresMainThread(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   // This handler does not use the channel implementation, 
@@ -1312,10 +1313,10 @@ sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
   return NS_ERROR_FAILURE;
 }
 
-/* bool isDRMProtected (in AString aPath); */
+/* PRBool isDRMProtected (in AString aPath); */
 NS_IMETHODIMP
 sbMetadataHandlerWMA::IsDRMProtected(const nsAString & aPath,
-                                     bool *_retval)
+                                     PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   BOOL isProtected; // needed for data type conversion

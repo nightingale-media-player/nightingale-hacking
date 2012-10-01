@@ -91,7 +91,7 @@ sbPropertyArray::Init()
  */
 nsresult
 sbPropertyArray::PropertyIsValid(sbIProperty* aProperty,
-                                 bool* _retval)
+                                 PRBool* _retval)
 {
   NS_ASSERTION(aProperty, "Don't hand me a null!");
   NS_ASSERTION(_retval, "Don't hand me a null!");
@@ -114,7 +114,7 @@ sbPropertyArray::PropertyIsValid(sbIProperty* aProperty,
 nsresult
 sbPropertyArray::ValueIsValid(const nsAString& aID,
                               const nsAString& aValue,
-                              bool* _retval)
+                              PRBool* _retval)
 {
   NS_ASSERTION(!aID.IsEmpty(), "Don't pass an empty property id!");
   NS_ASSERTION(_retval, "Don't hand me a null!");
@@ -137,7 +137,7 @@ sbPropertyArray::ValueIsValid(const nsAString& aID,
   rv = mPropManager->GetPropertyInfo(aID, getter_AddRefs(propInfo));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool valid;
+  PRBool valid;
   rv = propInfo->Validate(aValue, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -236,7 +236,7 @@ sbPropertyArray::Enumerate(nsISimpleEnumerator** _retval)
  */
 NS_IMETHODIMP
 sbPropertyArray::AppendElement(nsISupports* aElement,
-                               bool aWeak)
+                               PRBool aWeak)
 {
   NS_ENSURE_ARG_POINTER(aElement);
 
@@ -250,14 +250,14 @@ sbPropertyArray::AppendElement(nsISupports* aElement,
   nsAutoLock lock(mArrayLock);
 
   if (mStrict) {
-    bool valid;
+    PRBool valid;
     rv = PropertyIsValid(property, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
   }
 
-  bool success = mArray.AppendObject(property);
+  PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
 
   return NS_OK;
@@ -272,7 +272,7 @@ sbPropertyArray::RemoveElementAt(PRUint32 aIndex)
   NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
 
   nsAutoLock lock(mArrayLock);
-  bool success = mArray.RemoveObjectAt(aIndex);
+  PRBool success = mArray.RemoveObjectAt(aIndex);
   NS_ENSURE_STATE(success);
   return NS_OK;
 }
@@ -283,7 +283,7 @@ sbPropertyArray::RemoveElementAt(PRUint32 aIndex)
 NS_IMETHODIMP
 sbPropertyArray::InsertElementAt(nsISupports* aElement,
                                  PRUint32 aIndex,
-                                 bool aWeak)
+                                 PRBool aWeak)
 {
   NS_ENSURE_ARG_POINTER(aElement);
   NS_ENSURE_ARG_MAX((PRInt32)aIndex, mArray.Count());
@@ -298,14 +298,14 @@ sbPropertyArray::InsertElementAt(nsISupports* aElement,
   nsAutoLock lock(mArrayLock);
 
   if (mStrict) {
-    bool valid;
+    PRBool valid;
     rv = PropertyIsValid(property, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
   }
 
-  bool success = mArray.InsertObjectAt(property, aIndex);
+  PRBool success = mArray.InsertObjectAt(property, aIndex);
   NS_ENSURE_STATE(success);
 
   return NS_OK;
@@ -317,7 +317,7 @@ sbPropertyArray::InsertElementAt(nsISupports* aElement,
 NS_IMETHODIMP
 sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
                                   PRUint32 aIndex,
-                                  bool aWeak)
+                                  PRBool aWeak)
 {
   NS_ENSURE_ARG_POINTER(aElement);
   NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
@@ -332,14 +332,14 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
   nsAutoLock lock(mArrayLock);
 
   if (mStrict) {
-    bool valid;
+    PRBool valid;
     rv = PropertyIsValid(property, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
   }
 
-  bool success = mArray.ReplaceObjectAt(property, aIndex);
+  PRBool success = mArray.ReplaceObjectAt(property, aIndex);
   NS_ENSURE_STATE(success);
 
   return NS_OK;
@@ -368,7 +368,7 @@ sbPropertyArray::AppendProperty(const nsAString& aID,
   nsAutoLock lock(mArrayLock);
 
   if (mStrict) {
-    bool valid;
+    PRBool valid;
     nsresult rv = ValueIsValid(aID, aValue, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -378,7 +378,7 @@ sbPropertyArray::AppendProperty(const nsAString& aID,
   nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aID, aValue);
   NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
-  bool success = mArray.AppendObject(property);
+  PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
 
   return NS_OK;
@@ -389,7 +389,7 @@ sbPropertyArray::AppendProperty(const nsAString& aID,
  */
 NS_IMETHODIMP
 sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
-                                  bool            aSkipDuplicates)
+                                  PRBool            aSkipDuplicates)
 {
   NS_ENSURE_ARG_POINTER(aPropertyArray);
 
@@ -435,7 +435,7 @@ sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
 
     // Validate property if strict.
     if (mStrict) {
-      bool valid;
+      PRBool valid;
       rv = ValueIsValid(id, value, &valid);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
@@ -448,7 +448,7 @@ sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
 
     // Add the property to the array and its ID to the list of present property
     // IDs.
-    bool success = mArray.AppendObject(property);
+    PRBool success = mArray.AppendObject(property);
     NS_ENSURE_STATE(success);
     NS_ENSURE_TRUE(currentPropertyIDList.AppendElement(id),
                    NS_ERROR_OUT_OF_MEMORY);
@@ -461,7 +461,7 @@ sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
  * See sbIMutablePropertyArray
  */
 NS_IMETHODIMP
-sbPropertyArray::SetStrict(bool aStrict)
+sbPropertyArray::SetStrict(PRBool aStrict)
 {
   nsAutoLock lock(mArrayLock);
 
@@ -487,7 +487,7 @@ sbPropertyArray::SetStrict(bool aStrict)
  * See sbIMutablePropertyArray
  */
 NS_IMETHODIMP
-sbPropertyArray::GetStrict(bool* aStrict)
+sbPropertyArray::GetStrict(PRBool* aStrict)
 {
   NS_ENSURE_ARG_POINTER(aStrict);
 
@@ -593,7 +593,7 @@ sbPropertyArray::ToString(nsAString& _retval)
  * See sbIPropertyArray
  */
 NS_IMETHODIMP
-sbPropertyArray::GetValidated(bool* aValidated)
+sbPropertyArray::GetValidated(PRBool* aValidated)
 {
   return GetStrict(aValidated);
 }
@@ -629,7 +629,7 @@ sbPropertyArray::Read(nsIObjectInputStream* aStream)
     nsCOMPtr<sbIProperty> property = new sbSimpleProperty(id, value);
     NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
-    bool success = mArray.AppendObject(property);
+    PRBool success = mArray.AppendObject(property);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 

@@ -84,10 +84,10 @@ protected:
 #ifdef XP_WIN
   HWND m_window;
   static PRInt32 m_autoinc;
-  UINT makeWin32Mask(bool altKey, bool ctrlKey, bool shiftKey, bool metaKey);
+  UINT makeWin32Mask(PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey);
 #endif  
 
-  HOTKEY_HANDLE registerHotkey(PRInt32 keyCode, bool altKey, bool ctrlKey, bool shiftKey, bool metaKey);
+  HOTKEY_HANDLE registerHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey);
   void unregisterHotkey(HOTKEY_HANDLE handle);
   GlobalHotkeyEntry *findHotkeyById(const nsAString &keyid);
   GlobalHotkeyEntry *findHotkeyByHandle(HOTKEY_HANDLE handle);

@@ -214,6 +214,6 @@ NS_IMETHODIMP sbRemotePlaylistClickEvent::GetItem(sbIMediaItem * *aItem)
 
 FORWARD_NSIPRIVATEDOMEVENT(DuplicatePrivateData, , , nsresult, rv)
 FORWARD_NSIPRIVATEDOMEVENT(SetTarget, nsIDOMEventTarget*, aTarget, nsresult, rv)
-FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, , , bool, PR_FALSE)
+FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, , , PRBool, PR_FALSE)
 FORWARD_NSIPRIVATEDOMEVENT(GetInternalNSEvent, , , nsEvent*, nsnull)
-FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, bool, aTrusted, nsresult, rv)
+FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, PRBool, aTrusted, nsresult, rv)

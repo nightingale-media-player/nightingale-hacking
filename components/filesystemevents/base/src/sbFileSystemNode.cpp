@@ -68,7 +68,7 @@ sbFileSystemNode::~sbFileSystemNode()
 
 nsresult 
 sbFileSystemNode::Init(const nsAString & aLeafName,
-                       bool aIsDir,
+                       PRBool aIsDir,
                        PRUint64 aLastModify)
 {
   NS_ASSERTION(!aLeafName.IsEmpty(), "Error: Leaf name is empty!");
@@ -107,14 +107,14 @@ sbFileSystemNode::GetLeafName(nsAString & aLeafName)
 }
 
 nsresult
-sbFileSystemNode::SetIsDir(const bool aIsDir)
+sbFileSystemNode::SetIsDir(const PRBool aIsDir)
 {
   mIsDir = aIsDir;
   return NS_OK;
 }
 
 nsresult
-sbFileSystemNode::GetIsDir(bool *aIsDir)
+sbFileSystemNode::GetIsDir(PRBool *aIsDir)
 {
   NS_ENSURE_ARG_POINTER(aIsDir);
   *aIsDir = mIsDir;

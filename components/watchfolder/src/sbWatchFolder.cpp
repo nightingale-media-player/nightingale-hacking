@@ -99,7 +99,7 @@ sbWatchFolder::Init()
   if (NS_FAILED(rv))
     return NS_OK;
 
-  bool isWatcherSupported = PR_FALSE;
+  PRBool isWatcherSupported = PR_FALSE;
   rv = fileSystemWatcher->GetIsSupported(&isWatcherSupported);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -109,7 +109,7 @@ sbWatchFolder::Init()
       do_GetService(XULRUNTIME_SERVICE_CONTRACTID, &rv);
     // If we can't get or QI the runtime assume we're not in safe-mode
     if (NS_SUCCEEDED(rv)) {
-      bool isInSafeMode = PR_FALSE;
+      PRBool isInSafeMode = PR_FALSE;
       rv = appInfo->GetInSafeMode(&isInSafeMode);
       // If we're not in safe mode or we can't determine if we are, enable it
       isWatcherSupported = NS_FAILED(rv) || !isInSafeMode;
@@ -424,7 +424,7 @@ sbWatchFolder::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
 
     // Don't add every type of file, have the mediacore sniffer validate this
     // is a URI that we can handle.
-    bool isValid = PR_FALSE;
+    PRBool isValid = PR_FALSE;
     rv = typeSniffer->IsValidMediaURL(fileURI, &isValid);
     if (NS_SUCCEEDED(rv) && isValid) {
       rv = uriArray->AppendElement(fileURI, PR_FALSE);
@@ -567,7 +567,7 @@ sbWatchFolder::HandleSessionLoadError()
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool shouldRescan = PR_FALSE;
+  PRBool shouldRescan = PR_FALSE;
   prompter->Confirm(songbirdWindow,
                     dialogTitle.BeginReading(),
                     dialogText.BeginReading(),
@@ -685,7 +685,7 @@ sbWatchFolder::HandleRootPathMissing()
 
 nsresult
 sbWatchFolder::DecrementIgnoredPathCount(const nsAString & aFilePath,
-                                                bool *aIsIgnoredPath)
+                                                PRBool *aIsIgnoredPath)
 {
   NS_ENSURE_ARG_POINTER(aIsIgnoredPath);
 
@@ -742,7 +742,7 @@ sbWatchFolder::Stop(nsACString & _retval NS_OUTPARAM)
 }
 
 NS_IMETHODIMP
-sbWatchFolder::SetFolder(const nsAString & aNewWatchPath, bool aSynchronizeMediaList)
+sbWatchFolder::SetFolder(const nsAString & aNewWatchPath, PRBool aSynchronizeMediaList)
 {
   LOG(("%s: %s",
         __FUNCTION__,
@@ -870,7 +870,7 @@ NS_IMETHODIMP sbWatchFolder::SetMediaList(sbIMediaList * aMediaList)
   nsresult rv;
 
   if (mMediaList && aMediaList) {
-    bool same = PR_FALSE;
+    PRBool same = PR_FALSE;
     rv = mMediaList->Equals(aMediaList, &same);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -963,21 +963,21 @@ NS_IMETHODIMP sbWatchFolder::SetMetadataScanner(sbIFileMetadataService * aMetada
   return NS_OK;
 }
 
-NS_IMETHODIMP sbWatchFolder::GetCanInteract(bool *aCanInteract)
+NS_IMETHODIMP sbWatchFolder::GetCanInteract(PRBool *aCanInteract)
 {
   NS_ENSURE_ARG_POINTER(aCanInteract);
   *aCanInteract = mCanInteract;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbWatchFolder::SetCanInteract(bool aCanInteract)
+NS_IMETHODIMP sbWatchFolder::SetCanInteract(PRBool aCanInteract)
 {
   mCanInteract = aCanInteract;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbWatchFolder::GetIsSupported(bool *aIsSupported)
+sbWatchFolder::GetIsSupported(PRBool *aIsSupported)
 {
   NS_ENSURE_ARG_POINTER(aIsSupported);
   *aIsSupported = mServiceState != eNotSupported;
@@ -985,7 +985,7 @@ sbWatchFolder::GetIsSupported(bool *aIsSupported)
 }
 
 NS_IMETHODIMP
-sbWatchFolder::GetIsRunning(bool *aIsRunning)
+sbWatchFolder::GetIsRunning(PRBool *aIsRunning)
 {
   NS_ENSURE_ARG_POINTER(aIsRunning);
   *aIsRunning = (mServiceState == eWatching);
@@ -1159,7 +1159,7 @@ sbWatchFolder::OnFileSystemChanged(const nsAString & aFilePath)
   LOG(("sbWatchFolder::OnFileSystemChanged %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
-  bool isIgnoredPath = PR_FALSE;
+  PRBool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1209,7 +1209,7 @@ sbWatchFolder::OnFileSystemRemoved(const nsAString & aFilePath)
   LOG(("sbWatchFolder::OnFileSystemRemoved %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
-  bool isIgnoredPath = PR_FALSE;
+  PRBool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1230,7 +1230,7 @@ sbWatchFolder::OnFileSystemAdded(const nsAString & aFilePath)
   LOG(("sbWatchFolder::OnFileSystemAdded %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
-  bool isIgnoredPath = PR_FALSE;
+  PRBool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1352,7 +1352,7 @@ sbWatchFolder::OnEnumerationEnd(sbIMediaList *aMediaList,
         continue;
       }
 
-      bool doesExist = PR_FALSE;
+      PRBool doesExist = PR_FALSE;
       rv = curFile->Exists(&doesExist);
       if (NS_FAILED(rv) || !doesExist) {
         mAddedPaths.erase(*next);

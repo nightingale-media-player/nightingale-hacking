@@ -88,7 +88,7 @@ public:
                       PRInt32       aItemType,
                       sbIMediaList* aMediaList = nsnull,
                       sbIMediaItem* aMediaItem = nsnull,
-                      bool        aNewBatch = PR_TRUE);
+                      PRBool        aNewBatch = PR_TRUE);
 
   void OperationComplete(nsresult aResult);
 

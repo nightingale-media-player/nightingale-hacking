@@ -522,7 +522,7 @@ sbIPDMarshall::HandleRemovedEvent(char aDriveLetter)
 nsresult
 sbIPDMarshall::Initialize()
 {
-  bool   success;
+  PRBool   success;
   nsresult rv;
 
   // Create the device marshall services monitor.
@@ -589,10 +589,10 @@ sbIPDMarshall::ScanForConnectedDevices()
  * \return True if device is an iPod.
  */
 
-bool
+PRBool
 sbIPDMarshall::IsIPod(char aDriveLetter)
 {
-  bool isIPod = PR_FALSE;
+  PRBool isIPod = PR_FALSE;
   BOOL   success;
 
   // Produce the device path.

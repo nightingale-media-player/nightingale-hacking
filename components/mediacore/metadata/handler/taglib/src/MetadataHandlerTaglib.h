@@ -97,6 +97,7 @@
 #include <xiphcomment.h>
 #include <attachedpictureframe.h>
 
+#include <nsAutoLock.h>
 
 /* *****************************************************************************
  *
@@ -157,8 +158,8 @@ private:
                                 mpSeekableChannel;
     nsCOMPtr<nsIURL>            mpURL;
     nsCString                   mMetadataChannelID;
-    bool                      mMetadataChannelRestart;
-    bool                      mCompleted;
+    PRBool                      mMetadataChannelRestart;
+    PRBool                      mCompleted;
     nsCString                   mMetadataPath;
     
     
@@ -364,23 +365,23 @@ private:
 
     void CompleteRead();
 
-    bool ReadFile(
+    PRBool ReadFile(
         TagLib::File                *pTagFile,
         const char                  *aCharset = 0);
 
-    bool ReadMPEGFile();
+    PRBool ReadMPEGFile();
 
-    bool ReadASFFile();
+    PRBool ReadASFFile();
 
-    bool ReadMP4File();
+    PRBool ReadMP4File();
 
-    bool ReadOGGFile();
+    PRBool ReadOGGFile();
 
-    bool ReadOGAFile();
+    PRBool ReadOGAFile();
 
-    bool ReadFLACFile();
+    PRBool ReadFLACFile();
 
-    bool ReadMPCFile();
+    PRBool ReadMPCFile();
 
     nsresult AddMetadataValue(
         const char                  *name,

@@ -46,7 +46,7 @@ public:
   nsresult GetArray(nsIArray ** aArray);
   nsresult GetArrayLength(PRUint32 * aLength);
   
-  nsresult SetHasItems(bool aHasItems);
+  nsresult SetHasItems(PRBool aHasItems);
 
 private:
   ~sbLocalMediaListBaseEnumerationListener();

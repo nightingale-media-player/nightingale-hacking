@@ -69,7 +69,7 @@ sbWatchFolderPrefMgr::Init(sbWatchFolderService *aWFService)
 }
 
 nsresult
-sbWatchFolderPrefMgr::GetIsUnitTestsRunning(bool *aOutIsRunning)
+sbWatchFolderPrefMgr::GetIsUnitTestsRunning(PRBool *aOutIsRunning)
 {
   NS_ENSURE_ARG_POINTER(aOutIsRunning);
   *aOutIsRunning = PR_FALSE;
@@ -99,7 +99,7 @@ sbWatchFolderPrefMgr::OnPrefChanged(const nsAString & aPrefName,
 
   // Should enable watch folders pref.
   if (aPrefName.EqualsLiteral(PREF_WATCHFOLDER_ENABLE)) {
-    bool shouldEnable;
+    PRBool shouldEnable;
     rv = aPrefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE, &shouldEnable);
     NS_ENSURE_SUCCESS(rv, rv);
 

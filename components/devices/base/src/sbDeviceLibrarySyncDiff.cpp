@@ -512,7 +512,7 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
   nsCOMPtr<sbIProperty> property;
   nsTHashtable<nsStringHashKey> sourcePropertyNamesFoundInDestination;
 
-  bool success = sourcePropertyNamesFoundInDestination.Init();
+  PRBool success = sourcePropertyNamesFoundInDestination.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // These properties are excluded from checking since they
@@ -1107,7 +1107,7 @@ SyncExportEnumListener::SelectChangeForItem(sbIMediaItem *aMediaItem,
   rv = GetItemWithOriginGUID(mDeviceLibrary,
                              itemId,
                              getter_AddRefs(destMediaItem));
-  bool hasOriginMatch = NS_SUCCEEDED(rv) && destMediaItem;
+  PRBool hasOriginMatch = NS_SUCCEEDED(rv) && destMediaItem;
 
   if (mDropAction == DROP_TRACKS) {
     // Drag-and drop case is simple: if we have a matching origin item,
@@ -1204,7 +1204,7 @@ protected:
   virtual ~SyncImportEnumListener() { }
 
   nsresult IsFromMainLibrary(sbIMediaItem *aMediaItem,
-                             bool       *aFromMainLibrary);
+                             PRBool       *aFromMainLibrary);
   nsresult GetItemInMainLibrary(sbIMediaItem *aMediaItem,
                                 sbIMediaItem **aMainLibraryItem);
   nsresult GetSimplePlaylistWithSameName(sbILibrary *aLibrary,
@@ -1272,7 +1272,7 @@ SyncImportEnumListener::GetSimplePlaylistWithSameName(
 
 nsresult
 SyncImportEnumListener::IsFromMainLibrary(sbIMediaItem *aMediaItem,
-                                          bool       *aFromMainLibrary)
+                                          PRBool       *aFromMainLibrary)
 {
   // Determine if we know this is from the main library. Must have an origin
   // item GUID (which need not point to a currently-existing item!), and have an
@@ -1482,7 +1482,7 @@ SyncImportEnumListener::SelectChangeForItem(sbIMediaItem *aMediaItem,
   // If it came from the main library (according to origin item and library
   // guids), we do not wish to re-import it (even if the linked item is no
   // longer in the main library!).
-  bool isFromMainLibrary;
+  PRBool isFromMainLibrary;
   rv = IsFromMainLibrary(aMediaItem, &isFromMainLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 

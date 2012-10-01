@@ -48,7 +48,7 @@
 #include "sbFileUtils.h"
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,6 @@
 
 // Songbird directory enumerator defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDirectoryEnumerator, Initialize)
-NS_DEFINE_NAMED_CID(SB_DIRECTORYENUMERATOR_CID);
 
 
 //------------------------------------------------------------------------------
@@ -70,7 +69,7 @@ NS_DEFINE_NAMED_CID(SB_DIRECTORYENUMERATOR_CID);
 
 // Songbird file utilities defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileUtils)
-NS_DEFINE_NAMED_CID(SB_FILEUTILS_CID);
+
 
 //------------------------------------------------------------------------------
 //
@@ -78,27 +77,26 @@ NS_DEFINE_NAMED_CID(SB_FILEUTILS_CID);
 //
 //------------------------------------------------------------------------------
 
-static const mozilla::Module::CIDEntry kFileUtilsCIDs[] = {
-  { &kSB_DIRECTORYENUMERATOR_CID, false, NULL, sbDirectoryEnumeratorConstructor },
-  { &kSB_FILEUTILS_CID, false, NULL, sbFileUtilsConstructor },
-  { NULL }
+// Module component information.
+static nsModuleComponentInfo sbFileUtilsComponents[] =
+{
+  // Songbird directory enumerator component info.
+  {
+    SB_DIRECTORYENUMERATOR_CLASSNAME,
+    SB_DIRECTORYENUMERATOR_CID,
+    SB_DIRECTORYENUMERATOR_CONTRACTID,
+    sbDirectoryEnumeratorConstructor
+  },
+
+  // Songbird file utilities component info.
+  {
+    SB_FILEUTILS_CLASSNAME,
+    SB_FILEUTILS_CID,
+    SB_FILEUTILS_CONTRACTID,
+    sbFileUtilsConstructor
+  }
 };
 
-static const mozilla::Module::ContractIDEntry kFileUtilsContracts[] = {
-  { SB_DIRECTORYENUMERATOR_CONTRACTID, &kSB_DIRECTORYENUMERATOR_CID },
-  { SB_FILEUTILS_CONTRACTID, &kSB_FILEUTILS_CID },
-  { NULL }
-};
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbFileUtilsModule, sbFileUtilsComponents)
 
-static const mozilla::Module::CategoryEntry kFileUtilsCategories[] = {
-  { NULL }
-};
-
-static const mozilla::Module kFileUtilsModule = {
-  mozilla::Module::kVersion,
-  kFileUtilsCIDs,
-  kFileUtilsContracts,
-  kFileUtilsCategories
-};
-
-NSMODULE_DEFN(sbFileUtilsModule) = &kFileUtilsModule;

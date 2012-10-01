@@ -55,6 +55,7 @@
 #include <sbIDeviceRegistrar.h>
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
@@ -215,7 +216,7 @@ private:
 
   nsresult ScanForConnectedDevices();
 
-  bool IsIPod(FSVolumeRefNum aVolumeRefNum);
+  PRBool IsIPod(FSVolumeRefNum aVolumeRefNum);
 
   nsresult GetVolumePath(FSVolumeRefNum aVolumeRefNum,
                          nsAString&     aVolumePath);

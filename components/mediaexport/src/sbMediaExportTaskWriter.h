@@ -76,7 +76,7 @@ public:
   // \param aIsMainLibrary Whether or not this list is the main library.
   //
   nsresult WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList,
-                                          bool aIsMainLibrary = PR_FALSE);
+                                          PRBool aIsMainLibrary = PR_FALSE);
 
   //
   // \brief Write the header for the "updated media items" exported data.

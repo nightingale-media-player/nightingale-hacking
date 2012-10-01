@@ -154,9 +154,9 @@ protected:
 
   nsCString m_LocationURIString;
 
-  bool m_IsAborting;
-  bool m_IsExecuting;
-  bool m_AsyncQuery;
+  PRBool m_IsAborting;
+  PRBool m_IsExecuting;
+  PRBool m_AsyncQuery;
 
   PRUint32 m_CurrentQuery;
   PRInt32 m_LastError;
@@ -166,7 +166,7 @@ protected:
   std::deque< nsCOMPtr<sbIDatabasePreparedStatement> > m_DatabaseQueryList;
 
   PRMonitor* m_pQueryRunningMonitor;
-  bool m_QueryHasCompleted;
+  PRBool m_QueryHasCompleted;
 
   nsInterfaceHashtableMT<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_CallbackList;
   std::deque< bindParameterArray_t > m_BindParameters;

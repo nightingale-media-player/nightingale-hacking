@@ -49,7 +49,7 @@
 #include "sbMediaItemDownloadService.h"
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 
 //------------------------------------------------------------------------------

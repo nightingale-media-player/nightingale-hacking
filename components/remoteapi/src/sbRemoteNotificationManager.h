@@ -76,7 +76,7 @@ private:
   nsCOMPtr<sbIDataRemote> mDataRemote;
   ActionType mCurrentActionType;
   nsCOMPtr<sbILibrary> mMainLibrary;
-  bool mCancelPending;
+  PRBool mCancelPending;
 };
 
 #endif // __SB_REMOTENOTIFICATIONMANAGER_H__

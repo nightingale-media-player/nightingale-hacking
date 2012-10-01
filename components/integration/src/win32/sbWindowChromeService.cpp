@@ -105,7 +105,7 @@ sbWindowChromeService::IsCompositionEnabled(const sbWindowChromeService* self)
 
 /* void hideChrome (in nsISupports aWindow, in boolean aHide); */
 NS_IMETHODIMP sbWindowChromeService::HideChrome(nsISupports *aWindow,
-                                                bool aHide)
+                                                PRBool aHide)
 {
   NS_ENSURE_ARG_POINTER(aWindow);
   NS_ENSURE_STATE(gSubclassId == (UINT_PTR)this);
@@ -145,7 +145,7 @@ NS_IMETHODIMP sbWindowChromeService::HideChrome(nsISupports *aWindow,
 
 /* readonly attribute boolean isCompositionEnabled; */
 NS_IMETHODIMP
-sbWindowChromeService::GetIsCompositionEnabled(bool *aIsCompositionEnabled)
+sbWindowChromeService::GetIsCompositionEnabled(PRBool *aIsCompositionEnabled)
 {
   NS_ENSURE_ARG_POINTER(aIsCompositionEnabled);
   *aIsCompositionEnabled = IsCompositionEnabled(this);

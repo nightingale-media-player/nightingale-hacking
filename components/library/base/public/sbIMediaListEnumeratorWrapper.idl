@@ -44,7 +44,7 @@ interface sbIMediaListEnumeratorWrapper : nsISupports
 /**
  * \brief Listener interface for use with sbIMediaListEnumeratorWrapper.
  */
-[scriptable, uuid(f79af76f-243c-48e7-8de8-f73a80c0f5f4)]
+[scriptable, function, uuid(f79af76f-243c-48e7-8de8-f73a80c0f5f4)]
 interface sbIMediaListEnumeratorWrapperListener : nsISupports
 {
   void onHasMoreElements(in nsISimpleEnumerator aEnumerator, 

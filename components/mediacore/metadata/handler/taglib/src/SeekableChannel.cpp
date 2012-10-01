@@ -166,7 +166,7 @@ NS_IMETHODIMP sbSeekableChannel::Close()
 {
     DataSet::iterator           dataSetIterator;
     Segment                     *pSegment;
-    bool                      pending;
+    PRBool                      pending;
     nsresult                    result = NS_OK;
 
     /* Cancel any pending base channel requests. */
@@ -439,7 +439,7 @@ NS_IMETHODIMP sbSeekableChannel::GetSize(
  */
 
 NS_IMETHODIMP sbSeekableChannel::GetCompleted(
-    bool                      *pCompleted)
+    PRBool                      *pCompleted)
 {
     nsresult                    result = NS_OK;
 
@@ -891,11 +891,11 @@ nsresult sbSeekableChannel::MergeSegments(
  *   This function returns true if all of the channel data has been read.
  */
 
-bool sbSeekableChannel::AllDataRead()
+PRBool sbSeekableChannel::AllDataRead()
 {
     DataSet::iterator           dataSetIterator;
     Segment                     *pFirstSegment;
-    bool                      allDataRead = PR_FALSE;
+    PRBool                      allDataRead = PR_FALSE;
 
     /* When all data has been read, the data set will consist of */
     /* a single segment containing all of the channel content.   */

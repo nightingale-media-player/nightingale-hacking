@@ -62,10 +62,10 @@ protected:
   nsCOMPtr<sbIFileSystemListener> mListener;
   nsString                        mWatchPath;
   nsID                            mSessionID;
-  bool                          mIsRecursive;
-  bool                          mIsWatching;
-  bool                          mIsSupported;
-  bool                          mShouldLoadSession;
+  PRBool                          mIsRecursive;
+  PRBool                          mIsWatching;
+  PRBool                          mIsSupported;
+  PRBool                          mShouldLoadSession;
 };
 
 #endif  // sbBaseFileSystemWatcher_h_

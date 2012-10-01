@@ -121,8 +121,8 @@ private:
                           nsAutoPtr<sbLibraryLoaderInfo>& aEntry,
                           void* aUserData);
 
-  bool m_DetectedCorruptLibrary;
-  bool m_DeleteLibrariesAtShutdown;
+  PRBool m_DetectedCorruptLibrary;
+  PRBool m_DeleteLibrariesAtShutdown;
 
 private:
   nsClassHashtable<nsUint32HashKey, sbLibraryLoaderInfo> mLibraryInfoTable;
@@ -144,8 +144,8 @@ public:
   nsresult SetDatabaseLocation(nsILocalFile* aLocation);
   already_AddRefed<nsILocalFile> GetDatabaseLocation();
 
-  nsresult SetLoadAtStartup(bool aLoadAtStartup);
-  bool GetLoadAtStartup();
+  nsresult SetLoadAtStartup(PRBool aLoadAtStartup);
+  PRBool GetLoadAtStartup();
 
   nsresult SetResourceGUID(const nsAString& aGUID);
   void GetResourceGUID(nsAString& _retval);

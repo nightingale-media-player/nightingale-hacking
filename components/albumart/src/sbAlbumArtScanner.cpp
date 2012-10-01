@@ -273,7 +273,7 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
  */
 
 NS_IMETHODIMP
-sbAlbumArtScanner::GetUpdateArtwork(bool* _retval)
+sbAlbumArtScanner::GetUpdateArtwork(PRBool* _retval)
 {
   TRACE(("%s[%.8x] = %d", __FUNCTION__, this, mUpdateArtwork));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -282,7 +282,7 @@ sbAlbumArtScanner::GetUpdateArtwork(bool* _retval)
 }
 
 NS_IMETHODIMP
-sbAlbumArtScanner::SetUpdateArtwork(bool aUpdateArtwork)
+sbAlbumArtScanner::SetUpdateArtwork(PRBool aUpdateArtwork)
 {
   TRACE(("%s[%.8x] = %d", __FUNCTION__, this, aUpdateArtwork));
   mUpdateArtwork = aUpdateArtwork;
@@ -305,7 +305,7 @@ NS_IMETHODIMP sbAlbumArtScanner::GetStatus(PRUint16* aStatus)
 }
 
 /* readonly attribute boolean blocked; */
-NS_IMETHODIMP sbAlbumArtScanner::GetBlocked(bool* aBlocked)
+NS_IMETHODIMP sbAlbumArtScanner::GetBlocked(PRBool* aBlocked)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - GetBlocked", this));
   NS_ENSURE_ARG_POINTER( aBlocked );
@@ -450,7 +450,7 @@ sbAlbumArtScanner::AddJobProgressListener(sbIJobProgressListener *aListener)
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  bool succeeded = mListeners.AppendObject(aListener);
+  PRBool succeeded = mListeners.AppendObject(aListener);
   return succeeded ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -470,7 +470,7 @@ sbAlbumArtScanner::RemoveJobProgressListener(sbIJobProgressListener* aListener)
   }
 
   // remove the listener
-  bool succeeded = mListeners.RemoveObjectAt(indexToRemove);
+  PRBool succeeded = mListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -496,7 +496,7 @@ NS_IMETHODIMP sbAlbumArtScanner::GetCrop(nsAString & aCrop)
 //------------------------------------------------------------------------------
 
 /* boolean canCancel; */
-NS_IMETHODIMP sbAlbumArtScanner::GetCanCancel(bool* _retval)
+NS_IMETHODIMP sbAlbumArtScanner::GetCanCancel(PRBool* _retval)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - GetCanCancel", this));
   *_retval = PR_TRUE;
@@ -572,7 +572,7 @@ sbAlbumArtScanner::OnTrackResult(nsIURI*       aImageLocation,
   // If fetcher is remote, mark that an attempt was made to fetch remote art for
   // the item.
   if (mCurrentFetcher) {
-    bool isLocal;
+    PRBool isLocal;
     rv = mCurrentFetcher->GetIsLocal(&isLocal);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!isLocal) {
@@ -602,7 +602,7 @@ sbAlbumArtScanner::OnAlbumResult(nsIURI*    aImageLocation,
   // If fetcher is remote, mark that an attempt was made to fetch remote art for
   // the items.
   if (mCurrentFetcher) {
-    bool isLocal;
+    PRBool isLocal;
     rv = mCurrentFetcher->GetIsLocal(&isLocal);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!isLocal) {

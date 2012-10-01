@@ -157,11 +157,11 @@ private:
   // mProfileAvailable          If true, user profile is available.
   //
 
-  bool                        mInitialized;
+  PRBool                        mInitialized;
   nsCOMPtr<sbITemporaryFileFactory>
                                 mRootTemporaryFileFactory;
   nsCOMPtr<nsIObserverService>  mObserverService;
-  bool                        mProfileAvailable;
+  PRBool                        mProfileAvailable;
 };
 
 

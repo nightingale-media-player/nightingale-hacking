@@ -58,7 +58,7 @@ public:
 private:
   nsCOMPtr<sbIWatchFolderService> mWFService;
   nsString                        mWatchPath;
-  bool                          mIsIgnoring;
+  PRBool                          mIsIgnoring;
 };
 
 #endif  // sbWatchFolderUtils_h_

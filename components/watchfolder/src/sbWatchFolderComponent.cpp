@@ -24,7 +24,7 @@
 //
 */
 
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 #include "sbWatchFolder.h"
 #include "sbWatchFolderServiceCID.h"

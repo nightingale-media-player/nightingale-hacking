@@ -446,14 +446,14 @@ endif
 XPIDL_HEADERS ?= $(XPIDL_SRCS:.idl=.h)
 
 $(XPIDL_HEADERS): %.h: %.idl
-	$(XPIDL_HEADERS_CMD) $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -o $@ $<
+	$(XPIDL) -m header $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) $<
 
 export:: $(XPIDL_HEADERS)
 
 XPIDL_TYPELIBS ?= $(XPIDL_SRCS:.idl=.xpt)
 
 $(XPIDL_TYPELIBS): %.xpt: %.idl
-	$(XPIDL_TYPELIBS_CMD) $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -o $@ $<
+	$(XPIDL) -m typelib $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -e $@ $<
 
 # The ifneq() check is in here because if the collected typelibs are the same 
 # (single file) as XPIDL_MODULE, there's no reason to run xpt_link on them.
@@ -547,7 +547,6 @@ CPP_DEFAULT_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
                        $(MOZSDK_INCLUDE_DIR)/nspr \
                        $(MOZSDK_INCLUDE_DIR)/xpcom \
                        $(MOZSDK_INCLUDE_DIR)/string \
-                       $(MOZSDK_INCLUDE_DIR)/../../../../../components/moz/threads/src \
                        $(NULL)
 
 ifdef CPP_FLAGS
@@ -804,7 +803,6 @@ export:: $(OUR_WIN32_RC_OBJS)
 DEFAULT_DYNAMIC_LIBS_IMPORTS = xpcomglue_s \
                                nspr4 \
                                xpcom \
-                               mozalloc \
                                $(NULL)
 
 DEFAULT_DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)

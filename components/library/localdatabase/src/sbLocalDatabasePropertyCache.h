@@ -96,7 +96,7 @@ public:
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
       const nsAString& aLibraryResourceGUID);
 
-  bool GetPropertyID(PRUint32 aPropertyDBID, nsAString& aPropertyID);
+  PRBool GetPropertyID(PRUint32 aPropertyDBID, nsAString& aPropertyID);
 
   void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
 
@@ -126,7 +126,7 @@ private:
   
   // Used to persist invalid sorting state in case mSortInvalidateJob 
   // is interrupted.
-  nsresult GetSetInvalidSortDataPref(bool aWrite, bool& aValue);
+  nsresult GetSetInvalidSortDataPref(PRBool aWrite, PRBool& aValue);
 
   typedef nsInterfaceHashtable<nsUint32HashKey, sbLocalDatabaseResourcePropertyBag> IDToBagMap;
 

@@ -94,7 +94,7 @@ nsresult sbNewFileURI(nsIFile* aFile,
  * \param aAllPlatforms If true, remove characters that are bad on any platform.
  */
 void RemoveBadFileNameCharacters(nsAString& aFileName,
-                                 bool     aAllPlatforms);
+                                 PRBool     aAllPlatforms);
 
 
 //

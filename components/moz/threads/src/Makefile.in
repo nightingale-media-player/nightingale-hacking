@@ -31,7 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 STATIC_LIB = sbMozThreads
 
-CPP_SRCS = sbThreadUtils.cpp \
+CPP_SRCS = sbProxiedComponentManager.cpp \
+           sbThreadUtils.cpp \
            $(NULL)
 
 include $(topsrcdir)/build/rules.mk

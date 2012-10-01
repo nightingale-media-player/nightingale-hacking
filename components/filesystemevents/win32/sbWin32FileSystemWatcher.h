@@ -55,8 +55,8 @@ public:
   // sbBaseFileSystemWatcher
   NS_IMETHOD Init(sbIFileSystemListener *aListener,
                   const nsAString & aRootPath,
-                  bool aIsRecursive);
-  NS_IMETHOD StopWatching(bool aShouldSaveSession);
+                  PRBool aIsRecursive);
+  NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbIFileSystemTreeListener
   NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
@@ -67,19 +67,19 @@ public:
   //        true when the thread should be running, and false when the
   //        thread should stop.
   //
-  bool GetShouldRunThread();
+  PRBool GetShouldRunThread();
   
   //
   // \brief Accessor for the thread is running boolean. This
   //        returns true when the thread is up and running.
   //
-  bool GetIsThreadRunning();
+  PRBool GetIsThreadRunning();
 
   //
   // \brief Setter to specify if the thread is up and running. 
   //        Note: This method should only be called by the background thread.
   //
-  void SetIsThreadRunning(bool aIsThreadRunning);
+  void SetIsThreadRunning(PRBool aIsThreadRunning);
 
   //
   // \brief Accessor for the event structure buffer.
@@ -115,11 +115,11 @@ private:
   nsCOMPtr<nsIThread>  mRebuildThread;
   void                 *mBuffer;
   OVERLAPPED           mOverlapped;
-  bool               mShouldRunThread;
-  bool               mIsThreadRunning;
+  PRBool               mShouldRunThread;
+  PRBool               mIsThreadRunning;
   sbStringSet          mEventPathsSet;
   PRLock               *mEventPathsSetLock;
-  bool               mShuttingDown;
+  PRBool               mShuttingDown;
 };
 
 #endif  // sbWin32FileSystemWatcher_h_

@@ -27,7 +27,7 @@
  * \brief Songbird LibraryManager Component Factory and Main Entry Point.
  */
 
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include "sbLibraryCID.h"
 #include "sbLibraryConstraints.h"
 #include "sbLibraryManager.h"

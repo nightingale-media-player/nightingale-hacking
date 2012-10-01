@@ -36,6 +36,7 @@
 #include <nsIDateTimeFormat.h>
 #include <nsILocale.h>
 #include <nsILocaleService.h>
+#include <nsAutoLock.h>
 #include <sbIPropertyUnitConverter.h>
 
 class sbDurationPropertyInfo : public sbPropertyInfo,
@@ -52,7 +53,7 @@ public:
 
   nsresult Init();
 
-  NS_IMETHOD Validate(const nsAString & aValue, bool *_retval);
+  NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval);
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD MakeSearchable(const nsAString & aValue, nsAString & _retval);
@@ -60,8 +61,8 @@ public:
 protected:
   nsresult InitializeOperators();
 
-  bool  mDurationInversed;
-  bool  mDurationDisplayMillisec;
+  PRBool  mDurationInversed;
+  PRBool  mDurationDisplayMillisec;
 
   PRLock* mMinMaxDurationLock;
   PRInt64 mMinDuration;

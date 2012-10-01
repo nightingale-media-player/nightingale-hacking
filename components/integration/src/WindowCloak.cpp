@@ -66,7 +66,7 @@ sbWindowCloak::Uncloak(nsIDOMWindow* aDOMWindow)
 
 NS_IMETHODIMP
 sbWindowCloak::IsCloaked(nsIDOMWindow* aDOMWindow,
-                         bool* _retval)
+                         PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(aDOMWindow);
 
@@ -104,7 +104,7 @@ sbWindowCloak::IsCloaked(nsIDOMWindow* aDOMWindow,
 
 NS_IMETHODIMP
 sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
-                             bool aVisible)
+                             PRBool aVisible)
 {
   // XXXben Someday we could just ask the window if it is visible rather than
   //        trying to maintain a list ourselves.

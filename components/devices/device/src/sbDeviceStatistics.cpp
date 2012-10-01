@@ -600,7 +600,7 @@ sbDeviceStatistics::ClearLibraryStatistics(sbIDeviceLibrary* aLibrary)
 
 nsresult
 sbDeviceStatistics::UpdateForItem(sbIMediaItem* aMediaItem,
-                                  bool        aItemAdded)
+                                  PRBool        aItemAdded)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);

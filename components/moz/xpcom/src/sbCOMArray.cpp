@@ -39,7 +39,7 @@
 #include "sbCOMArray.h"
 #include "nsCOMPtr.h"
 
-PR_STATIC_CALLBACK(bool) ReleaseObjects(void* aElement, void*);
+PR_STATIC_CALLBACK(PRBool) ReleaseObjects(void* aElement, void*);
 
 // implementations of non-trivial methods in sbCOMArray_base
 
@@ -81,17 +81,17 @@ sbCOMArray_base::IndexOfObject(nsISupports* aObject) const {
     return retval;
 }
 
-bool
+PRBool
 sbCOMArray_base::InsertObjectAt(nsISupports* aObject, PRInt32 aIndex) {
-    bool result = mArray.InsertElementAt(aObject, aIndex);
+    PRBool result = mArray.InsertElementAt(aObject, aIndex);
     if (result)
         NS_IF_ADDREF(aObject);
     return result;
 }
 
-bool
+PRBool
 sbCOMArray_base::InsertObjectsAt(const sbCOMArray_base& aObjects, PRInt32 aIndex) {
-    bool result = mArray.InsertElementsAt(aObjects.mArray, aIndex);
+    PRBool result = mArray.InsertElementsAt(aObjects.mArray, aIndex);
     if (result) {
         // need to addref all these
         PRInt32 count = aObjects.Count();
@@ -102,14 +102,14 @@ sbCOMArray_base::InsertObjectsAt(const sbCOMArray_base& aObjects, PRInt32 aIndex
     return result;
 }
 
-bool
+PRBool
 sbCOMArray_base::ReplaceObjectAt(nsISupports* aObject, PRInt32 aIndex)
 {
     // its ok if oldObject is null here
     nsISupports *oldObject =
         reinterpret_cast<nsISupports*>(mArray.SafeElementAt(aIndex));
 
-    bool result = mArray.ReplaceElementAt(aObject, aIndex);
+    PRBool result = mArray.ReplaceElementAt(aObject, aIndex);
 
     // ReplaceElementAt could fail, such as if the array grows
     // so only release the existing object if the replacement succeeded
@@ -121,16 +121,16 @@ sbCOMArray_base::ReplaceObjectAt(nsISupports* aObject, PRInt32 aIndex)
     return result;
 }
 
-bool
+PRBool
 sbCOMArray_base::RemoveObject(nsISupports *aObject)
 {
-    bool result = mArray.RemoveElement(aObject);
+    PRBool result = mArray.RemoveElement(aObject);
     if (result)
         NS_IF_RELEASE(aObject);
     return result;
 }
 
-bool
+PRBool
 sbCOMArray_base::RemoveObjectAt(PRInt32 aIndex)
 {
     if (PRUint32(aIndex) < PRUint32(Count())) {
@@ -144,7 +144,7 @@ sbCOMArray_base::RemoveObjectAt(PRInt32 aIndex)
 }
 
 // useful for destructors
-bool
+PRBool
 ReleaseObjects(void* aElement, void*)
 {
     nsISupports* element = static_cast<nsISupports*>(aElement);

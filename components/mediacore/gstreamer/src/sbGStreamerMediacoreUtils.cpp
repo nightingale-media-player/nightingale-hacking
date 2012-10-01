@@ -107,7 +107,7 @@ static PRLogModuleInfo* gGStreamerMediacoreUtils =
 #define SB_GN_PROP_EXTENDEDDATA "http://gracenote.com/pos/1.0#extendedData"
 #define SB_GN_PROP_TAGID        "http://gracenote.com/pos/1.0#tagId"
 
-bool
+PRBool
 ConvertSinglePropertyToTag(sbIProperty *property,
         GstTagList *taglist)
 {
@@ -193,9 +193,9 @@ ConvertPropertyArrayToTagList(sbIPropertyArray *properties)
 {
   nsresult rv;
   nsCOMPtr<nsISimpleEnumerator> propertyEnum;
-  bool more;
+  PRBool more;
   GstTagList *tags;
-  bool converted;
+  PRBool converted;
 
   if (properties == nsnull)
     return NULL;
@@ -318,7 +318,7 @@ SyncToAsyncDispatcher(GstBus* bus, GstMessage* message, gpointer data)
 
   // Allow a sync handler to look at this first.
   // If it returns false (the default), we dispatch it asynchronously.
-  bool handled = handler->HandleSynchronousMessage(message);
+  PRBool handled = handler->HandleSynchronousMessage(message);
 
   if (!handled) {
     nsCOMPtr<nsIRunnable> event = new sbGstMessageEvent(message, handler);
@@ -632,7 +632,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
   nsresult rv = props->GetEnumerator (getter_AddRefs (enumerator));
   NS_ENSURE_SUCCESS (rv, rv);
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   while (NS_SUCCEEDED (enumerator->HasMoreElements (&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> next;
     rv = enumerator->GetNext (getter_AddRefs (next));
@@ -699,7 +699,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
     }
     else if (paramSpec->value_type == G_TYPE_BOOLEAN)
     {
-      bool val;
+      PRBool val;
       rv = propertyVariant->GetAsBool (&val);
       NS_ENSURE_SUCCESS (rv, rv);
       g_value_init (&propertyValue, G_TYPE_BOOLEAN);

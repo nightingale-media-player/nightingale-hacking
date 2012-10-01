@@ -550,9 +550,9 @@ nsSystemTrayService::WindowProc(HWND hwnd,
     }
   }
   
-  bool shiftArg = PR_FALSE;
-  bool ctrlArg = PR_FALSE;
-  bool altArg = PR_FALSE;
+  PRBool shiftArg = PR_FALSE;
+  PRBool ctrlArg = PR_FALSE;
+  PRBool altArg = PR_FALSE;
 
   if (handled) {
     GetCursorPos(&mousePos);
@@ -592,7 +592,7 @@ nsSystemTrayService::WindowProc(HWND hwnd,
     rv = documentView->GetDefaultView(getter_AddRefs(abstractView));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool ret = PR_TRUE;
+    PRBool ret = PR_TRUE;
     nsCOMPtr<nsIDOMEvent> event;
     if (detail == -1)
       // not a mouse event
@@ -658,8 +658,8 @@ nsSystemTrayService::CreateMouseEvent(nsIDOMDocumentEvent* documentEvent,
                                       PRInt32 detailArg,
                                       PRInt32 screenXArg, PRInt32 screenYArg,
                                       PRInt32 clientXArg, PRInt32 clientYArg,
-                                      bool ctrlKeyArg, bool altKeyArg,
-                                      bool shiftKeyArg, bool metaKeyArg,
+                                      PRBool ctrlKeyArg, PRBool altKeyArg,
+                                      PRBool shiftKeyArg, PRBool metaKeyArg,
                                       PRUint16 buttonArg,
                                       nsIDOMEvent** _retval)
 {
@@ -713,9 +713,9 @@ nsSystemTrayService::SetImage(imgIContainer * aImage)
   return NS_OK;
 }
 
-/* readonly attribute bool isMultiPartChannel; */
+/* readonly attribute PRBool isMultiPartChannel; */
 NS_IMETHODIMP
-nsSystemTrayService::GetIsMultiPartChannel(bool *aIsMultiPartChannel)
+nsSystemTrayService::GetIsMultiPartChannel(PRBool *aIsMultiPartChannel)
 {
   *aIsMultiPartChannel = PR_FALSE;
   return NS_OK;
@@ -756,7 +756,7 @@ nsSystemTrayService::OnStartFrame(imgIRequest *aRequest,
   in boolean aCurrentFrame, [const] in nsIntRect aRect); */
 NS_IMETHODIMP
 nsSystemTrayService::OnDataAvailable(imgIRequest *aRequest,
-                                     bool aCurrentFrame,
+                                     PRBool aCurrentFrame,
                                      const nsIntRect * aRect)
 {
   return NS_OK;
@@ -791,7 +791,7 @@ nsSystemTrayService::OnStopDecode(imgIRequest *aRequest,
 /* void onStopRequest(in imgIRequest aRequest, in boolean aIsLastPart); */
 NS_IMETHODIMP
 nsSystemTrayService::OnStopRequest(imgIRequest* aRequest,
-                                   bool aIsLastPart)
+                                   PRBool aIsLastPart)
 {
   return NS_OK;
 }

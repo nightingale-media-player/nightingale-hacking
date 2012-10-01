@@ -187,7 +187,7 @@ sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 }
 
 NS_IMETHODIMP 
-sbBaseMediacorePlaybackControl::GetIsPlayingAudio(bool *aIsPlayingAudio)
+sbBaseMediacorePlaybackControl::GetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -204,7 +204,7 @@ sbBaseMediacorePlaybackControl::GetIsPlayingAudio(bool *aIsPlayingAudio)
 }
 
 NS_IMETHODIMP 
-sbBaseMediacorePlaybackControl::GetIsPlayingVideo(bool *aIsPlayingVideo)
+sbBaseMediacorePlaybackControl::GetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -317,7 +317,7 @@ sbBaseMediacorePlaybackControl::OnSetPosition(PRUint64 aPosition)
 }
 
 /*virtual*/ nsresult 
-sbBaseMediacorePlaybackControl::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
+sbBaseMediacorePlaybackControl::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
   /**
    *  This is where you'll want to report on whether you're playing audio.
@@ -327,7 +327,7 @@ sbBaseMediacorePlaybackControl::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
 }
 
 /*virtual*/ nsresult 
-sbBaseMediacorePlaybackControl::OnGetIsPlayingVideo(bool *aIsPlayingVideo)
+sbBaseMediacorePlaybackControl::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
   /**
    *  This is where you'll want to report on whether you're playing video.

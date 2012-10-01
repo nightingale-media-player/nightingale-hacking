@@ -343,7 +343,7 @@ interface sbIServicePaneService : nsISupports
                           in nsIDOMWindow aParentWindow);
 
   /* drag and drop support */
-  boolean canDrop(in sbIServicePaneNode aNode,
+  PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
                  in PRInt32 aOrientation,
                  in nsIDOMWindow aWindow);
@@ -353,7 +353,7 @@ interface sbIServicePaneService : nsISupports
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
 
-  boolean onDragGesture(in sbIServicePaneNode aNode,
+  PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsIDOMDataTransfer aDataTransfer);
 
   /* \brief Called before a user starts to rename a node.
@@ -418,7 +418,7 @@ interface sbIServicePaneModule : nsISupports
                           in nsIDOMNode aContainer,
                           in nsIDOMWindow aParentWindow);
 
-  boolean canDrop(in sbIServicePaneNode aNode,
+  PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
                  in PRInt32 aOrientation,
                  in nsIDOMWindow aWindow);
@@ -426,7 +426,7 @@ interface sbIServicePaneModule : nsISupports
               in nsIDragSession aDragSession,
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
-  boolean onDragGesture(in sbIServicePaneNode aNode,
+  PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsIDOMDataTransfer aDataTransfer);
 
   /* \brief Called before a user starts to rename a node.

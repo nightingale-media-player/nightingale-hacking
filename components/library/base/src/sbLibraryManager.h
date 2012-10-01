@@ -37,6 +37,7 @@
 #include <sbILibraryUtils.h>
 
 #include <nsCategoryCache.h>
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsClassHashtable.h>
@@ -67,7 +68,7 @@ class sbLibraryManager : public sbILibraryManager,
                          public sbSupportsWeakReference
 {
   struct sbLibraryInfo {
-    sbLibraryInfo(bool aLoadAtStartup = PR_FALSE)
+    sbLibraryInfo(PRBool aLoadAtStartup = PR_FALSE)
     : loader(nsnull),
        loadAtStartup(aLoadAtStartup)
     { }
@@ -78,7 +79,7 @@ class sbLibraryManager : public sbILibraryManager,
     // mLoaderCache.
     sbILibraryLoader* loader;
 
-    bool loadAtStartup;
+    PRBool loadAtStartup;
   };
 
 public:
@@ -135,7 +136,7 @@ private:
   void InvokeLoaders();
 
   nsresult SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
-                                            bool aLoadAtStartup,
+                                            PRBool aLoadAtStartup,
                                             sbLibraryInfo** aInfo);
 
 private:

@@ -123,7 +123,7 @@ static sbStaticProperty sStaticProperties[] = {
 
 static const PRUint32 sStaticPropertyCount = 11;
 
-static inline bool
+static inline PRBool
 SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
@@ -133,7 +133,7 @@ SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
   return PR_FALSE;
 }
 
-static inline bool
+static inline PRBool
 SB_IsTopLevelProperty(const nsAString& aProperty)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {

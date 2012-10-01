@@ -297,7 +297,7 @@ sbAlbumArtFetcherSet::GetDescription(nsAString& aDescription)
  */
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetIsLocal(bool* aIsLocal)
+sbAlbumArtFetcherSet::GetIsLocal(PRBool* aIsLocal)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsLocal);
@@ -311,7 +311,7 @@ sbAlbumArtFetcherSet::GetIsLocal(bool* aIsLocal)
  */
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetIsEnabled(bool* aIsEnabled)
+sbAlbumArtFetcherSet::GetIsEnabled(PRBool* aIsEnabled)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsEnabled);
@@ -320,7 +320,7 @@ sbAlbumArtFetcherSet::GetIsEnabled(bool* aIsEnabled)
 }
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::SetIsEnabled(bool aIsEnabled)
+sbAlbumArtFetcherSet::SetIsEnabled(PRBool aIsEnabled)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   return NS_OK;
@@ -373,7 +373,7 @@ sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  */
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetIsFetching(bool* aIsFetching)
+sbAlbumArtFetcherSet::GetIsFetching(PRBool* aIsFetching)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsFetching);
@@ -671,7 +671,7 @@ sbAlbumArtFetcherSet::NextFetcher()
     // If the fetcher is still fetching, we have to wait until it calls
     // OnSearchComplete and shutdown then.  This can happen if Shutdown isn't
     // able to immediately stop the fetching (e.g., fetching on a thread).
-    bool isFetching;
+    PRBool isFetching;
     rv = mFetcher->GetIsFetching(&isFetching);
     NS_WARN_IF_FALSE
       (NS_SUCCEEDED(rv),

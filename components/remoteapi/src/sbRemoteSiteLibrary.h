@@ -67,7 +67,7 @@ protected:
                                                 const nsACString &aPath );
   static nsresult GetFilenameForSiteLibraryInternal( const nsACString& aDomain,
                                                      const nsACString& aPath,
-                                                     bool aDoFixup,
+                                                     PRBool aDoFixup,
                                                      nsAString& _retval );
 
   nsRefPtr<sbRemoteSiteMediaList> mRemSiteMediaList;

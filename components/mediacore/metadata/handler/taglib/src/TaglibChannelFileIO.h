@@ -105,7 +105,7 @@ private:
     nsCOMPtr<sbITagLibChannelFileIOManager>
                                 mpTagLibChannelFileIOManager;
     PRUint32                    mChannelSize;
-    bool                      mChannelRestart;
+    PRBool                      mChannelRestart;
 
 
     /*

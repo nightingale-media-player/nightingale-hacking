@@ -47,7 +47,7 @@
 //------------------------------------------------------------------------------
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 // Mac OS/X imports.
 #include <Cocoa/Cocoa.h>
@@ -160,7 +160,7 @@ private:
   // mInitialized               True if initialized.
   //
 
-  bool                        mInitialized;
+  PRBool                        mInitialized;
 };
 
 

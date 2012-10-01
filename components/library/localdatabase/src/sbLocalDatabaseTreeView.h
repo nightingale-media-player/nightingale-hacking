@@ -117,8 +117,8 @@ public:
   nsresult Rebuild();
 
   // Getter and setter methods to toggle rebuild prevention.
-  void SetShouldPreventRebuild(bool aShouldPreventRebuild);
-  bool GetShouldPreventRebuild();
+  void SetShouldPreventRebuild(PRBool aShouldPreventRebuild);
+  PRBool GetShouldPreventRebuild();
 
   void ClearMediaListView();
 
@@ -170,12 +170,12 @@ private:
 
   nsresult GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId);
 
-  void SetSelectionIsAll(bool aSelectionIsAll);
+  void SetSelectionIsAll(PRBool aSelectionIsAll);
 
   void ClearSelectionList();
 
   nsresult UpdateColumnSortAttributes(const nsAString& aProperty,
-                                      bool aDirection);
+                                      PRBool aDirection);
 
   static nsresult PR_CALLBACK
     SelectionListSavingEnumeratorCallback(PRUint32 aIndex,
@@ -197,7 +197,7 @@ private:
     return (PRInt32) (mFakeAllRow ? aIndex + 1 : aIndex);
   }
 
-  inline bool IsAllRow(PRInt32 aRow) {
+  inline PRBool IsAllRow(PRInt32 aRow) {
     return mFakeAllRow && aRow == 0;
   }
 
@@ -221,7 +221,7 @@ private:
   nsresult GetPlayQueueStatus(PRUint32 aIndex,
                               nsISupportsArray* properties);
 
-  nsresult GetIsListReadOnly(bool *aOutIsReadOnly);
+  nsresult GetIsListReadOnly(PRBool *aOutIsReadOnly);
 
   nsresult GetBag(PRUint32 aIndex,
                   sbILocalDatabaseResourcePropertyBag** aBag);
@@ -233,7 +233,7 @@ private:
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
   // Indicates if we are currently viewing content that is on a device
-  bool mViewingDeviceContent;
+  PRBool mViewingDeviceContent;
 
   // Type of media list this tree view is of
   MediaListType mListType;
@@ -268,11 +268,11 @@ private:
   nsCOMPtr<nsIWeakReference> mObserver;
 
   // Do we manage our selection?  Filters do, playlists don't
-  bool mManageSelection;
+  PRBool mManageSelection;
 
   // Saved list of selected rows and associated guids used to restore selection
   // between rebuilds
-  bool mHaveSavedSelection;
+  PRBool mHaveSavedSelection;
   sbSelectionList mSelectionList;
 
   // Mouse state

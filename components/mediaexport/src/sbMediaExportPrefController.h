@@ -37,7 +37,7 @@ class sbMediaExportPrefListener
 {
 public:
   NS_IMETHOD OnBoolPrefChanged(const nsAString & aPrefName,
-                               const bool aNewPrefValue) = 0;
+                               const PRBool aNewPrefValue) = 0;
 };
 
 //------------------------------------------------------------------------------
@@ -54,27 +54,27 @@ public:
   nsresult Shutdown();
 
   // Utility method, returns true if any media should be exported.
-  bool GetShouldExportAnyMedia();
+  PRBool GetShouldExportAnyMedia();
     
   // Utility method, returns true if any playlist type should be exported.
-  bool GetShouldExportAnyPlaylists();
+  PRBool GetShouldExportAnyPlaylists();
 
   // Utility method, used to determine if the pref has been set to prevent
   // the export agent from starting.
-  bool GetShouldStartExportAgent();
+  PRBool GetShouldStartExportAgent();
 
-  bool GetShouldExportTracks();
-  bool GetShouldExportPlaylists();
-  bool GetShouldExportSmartPlaylists();
+  PRBool GetShouldExportTracks();
+  PRBool GetShouldExportPlaylists();
+  PRBool GetShouldExportSmartPlaylists();
 
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
 
 private:
-  bool mShouldExportTracks;
-  bool mShouldExportPlaylists;
-  bool mShouldExportSmartPlaylists;
-  bool mShouldStartExportAgent;
+  PRBool mShouldExportTracks;
+  PRBool mShouldExportPlaylists;
+  PRBool mShouldExportSmartPlaylists;
+  PRBool mShouldStartExportAgent;
 
   sbMediaExportPrefListener *mListener;  // weak
 };

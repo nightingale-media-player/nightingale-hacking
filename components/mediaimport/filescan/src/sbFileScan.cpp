@@ -95,7 +95,7 @@ sbFileScanQuery::sbFileScanQuery()
 
 //-----------------------------------------------------------------------------
 sbFileScanQuery::sbFileScanQuery(const nsString & strDirectory,
-                                 const bool & bRecurse,
+                                 const PRBool & bRecurse,
                                  sbIFileScanCallback *pCallback)
   : m_pDirectoryLock(PR_NewLock())
   , m_strDirectory(strDirectory)
@@ -132,14 +132,14 @@ void sbFileScanQuery::init()
 
   {
     nsAutoLock lock(m_pExtensionsLock);
-    bool SB_UNUSED_IN_RELEASE(success) = m_Extensions.Init();
+    PRBool SB_UNUSED_IN_RELEASE(success) = m_Extensions.Init();
     NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
   }
 
   {
     nsAutoLock lock(m_pFlaggedFileExtensionsLock);
 
-    bool SB_UNUSED_IN_RELEASE(success) = m_FlaggedExtensions.Init();
+    PRBool SB_UNUSED_IN_RELEASE(success) = m_FlaggedExtensions.Init();
     NS_ASSERTION(success,
         "FileScanQuery.m_FlaggedExtensions failed to be initialized!");
   }
@@ -169,7 +169,7 @@ void sbFileScanQuery::init()
 
 //-----------------------------------------------------------------------------
 /* attribute boolean searchHidden; */
-NS_IMETHODIMP sbFileScanQuery::GetSearchHidden(bool *aSearchHidden)
+NS_IMETHODIMP sbFileScanQuery::GetSearchHidden(PRBool *aSearchHidden)
 {
   NS_ENSURE_ARG_POINTER(aSearchHidden);
   *aSearchHidden = m_bSearchHidden;
@@ -177,7 +177,7 @@ NS_IMETHODIMP sbFileScanQuery::GetSearchHidden(bool *aSearchHidden)
 } //GetSearchHidden
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP sbFileScanQuery::SetSearchHidden(bool aSearchHidden)
+NS_IMETHODIMP sbFileScanQuery::SetSearchHidden(PRBool aSearchHidden)
 {
   m_bSearchHidden = aSearchHidden;
   return NS_OK;
@@ -216,16 +216,16 @@ NS_IMETHODIMP sbFileScanQuery::GetDirectory(nsAString &_retval)
 } //GetDirectory
 
 //-----------------------------------------------------------------------------
-/* void SetRecurse (in bool bRecurse); */
-NS_IMETHODIMP sbFileScanQuery::SetRecurse(bool bRecurse)
+/* void SetRecurse (in PRBool bRecurse); */
+NS_IMETHODIMP sbFileScanQuery::SetRecurse(PRBool bRecurse)
 {
   m_bRecurse = bRecurse;
   return NS_OK;
 } //SetRecurse
 
 //-----------------------------------------------------------------------------
-/* bool GetRecurse (); */
-NS_IMETHODIMP sbFileScanQuery::GetRecurse(bool *_retval)
+/* PRBool GetRecurse (); */
+NS_IMETHODIMP sbFileScanQuery::GetRecurse(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_bRecurse;
@@ -265,7 +265,7 @@ sbFileScanQuery::AddFlaggedFileExtension(const nsAString & strExtension)
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-sbFileScanQuery::GetFlaggedExtensionsFound(bool *aOutIsFound)
+sbFileScanQuery::GetFlaggedExtensionsFound(PRBool *aOutIsFound)
 {
   NS_ENSURE_ARG_POINTER(aOutIsFound);
 
@@ -344,13 +344,13 @@ NS_IMETHODIMP sbFileScanQuery::GetFlaggedFileCount(PRUint32 *_retval)
 /* void AddFilePath (in wstring strFilePath); */
 NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
 {
-  bool isFlagged = PR_FALSE;
+  PRBool isFlagged = PR_FALSE;
   const nsAutoString strExtension = GetExtensionFromFilename(strFilePath);
   if (m_lastSeenExtension.IsEmpty() ||
       !m_lastSeenExtension.Equals(strExtension, CaseInsensitiveCompare)) {
     // m_lastSeenExtension could be set multiple times without lock guarded
     // in theory. However, the race is benign and in practice, it is rare.
-    bool isValidExtension = VerifyFileExtension(strExtension, &isFlagged);
+    PRBool isValidExtension = VerifyFileExtension(strExtension, &isFlagged);
     if (isValidExtension) {
       m_lastSeenExtension = strExtension;
     } else if (!isValidExtension && !isFlagged) {
@@ -424,8 +424,8 @@ sbFileScanQuery::GetFlaggedFilePath(PRUint32 nIndex, nsAString &retVal)
 } //getFlaggedFilePath
 
 //-----------------------------------------------------------------------------
-/* bool IsScanning (); */
-NS_IMETHODIMP sbFileScanQuery::IsScanning(bool *_retval)
+/* PRBool IsScanning (); */
+NS_IMETHODIMP sbFileScanQuery::IsScanning(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   PR_Lock(m_pScanningLock);
@@ -435,8 +435,8 @@ NS_IMETHODIMP sbFileScanQuery::IsScanning(bool *_retval)
 } //IsScanning
 
 //-----------------------------------------------------------------------------
-/* void SetIsScanning (in bool bIsScanning); */
-NS_IMETHODIMP sbFileScanQuery::SetIsScanning(bool bIsScanning)
+/* void SetIsScanning (in PRBool bIsScanning); */
+NS_IMETHODIMP sbFileScanQuery::SetIsScanning(PRBool bIsScanning)
 {
   PR_Lock(m_pScanningLock);
   m_bIsScanning = bIsScanning;
@@ -532,8 +532,8 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
 }
 
 //-----------------------------------------------------------------------------
-/* bool IsCancelled (); */
-NS_IMETHODIMP sbFileScanQuery::IsCancelled(bool *_retval)
+/* PRBool IsCancelled (); */
+NS_IMETHODIMP sbFileScanQuery::IsCancelled(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   PR_Lock(m_pCancelLock);
@@ -555,13 +555,13 @@ nsString sbFileScanQuery::GetExtensionFromFilename(const nsAString &strFilename)
 } //GetExtensionFromFilename
 
 //-----------------------------------------------------------------------------
-bool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
-                                            bool *aOutIsFlaggedExtension)
+PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
+                                            PRBool *aOutIsFlaggedExtension)
 {
   NS_ENSURE_ARG_POINTER(aOutIsFlaggedExtension);
 
   *aOutIsFlaggedExtension = PR_FALSE;
-  bool isValid = PR_FALSE;
+  PRBool isValid = PR_FALSE;
   nsAutoString extString;
 
   { // scoped lock
@@ -589,7 +589,7 @@ bool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
 //-----------------------------------------------------------------------------
 /* attribute boolean wantContentURLs; */
 NS_IMETHODIMP sbFileScanQuery::
-  GetWantLibraryContentURIs(bool *aWantLibraryContentURIs)
+  GetWantLibraryContentURIs(PRBool *aWantLibraryContentURIs)
 {
   NS_ENSURE_ARG_POINTER(aWantLibraryContentURIs);
   *aWantLibraryContentURIs = m_bWantLibraryContentURIs;
@@ -598,7 +598,7 @@ NS_IMETHODIMP sbFileScanQuery::
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP sbFileScanQuery::
-  SetWantLibraryContentURIs(bool aWantLibraryContentURIs)
+  SetWantLibraryContentURIs(PRBool aWantLibraryContentURIs)
 {
   m_bWantLibraryContentURIs = aWantLibraryContentURIs;
   return NS_OK;
@@ -792,22 +792,22 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   sbIFileScanCallback *pCallback = nsnull;
   pQuery->GetCallback(&pCallback);
 
-  bool bSearchHidden = PR_FALSE;
+  PRBool bSearchHidden = PR_FALSE;
   pQuery->GetSearchHidden(&bSearchHidden);
 
-  bool bRecurse = PR_FALSE;
+  PRBool bRecurse = PR_FALSE;
   pQuery->GetRecurse(&bRecurse);
 
   nsString strTheDirectory;
   pQuery->GetDirectory(strTheDirectory);
 
-  bool bWantLibraryContentURIs = PR_TRUE;
+  PRBool bWantLibraryContentURIs = PR_TRUE;
   pQuery->GetWantLibraryContentURIs(&bWantLibraryContentURIs);
 
   rv = pFile->InitWithPath(strTheDirectory);
   if(NS_FAILED(rv)) return rv;
 
-  bool bFlag = PR_FALSE;
+  PRBool bFlag = PR_FALSE;
   pFile->IsDirectory(&bFlag);
 
   if(pCallback)
@@ -821,19 +821,19 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
     rv = sbGetDirectoryEntries(pFile, &pDirEntries);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool keepRunning = !m_ThreadShouldShutdown;
+    PRBool keepRunning = !m_ThreadShouldShutdown;
 
     while(keepRunning)
     {
       // Allow us to get the hell out of here.
-      bool cancel = PR_FALSE;
+      PRBool cancel = PR_FALSE;
       pQuery->IsCancelled(&cancel);
 
       if (cancel) {
         break;
       }
 
-      bool bHasMore = PR_FALSE;
+      PRBool bHasMore = PR_FALSE;
       rv = pDirEntries->HasMoreElements(&bHasMore);
       nsCOMPtr<nsIFile> pEntry;
       if(NS_SUCCEEDED(rv) && bHasMore) {
@@ -842,7 +842,7 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
       if(NS_SUCCEEDED(rv) && pEntry)
       {
-        bool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
+        PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
         pEntry->IsFile(&bIsFile);
         pEntry->IsDirectory(&bIsDirectory);
         pEntry->IsHidden(&bIsHidden);
@@ -851,7 +851,7 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
         // dot prefix to be treated as hidden which they are on Mac and Linux.
         // Windows will include dot prefixed file as it did before the
         // file scan reimplementation in bug 24478
-        bool isSpecial = PR_FALSE;
+        PRBool isSpecial = PR_FALSE;
         pEntry->IsSpecial(&isSpecial);
 
 #if XP_MACOSX

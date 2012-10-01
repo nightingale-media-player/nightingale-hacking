@@ -472,7 +472,7 @@ NS_IMETHODIMP sbPropertyInfo::SetLocalizationKey(const nsAString & aLocalization
 }
 
 
-NS_IMETHODIMP sbPropertyInfo::GetUserViewable(bool *aUserViewable)
+NS_IMETHODIMP sbPropertyInfo::GetUserViewable(PRBool *aUserViewable)
 {
   NS_ENSURE_ARG_POINTER(aUserViewable);
 
@@ -482,7 +482,7 @@ NS_IMETHODIMP sbPropertyInfo::GetUserViewable(bool *aUserViewable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::SetUserViewable(bool aUserViewable)
+NS_IMETHODIMP sbPropertyInfo::SetUserViewable(PRBool aUserViewable)
 {
   sbSimpleAutoLock lock(mUserViewableLock);
   mUserViewable = aUserViewable;
@@ -490,7 +490,7 @@ NS_IMETHODIMP sbPropertyInfo::SetUserViewable(bool aUserViewable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetUserEditable(bool *aUserEditable)
+NS_IMETHODIMP sbPropertyInfo::GetUserEditable(PRBool *aUserEditable)
 {
   NS_ENSURE_ARG_POINTER(aUserEditable);
 
@@ -500,7 +500,7 @@ NS_IMETHODIMP sbPropertyInfo::GetUserEditable(bool *aUserEditable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::SetUserEditable(bool aUserEditable)
+NS_IMETHODIMP sbPropertyInfo::SetUserEditable(PRBool aUserEditable)
 {
   sbSimpleAutoLock lock(mUserEditableLock);
   mUserEditable = aUserEditable;
@@ -522,7 +522,7 @@ NS_IMETHODIMP sbPropertyInfo::SetOperators(nsISimpleEnumerator * aOperators)
   sbSimpleAutoLock lock(mOperatorsLock);
   mOperators.Clear();
 
-  bool hasMore = PR_FALSE;
+  PRBool hasMore = PR_FALSE;
   nsCOMPtr<nsISupports> object;
 
   while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) &&
@@ -532,7 +532,7 @@ NS_IMETHODIMP sbPropertyInfo::SetOperators(nsISimpleEnumerator * aOperators)
     nsCOMPtr<sbIPropertyOperator> po = do_QueryInterface(object, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool success = mOperators.AppendObject(po);
+    PRBool success = mOperators.AppendObject(po);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -561,7 +561,7 @@ NS_IMETHODIMP sbPropertyInfo::GetOperator(const nsAString & aOperator,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
+NS_IMETHODIMP sbPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -593,7 +593,7 @@ NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString &
   return MakeSearchable(aValue, _retval);
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(bool *aRemoteReadable)
+NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(PRBool *aRemoteReadable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteReadable);
 
@@ -603,7 +603,7 @@ NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(bool *aRemoteReadable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::SetRemoteReadable(bool aRemoteReadable)
+NS_IMETHODIMP sbPropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
 {
   sbSimpleAutoLock lock(mRemoteReadableLock);
   mRemoteReadable = aRemoteReadable;
@@ -611,7 +611,7 @@ NS_IMETHODIMP sbPropertyInfo::SetRemoteReadable(bool aRemoteReadable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetRemoteWritable(bool *aRemoteWritable)
+NS_IMETHODIMP sbPropertyInfo::GetRemoteWritable(PRBool *aRemoteWritable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteWritable);
 
@@ -621,7 +621,7 @@ NS_IMETHODIMP sbPropertyInfo::GetRemoteWritable(bool *aRemoteWritable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::SetRemoteWritable(bool aRemoteWritable)
+NS_IMETHODIMP sbPropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
 {
   sbSimpleAutoLock lock(mRemoteWritableLock);
   mRemoteWritable = aRemoteWritable;
@@ -652,7 +652,7 @@ NS_IMETHODIMP sbPropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitCo
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetUsedInIdentity(bool *aUsedInIdentity)
+NS_IMETHODIMP sbPropertyInfo::GetUsedInIdentity(PRBool *aUsedInIdentity)
 {
   NS_ENSURE_ARG_POINTER(aUsedInIdentity);
 
@@ -662,7 +662,7 @@ NS_IMETHODIMP sbPropertyInfo::GetUsedInIdentity(bool *aUsedInIdentity)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::SetUsedInIdentity(bool aUsedInIdentity)
+NS_IMETHODIMP sbPropertyInfo::SetUsedInIdentity(PRBool aUsedInIdentity)
 {
   sbSimpleAutoLock lock(mUsedInIdentityLock);
   mUsedInIdentity = aUsedInIdentity;

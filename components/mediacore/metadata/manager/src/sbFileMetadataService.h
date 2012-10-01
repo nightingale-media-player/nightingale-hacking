@@ -158,7 +158,7 @@ public:
    * \param aJobItem The job item to be processed
    * \return NS_ERROR_NOT_AVAILABLE if there are no more items
    */
-  nsresult GetQueuedJobItem(bool aMainThreadOnly, sbMetadataJobItem** aJobItem);
+  nsresult GetQueuedJobItem(PRBool aMainThreadOnly, sbMetadataJobItem** aJobItem);
   
   /**
    * Give back a job item after processing has been attempted.
@@ -178,7 +178,7 @@ public:
    * \param aJobItemIsBlocked   If true, job item is blocked.
    */
   nsresult GetJobItemIsBlocked(sbMetadataJobItem* aJobItem,
-                               bool*            aJobItemIsBlocked);
+                               PRBool*            aJobItemIsBlocked);
 
 
 protected:
@@ -248,8 +248,8 @@ protected:
   nsRefPtr<sbBackgroundThreadMetadataProcessor>  
                                            mBackgroundThreadProcessor;
 
-  bool                                   mInitialized;
-  bool                                   mRunning;
+  PRBool                                   mInitialized;
+  PRBool                                   mRunning;
   
   // Timer used to call Job.OnJobProgress()
   nsCOMPtr<nsITimer>                       mNotificationTimer;

@@ -26,7 +26,7 @@
 
 #include "sbDataRemoteWrapper.h"
 
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDataRemoteWrapper, InitWrapper)
 

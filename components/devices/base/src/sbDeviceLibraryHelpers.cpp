@@ -63,7 +63,7 @@ NS_IMETHODIMP
 sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
                                      sbIMediaItem *aMediaItem,
                                      PRUint32 aIndex,
-                                     bool *_retval)
+                                     PRBool *_retval)
 {
 
   // Nothing to do on adding to the main library
@@ -74,7 +74,7 @@ NS_IMETHODIMP
 sbLibraryUpdateListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                              sbIMediaItem *aMediaItem,
                                              PRUint32 aIndex,
-                                             bool *_retval)
+                                             PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -100,7 +100,7 @@ NS_IMETHODIMP
 sbLibraryUpdateListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                             sbIMediaItem *aMediaItem,
                                             PRUint32 aIndex,
-                                            bool *_retval)
+                                            PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
   if (_retval) {
@@ -114,7 +114,7 @@ NS_IMETHODIMP
 sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
                                        sbIMediaItem *aMediaItem,
                                        sbIPropertyArray *aProperties,
-                                       bool *_retval)
+                                       PRBool *_retval)
 {
   if (_retval) {
     *_retval = PR_FALSE; /* keep going */
@@ -127,7 +127,7 @@ NS_IMETHODIMP
 sbLibraryUpdateListener::OnItemMoved(sbIMediaList *aMediaList,
                                      PRUint32 aFromIndex,
                                      PRUint32 aToIndex,
-                                     bool *_retval)
+                                     PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
 
@@ -257,8 +257,8 @@ namespace
 
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnListCleared(sbIMediaList *aMediaList,
-                                       bool aExcludeLists,
-                                       bool *_retval)
+                                       PRBool aExcludeLists,
+                                       PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
   // Make sure we're dealing with the library
@@ -270,8 +270,8 @@ sbLibraryUpdateListener::OnListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                             bool aExcludeLists,
-                                             bool *_retval)
+                                             PRBool aExcludeLists,
+                                             PRBool *_retval)
 {
 
   // We clear the origin is in main library property for all device library

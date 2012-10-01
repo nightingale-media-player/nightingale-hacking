@@ -173,7 +173,7 @@ private:
   /**
    * Flag to let us know if batch has been ended
    */
-  bool mBatchEnded;
+  PRBool mBatchEnded;
   /**
    * The current data format version of the itunes mapping data
    */
@@ -181,16 +181,16 @@ private:
   /**
    * Flag to indicate if we've found any changes
    */
-  bool mFoundChanges;
+  PRBool mFoundChanges;
   /**
    * Flag to denote if we're importing. TRUE = Importing, FALSE = first run 
    * update
    */
-  bool mImport;
+  PRBool mImport;
   /**
    * Flag to indicate whether we're to import playlists
    */
-  bool mImportPlaylists;
+  PRBool mImportPlaylists;
   /**
    * IO service used to get URI's and such
    */
@@ -301,7 +301,7 @@ private:
    */
   nsresult DBModified(sbPrefBranch & aPrefs,
                       nsAString const & aLibPath,
-                      bool * aModified);
+                      PRBool * aModified);
   /**
    * Helper function to destry the iTunesTracks in the mTrackBatch member
    */
@@ -369,7 +369,7 @@ private:
    * and special playlists
    * \param aProperties The properties of the playlist 
    */
-  bool ShouldImportPlaylist(sbIStringMap * aProperties);
+  PRBool ShouldImportPlaylist(sbIStringMap * aProperties);
   /**
    * Update our status object's progress 
    */

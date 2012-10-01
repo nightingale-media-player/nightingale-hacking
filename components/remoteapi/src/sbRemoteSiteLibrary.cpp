@@ -230,7 +230,7 @@ sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsACString &aDomain,
     do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  bool hasLibrary;
+  PRBool hasLibrary;
   rv = libraryManager->HasLibrary( mLibrary, &hasLibrary );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -349,7 +349,7 @@ sbRemoteSiteLibrary::GetURI()
 nsresult
 sbRemoteSiteLibrary::GetFilenameForSiteLibraryInternal( const nsACString& aDomain,
                                                         const nsACString& aPath,
-                                                        bool aDoFixup,
+                                                        PRBool aDoFixup,
                                                         nsAString& _retval )
 {
   // aDomain and aPath may be empty

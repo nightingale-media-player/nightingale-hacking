@@ -26,6 +26,7 @@
 #define __SB_VIDEOBOX_H__
 
 #include <sbIVideoBox.h>
+#include <nsAutoLock.h>
 
 class sbVideoBox : public sbIVideoBox
 {

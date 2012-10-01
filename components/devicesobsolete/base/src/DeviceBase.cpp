@@ -33,6 +33,7 @@
 #include "sbIDeviceBase.h"
 
 #include <nsAppDirectoryServiceDefs.h>
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsCRTGlue.h>
@@ -41,6 +42,7 @@
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
 #include <nsILocalFile.h>
+#include <nsIProxyObjectManager.h>
 #include <nsIURI.h>
 #include <nsIURIFixup.h>
 #include <nsIWritablePropertyBag2.h>
@@ -157,21 +159,21 @@ sbDeviceBaseLibraryListener::Init(const nsAString &aDeviceIdentifier,
 
   mDeviceIdentifier = aDeviceIdentifier;
   mDevice = aDevice;
-  bool success = mBeforeRemoveIndexes.Init();
+  PRBool success = mBeforeRemoveIndexes.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
 
 nsresult 
-sbDeviceBaseLibraryListener::SetIgnoreListener(bool aIgnoreListener)
+sbDeviceBaseLibraryListener::SetIgnoreListener(PRBool aIgnoreListener)
 {
   mIgnoreListener = aIgnoreListener;
   return NS_OK;
 }
 
 nsresult 
-sbDeviceBaseLibraryListener::SetManagePlaylists(bool aManagePlaylists)
+sbDeviceBaseLibraryListener::SetManagePlaylists(PRBool aManagePlaylists)
 {
   mManagePlaylists = aManagePlaylists;
   return NS_OK;
@@ -181,7 +183,7 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
                                          PRUint32 aIndex,
-                                         bool *aNoMoreForBatch)
+                                         PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -199,12 +201,12 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   rv = aMediaList->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool destinationIsLibrary;
+  PRBool destinationIsLibrary;
   rv = aMediaList->Equals(library, &destinationIsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem, &rv);
-  bool addedIsList = NS_SUCCEEDED(rv);
+  PRBool addedIsList = NS_SUCCEEDED(rv);
 
   // If we're managing playlists and a list is being added to the library, we
   // need to attach a listener so we can track changes to the list
@@ -223,7 +225,7 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
     nsAutoPtr<sbRemovedItemIndexes> removedIndexes(new sbRemovedItemIndexes());
     NS_ENSURE_TRUE(removedIndexes, NS_ERROR_OUT_OF_MEMORY);
 
-    bool success = removedIndexes->Init();
+    PRBool success = removedIndexes->Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     success = mBeforeRemoveIndexes.Put(list, removedIndexes);
@@ -299,7 +301,7 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                  sbIMediaItem *aMediaItem,
                                                  PRUint32 aIndex,
-                                                 bool *aNoMoreForBatch)
+                                                 PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -324,7 +326,7 @@ sbDeviceBaseLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   rv = aMediaList->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool fromListIsLibrary;
+  PRBool fromListIsLibrary;
   rv = aMediaList->Equals(library, &fromListIsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -334,7 +336,7 @@ sbDeviceBaseLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
 
     sbRemovedItemIndexes* removedIndexes;
-    bool success = mBeforeRemoveIndexes.Get(aMediaList, &removedIndexes);
+    PRBool success = mBeforeRemoveIndexes.Get(aMediaList, &removedIndexes);
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
     success = removedIndexes->Put(aMediaItem, index);
@@ -348,7 +350,7 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList, 
                                                 sbIMediaItem *aMediaItem,
                                                 PRUint32 aIndex,
-                                                bool *aNoMoreForBatch)
+                                                PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -362,12 +364,12 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   rv = aMediaList->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool fromListIsLibrary;
+  PRBool fromListIsLibrary;
   rv = aMediaList->Equals(library, &fromListIsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem, &rv);
-  bool removedIsList = NS_SUCCEEDED(rv);
+  PRBool removedIsList = NS_SUCCEEDED(rv);
 
   if (mManagePlaylists && fromListIsLibrary && removedIsList) {
     rv = list->RemoveListener(this);
@@ -405,11 +407,11 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
       }
       else {
         sbRemovedItemIndexes* removedIndexes;
-        bool success = mBeforeRemoveIndexes.Get(aMediaList, &removedIndexes);
+        PRBool success = mBeforeRemoveIndexes.Get(aMediaList, &removedIndexes);
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
         PRUint32 index;
-        bool found = removedIndexes->Get(aMediaItem, &index);
+        PRBool found = removedIndexes->Get(aMediaItem, &index);
         if (found) {
           removedIndexes->Remove(aMediaItem);
           rv = mDevice->RemoveFromPlaylist(mDeviceIdentifier,
@@ -442,7 +444,7 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
                                            sbIPropertyArray* aProperties,
-                                           bool* aNoMoreForBatch)
+                                           PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -475,7 +477,7 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
                                          PRUint32 aFromIndex,
                                          PRUint32 aToIndex,
-                                         bool *aNoMoreForBatch)
+                                         PRBool *aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -505,8 +507,8 @@ sbDeviceBaseLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP 
 sbDeviceBaseLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                                 bool aExcludeLists,
-                                                 bool* aNoMoreForBatch)
+                                                 PRBool aExcludeLists,
+                                                 PRBool* aNoMoreForBatch)
 {
   /* Validate parameters. */
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -517,8 +519,8 @@ sbDeviceBaseLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP 
 sbDeviceBaseLibraryListener::OnListCleared(sbIMediaList *aMediaList,
-                                           bool aExcludeLists,
-                                           bool* aNoMoreForBatch)
+                                           PRBool aExcludeLists,
+                                           PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -535,7 +537,7 @@ sbDeviceBaseLibraryListener::OnListCleared(sbIMediaList *aMediaList,
   rv = aMediaList->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool fromListIsLibrary;
+  PRBool fromListIsLibrary;
   rv = aMediaList->Equals(library, &fromListIsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -907,7 +909,7 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     rv = libraryFile->Append(NS_LITERAL_STRING("db"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool exists = PR_FALSE;
+    PRBool exists = PR_FALSE;
     rv = libraryFile->Exists(&exists);
     NS_ENSURE_SUCCESS(rv, rv);
     if(!exists) {
@@ -1152,7 +1154,7 @@ sbDeviceBase::ClearTransferQueue(const nsAString &aDeviceIdentifier)
 
 nsresult 
 sbDeviceBase::IsTransferQueueEmpty(const nsAString &aDeviceIdentifier, 
-                                   bool &aEmpty)
+                                   PRBool &aEmpty)
 {
   aEmpty = PR_FALSE;
 

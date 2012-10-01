@@ -148,18 +148,18 @@ private:
   public:
     nsCString                       contractID;
     PRUint32                        priority;
-    bool                          enabled;
-    bool                          local;
+    PRBool                          enabled;
+    PRBool                          local;
 
     // Defined for the Sort function on nsTArray. Overload "less then" operator
     // with "<=" to make sure Sort returns the same result when priorities are
     // the same.
-    bool operator<(const FetcherInfo& right) const {
+    PRBool operator<(const FetcherInfo& right) const {
       return (priority <= right.priority);
     };
 
     // This has to be defined for Sort as well, but is used for Searching.
-    bool operator==(const FetcherInfo& right) const {
+    PRBool operator==(const FetcherInfo& right) const {
       return contractID.Equals(right.contractID);
     }
   };
@@ -179,8 +179,8 @@ private:
   nsCOMPtr<nsIIOService>        mIOService;
   nsCOMPtr<nsIMIMEService>      mMIMEService;
   nsCOMPtr<nsIFile>             mAlbumArtCacheDir;
-  bool                        mInitialized;
-  bool                        mPrefsAvailable;
+  PRBool                        mInitialized;
+  PRBool                        mPrefsAvailable;
   nsTArray<FetcherInfo>         mFetcherInfoList;
   nsTArray<nsCString>           mValidExtensionList;
   nsInterfaceHashtable<nsStringHashKey, nsISupports>

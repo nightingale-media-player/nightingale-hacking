@@ -51,7 +51,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
 
-  nsresult GetIsUnitTestsRunning(bool *aOutIsRunning);
+  nsresult GetIsUnitTestsRunning(PRBool *aOutIsRunning);
 
 protected:
   nsresult OnPrefChanged(const nsAString & aPrefName,

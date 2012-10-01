@@ -656,7 +656,7 @@ sbGStreamerAudioProcessor::DecoderNoMorePads (GstElement *uridecodebin)
   return NS_OK;
 }
 
-bool
+PRBool
 sbGStreamerAudioProcessor::HasEnoughData()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -946,7 +946,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
   PRUint32 sampleNumber = mSampleNumber;
   PRUint32 numSamples;
 
-  bool sendGap = mSendGap;
+  PRBool sendGap = mSendGap;
   mSendGap = PR_FALSE;
 
   // Call listener with the monitor released.

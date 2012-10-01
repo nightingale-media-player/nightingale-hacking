@@ -45,10 +45,13 @@
 
 // Self imports.
 #include "sbDeviceStreamingHandler.h"
+#include "sbProxiedComponentManager.h"
 
 // Local imports.
+#include <nsIProxyObjectManager.h>
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 
 
@@ -161,7 +164,7 @@ sbDeviceStreamingHandler::CheckTransferable()
 // IsComplete
 //
 
-bool
+PRBool
 sbDeviceStreamingHandler::IsComplete()
 {
   return mIsComplete;
@@ -173,7 +176,7 @@ sbDeviceStreamingHandler::IsComplete()
 // IsStreamingItemSupported
 //
 
-bool
+PRBool
 sbDeviceStreamingHandler::IsStreamingItemSupported()
 {
   return mIsSupported;

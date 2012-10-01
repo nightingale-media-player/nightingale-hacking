@@ -159,7 +159,7 @@ sbVariantToInt(nsIVariant* aVariant,
 nsresult
 sbVariantsEqual(nsIVariant* aVariant1,
                 nsIVariant* aVariant2,
-                bool*     aEqual)
+                PRBool*     aEqual)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aEqual);
@@ -228,8 +228,8 @@ sbVariantsEqual(nsIVariant* aVariant1,
 
     case nsIDataType::VTYPE_BOOL :
     {
-      bool value1;
-      bool value2;
+      PRBool value1;
+      PRBool value2;
       rv = aVariant1->GetAsBool(&value1);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = aVariant2->GetAsBool(&value2);

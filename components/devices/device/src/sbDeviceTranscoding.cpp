@@ -50,6 +50,7 @@
 #include <sbITranscodingConfigurator.h>
 
 // Songbird includes
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbTranscodeUtils.h>
@@ -104,7 +105,7 @@ sbDeviceTranscoding::SelectTranscodeProfile(PRUint32 transcodeType,
 {
   nsresult rv;
 
-  bool hasProfilePref = PR_FALSE;
+  PRBool hasProfilePref = PR_FALSE;
   // See if we have a preference for the transcoding profile.
   nsCOMPtr<nsIVariant> profileIdVariant;
   nsString prefProfileId;
@@ -265,7 +266,7 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
     // First, ensure that the item isn't DRM protected before looking for
     // transcode profiles.
     if (sbDeviceUtils::IsItemDRMProtected(request->item)) {
-      bool isSupported = PR_FALSE;
+      PRBool isSupported = PR_FALSE;
       rv = mBaseDevice->SupportsMediaItemDRM(
           request->item,
           PR_TRUE,  // report errors
@@ -749,7 +750,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
   // Wait until the transcode job is complete.
   //XXXeps should check for abort.  To do this, the job will have to be
   //       canceled.
-  bool isComplete = PR_FALSE;
+  PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
     nsAutoMonitor monitor(stopMonitor);
@@ -812,7 +813,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
     // Log each error.
     if (NS_SUCCEEDED(rv)) {
-      bool hasMore;
+      PRBool hasMore;
       rv = errorMessageEnum->HasMore(&hasMore);
       if (NS_FAILED(rv))
         hasMore = PR_FALSE;

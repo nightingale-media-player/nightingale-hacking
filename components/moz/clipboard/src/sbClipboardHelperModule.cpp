@@ -25,30 +25,22 @@
  */
 
 #include "sbClipboardHelper.h"
-#include <mozilla/ModuleUtils.h>
+
+#include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbClipboardHelper)
-NS_DEFINE_NAMED_CID(SONGBIRD_CLIPBOARD_HELPER_CID);
 
-static const mozilla::Module::CIDEntry kClipboardHelperCIDs[] = {
-  { &kSONGBIRD_CLIPBOARD_HELPER_CID, false, NULL, sbClipboardHelperConstructor },
-  { NULL }
+// fill out data struct to register with component system
+static const nsModuleComponentInfo components[] =
+{
+  {
+    SONGBIRD_CLIPBOARD_HELPER_CLASSNAME,
+    SONGBIRD_CLIPBOARD_HELPER_CID,
+    SONGBIRD_CLIPBOARD_HELPER_CONTRACTID,
+    sbClipboardHelperConstructor
+  }
 };
 
-static const mozilla::Module::ContractIDEntry kClipboardHelperContracts[] = {
-  { SONGBIRD_CLIPBOARD_HELPER_CONTRACTID, &kSONGBIRD_CLIPBOARD_HELPER_CID },
-  { NULL }
-};
+// create the module info struct that is used to regsiter
+NS_IMPL_NSGETMODULE(SongbirdClipboardHelper, components)
 
-static const mozilla::Module::CategoryEntry kClipboardHelperCategories[] = {
-  { NULL }
-};
-
-static const mozilla::Module kClipboardHelperModule = {
-  mozilla::Module::kVersion,
-  kClipboardHelperCIDs,
-  kClipboardHelperContracts,
-  kClipboardHelperCategories
-};
-
-NSMODULE_DEFN(SongbirdClipboardHelper) = &kClipboardHelperModule;

@@ -45,7 +45,7 @@ sbStringMap::~sbStringMap()
 NS_IMETHODIMP sbStringMap::Get(const nsAString & aKey, nsAString & aValue)
 {
   nsString value;
-  bool const found = mMap.Get(aKey, &value);
+  PRBool const found = mMap.Get(aKey, &value);
   if (!found) {
     aValue.SetIsVoid(PR_TRUE);
   }
@@ -59,7 +59,8 @@ NS_IMETHODIMP sbStringMap::Get(const nsAString & aKey, nsAString & aValue)
 /* void Set (in AString key, in AString value); */
 NS_IMETHODIMP sbStringMap::Set(const nsAString & key, const nsAString & value)
 {
-  mMap.Put(nsString(key), nsString(value));
+  PRBool const success = mMap.Put(nsString(key), nsString(value));
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }
 

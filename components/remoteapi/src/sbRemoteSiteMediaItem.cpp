@@ -100,7 +100,7 @@ sbRemoteSiteMediaItemSecurityMixin::CanGetProperty( const nsIID* aIID,
     rv = mMediaItem->GetContentSrc(getter_AddRefs(uri));
     NS_ENSURE_SUCCESS( rv, rv );
 
-    bool isFileURI;
+    PRBool isFileURI;
     rv = uri->SchemeIs( "file" , &isFileURI );
     NS_ENSURE_SUCCESS( rv, rv );
 

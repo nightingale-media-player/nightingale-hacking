@@ -40,10 +40,10 @@
 sbOriginPageImagePropertyInfo::sbOriginPageImagePropertyInfo(const nsAString& aPropertyID,
                                                              const nsAString& aDisplayName,
                                                              const nsAString& aLocalizationKey,
-                                                             const bool aRemoteReadable,
-                                                             const bool aRemoteWritable,
-                                                             const bool aUserViewable,
-                                                             const bool aUserEditable) :
+                                                             const PRBool aRemoteReadable,
+                                                             const PRBool aRemoteWritable,
+                                                             const PRBool aUserViewable,
+                                                             const PRBool aUserEditable) :
   sbImageLinkPropertyInfo(aPropertyID,
                           aDisplayName,
                           aLocalizationKey,
@@ -148,7 +148,7 @@ sbOriginPageImagePropertyInfo::GetCellProperties(const nsAString& aValue,
 NS_IMETHODIMP
 sbOriginPageImagePropertyInfo::GetPreventNavigation(const nsAString& aImageValue,
                                                     const nsAString& aUrlValue,
-                                                    bool *_retval)
+                                                    PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   

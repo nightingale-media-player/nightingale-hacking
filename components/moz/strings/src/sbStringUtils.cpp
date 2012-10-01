@@ -117,7 +117,7 @@ nsString_ToUint64(const nsAString& str, nsresult* rv)
  * modification. Make sure to update it when the upstream is changed.
  */
 void
-SB_CompressWhitespace(nsAString& aString, bool aLeading, bool aTrailing)
+SB_CompressWhitespace(nsAString& aString, PRBool aLeading, PRBool aTrailing)
 {
   PRUnichar *start;
   PRUint32 len = NS_StringGetMutableData(aString, PR_UINT32_MAX, &start);
@@ -164,7 +164,7 @@ SB_CompressWhitespace(nsAString& aString, bool aLeading, bool aTrailing)
 nsresult
 SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                           nsIStringEnumerator* aRight,
-                          bool* _retval)
+                          PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(aLeft);
   NS_ENSURE_ARG_POINTER(aRight);
@@ -173,9 +173,10 @@ SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
   nsresult rv;
 
   nsDataHashtable<nsStringHashKey, PRUint32> leftValues;
-  leftValues.Init();
+  PRBool success = leftValues.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(aLeft->HasMore(&hasMore)) && hasMore) {
     nsString value;
     rv = aLeft->GetNext(value);
@@ -186,7 +187,8 @@ SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
       count++;
     }
 
-    leftValues.Put(value, count);
+    PRBool success = leftValues.Put(value, count);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   while (NS_SUCCEEDED(aRight->HasMore(&hasMore)) && hasMore) {
@@ -202,7 +204,8 @@ SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
 
     count--;
     if (count) {
-      leftValues.Put(value, count);
+      PRBool success = leftValues.Put(value, count);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
     }
     else {
       leftValues.Remove(value);
@@ -268,7 +271,7 @@ void nsString_ReplaceSubstring(/* inout */ nsAString &aString,
   return;
 }
 
-bool IsLikelyUTF8(const nsACString& aString)
+PRBool IsLikelyUTF8(const nsACString& aString)
 {
   if (aString.IsEmpty()) {
     return PR_TRUE;
@@ -322,7 +325,7 @@ bool IsLikelyUTF8(const nsACString& aString)
   return PR_TRUE;
 }
 
-bool IsUTF8(const nsACString& aString)
+PRBool IsUTF8(const nsACString& aString)
 {
   nsresult rv = NS_OK;
   nsCOMPtr<nsICharsetConverterManager> converterManager =

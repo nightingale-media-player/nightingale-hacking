@@ -61,11 +61,11 @@ protected:
   nsString mType;
   nsString mDisplayName;
   nsString mLocalizationKey;
-  bool mUserViewable;
-  bool mUserEditable;
-  bool mRemoteReadable;
-  bool mRemoteWritable;
-  bool mUsedInIdentity;
+  PRBool mUserViewable;
+  PRBool mUserEditable;
+  PRBool mRemoteReadable;
+  PRBool mRemoteWritable;
+  PRBool mUsedInIdentity;
   nsCOMPtr<nsIStringBundle> mBundle;
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;

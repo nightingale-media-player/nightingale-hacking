@@ -102,7 +102,7 @@ public:
 
   sbPlaylistReaderObserver(sbRemotePlayer* aRemotePlayer,
                            sbICreateMediaListCallback* aCallback,
-                           bool aShouldScan) :
+                           PRBool aShouldScan) :
     mRemotePlayer(aRemotePlayer),
     mCallback(aCallback),
     mShouldScan(aShouldScan)
@@ -174,7 +174,7 @@ private:
 
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbICreateMediaListCallback> mCallback;
-  bool mShouldScan;
+  PRBool mShouldScan;
 };
 NS_IMPL_ISUPPORTS1( sbPlaylistReaderObserver, nsIObserver )
 
@@ -223,12 +223,12 @@ struct sbRemoteLibraryScopeURLSet {
     NS_ASSERTION( item, "Null pointer!");
   }
 
-  bool operator ==(const sbRemoteLibraryScopeURLSet& rhs) const
+  PRBool operator ==(const sbRemoteLibraryScopeURLSet& rhs) const
   {
     return (length == rhs.length) && (scopePath.Equals(rhs.scopePath));
   }
 
-  bool operator <(const sbRemoteLibraryScopeURLSet& rhs) const
+  PRBool operator <(const sbRemoteLibraryScopeURLSet& rhs) const
   {
     return length < rhs.length;
   }
@@ -292,7 +292,7 @@ sbRemoteLibraryBase::SetProperty( const nsAString& aID, const nsAString& aValue 
   // 2) ONLY allow modificatoin of the hidden property for site libraries
 
   // Find out if we are trying to set properties on the main library
-  bool isMain;
+  PRBool isMain;
   nsCOMPtr<sbIMediaItem> item( do_QueryInterface( (sbIRemoteLibrary*)this, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -360,7 +360,7 @@ sbRemoteLibraryBase::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::GetScanMediaOnCreation( bool *aShouldScan )
+sbRemoteLibraryBase::GetScanMediaOnCreation( PRBool *aShouldScan )
 {
   NS_ENSURE_ARG_POINTER(aShouldScan);
   *aShouldScan = mShouldScan;
@@ -368,7 +368,7 @@ sbRemoteLibraryBase::GetScanMediaOnCreation( bool *aShouldScan )
 }
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::SetScanMediaOnCreation( bool aShouldScan )
+sbRemoteLibraryBase::SetScanMediaOnCreation( PRBool aShouldScan )
 {
   mShouldScan = aShouldScan;
   return NS_OK;
@@ -414,7 +414,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Only allow the creation of media items with http(s) schemes
-  bool validScheme;
+  PRBool validScheme;
   uri->SchemeIs("http", &validScheme);
   if (!validScheme) {
     uri->SchemeIs("https", &validScheme);
@@ -587,7 +587,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Only allow the creation of media lists with http(s) schemes
-  bool validScheme;
+  PRBool validScheme;
   uri->SchemeIs("http", &validScheme);
   if (!validScheme) {
     uri->SchemeIs("https", &validScheme);
@@ -633,14 +633,14 @@ sbRemoteLibraryBase::GetMediaListBySiteID( const nsAString &aSiteID,
 /**
  * Determines if the library is the site library of the given remote player
  */
-static bool IsSiteLibrary(sbILibrary *aLibrary, sbIRemotePlayer *aRemotePlayer) {
-  bool result = PR_FALSE;
+static PRBool IsSiteLibrary(sbILibrary *aLibrary, sbIRemotePlayer *aRemotePlayer) {
+  PRBool result = PR_FALSE;
   nsCOMPtr<sbIRemoteLibrary> siteLibrary;
   nsresult rv = aRemotePlayer->GetSiteLibrary( getter_AddRefs(siteLibrary) );
   if ( NS_SUCCEEDED(rv) ) {
     nsCOMPtr<sbIMediaItem> siteLibraryAsItem = do_QueryInterface(siteLibrary);
     nsCOMPtr<sbIMediaItem> libraryAsItem = do_QueryInterface(aLibrary);
-    bool equal = PR_FALSE;
+    PRBool equal = PR_FALSE;
     result = ( siteLibraryAsItem &&
                libraryAsItem &&
                NS_SUCCEEDED( siteLibraryAsItem->Equals( libraryAsItem, &equal ) ) &&
@@ -949,12 +949,12 @@ sbRemoteLibraryBase::OnEnumeratedItem( sbIMediaList *aMediaList,
   // If there is no outer guid then we want this. 
   // (Avoids smart playlists dupes, see bug 14896)
   nsString propValue;
-  bool const isSmartStoragePlaylist = 
+  PRBool const isSmartStoragePlaylist = 
     NS_SUCCEEDED(aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID), 
                                          propValue)) && 
       !propValue.IsEmpty();
 
-  bool const isHiddenPlaylist = 
+  PRBool const isHiddenPlaylist = 
     NS_SUCCEEDED(aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                          propValue)) &&
       propValue.EqualsLiteral("1");
@@ -1021,7 +1021,7 @@ sbRemoteLibraryBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
                                  jsval id,
                                  PRUint32 flags,
                                  JSObject **objp,
-                                 bool *_retval )
+                                 PRBool *_retval )
 {
   LOG_LIB(("sbRemoteLibraryBase::NewResolve()"));
 #ifdef DEBUG
@@ -1043,7 +1043,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
                                   JSObject * obj,
                                   jsval id,
                                   jsval * vp,
-                                  bool *_retval )
+                                  PRBool *_retval )
 {
   TRACE_LIB(("sbRemoteLibraryBase::GetProperty()"));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -1109,7 +1109,7 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
     rv = mSecurityMixin->CanCallMethod( &iid,
                                         jsid.BeginReading(),
                                         &access );
-    bool canCallMethod = NS_SUCCEEDED(rv);
+    PRBool canCallMethod = NS_SUCCEEDED(rv);
     if (canCallMethod) {
       canCallMethod = !strcmp( access, "AllAccess" );
       NS_Free(access);

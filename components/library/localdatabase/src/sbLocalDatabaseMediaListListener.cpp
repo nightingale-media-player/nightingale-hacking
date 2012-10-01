@@ -34,10 +34,12 @@
 #include <nsIWeakReference.h>
 #include <nsIWeakReferenceUtils.h>
 
+#include <nsAutoLock.h>
 #include <nsHashKeys.h>
 #include <nsThreadUtils.h>
 #include <nsServiceManagerUtils.h>
 
+#include <sbProxiedComponentManager.h>
 
 #ifdef DEBUG
 #include <nsIXPConnect.h>
@@ -107,7 +109,7 @@ sbLocalDatabaseMediaListListener::Init()
 nsresult
 sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aList,
                                               sbIMediaListListener* aListener,
-                                              bool aOwnsWeak,
+                                              PRBool aOwnsWeak,
                                               PRUint32 aFlags,
                                               sbIPropertyArray* aPropertyFilter)
 {
@@ -402,12 +404,12 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
   SB_NOTIFY_LOG_COUNT(method)                                             \
                                                                           \
   for (PRUint32 i = 0; i < length; i++) {                                 \
-    bool noMoreForBatch = PR_FALSE;                                     \
+    PRBool noMoreForBatch = PR_FALSE;                                     \
     SB_NOTIFY_LOG_START_TIMER                                             \
     rv = snapshot[i].listener->call;                                      \
     SB_NOTIFY_LOG_STOP_TIMER                                              \
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), #call " returned a failure code"); \
-    bool isGone = rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;          \
+    PRBool isGone = rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;          \
     PRUint32 listenerFlags = 0;                                           \
     if (noMoreForBatch) {                                                 \
       listenerFlags = sbIMediaList::flag;                                 \
@@ -549,7 +551,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(sbIMediaList* aList,
 void
 sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared
                                     (sbIMediaList* aList,
-                                     bool        aExcludeLists)
+                                     PRBool        aExcludeLists)
 {
   SB_ENSURE_TRUE_VOID(aList);
 
@@ -564,7 +566,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared
 void
 sbLocalDatabaseMediaListListener::NotifyListenersListCleared
                                     (sbIMediaList* aList,
-                                     bool        aExcludeLists)
+                                     PRBool        aExcludeLists)
 {
   SB_ENSURE_TRUE_VOID(aList);
 
@@ -653,7 +655,7 @@ sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
 
   mFlags = aFlags;
 
-  bool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
+  PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   for (PRUint32 i = 0; i < aCurrentBatchDepth; i++) {
     mStopNotifiyingStack[i] = 0;
@@ -697,7 +699,7 @@ sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
   mWeak  = aWeakListener;
   mFlags = aFlags;
 
-  bool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
+  PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   for (PRUint32 i = 0; i < aCurrentBatchDepth; i++) {
     mStopNotifiyingStack[i] = 0;
@@ -737,7 +739,7 @@ sbListenerInfo::GetDebugAddress(nsAString& aDebugAddress)
   aDebugAddress = mDebugAddress;
 }
 
-bool
+PRBool
 sbListenerInfo::ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties)
 {
   // Check the flags to see if we should be notifying
@@ -822,7 +824,7 @@ sbListenerInfo::InitPropertyFilter(sbIPropertyArray* aPropertyFilter)
     rv = aPropertyFilter->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool success = mPropertyFilter.Init(length);
+    PRBool success = mPropertyFilter.Init(length);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     for (PRUint32 i = 0; i < length; i++) {
@@ -889,7 +891,7 @@ NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemAdded(sbIMediaList* aMediaList,
                                             sbIMediaItem* aMediaItem,
                                             PRUint32 aIndex,
-                                            bool* aNoMoreForBatch)
+                                            PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnItemAdded(aMediaList, aMediaItem, aIndex, aNoMoreForBatch))
 }
@@ -898,7 +900,7 @@ NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                     sbIMediaItem* aMediaItem,
                                                     PRUint32 aIndex,
-                                                    bool* aNoMoreForBatch)
+                                                    PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnBeforeItemRemoved(aMediaList,
                                     aMediaItem,
@@ -910,7 +912,7 @@ NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                    sbIMediaItem* aMediaItem,
                                                    PRUint32 aIndex,
-                                                   bool* aNoMoreForBatch)
+                                                   PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnAfterItemRemoved(aMediaList,
                                    aMediaItem,
@@ -922,7 +924,7 @@ NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemUpdated(sbIMediaList* aMediaList,
                                               sbIMediaItem* aMediaItem,
                                               sbIPropertyArray* aProperties,
-                                              bool* aNoMoreForBatch)
+                                              PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnItemUpdated(aMediaList,
                               aMediaItem,
@@ -934,7 +936,7 @@ NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemMoved(sbIMediaList* aMediaList,
                                             PRUint32 aFromIndex,
                                             PRUint32 aToIndex,
-                                            bool* aNoMoreForBatch)
+                                            PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnItemMoved(aMediaList,
                             aFromIndex,
@@ -944,16 +946,16 @@ sbWeakMediaListListenerWrapper::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                                    bool aExcludeLists,
-                                                    bool* aNoMoreForBatch)
+                                                    PRBool aExcludeLists,
+                                                    PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnBeforeListCleared(aMediaList, aExcludeLists, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnListCleared(sbIMediaList* aMediaList,
-                                              bool aExcludeLists,
-                                              bool* aNoMoreForBatch)
+                                              PRBool aExcludeLists,
+                                              PRBool* aNoMoreForBatch)
 {
   SB_TRY_NOTIFY(OnListCleared(aMediaList, aExcludeLists, aNoMoreForBatch))
 }

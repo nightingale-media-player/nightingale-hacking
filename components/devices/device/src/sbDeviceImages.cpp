@@ -162,7 +162,7 @@ nsresult
 sbDeviceImages::ScanImages(nsIFile *aScanDir,
                            nsIFile *aBaseDir,
                            const nsTArray<nsString> &aFileExtensionList,
-                           bool recursive,
+                           PRBool recursive,
                            nsIArray **retImageArray) {
   nsresult rv;
 
@@ -324,8 +324,8 @@ sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage*   aImage,
 // file's parent directory rather than at the file itself.
 nsresult sbDeviceImages::MakeFile(sbIDeviceImage* aImage,
                                   nsIFile*        aBaseDir,
-                                  bool          aWithFilename,
-                                  bool          aCreateDirectories,
+                                  PRBool          aWithFilename,
+                                  PRBool          aCreateDirectories,
                                   nsIFile**       retFile)
 {
   NS_ENSURE_ARG_POINTER(retFile);
@@ -358,7 +358,7 @@ nsresult sbDeviceImages::MakeFile(sbIDeviceImage* aImage,
         NS_ENSURE_SUCCESS(rv, rv);
         // If needed, create the directory
         if (aCreateDirectories) {
-          bool exists;
+          PRBool exists;
           rv = file->Exists(&exists);
           NS_ENSURE_SUCCESS(rv, rv);
           if (!exists) {
@@ -393,7 +393,7 @@ sbDeviceImages::
   AddLocalImages(nsIFile *baseDir,
                  nsIFile *scanDir,
                  const nsTArray<nsString> aFileExtensionList,
-                 bool recursive,
+                 PRBool recursive,
                  nsIMutableArray *localImageArray)
 {
   nsresult rv;
@@ -453,7 +453,7 @@ sbDeviceImages::DiffImages(nsIMutableArray *diffResultsArray,
 nsresult
 sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
                                   const nsTArray<nsString> &aFileExtensionList,
-                                  bool recursive,
+                                  PRBool recursive,
                                   sbIFileScanQuery** aFileScanQuery)
 {
   NS_ENSURE_ARG_POINTER(aFileScanQuery);
@@ -504,7 +504,7 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
   // Wait until the file scan query completes.  Poll instead of using callbacks
   // because individual item callbacks are not needed and would reduce
   // efficiency.
-  bool isScanning = PR_TRUE;
+  PRBool isScanning = PR_TRUE;
   while (isScanning) {
     // Check for abort.
     NS_ENSURE_FALSE(mBaseDevice->IsRequestAborted(), NS_ERROR_ABORT);
@@ -583,7 +583,7 @@ NS_IMETHODIMP sbDeviceImage::SetSubdirectory(const nsAString &aSubdirectory)
 }
 
 // Sorting operator.
-bool sbDeviceImageComparator::LessThan(const sbIDeviceImage *a, const sbIDeviceImage *b) const
+PRBool sbDeviceImageComparator::LessThan(const sbIDeviceImage *a, const sbIDeviceImage *b) const
 {
   nsString a_subdir;
   nsString b_subdir;
@@ -603,7 +603,7 @@ bool sbDeviceImageComparator::LessThan(const sbIDeviceImage *a, const sbIDeviceI
 }
 
 // Sorting operator.
-bool sbDeviceImageComparator::Equals(const sbIDeviceImage *a, const sbIDeviceImage *b) const
+PRBool sbDeviceImageComparator::Equals(const sbIDeviceImage *a, const sbIDeviceImage *b) const
 {
   nsString a_subdir;
   nsString b_subdir;

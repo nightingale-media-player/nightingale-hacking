@@ -29,6 +29,7 @@
 
 #include <sbIDeviceContent.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIMutableArray.h>

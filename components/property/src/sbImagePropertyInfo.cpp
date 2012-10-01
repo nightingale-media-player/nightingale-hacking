@@ -39,10 +39,10 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbImagePropertyInfo,
 sbImagePropertyInfo::sbImagePropertyInfo(const nsAString& aPropertyID,
                                          const nsAString& aDisplayName,
                                          const nsAString& aLocalizationKey,
-                                         const bool aRemoteReadable,
-                                         const bool aRemoteWritable,
-                                         const bool aUserViewable,
-                                         const bool aUserEditable)
+                                         const PRBool aRemoteReadable,
+                                         const PRBool aRemoteWritable,
+                                         const PRBool aUserViewable,
+                                         const PRBool aUserEditable)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -119,7 +119,7 @@ sbImagePropertyInfo::GetColumnType(nsAString& _retval)
 // sbIClickablePropertyInfo
 
 NS_IMETHODIMP
-sbImagePropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
+sbImagePropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
   *aSuppressSelect = mSuppressSelect;
@@ -127,7 +127,7 @@ sbImagePropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
 }
 
 NS_IMETHODIMP
-sbImagePropertyInfo::SetSuppressSelect(bool aSuppressSelect)
+sbImagePropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
 {
   mSuppressSelect = aSuppressSelect;
   return NS_OK;
@@ -135,7 +135,7 @@ sbImagePropertyInfo::SetSuppressSelect(bool aSuppressSelect)
 
 NS_IMETHODIMP
 sbImagePropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                bool* _retval)
+                                PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -149,7 +149,7 @@ sbImagePropertyInfo::HitTest(const nsAString& aCurrentValue,
                              PRUint32 aBoxHeight,
                              PRUint32 aMouseX,
                              PRUint32 aMouseY,
-                             bool* _retval)
+                             PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = aPart.EqualsLiteral("image");
@@ -174,7 +174,7 @@ NS_IMETHODIMP
 sbImagePropertyInfo::OnClick(sbIMediaItem *aItem,
                              nsISupports *aEvent,
                              nsISupports *aContext,
-                             bool *_retval NS_OUTPARAM)
+                             PRBool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

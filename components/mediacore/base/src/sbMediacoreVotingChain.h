@@ -34,6 +34,7 @@
 
 #include <sbIMediacoreVotingChain.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 #include <nsHashKeys.h>

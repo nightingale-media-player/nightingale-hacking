@@ -70,12 +70,12 @@ public:
   // override base class
   NS_IMETHOD GetType(nsAString& aType);
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
-  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, bool* _retval);
+  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
   NS_IMETHOD Add(sbIMediaItem *aMediaItem);
   NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, bool aAsync);
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
@@ -232,7 +232,7 @@ private:
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsCOMArray<sbIMediaItem> mNotificationList;
   nsTArray<PRUint32> mNotificationIndexes;
-  bool mItemEnumerated;
+  PRBool mItemEnumerated;
 };
 
 #endif /* __SBLOCALDATABASESIMPLEMEDIALIST_H__ */

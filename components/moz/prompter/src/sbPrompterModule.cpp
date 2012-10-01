@@ -35,31 +35,22 @@
 #include "sbPrompter.h"
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 // Construct the sbPrompter object and call its Init method.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPrompter, Init)
-NS_DEFINE_NAMED_CID(SONGBIRD_PROMPTER_CID);
 
-static const mozilla::Module::CIDEntry kPrompterCIDs[] = {
-  { &kSONGBIRD_PROMPTER_CID, false, NULL, sbPrompterConstructor },
-  { NULL }
+// Module component information.
+static const nsModuleComponentInfo components[] =
+{
+  {
+    SONGBIRD_PROMPTER_CLASSNAME,
+    SONGBIRD_PROMPTER_CID,
+    SONGBIRD_PROMPTER_CONTRACTID,
+    sbPrompterConstructor
+  }
 };
 
-static const mozilla::Module::ContractIDEntry kPrompterContracts[] = {
-  { SONGBIRD_PROMPTER_CONTRACTID, &kSONGBIRD_PROMPTER_CID },
-  { NULL }
-};
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbPrompter, components)
 
-static const mozilla::Module::CategoryEntry kPrompterCategories[] = {
-  { NULL }
-};
-
-static const mozilla::Module kPrompterModule = {
-  mozilla::Module::kVersion,
-  kPrompterCIDs,
-  kPrompterContracts,
-  kPrompterCategories
-};
-
-NSMODULE_DEFN(sbPrompter) = &kPrompterModule;

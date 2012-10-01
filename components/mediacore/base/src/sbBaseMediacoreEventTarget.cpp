@@ -26,6 +26,7 @@
 
 #include "sbBaseMediacoreEventTarget.h"
 
+#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 
 #include <sbIMediacore.h>
@@ -33,6 +34,7 @@
 #include <sbIMediacoreEventListener.h>
 
 #include <sbMediacoreEvent.h>
+#include <sbProxiedComponentManager.h>
 
 /* ctor / dtor */
 sbBaseMediacoreEventTarget::sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget)
@@ -46,11 +48,11 @@ sbBaseMediacoreEventTarget::~sbBaseMediacoreEventTarget()
 }
 
 
-/* boolean dispatchEvent (in sbIMediacoreEvent aEvent, [optional] bool aAsync); */
+/* boolean dispatchEvent (in sbIMediacoreEvent aEvent, [optional] PRBool aAsync); */
 nsresult
 sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
-                                          bool aAsync,
-                                          bool* _retval)
+                                          PRBool aAsync,
+                                          PRBool* _retval)
 {
   nsresult rv;
 
@@ -88,7 +90,7 @@ sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
 /* Dispatch an event, assuming we're already on the main thread */
 nsresult
 sbBaseMediacoreEventTarget::DispatchEventInternal(sbIMediacoreEvent *aEvent,
-                                                  bool* _retval)
+                                                  PRBool* _retval)
 {
   DispatchState state;
   state.length = mListeners.Count();
@@ -164,7 +166,7 @@ sbBaseMediacoreEventTarget::AddListener(sbIMediacoreEventListener *aListener)
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  bool succeeded = mListeners.AppendObject(aListener);
+  PRBool succeeded = mListeners.AppendObject(aListener);
   return succeeded ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -199,7 +201,7 @@ sbBaseMediacoreEventTarget::RemoveListener(sbIMediacoreEventListener *aListener)
   }
 
   // remove the listener
-  bool succeeded = mListeners.RemoveObjectAt(indexToRemove);
+  PRBool succeeded = mListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   // fix up the stack to account for the removed listener

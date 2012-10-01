@@ -194,7 +194,7 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
   NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   nsTArray<PRUint32> * nContentTypes = nsnull;
-  bool const found = mContentTypes.Get(aFunctionType, &nContentTypes);
+  PRBool const found = mContentTypes.Get(aFunctionType, &nContentTypes);
   if (!found) {
     nContentTypes = new nsTArray<PRUint32>(aContentTypesCount);
   }
@@ -223,7 +223,7 @@ sbDeviceCapabilities::AddMimeTypes(PRUint32 aContentType,
   NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   nsTArray<nsCString> * nMimeTypes = nsnull;
-  bool const found = mSupportedMimeTypes.Get(aContentType, &nMimeTypes);
+  PRBool const found = mSupportedMimeTypes.Get(aContentType, &nMimeTypes);
   if (!found) {
     nMimeTypes = new nsTArray<nsCString>(aMimeTypesCount);
   }
@@ -258,7 +258,7 @@ sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
     return NS_ERROR_NULL_POINTER;
 
   nsTArray<nsCOMPtr<nsISupports> > * formatTypes;
-  bool const found = formatType->Get(aMimeType, &formatTypes);
+  PRBool const found = formatType->Get(aMimeType, &formatTypes);
   if (!found) {
     formatTypes = new nsTArray<nsCOMPtr<nsISupports> >(1);
   }
@@ -266,7 +266,7 @@ sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
   formatTypes->AppendElement(aFormatType);
 
   if (!found) {
-    bool const added = formatType->Put(aMimeType, formatTypes);
+    PRBool const added = formatType->Put(aMimeType, formatTypes);
     NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -290,7 +290,7 @@ sbDeviceCapabilities::AddPreferredFormatType(PRUint32 aContentType,
     return NS_ERROR_NULL_POINTER;
 
   nsTArray<nsCOMPtr<nsISupports> > * formatTypes;
-  bool const found = formatType->Get(aMimeType, &formatTypes);
+  PRBool const found = formatType->Get(aMimeType, &formatTypes);
   if (!found) {
     formatTypes = new nsTArray<nsCOMPtr<nsISupports> >(1);
   }
@@ -298,7 +298,7 @@ sbDeviceCapabilities::AddPreferredFormatType(PRUint32 aContentType,
   formatTypes->AppendElement(aFormatType);
 
   if (!found) {
-    bool const added = formatType->Put(aMimeType, formatTypes);
+    PRBool const added = formatType->Put(aMimeType, formatTypes);
     NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -513,7 +513,7 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
 NS_IMETHODIMP
 sbDeviceCapabilities::SupportsContent(PRUint32 aFunctionType,
                                       PRUint32 aContentType,
-                                      bool *aSupported)
+                                      PRBool *aSupported)
 {
   NS_ENSURE_ARG_POINTER(aSupported);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
@@ -594,7 +594,7 @@ sbDeviceCapabilities::GetFormatTypes(PRUint32 aContentType,
     return NS_ERROR_NULL_POINTER;
 
   nsTArray<nsCOMPtr<nsISupports> > * formats;
-  bool const found = formatType->Get(aMimeType, &formats);
+  PRBool const found = formatType->Get(aMimeType, &formats);
   PRUint32 count = 0;
   if (found) {
     count = formats->Length();
@@ -637,7 +637,7 @@ sbDeviceCapabilities::GetPreferredFormatTypes(PRUint32 aContentType,
     return NS_ERROR_NULL_POINTER;
 
   nsTArray<nsCOMPtr<nsISupports> > * formats;
-  bool const found = formatType->Get(aMimeType, &formats);
+  PRBool const found = formatType->Get(aMimeType, &formats);
   if (!found) {
     // If there were no format types found, forward to GetFormatTypes - this
     // simply means we weren't given any preferred types, and will transcode to
@@ -803,7 +803,7 @@ sbDevCapRange::GetStep(PRInt32 *aStep)
 }
 
 NS_IMETHODIMP
-sbDevCapRange::IsValueInRange(PRInt32 aValue, bool * aInRange) {
+sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
   NS_ENSURE_ARG_POINTER(aInRange);
 
   if (mValues.Length() > 0) {
@@ -1115,9 +1115,9 @@ NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
                                               sbIDevCapRange *aWidths,
                                               sbIDevCapRange *aHeights,
                                               nsIArray *aSupportPARs,
-                                              bool aIsSupportedPARsRange,
+                                              PRBool aIsSupportedPARsRange,
                                               nsIArray *aSupportedFrameRates,
-                                              bool aIsSupportedFrameratesRange,
+                                              PRBool aIsSupportedFrameratesRange,
                                               sbIDevCapRange *aBitRates)
 {
   NS_ENSURE_ARG_POINTER(aExplicitSizes);
@@ -1205,7 +1205,7 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedHeights(sbIDevCapRange * *aSuppor
 
 /* readonly attribute boolean doesSupportPARRange; */
 NS_IMETHODIMP
-sbDevCapVideoStream::GetDoesSupportPARRange(bool *aDoesSupportPARRange)
+sbDevCapVideoStream::GetDoesSupportPARRange(PRBool *aDoesSupportPARRange)
 {
   NS_ENSURE_ARG_POINTER(aDoesSupportPARRange);
   *aDoesSupportPARRange = mIsPARRange;
@@ -1262,7 +1262,7 @@ sbDevCapVideoStream::GetMaximumSupportedPAR(
 /* readonly attribute boolean doesSupportFrameRateRange; */
 NS_IMETHODIMP
 sbDevCapVideoStream::GetDoesSupportFrameRateRange(
-    bool *aDoesSupportFrameRateRange)
+    PRBool *aDoesSupportFrameRateRange)
 {
   NS_ENSURE_ARG_POINTER(aDoesSupportFrameRateRange);
   *aDoesSupportFrameRateRange = mIsFrameRatesRange;

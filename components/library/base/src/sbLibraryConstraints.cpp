@@ -117,7 +117,7 @@ sbLibraryConstraintBuilder::ParseFromString(const nsAString & aConstraint,
   rv = group->GetProperties(getter_AddRefs(props));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool hasMore;
+  PRBool hasMore;
   rv = props->HasMore(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_FALSE(hasMore, NS_ERROR_ALREADY_INITIALIZED);
@@ -215,7 +215,7 @@ sbLibraryConstraintBuilder::IncludeConstraint(sbILibraryConstraint* aConstraint,
     rv = group->GetProperties(getter_AddRefs(properties));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool hasMore;
+    PRBool hasMore;
     while (NS_SUCCEEDED(properties->HasMore(&hasMore)) && hasMore) {
       nsString property;
       rv = properties->GetNext(property);
@@ -289,7 +289,7 @@ sbLibraryConstraintBuilder::IncludeList(const nsAString& aProperty,
   nsAutoPtr<sbStringArray> array(new sbStringArray);
   NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
 
-  bool hasMore;
+  PRBool hasMore;
   while (NS_SUCCEEDED(aValues->HasMore(&hasMore)) && hasMore) {
     nsString value;
     rv = aValues->GetNext(value);
@@ -408,7 +408,7 @@ sbLibraryConstraint::GetGroups(nsISimpleEnumerator** aGroups)
   nsCOMArray<sbILibraryConstraintGroup> array;
   PRUint32 length = mConstraint.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    bool success = array.AppendObject(mConstraint[i]);
+    PRBool success = array.AppendObject(mConstraint[i]);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -431,7 +431,7 @@ sbLibraryConstraint::GetGroup(PRUint32 aIndex,
 
 NS_IMETHODIMP
 sbLibraryConstraint::Equals(sbILibraryConstraint* aOtherConstraint,
-                            bool* _retval)
+                            PRBool* _retval)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -459,13 +459,13 @@ sbLibraryConstraint::Equals(sbILibraryConstraint* aOtherConstraint,
     rv = aOtherConstraint->GetGroup(i, getter_AddRefs(otherGroup));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool success = matchesRemaining.AppendObject(otherGroup);
+    PRBool success = matchesRemaining.AppendObject(otherGroup);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   for (PRUint32 i = 0; i < groupCount; i++) {
     for (PRInt32 j = 0; j < matchesRemaining.Count(); j++) {
-      bool equals;
+      PRBool equals;
       rv = mConstraint[i]->Equals(matchesRemaining[j], &equals);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -648,7 +648,7 @@ sbLibraryConstraint::AddToCurrent(const nsAString& aProperty,
   return NS_OK;
 }
 
-bool
+PRBool
 sbLibraryConstraint::IsValid()
 {
   PRUint32 length = mConstraint.Length();
@@ -725,7 +725,7 @@ sbLibraryConstraintGroup::GetValues(const nsAString& aProperty,
 
 NS_IMETHODIMP
 sbLibraryConstraintGroup::HasProperty(const nsAString& aProperty,
-                                      bool* _retval)
+                                      PRBool* _retval)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -737,7 +737,7 @@ sbLibraryConstraintGroup::HasProperty(const nsAString& aProperty,
 
 NS_IMETHODIMP
 sbLibraryConstraintGroup::Equals(sbILibraryConstraintGroup* aOtherGroup,
-                                 bool* _retval)
+                                 PRBool* _retval)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -757,7 +757,7 @@ sbLibraryConstraintGroup::Equals(sbILibraryConstraintGroup* aOtherGroup,
   rv = aOtherGroup->GetProperties(getter_AddRefs(otherProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool equals;
+  PRBool equals;
   rv = SB_StringEnumeratorEquals(properties, otherProperties, &equals);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -814,7 +814,7 @@ sbLibraryConstraintGroup::ToString(nsAString& _retval)
     buff.Append(properties[i]);
     buff.AppendLiteral("\": [");
     sbStringArray* values;
-    bool success = mConstraintGroup.Get(properties[i], &values);
+    PRBool success = mConstraintGroup.Get(properties[i], &values);
     NS_ENSURE_SUCCESS(success, NS_ERROR_UNEXPECTED);
     PRUint32 valueCount = values->Length();
     for (PRUint32 j = 0; j < valueCount; j++) {
@@ -847,7 +847,7 @@ sbLibraryConstraintGroup::ToString(nsAString& _retval)
 nsresult
 sbLibraryConstraintGroup::Init()
 {
-  bool success = mConstraintGroup.Init();
+  PRBool success = mConstraintGroup.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mInitialized = PR_TRUE;
@@ -855,7 +855,7 @@ sbLibraryConstraintGroup::Init()
   return NS_OK;
 }
 
-inline bool
+inline PRBool
 sbLibraryConstraintGroup::IsEmpty()
 {
   return mConstraintGroup.Count() == 0;
@@ -876,7 +876,7 @@ sbLibraryConstraintGroup::Add(const nsAString& aProperty,
     // in to the hashtable
   }
   else {
-    bool success = mConstraintGroup.Put(aProperty, array);
+    PRBool success = mConstraintGroup.Put(aProperty, array);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     // We've transfered ownership to the hashtable so forget it
@@ -922,7 +922,7 @@ sbLibraryConstraintGroup::Read(nsIObjectInputStream* aStream)
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    bool success = mConstraintGroup.Put(property, array);
+    PRBool success = mConstraintGroup.Put(property, array);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -948,7 +948,7 @@ sbLibraryConstraintGroup::Write(nsIObjectOutputStream* aStream)
     NS_ENSURE_SUCCESS(rv, rv);
 
     sbStringArray* values;
-    bool success = mConstraintGroup.Get(array[i], &values);
+    PRBool success = mConstraintGroup.Get(array[i], &values);
     NS_ENSURE_SUCCESS(success, NS_ERROR_UNEXPECTED);
 
     PRUint32 valueCount = values->Length();
@@ -984,7 +984,7 @@ sbLibrarySort::sbLibrarySort() :
 }
 
 NS_IMETHODIMP
-sbLibrarySort::Init(const nsAString& aProperty, bool aIsAscending)
+sbLibrarySort::Init(const nsAString& aProperty, PRBool aIsAscending)
 {
   NS_ENSURE_STATE(!mInitialized);
   mProperty = aProperty;
@@ -1002,7 +1002,7 @@ sbLibrarySort::GetProperty(nsAString& aProperty)
 }
 
 NS_IMETHODIMP
-sbLibrarySort::GetIsAscending(bool* aIsAscending)
+sbLibrarySort::GetIsAscending(PRBool* aIsAscending)
 {
   NS_ENSURE_STATE(mInitialized);
   NS_ENSURE_ARG_POINTER(aIsAscending);

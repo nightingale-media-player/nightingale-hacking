@@ -73,7 +73,7 @@ void IfUnlock(PRLock *aLock)
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseResult, sbIDatabaseResult)
 
 //-----------------------------------------------------------------------------
-CDatabaseResult::CDatabaseResult(bool aRequiresLocking)
+CDatabaseResult::CDatabaseResult(PRBool aRequiresLocking)
 : m_RequiresLocking(aRequiresLocking)
 , m_pLock(nsnull)
 {

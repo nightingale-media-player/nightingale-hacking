@@ -59,19 +59,19 @@ private:
    * To compare the audio format between media file and device capabilities.
    * \param aCompatible The flag on whether it's compatible.
    */
-  nsresult CompareAudioFormat(bool* aCompatible);
+  nsresult CompareAudioFormat(PRBool* aCompatible);
 
   /**
    * To compare the video format between media file and device capabilities.
    * \param aCompatible The flag on whether it's compatible.
    */
-  nsresult CompareVideoFormat(bool* aCompatible);
+  nsresult CompareVideoFormat(PRBool* aCompatible);
 
   /**
    * To compare the image format between media file and device capabilities.
    * \param aCompatible The flag on whether it's compatible.
    */
-  nsresult CompareImageFormat(bool* aCompatible);
+  nsresult CompareImageFormat(PRBool* aCompatible);
 
   /**
    * To compare the video stream between media file and device capabilities.
@@ -79,7 +79,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareVideoStream(sbIDevCapVideoStream* aVideoStream,
-                              bool* aCompatible);
+                              PRBool* aCompatible);
 
   /**
    * To compare the audio stream between media file and device capabilities.
@@ -87,7 +87,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareAudioStream(sbIDevCapAudioStream* aAudioStream,
-                              bool* aCompatible);
+                              PRBool* aCompatible);
 
   /**
    * To compare the width and height of video stream between media file and
@@ -96,7 +96,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareVideoWidthAndHeight(sbIDevCapVideoStream* aVideoStream,
-                                      bool* aCompatible);
+                                      PRBool* aCompatible);
 
   /**
    * To compare the bit rate of video stream between media file and device
@@ -105,7 +105,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareVideoBitRate(sbIDevCapVideoStream* aVideoStream,
-                               bool* aCompatible);
+                               PRBool* aCompatible);
 
   /**
    * To compare the PAR (Pixel aspect ratio) of video stream between media
@@ -114,7 +114,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareVideoPAR(sbIDevCapVideoStream* aVideoStream,
-                           bool* aCompatible);
+                           PRBool* aCompatible);
 
   /**
    * To compare the frame rate of video stream between media file and device
@@ -123,7 +123,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareVideoFrameRate(sbIDevCapVideoStream* aVideoStream,
-                                 bool* aCompatible);
+                                 PRBool* aCompatible);
 
   /**
    * To compare the bit rate of audio stream between media file and device
@@ -132,7 +132,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareAudioBitRate(sbIDevCapAudioStream* aAudioStream,
-                               bool* aCompatible);
+                               PRBool* aCompatible);
 
   /**
    * To compare the sample rate of audio stream between media file and device
@@ -141,7 +141,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareAudioSampleRate(sbIDevCapAudioStream* aAudioStream,
-                                  bool* aCompatible);
+                                  PRBool* aCompatible);
 
   /**
    * To compare the channels of audio stream between media file and device
@@ -150,7 +150,7 @@ private:
    * \param aCompatible The flag on whether it's compatible.
    */
   nsresult CompareAudioChannels(sbIDevCapAudioStream* aAudioStream,
-                                bool* aCompatible);
+                                PRBool* aCompatible);
 
   // Device capabilities
   nsCOMPtr<sbIDeviceCapabilities> mDeviceCapabilities;

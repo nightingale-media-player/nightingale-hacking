@@ -132,7 +132,7 @@ sbMediacoreCapabilities::SetImageExtensions(
 }
 
 nsresult  
-sbMediacoreCapabilities::SetSupportsAudioPlayback(bool aSupportsAudioPlayback)
+sbMediacoreCapabilities::SetSupportsAudioPlayback(PRBool aSupportsAudioPlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsAudioPlayback", this));
 
@@ -145,7 +145,7 @@ sbMediacoreCapabilities::SetSupportsAudioPlayback(bool aSupportsAudioPlayback)
 }
 
 nsresult  
-sbMediacoreCapabilities::SetSupportsVideoPlayback(bool aSupportsVideoPlayback)
+sbMediacoreCapabilities::SetSupportsVideoPlayback(PRBool aSupportsVideoPlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsVideoPlayback", this));
 
@@ -158,7 +158,7 @@ sbMediacoreCapabilities::SetSupportsVideoPlayback(bool aSupportsVideoPlayback)
 }
 
 nsresult  
-sbMediacoreCapabilities::SetSupportsImagePlayback(bool aSupportsImagePlayback)
+sbMediacoreCapabilities::SetSupportsImagePlayback(PRBool aSupportsImagePlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsImagePlayback", this));
 
@@ -171,7 +171,7 @@ sbMediacoreCapabilities::SetSupportsImagePlayback(bool aSupportsImagePlayback)
 }
 
 nsresult  
-sbMediacoreCapabilities::SetSupportsAudioTranscode(bool aSupportsAudioTranscode)
+sbMediacoreCapabilities::SetSupportsAudioTranscode(PRBool aSupportsAudioTranscode)
 {  
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsAudioTranscode", this));
 
@@ -184,7 +184,7 @@ sbMediacoreCapabilities::SetSupportsAudioTranscode(bool aSupportsAudioTranscode)
 }
 
 nsresult  
-sbMediacoreCapabilities::SetSupportsVideoTranscode(bool aSupportsVideoTranscode)
+sbMediacoreCapabilities::SetSupportsVideoTranscode(PRBool aSupportsVideoTranscode)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsVideoTranscode", this));
 
@@ -197,7 +197,7 @@ sbMediacoreCapabilities::SetSupportsVideoTranscode(bool aSupportsVideoTranscode)
 }
 
 nsresult  
-sbMediacoreCapabilities::SetSupportsImageTranscode(bool aSupportsImageTranscode)
+sbMediacoreCapabilities::SetSupportsImageTranscode(PRBool aSupportsImageTranscode)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsImageTranscode", this));
 
@@ -264,7 +264,7 @@ sbMediacoreCapabilities::GetImageExtensions(nsIStringEnumerator * *aImageExtensi
 }
 
 NS_IMETHODIMP 
-sbMediacoreCapabilities::GetSupportsAudioPlayback(bool *aSupportsAudioPlayback)
+sbMediacoreCapabilities::GetSupportsAudioPlayback(PRBool *aSupportsAudioPlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsAudioPlayback", this));
   
@@ -278,7 +278,7 @@ sbMediacoreCapabilities::GetSupportsAudioPlayback(bool *aSupportsAudioPlayback)
 }
 
 NS_IMETHODIMP 
-sbMediacoreCapabilities::GetSupportsVideoPlayback(bool *aSupportsVideoPlayback)
+sbMediacoreCapabilities::GetSupportsVideoPlayback(PRBool *aSupportsVideoPlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsVideoPlayback", this));
 
@@ -292,7 +292,7 @@ sbMediacoreCapabilities::GetSupportsVideoPlayback(bool *aSupportsVideoPlayback)
 }
 
 NS_IMETHODIMP 
-sbMediacoreCapabilities::GetSupportsImagePlayback(bool *aSupportsImagePlayback)
+sbMediacoreCapabilities::GetSupportsImagePlayback(PRBool *aSupportsImagePlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsImagePlayback", this));
 
@@ -306,7 +306,7 @@ sbMediacoreCapabilities::GetSupportsImagePlayback(bool *aSupportsImagePlayback)
 }
 
 NS_IMETHODIMP 
-sbMediacoreCapabilities::GetSupportsAudioTranscode(bool *aSupportsAudioTranscode)
+sbMediacoreCapabilities::GetSupportsAudioTranscode(PRBool *aSupportsAudioTranscode)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsAudioTranscode", this));
 
@@ -320,7 +320,7 @@ sbMediacoreCapabilities::GetSupportsAudioTranscode(bool *aSupportsAudioTranscode
 }
 
 NS_IMETHODIMP 
-sbMediacoreCapabilities::GetSupportsVideoTranscode(bool *aSupportsVideoTranscode)
+sbMediacoreCapabilities::GetSupportsVideoTranscode(PRBool *aSupportsVideoTranscode)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsVideoTranscode", this));
 
@@ -334,7 +334,7 @@ sbMediacoreCapabilities::GetSupportsVideoTranscode(bool *aSupportsVideoTranscode
 }
 
 NS_IMETHODIMP 
-sbMediacoreCapabilities::GetSupportsImageTranscode(bool *aSupportsImageTranscode)
+sbMediacoreCapabilities::GetSupportsImageTranscode(PRBool *aSupportsImageTranscode)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsImageTranscode", this));
 

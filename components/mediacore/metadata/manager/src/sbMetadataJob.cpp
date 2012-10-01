@@ -33,6 +33,7 @@
 // INCLUDES ===================================================================
 #include <nspr.h>
 #include <nscore.h>
+#include <nsAutoLock.h>
 #include <pratom.h>
 
 #include <nsArrayUtils.h>
@@ -202,7 +203,7 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
     NS_ENSURE_ARG_POINTER(aRequiredProperties);
     
     // Create a string array of the properties
-    bool hasMore;
+    PRBool hasMore;
     rv = aRequiredProperties->HasMore(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
     
@@ -218,8 +219,8 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
    }
 
     // Figure out if we are allowed to write rating or artwork values to files
-    bool enableRatingWrite = PR_FALSE;
-    bool enableArtworkWrite = PR_FALSE;
+    PRBool enableRatingWrite = PR_FALSE;
+    PRBool enableArtworkWrite = PR_FALSE;
     nsCOMPtr<nsIPrefBranch> prefService =
         do_GetService("@mozilla.org/preferences-service;1", &rv);
     NS_ENSURE_SUCCESS( rv, rv);
@@ -280,7 +281,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
     rv = mediaItem->GetLibrary(getter_AddRefs(library));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    bool equals;
+    PRBool equals;
     rv = library->Equals(mLibrary, &equals);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -293,7 +294,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
   // If this job type is a write, inform the watch folder service of the paths
   // that are about to be written to. This prevents the watch folder service 
   // from re-reading in the changes that this job is about to do.
-  bool shouldIgnorePaths = PR_FALSE;
+  PRBool shouldIgnorePaths = PR_FALSE;
   nsCOMPtr<sbIWatchFolderService> wfService;
   if (mJobType == TYPE_WRITE) {
     wfService = do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
@@ -315,8 +316,8 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
   
   // Avoid allocating both lists, since most jobs
   // will be entirely main thread or entirely background thread
-  bool resizedMainThreadItems = PR_FALSE;
-  bool resizedBackgroundThreadItems = PR_FALSE;
+  PRBool resizedMainThreadItems = PR_FALSE;
+  PRBool resizedBackgroundThreadItems = PR_FALSE;
 
   for (PRUint32 i=0; i < length; i++) {
     mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
@@ -357,7 +358,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
     } else {
       
       // Find out if the handler can be run off the main thread
-      bool requiresMainThread = PR_TRUE;
+      PRBool requiresMainThread = PR_TRUE;
       nsCOMPtr<sbIMetadataHandler> handler;
       rv = jobItem->GetHandler(getter_AddRefs(handler));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -403,11 +404,11 @@ sbMetadataJob::AppendJobItem(sbMetadataJobItem* aJobItem)
 
   // Avoid allocating both lists, since most jobs
   // will be entirely main thread or entirely background thread
-  bool resizedMainThreadItems = PR_FALSE;
-  bool resizedBackgroundThreadItems = PR_FALSE;
+  PRBool resizedMainThreadItems = PR_FALSE;
+  PRBool resizedBackgroundThreadItems = PR_FALSE;
 
   // Find out if the handler can be run off the main thread
-  bool requiresMainThread = PR_TRUE;
+  PRBool requiresMainThread = PR_TRUE;
   nsCOMPtr<sbIMetadataHandler> handler;
   nsresult rv = aJobItem->GetHandler(getter_AddRefs(handler));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -511,7 +512,7 @@ sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
 }
 
 
-nsresult sbMetadataJob::GetQueuedItem(bool aMainThreadOnly, 
+nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly, 
                                       sbMetadataJobItem** aJobItem)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
@@ -638,7 +639,7 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
   // For read items, filter properties from the handler
   // and set them on the media item
   if (mJobType == TYPE_READ) {
-    bool willRetry = PR_FALSE;
+    PRBool willRetry = PR_FALSE;
     rv = CopyPropertiesToMediaItem(aJobItem, &willRetry);
     NS_ASSERTION(NS_SUCCEEDED(rv), \
       "sbMetadataJob::HandleProcessedItem CopyPropertiesToMediaItem failed!");
@@ -650,7 +651,7 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
   } else {
     // For write items, we need to check for failure. Also, we need to
     // update the content-length property if we did write to the file.
-    bool processed = PR_FALSE;
+    PRBool processed = PR_FALSE;
     aJobItem->GetProcessed(&processed);
     if (!processed) {
       rv = HandleFailedItem(aJobItem);
@@ -741,7 +742,7 @@ nsresult sbMetadataJob::DeferProcessedItemHandling(sbMetadataJobItem *aJobItem)
 
 
 nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem,
-                                                  bool* aWillRetry)
+                                                  PRBool* aWillRetry)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
@@ -815,7 +816,7 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem,
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Update the title if needed
-  bool defaultTrackname = trackName.IsEmpty() && !oldName.IsEmpty();
+  PRBool defaultTrackname = trackName.IsEmpty() && !oldName.IsEmpty();
   // If the metadata read can't even find a song name,
   // AND THERE ISN'T ALREADY A TRACK NAME, cook one up off the url.
   if ( trackName.IsEmpty() && oldName.IsEmpty() ) {
@@ -845,7 +846,7 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem,
     }
   }
 
-  bool isLocalFile = PR_FALSE;
+  PRBool isLocalFile = PR_FALSE;
 
   PRInt64 fileSize = 0;
   rv = GetFileSize(item, &fileSize);
@@ -971,8 +972,8 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
 
 
 nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem, 
-                                         bool aShouldRetry /*= PR_FALSE*/, 
-                                         bool *aWillRetry /*= nsnull*/)
+                                         PRBool aShouldRetry /*= PR_FALSE*/, 
+                                         PRBool *aWillRetry /*= nsnull*/)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
@@ -1106,7 +1107,7 @@ nsresult sbMetadataJob::BatchCompleteItems()
   nsresult rv = NS_OK;
   
   // Are there items that need completing
-  bool needBatchComplete = PR_FALSE;
+  PRBool needBatchComplete = PR_FALSE;
   {
     nsAutoLock processedLock(mProcessedBackgroundItemsLock);
     if (mProcessedBackgroundThreadItems) {
@@ -1324,7 +1325,7 @@ nsresult sbMetadataJob::GetType(JobType* aJobType)
   return NS_OK;
 }
 
-nsresult sbMetadataJob::SetBlocked(bool aBlocked)
+nsresult sbMetadataJob::SetBlocked(PRBool aBlocked)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   
@@ -1332,7 +1333,7 @@ nsresult sbMetadataJob::SetBlocked(bool aBlocked)
 
   // Need to save previous state to check if we need to
   // begin or end the library batch.
-  bool wasBlocked = mBlocked;
+  PRBool wasBlocked = mBlocked;
   
   mBlocked = aBlocked;
 
@@ -1373,7 +1374,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatus(PRUint16* aStatus)
 }
 
 /* readonly attribute boolean blocked; */
-NS_IMETHODIMP sbMetadataJob::GetBlocked(bool* aBlocked)
+NS_IMETHODIMP sbMetadataJob::GetBlocked(PRBool* aBlocked)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aBlocked );
@@ -1553,7 +1554,7 @@ sbMetadataJob::AddJobProgressListener(sbIJobProgressListener *aListener)
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  bool succeeded = mListeners.AppendObject(aListener);
+  PRBool succeeded = mListeners.AppendObject(aListener);
   return succeeded ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -1573,7 +1574,7 @@ sbMetadataJob::RemoveJobProgressListener(sbIJobProgressListener* aListener)
   }
 
   // remove the listener
-  bool succeeded = mListeners.RemoveObjectAt(indexToRemove);
+  PRBool succeeded = mListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -1596,7 +1597,7 @@ NS_IMETHODIMP sbMetadataJob::GetCrop(nsAString & aCrop)
 // =======================================
 
 /* boolean canCancel; */
-NS_IMETHODIMP sbMetadataJob::GetCanCancel(bool* _retval)
+NS_IMETHODIMP sbMetadataJob::GetCanCancel(PRBool* _retval)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   *_retval = PR_TRUE;
@@ -1734,7 +1735,7 @@ sbMetadataJob::AppendToPropertiesIfValid(sbIPropertyManager* aPropertyManager,
   nsresult rv = aPropertyManager->GetPropertyInfo(aID, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool isValid = PR_FALSE;
+  PRBool isValid = PR_FALSE;
   rv = info->Validate(aValue, &isValid);
   NS_ENSURE_SUCCESS(rv, rv);
 

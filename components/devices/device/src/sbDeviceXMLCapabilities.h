@@ -64,7 +64,7 @@ public:
    * Return true if DOM document contains device capabilities.
    * \return true if DOM document contains device capabilities.
    */
-  bool HasCapabilities() { return mHasCapabilities; }
+  PRBool HasCapabilities() { return mHasCapabilities; }
   /**
    * Read the capabilities matching the device specified by aDevice from the
    * document specified by aDocument and return them in aCapabilities.  If no
@@ -102,7 +102,7 @@ public:
   static nsresult AddCapabilities
                     (sbIDeviceCapabilities* aCapabilities,
                      const char*            aXMLCapabilitiesSpec,
-                     bool*                aAddedCapabilities = nsnull,
+                     PRBool*                aAddedCapabilities = nsnull,
                      sbIDevice*             aDevice = nsnull);
   /**
    * Read the capabilities matching the device specified by aDevice from the
@@ -118,13 +118,13 @@ public:
   static nsresult AddCapabilities
                     (sbIDeviceCapabilities* aCapabilities,
                      nsIDOMNode*            aDeviceCapsRootNode,
-                     bool*                aAddedCapabilities = nsnull,
+                     PRBool*                aAddedCapabilities = nsnull,
                      sbIDevice*             aDevice = nsnull);
 private:
   sbIDevice* mDevice;                   // Non-owning reference
   sbIDeviceCapabilities * mDeviceCaps;  // Non-owning reference
   nsCOMPtr<nsIDOMElement> mRootElement;
-  bool mHasCapabilities;
+  PRBool mHasCapabilities;
 
   /**
    * Adds the function type to the device capabilities
@@ -227,7 +227,7 @@ private:
    * \param aDeviceMatches Returned true if device matches.
    */
   nsresult DeviceMatchesCapabilitiesNode(nsIDOMNode * aCapabilitiesNode,
-                                         bool * aDeviceMatches);
+                                         PRBool * aDeviceMatches);
 
   /**
    * Check if the device with the properties specified by aDeviceProperties
@@ -239,7 +239,7 @@ private:
    */
   nsresult DeviceMatchesDeviceNode(nsIDOMNode * aDeviceNode,
                                    nsIPropertyBag2 * aDeviceProperties,
-                                   bool * aDeviceMatches);
+                                   PRBool * aDeviceMatches);
 
   /**
    * Search for the first child of the node specified by aNode with the tag name

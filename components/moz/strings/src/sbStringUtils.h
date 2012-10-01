@@ -54,8 +54,8 @@ public:
   }
 
   sbAutoString(PRUint32 aValue,
-               bool aHex = PR_FALSE,
-               bool aHexPrefix = PR_TRUE)
+               PRBool aHex = PR_FALSE,
+               PRBool aHexPrefix = PR_TRUE)
   {
     char valueStr[64];
 
@@ -118,8 +118,8 @@ public:
   }
 
   sbCAutoString(PRUint32 aValue,
-                bool aHex = PR_FALSE,
-                bool aHexPrefix = PR_TRUE)
+                PRBool aHex = PR_FALSE,
+                PRBool aHexPrefix = PR_TRUE)
   {
     char valueStr[64];
 
@@ -211,12 +211,12 @@ PRUint64 nsString_ToUint64(const nsAString& str, nsresult* rv = nsnull);
  * @see CompressWhitespace in nsStringAPI.
  */
 void SB_CompressWhitespace(nsAString& aString,
-                           bool aLeading = PR_TRUE,
-                           bool aTrailing = PR_TRUE);
+                           PRBool aLeading = PR_TRUE,
+                           PRBool aTrailing = PR_TRUE);
 
 nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                                    nsIStringEnumerator* aRight,
-                                   bool* _retval);
+                                   PRBool* _retval);
 
 /**
  * Searches a string for any occurences of any character of a set and replace
@@ -249,7 +249,7 @@ void nsString_ReplaceSubstring(/* inout */ nsAString &aString,
  * invalid characters (e.g. 0xFFFE, surrogates).  This is a weaker check than
  * the nsReadableUtils version.
  */
-bool IsLikelyUTF8(const nsACString& aString);
+PRBool IsLikelyUTF8(const nsACString& aString);
 
 /**
  * Returns true if the given string is UTF8
@@ -257,7 +257,7 @@ bool IsLikelyUTF8(const nsACString& aString);
  * Note that this actually decodes the UTF8 string so it is significantly
  * slower than IsLikelyUTF8.
  */
-bool IsUTF8(const nsACString& aString);
+PRBool IsUTF8(const nsACString& aString);
 
 /**
  * Split the string specified by aString into sub-strings using the delimiter
@@ -445,7 +445,7 @@ S sbAppendStringArray(S & aTarget,
     return aTarget;
   writePosition += stringLength;
   // Now append
-  bool const isSeparatorEmpty = aSeparator.IsEmpty();
+  PRBool const isSeparatorEmpty = aSeparator.IsEmpty();
   for (PRUint32 index = 0; index < length; ++index) {
     if (index != 0 && !isSeparatorEmpty) {
       memcpy(writePosition, separator, separatorLength * sizeof(typename S::char_type));
@@ -494,7 +494,7 @@ sbAppendStringEnumerator(StringType&     aStringArray,
   nsresult rv;
   while (1) {
     // Check if the enumerator has any more elements.
-    bool hasMore;
+    PRBool hasMore;
     rv = aEnumerator->HasMore(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasMore)

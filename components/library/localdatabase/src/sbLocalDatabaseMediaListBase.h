@@ -99,7 +99,7 @@ public:
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid,
-                bool aOwnsLibrary = PR_TRUE);
+                PRBool aOwnsLibrary = PR_TRUE);
 
   already_AddRefed<sbLocalDatabaseLibrary> GetNativeLibrary();
 
@@ -109,7 +109,7 @@ public:
   }
 
   nsresult AddListener(sbIMediaListListener* aListener,
-                       bool aOwnsWeak = PR_FALSE,
+                       PRBool aOwnsWeak = PR_FALSE,
                        PRUint32 aFlags = 0) {
     return AddListener(aListener, aOwnsWeak, aFlags, nsnull);
   }
@@ -181,7 +181,7 @@ protected:
   // Cached list content type
   PRUint16 mListContentType;
 
-  bool mLockedEnumerationActive;
+  PRBool mLockedEnumerationActive;
   
   // The mFilteredProperties hash table caches the property ids
   // that we always want to filter out of the property arrays that

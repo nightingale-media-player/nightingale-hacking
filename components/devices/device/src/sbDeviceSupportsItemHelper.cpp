@@ -59,7 +59,7 @@ sbDeviceSupportsItemHelper::OnJobProgress(sbIJobProgress *aJobProgress)
   NS_ENSURE_ARG_POINTER(aJobProgress);
   NS_ENSURE_STATE(mCallback);
 
-  bool supported = PR_FALSE;
+  PRBool supported = PR_FALSE;
 
   PRUint16 status;
   rv = aJobProgress->GetStatus(&status);
@@ -148,7 +148,7 @@ void
 sbDeviceSupportsItemHelper::RunSupportsMediaItem()
 {
   nsresult rv;
-  bool result;
+  PRBool result;
   rv = mDevice->SupportsMediaItem(mItem, this, PR_FALSE, &result);
   if (rv != NS_ERROR_IN_PROGRESS) {
     // this was synchronous, notify the callback

@@ -243,14 +243,12 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_IMAGESYNC_PREPARING  = 21; // Preparing to sync
   const unsigned long STATE_COPYING_IMAGE        = 22; // Copying image
 
-  // @warning @see sbICDDevice::REQUEST_CDLOOKUP
   const unsigned long STATE_USER            = 0x20000000;
 
   /**
    * Requests below 0x2000000 are reserved by the sbRequestThreadQueue for
    * internal use
    */
-  // @warning @see sbICDDevice::STATE_LOOKINGUPCD
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
   const unsigned long REQUEST_FLAG_READ  = 0x20000000;

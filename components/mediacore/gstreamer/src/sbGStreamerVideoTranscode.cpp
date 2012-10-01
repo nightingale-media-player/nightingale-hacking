@@ -376,7 +376,7 @@ sbGStreamerVideoTranscoder::StopPipeline()
 /* sbIJobCancelable interface implementation */
 
 NS_IMETHODIMP
-sbGStreamerVideoTranscoder::GetCanCancel(bool *aCanCancel)
+sbGStreamerVideoTranscoder::GetCanCancel(PRBool *aCanCancel)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -451,7 +451,7 @@ sbGStreamerVideoTranscoder::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
-sbGStreamerVideoTranscoder::GetBlocked(bool *aBlocked)
+sbGStreamerVideoTranscoder::GetBlocked(PRBool *aBlocked)
 {
   NS_ENSURE_ARG_POINTER(aBlocked);
 
@@ -592,7 +592,7 @@ sbGStreamerVideoTranscoder::AddJobProgressListener(sbIJobProgressListener *aList
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  bool succeeded = mProgressListeners.AppendObject(aListener);
+  PRBool succeeded = mProgressListeners.AppendObject(aListener);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -615,7 +615,7 @@ sbGStreamerVideoTranscoder::RemoveJobProgressListener(
   }
 
   // remove the listener
-  bool succeeded = mProgressListeners.RemoveObjectAt(indexToRemove);
+  PRBool succeeded = mProgressListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -1301,7 +1301,7 @@ sbGStreamerVideoTranscoder::GetRawAudioCaps(GstCaps **aResultCaps)
   rv = encoderProperties->GetProperty(NS_LITERAL_STRING ("IsFloat"),
                                       getter_AddRefs(isFloatVar));
   NS_ENSURE_SUCCESS(rv, rv);
-  bool isFloat;
+  PRBool isFloat;
   rv = isFloatVar->GetAsBool(&isFloat);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1309,7 +1309,7 @@ sbGStreamerVideoTranscoder::GetRawAudioCaps(GstCaps **aResultCaps)
   rv = encoderProperties->GetProperty(NS_LITERAL_STRING ("LittleEndian"),
                                       getter_AddRefs(isLittleEndianVar));
   NS_ENSURE_SUCCESS(rv, rv);
-  bool isLittleEndian;
+  PRBool isLittleEndian;
   rv = isLittleEndianVar->GetAsBool(&isLittleEndian);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1981,7 +1981,7 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
         nsCOMPtr<nsIFile> destFile;
         rv = fixedDestFileURI->GetFile(getter_AddRefs(destFile));
 
-        bool exists;
+        PRBool exists;
         rv = destFile->Exists(&exists);
         NS_ENSURE_SUCCESS(rv, rv);
 
