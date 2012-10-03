@@ -12,7 +12,7 @@ SB_MILESTONE=15.0.1a
 SB_MILESTONE_WINDOWS=2.2.90.1
 SB_BRANCHNAME=trunk
 SB_PROFILE_VERSION=2
-SB_MOZILLA_VERSION=
+SB_MOZILLA_VERSION=15.0.1
 
 # These are here to centralize our handling of these versions, since we
 # use them; we make a slight distinction between JS-only and binary extensions
