@@ -1085,7 +1085,7 @@ $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
       target=$(OUR_SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
       echo Preprocessing $$item into $$target...; \
       $(RM) -f $$target; \
-      $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+      $(PYTHON) $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py \
        $(ACDEFINES) $(RESOURCES_PPFLAGS) \
        $(PPDEFINES) -- $$item > $$target; \
       $(if $(SONGBIRD_PP_MODE),$(CHMOD) $(SONGBIRD_PP_MODE) $$target; ) \
@@ -1149,7 +1149,7 @@ else
                          -t $(topsrcdir) \
                          -j $(OUR_JAR_TARGET_DIR) \
                          -z $(ZIP) \
-                         -p $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+                         -p $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py \
                          -v \
                          $(EXTRA_MAKE_JARS_FLAGS) \
                          $(NULL)
@@ -1193,7 +1193,7 @@ endif
 $(OUR_JAR_MN): FORCE
 ifneq (,$(OUR_JAR_MN_IN))
 	$(RM) $(OUR_JAR_MN)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
+	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py $(ACDEFINES) $(PPDEFINES) -- \
     $(srcdir)/$(OUR_JAR_MN_IN) | \
     $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(OUR_JAR_MN)
 endif
@@ -1309,7 +1309,7 @@ ifdef DEBUG
 endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py \
     $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) \
     -DEXTENSION_ARCH="$(EXTENSION_ARCH)" \
     -DEXTENSION_UUID="$(EXTENSION_UUID)" \
