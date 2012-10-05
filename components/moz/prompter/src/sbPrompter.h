@@ -112,7 +112,7 @@ private:
   //   mRenderHTML
   //
 
-  mozilla::Mutex*	            mPrompterLock;
+  mozilla::Mutex	            mPrompterLock;
   nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
   nsCOMPtr<nsIPromptService>    mPromptService;

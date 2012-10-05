@@ -1233,6 +1233,7 @@ sbPrompter::Observe(nsISupports*     aSubject,
  */
 
 sbPrompter::sbPrompter() :
+  mPrompterLock("sbPrompter.mPrompterLock"),
   mRenderHTML(PR_FALSE)
 {
 }
@@ -1256,10 +1257,7 @@ sbPrompter::~sbPrompter()
 nsresult
 sbPrompter::Init()
 {
-  nsresult rv;
-
-  // Create a lock for the prompter.
-  mPrompterLock = new mozilla::Mutex("sbPrompter::mPrompterLock");
+  nsresult rv;	
 
   // Set defaults.
   {
