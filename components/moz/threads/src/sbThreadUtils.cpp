@@ -93,7 +93,7 @@ NS_IMETHODIMP
 sbRunnable::Run()
 {
   // Enter the monitor to set the done flag:
-  mozilla::sbMozHackReentrantMonitorAutoEnter lock(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter lock(mMonitor);
 
   // Set the done flag and notify all waiters:
   mDone = true;
@@ -111,7 +111,7 @@ sbRunnable::Wait(PRIntervalTime aTimeout)
   const PRIntervalTime expiry = PR_IntervalNow() + aTimeout;
 
   // Enter the monitor to check the done flag:
-  mozilla::sbMozHackReentrantMonitorAutoEnter lock(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter lock(mMonitor);
 
   // Only wait for Run() to complete if asked:
   if (aTimeout != PR_INTERVAL_NO_WAIT) {

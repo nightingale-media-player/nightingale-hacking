@@ -47,8 +47,7 @@
 //------------------------------------------------------------------------------
 
 // Mozilla imports.
-#include <sbMozHackMutex.h>
-#include <sbMozHackReentrantMonitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
@@ -100,13 +99,9 @@ public:
     if (!mObject)
       return NS_OK;
 
-    // Ensure lock is available.
-    NS_ENSURE_TRUE(mLock, mFailureReturnValue);
-
     // Invoke method.
     ReturnType returnValue = (mObject->*mMethod)(mArg1Value);
     {
-      mozilla::sbMozHackMutexAutoLock autoLock(*mLock);
       mReturnValue = returnValue;
     }
 
@@ -323,8 +318,6 @@ public:
 
   ReturnType GetReturnValue()
   {
-    NS_ENSURE_TRUE(mLock, mFailureReturnValue);
-    mozilla::sbMozHackMutexAutoLock autoLock(*mLock);
     return mReturnValue;
   }
 
@@ -355,7 +348,6 @@ protected:
                     MethodType aMethod,
                     ReturnType aFailureReturnValue,
                     Arg1Type   aArg1Value) :
-    mLock(nsnull),
     mObject(aObject),
     mMethod(aMethod),
     mReturnValue(aFailureReturnValue),
@@ -371,9 +363,6 @@ protected:
 
   virtual ~sbRunnableMethod1()
   {
-    // Dispose of the Songbird runnable method lock.
-    if (mLock)
-      delete mLock;
   }
 
 
@@ -383,16 +372,11 @@ protected:
 
   nsresult Initialize()
   {
-    // Create the runnable lock.
-    mLock = new mozilla::sbMozHackMutex("sbRunnableMethod1::mLock");
-    NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-
     return NS_OK;
   }
 
 
   //
-  // mLock                      Lock used to serialize field access.
   // mObject                    Object for which to invoke method.
   // mMethod                    Method to invoke.
   // mReturnValue               Method return value.
@@ -400,7 +384,6 @@ protected:
   // mArg1Value                 Method argument 1 value.
   //
 
-  mozilla::sbMozHackMutex* mLock;
   nsRefPtr<ClassType> mObject;
   MethodType          mMethod;
   ReturnType          mReturnValue;
@@ -455,7 +438,6 @@ public:
       returnValue = (BaseType::mObject->*mMethod)(BaseType::mArg1Value,
                                                   mArg2Value);
     {
-      nsAutoLock autoLock(BaseType::mLock);
       BaseType::mReturnValue = returnValue;
     }
 
@@ -761,7 +743,7 @@ public:
   bool Wait(PRIntervalTime aTimeout);
 
 private:
-  mozilla::sbMozHackReentrantMonitor  mMonitor;
+  mozilla::ReentrantMonitor  mMonitor;
   bool            mDone;
 };
 
