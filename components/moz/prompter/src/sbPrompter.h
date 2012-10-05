@@ -45,6 +45,7 @@
 #include <sbIWindowWatcher.h>
 
 // Mozilla imports.
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsIDialogParamBlock.h>
 #include <nsIObserver.h>
@@ -56,9 +57,6 @@
  * This class implements the Songbird prompter interface.
  */
 
-namespace mozilla {
-  class sbMozHackMutex;
-}
 class sbPrompter : public sbIPrompter,
                    public nsIObserver
 {
@@ -114,7 +112,7 @@ private:
   //   mRenderHTML
   //
 
-  mozilla::sbMozHackMutex*      mPrompterLock;
+  mozilla::Mutex*	            mPrompterLock;
   nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
   nsCOMPtr<nsIPromptService>    mPromptService;

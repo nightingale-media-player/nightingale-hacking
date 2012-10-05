@@ -47,6 +47,7 @@
 #include "sbPrompter.h"
 
 // Mozilla imports.
+#include <mozilla/Mutex.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsPIPromptService.h>
@@ -311,7 +312,7 @@ sbPrompter::CancelImpl()
 NS_IMETHODIMP
 sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 {
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
   aParentWindowType.Assign(mParentWindowType);
   return NS_OK;
 }
@@ -319,7 +320,7 @@ sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 NS_IMETHODIMP
 sbPrompter::SetParentWindowType(const nsAString& aParentWindowType)
 {
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
   mParentWindowType.Assign(aParentWindowType);
   return NS_OK;
 }
@@ -334,7 +335,7 @@ NS_IMETHODIMP
 sbPrompter::GetWaitForWindow(bool* aWaitForWindow)
 {
   NS_ENSURE_ARG_POINTER(aWaitForWindow);
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
   *aWaitForWindow = mWaitForWindow;
   return NS_OK;
 }
@@ -342,7 +343,7 @@ sbPrompter::GetWaitForWindow(bool* aWaitForWindow)
 NS_IMETHODIMP
 sbPrompter::SetWaitForWindow(bool aWaitForWindow)
 {
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
   mWaitForWindow = aWaitForWindow;
   return NS_OK;
 }
@@ -356,7 +357,7 @@ NS_IMETHODIMP
 sbPrompter::GetRenderHTML(bool* aRenderHTML)
 {
   NS_ENSURE_ARG_POINTER(aRenderHTML);
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
   *aRenderHTML = mRenderHTML;
   return NS_OK;
 }
@@ -364,7 +365,7 @@ sbPrompter::GetRenderHTML(bool* aRenderHTML)
 NS_IMETHODIMP
 sbPrompter::SetRenderHTML(bool aRenderHTML)
 {
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
   mRenderHTML = aRenderHTML;
   return NS_OK;
 }
@@ -1244,9 +1245,7 @@ sbPrompter::sbPrompter() :
 sbPrompter::~sbPrompter()
 {
   // Dispose of prompter lock.
-  if (mPrompterLock)
-    delete mPrompterLock;
-  mPrompterLock = nsnull;
+  //pretty sure this is automatic?
 }
 
 
@@ -1260,11 +1259,11 @@ sbPrompter::Init()
   nsresult rv;
 
   // Create a lock for the prompter.
-  mPrompterLock = new mozilla::sbMozHackMutex("sbPrompter::mPrompterLock");
+  mPrompterLock = new mozilla::Mutex("sbPrompter::mPrompterLock");
 
   // Set defaults.
   {
-    mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+    mozilla::MutexAutoLock autoLock(mPrompterLock);
     mWaitForWindow = PR_FALSE;
   }
 
@@ -1336,7 +1335,7 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   nsresult rv;
 
   // Operate under lock.
-  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
+  mozilla::MutexAutoLock autoLock(mPrompterLock);
 
   // If the Songbird window watcher is shutting down, don't wait for a window.
   {
