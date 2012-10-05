@@ -52,6 +52,7 @@
 #include <sbIDirectoryEnumerator.h>
 
 // Mozilla imports.
+#include <mozilla/Mutex.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsISimpleEnumerator.h>
@@ -140,7 +141,7 @@ private:
   //
 
   bool                          mIsInitialized;
-  mozilla::sbMozHackMutex*      mEnumeratorLock;
+  mozilla::Mutex			    mEnumeratorLock;
   nsCOMArray<nsISimpleEnumerator>
                                 mEntriesEnumStack;
   nsCOMPtr<nsIFile>             mNextFile;
