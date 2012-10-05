@@ -52,10 +52,14 @@
 #include <sbIDirectoryEnumerator.h>
 
 // Mozilla imports.
+#include <mozilla/Mutex.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsISimpleEnumerator.h>
 
+namespace mozilla {
+  class sbMozHackMutex;
+}
 
 //------------------------------------------------------------------------------
 //

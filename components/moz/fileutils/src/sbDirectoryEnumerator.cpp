@@ -54,13 +54,13 @@
 #endif
 
 // Mozilla imports.
-#include <nsAutoLock.h>
-#include <nsAutoPtr.h>
+#include <mozilla/Mutex.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsILocalFile.h>
 #include <prerr.h>
 #include <prerror.h>
+#include <nsStringAPI.h>
 
 //------------------------------------------------------------------------------
 //
@@ -344,7 +344,7 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
   nsresult rv;
 
   // Operate under the enumerator lock.
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
 
   // Ensure directory exists and is a directory.
   PRBool exists;
@@ -394,7 +394,7 @@ sbDirectoryEnumerator::HasMoreElements(PRBool* aHasMoreElements)
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
 
   // Operate under the enumerator lock.
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
 
   // Return results.
   *aHasMoreElements = (mEntriesEnumStack.Count() > 0);
@@ -420,7 +420,7 @@ sbDirectoryEnumerator::GetNext(nsIFile** aFile)
   nsresult rv;
 
   // Operate under the enumerator lock.
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
 
   // Return the next file.  Return error if no next file.
   if (mNextFile)
@@ -451,7 +451,7 @@ sbDirectoryEnumerator::GetMaxDepth(PRUint32* aMaxDepth)
 {
   NS_ENSURE_ARG_POINTER(aMaxDepth);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
   *aMaxDepth = mMaxDepth;
   return NS_OK;
 }
@@ -460,7 +460,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetMaxDepth(PRUint32 aMaxDepth)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
   mMaxDepth = aMaxDepth;
   return NS_OK;
 }
@@ -475,7 +475,7 @@ sbDirectoryEnumerator::GetDirectoriesOnly(PRBool* aDirectoriesOnly)
 {
   NS_ENSURE_ARG_POINTER(aDirectoriesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
   *aDirectoriesOnly = mDirectoriesOnly;
   return NS_OK;
 }
@@ -484,7 +484,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetDirectoriesOnly(PRBool aDirectoriesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
   mDirectoriesOnly = aDirectoriesOnly;
   return NS_OK;
 }
@@ -499,7 +499,7 @@ sbDirectoryEnumerator::GetFilesOnly(PRBool* aFilesOnly)
 {
   NS_ENSURE_ARG_POINTER(aFilesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
   *aFilesOnly = mFilesOnly;
   return NS_OK;
 }
@@ -508,7 +508,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
   mFilesOnly = aFilesOnly;
   return NS_OK;
 }
