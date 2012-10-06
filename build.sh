@@ -64,7 +64,7 @@ case $OSTYPE in
     #if you have a dep built on a differing date for either arch, just use a conditional to set this
     depdate=20120929
     #export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
-	export CXXFLAGS="-std=gnu++0x -fpermissive"
+	export CXXFLAGS="-std=gnu++0x"
     echo "linux $arch"
     ( cd dependencies && {
 		if [ ! -d "$depdirn" ] ; then
