@@ -136,49 +136,49 @@ private:
   nsresult PresentPrompterDialog(nsIDOMWindow*        aParent,
                                  nsIDialogParamBlock* aParamBlock);
   nsresult
-  sbPrompter::OpenDialogImpl(nsIDOMWindow*    aParent,
+  OpenDialogImpl(nsIDOMWindow*    aParent,
                          const nsAString& aUrl,
                          const nsAString& aName,
                          const nsAString& aOptions,
                          nsISupports*     aExtraArgument,
                          nsIDOMWindow**   _retval);
   nsresult
-  sbPrompter::OpenWindowImpl(nsIDOMWindow*    aParent,
+  OpenWindowImpl(nsIDOMWindow*    aParent,
                          const nsAString& aUrl,
                          const nsAString& aName,
                          const nsAString& aOptions,
                          nsISupports*     aExtraArgument,
                          nsIDOMWindow**   _retval);
   nsresult
-  sbPrompter::CancelImpl();
+  CancelImpl();
 
   nsresult
-  sbPrompter::AlertImpl(nsIDOMWindow*    aParent,
+  AlertImpl(nsIDOMWindow*    aParent,
                     const PRUnichar* aDialogTitle,
                     const PRUnichar* aText);
 
   nsresult
-  sbPrompter::AlertCheckImpl(nsIDOMWindow*    aParent,
+  AlertCheckImpl(nsIDOMWindow*    aParent,
                          const PRUnichar* aDialogTitle,
                          const PRUnichar* aText,
                          const PRUnichar* aCheckMsg,
                          bool*          aCheckState);
 
   nsresult
-  sbPrompter::ConfirmImpl(nsIDOMWindow*    aParent,
+  ConfirmImpl(nsIDOMWindow*    aParent,
                       const PRUnichar* aDialogTitle,
                       const PRUnichar* aText,
                       bool*          _retval);
 
   nsresult
-  sbPrompter::ConfirmCheckImpl(nsIDOMWindow*    aParent,
+  ConfirmCheckImpl(nsIDOMWindow*    aParent,
                            const PRUnichar* aDialogTitle,
                            const PRUnichar* aText,
                            const PRUnichar* aCheckMsg,
                            bool*          aCheckState,
                            bool*          _retval);
   nsresult
-  sbPrompter::ConfirmExImpl(nsIDOMWindow*    aParent,
+  ConfirmExImpl(nsIDOMWindow*    aParent,
                         const PRUnichar* aDialogTitle,
                         const PRUnichar* aText,
                         PRUint32         aButtonFlags,
@@ -190,7 +190,7 @@ private:
                         PRInt32*         _retval);
 
   nsresult
-  sbPrompter::PromptImpl(nsIDOMWindow*    aParent,
+  PromptImpl(nsIDOMWindow*    aParent,
                      const PRUnichar* aDialogTitle,
                      const PRUnichar* aText,
                      PRUnichar**      aValue,
@@ -199,7 +199,7 @@ private:
                      bool*          _retval);
 
   nsresult
-  sbPrompter::PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
+  PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
                                         const PRUnichar* aDialogTitle,
                                         const PRUnichar* aText,
                                         PRUnichar**      aUsername,
@@ -209,7 +209,7 @@ private:
                                         bool*          _retval);
 
   nsresult
-  sbPrompter::PromptPasswordImpl(nsIDOMWindow*    aParent,
+  PromptPasswordImpl(nsIDOMWindow*    aParent,
                              const PRUnichar* aDialogTitle,
                              const PRUnichar* aText,
                              PRUnichar**      aPassword,
@@ -218,7 +218,7 @@ private:
                              bool*          _retval);
 
   nsresult
-  sbPrompter::SelectImpl(nsIDOMWindow*     aParent,
+  SelectImpl(nsIDOMWindow*     aParent,
                      const PRUnichar*  aDialogTitle,
                      const PRUnichar*  aText,
                      PRUint32          aCount,
