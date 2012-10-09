@@ -48,6 +48,7 @@
 #include <nsIWindowWatcher.h>
 #include <nsTArray.h>
 #include <prmon.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbWeakReference.h>
 
@@ -58,10 +59,6 @@
  */
 
 class sbWindowWatcherEventListener;
-
-namespace mozilla {
-  class sbMozHackReentrantMonitor;
-}
 
 class sbWindowWatcher : public sbIWindowWatcher,
                         public nsIObserver,
@@ -147,7 +144,7 @@ private:
   nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIThreadManager>    mThreadManager;
   bool                          mSentMainWinPresentedNotification;
-  mozilla::sbMozHackReentrantMonitor* mMonitor;
+  mozilla::ReentrantMonitor     mMonitor;
   bool                          mIsShuttingDown;
   nsCOMArray<nsIDOMWindow>      mWindowList;
 
@@ -386,7 +383,7 @@ private:
   //
 
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
-  mozilla::sbMozHackReentrantMonitor*    mReadyMonitor;
+  mozilla::ReentrantMonitor    mReadyMonitor;
   nsCOMPtr<nsIDOMWindow>        mWindow;
   bool                        mReady;
 

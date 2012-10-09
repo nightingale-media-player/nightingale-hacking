@@ -35,32 +35,23 @@ private:
   friend class sbSupportsWeakReference;
 
   sbWeakReference(sbSupportsWeakReference* referent) 
-    : mReferentLock(nsnull)
-    , mReferent(referent) {
-    // ...I can only be constructed by an |sbSupportsWeakReference|
-    mReferentLock = new mozilla::sbMozHackMutex("sbWeakReference::mReferentLock");
-    NS_WARN_IF_FALSE(mReferentLock, "Failed to create lock.");
-  }
+    : mReferentLock("sbWeakReference::mReferentLock"); 
+    , mReferent(referent) {}
 
   ~sbWeakReference() {
     // ...I will only be destroyed by calling |delete| myself.
     if (mReferent) {
       mReferent->NoticeProxyDestruction();
     }
-
-    if (mReferentLock) {
-      delete mReferentLock;
-    }
   }
 
   void NoticeReferentDestruction() {
-    NS_ENSURE_TRUE(mReferentLock, /*void*/);
-    mozilla::sbMozHackMutexAutoLock lock(*mReferentLock);
+    mozilla::Mutex Lock(mReferentLock);
     // ...called (only) by an |sbSupportsWeakReference| from _its_ dtor.
     mReferent = nsnull;
   }
 
-  mozilla::sbMozHackMutex *mReferentLock;
+  mozilla::Mutex mReferentLock;
   sbSupportsWeakReference*  mReferent;
 };
 
@@ -69,7 +60,7 @@ sbSupportsWeakReference::GetWeakReference(nsIWeakReference** aInstancePtr)
 {
   NS_ENSURE_ARG_POINTER(aInstancePtr);
 
-  mozilla::Mutex lock(mProxyLock);
+  mozilla::Mutex Lock(mProxyLock);
 
   if (!mProxy) {
     mProxy = new sbWeakReference(this);
@@ -93,7 +84,7 @@ sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr)
 {
   NS_ENSURE_TRUE(mReferentLock, NS_ERROR_NOT_INITIALIZED);
 
-  mozilla::Mutex lock(mReferentLock);
+  mozilla::Mutex Lock(mReferentLock);
   return mReferent ? 
     mReferent->QueryInterface(aIID, aInstancePtr) : NS_ERROR_NULL_POINTER;
 }
@@ -101,7 +92,7 @@ sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr)
 void
 sbSupportsWeakReference::ClearWeakReferences() 
 {
-  mozilla::Mutex lock(mProxyLock);
+  mozilla::Mutex Lock(mProxyLock);
 
   if (mProxy) {
     mProxy->NoticeReferentDestruction();
