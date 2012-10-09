@@ -965,7 +965,7 @@ case "$SB_PLATFORM" in
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
-    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
+    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread --std=gnu++0x"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
