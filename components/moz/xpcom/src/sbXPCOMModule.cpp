@@ -43,29 +43,35 @@ NS_DEFINE_NAMED_CID(SB_THREADSAFE_ARRAY_CID);
 NS_DEFINE_NAMED_CID(SB_PROPERTYBAG_CID);
 NS_DEFINE_NAMED_CID(SB_SERVICE_MANAGER_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdXPCOMLibCIDs[] = {
-  { &kSB_THREADSAFE_ARRAY_CID, false, NULL, sbArrayConstructor },
-  { &kSB_PROPERTYBAG_CID, false, NULL, sbPropertyBagConstructor },
-  { &kSB_SERVICE_MANAGER_CID, false, NULL, sbServiceManagerConstructor },
-  { NULL }
+static const mozilla::Module::CIDEntry kSongbirdMozArrayCIDs[] = {
+    { &kSB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
+    { &kSB_PROPERTYBAG_CID, true, NULL, sbPropertyBagConstructor },
+    { &kSB_SERVICE_MANAGER_CID, true, NULL, sbServiceManagerConstructor },
+    { NULL }
 };
 
-static const mozilla::Module::ContractIDEntry kSongbirdXPCOMLibContracts[] = {
-  { SB_THREADSAFE_ARRAY_CONTRACTID, &kSB_THREADSAFE_ARRAY_CID },
-  { SB_PROPERTYBAG_CONTRACTID, &kSB_PROPERTYBAG_CID },
-  { SB_SERVICE_MANAGER_CONTRACTID, &kSB_SERVICE_MANAGER_CID },
-  { NULL }
+
+static const mozilla::Module::ContractIDEntry kSongbirdMozArrayContracts[] = {
+    { SB_THREADSAFE_ARRAY_CONTRACTID, &kSB_THREADSAFE_ARRAY_CID },
+	{ SB_PROPERTYBAG_CONTRACTID, &kSB_PROPERTYBAG_CID },
+    { SB_SERVICE_MANAGER_CONTRACTID, &kSB_SERVICE_MANAGER_CID },
+    { NULL }
 };
 
-static const mozilla::Module::CategoryEntry kSongbirdXPCOMLibCategories[] = {
-  { NULL }
+
+static const mozilla::Module::CategoryEntry kSongbirdMozArrayCategories[] = {
+    { SB_THREADSAFE_ARRAY_CLASSNAME, SB_THREADSAFE_ARRAY_CONTRACTID },
+    { SB_PROPERTYBAG_CLASSNAME, SB_PROPERTYBAG_CONTRACTID },
+    { SB_SERVICE_MANAGER_CLASSNAME, SB_SERVICE_MANAGER_CONTRACTID },
+    { NULL }
 };
 
-static const mozilla::Module kSongbirdXPCOMLibModule = {
-  mozilla::Module::kVersion,
-  kSongbirdXPCOMLibCIDs,
-  kSongbirdXPCOMLibContracts,
-  kSongbirdXPCOMLibCategories
+
+static const mozilla::Module kSongbirdMozArrayModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozArrayCIDs,
+    kSongbirdMozArrayContracts,
+    kSongbirdMozArrayCategories
 };
 
-NSMODULE_DEFN(SongbirdXPCOMLib) = &kSongbirdXPCOMLibModule;
+NSMODULE_DEFN(sbMozArrayModule) = &kSongbirdMozArrayModule;

@@ -41,7 +41,7 @@
 
 #include "nsIMutableArray.h"
 #include "sbCOMArray.h"
-#include "nsCOMPtr.h"s
+#include "nsCOMPtr.h"
 #include <mozilla/Mutex.h>
 
 #define SB_THREADSAFE_ARRAY_CLASSNAME \
