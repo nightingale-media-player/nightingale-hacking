@@ -53,7 +53,7 @@ private:
   friend class sbWeakReference;
 
   void NoticeProxyDestruction() {
-    mozilla::Mutex lock(mProxyLock);
+    mozilla::Mutex autoLock(mProxyLock);
     // ...called (only) by an |nsWeakReference| from _its_ dtor.
     mProxy = nsnull;
   }
@@ -65,8 +65,7 @@ private:
 protected:
   void ClearWeakReferences();
   PRBool HasWeakReferences() const {
-    mozilla::Mutex lock(mProxyLock);
-
+    mozilla::Mutex Lock(mProxyLock);
     return mProxy != 0; 
   }
 };
@@ -77,10 +76,6 @@ protected:
 inline
 sbSupportsWeakReference::~sbSupportsWeakReference() {
   ClearWeakReferences();
-  
-  if (mProxyLock) {
-    delete mProxyLock;
-  }
   mProxyLock = NULL;
 }
 

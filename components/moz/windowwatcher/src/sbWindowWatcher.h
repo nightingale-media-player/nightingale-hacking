@@ -40,7 +40,7 @@
 #include <nsCOMArray.h>
 #include <nsIDOMEventListener.h>
 #include <nsIDOMEventTarget.h>
-#include <nsIDOMWindowInternal.h>
+#include <nsIDOMWindow.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
 #include <nsIThreadManager.h>
@@ -48,6 +48,7 @@
 #include <nsIWindowWatcher.h>
 #include <nsTArray.h>
 #include <prmon.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbWeakReference.h>
 
@@ -143,7 +144,7 @@ private:
   nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIThreadManager>    mThreadManager;
   PRBool                        mSentMainWinPresentedNotification;
-  PRMonitor*                    mMonitor;
+  mozilla::ReentrantMonitor     mMonitor;
   PRBool                        mIsShuttingDown;
   nsCOMArray<nsIDOMWindow>      mWindowList;
 
@@ -209,7 +210,10 @@ private:
 
   nsresult InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow);
 
-  nsresult GetProxiedWindowWatcher(sbIWindowWatcher** aWindowWatcher);
+  nsresult
+  CallWithWindow_Proxy(const nsAString&           aWindowType,
+                             sbICallWithWindowCallback* aCallback,
+                             PRBool                   aWait);
 };
 
 
@@ -378,7 +382,7 @@ private:
   //
 
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
-  PRMonitor*                    mReadyMonitor;
+  mozilla::ReentrantMonitor    mReadyMonitor;
   nsCOMPtr<nsIDOMWindow>        mWindow;
   PRBool                        mReady;
 
