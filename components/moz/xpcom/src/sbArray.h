@@ -41,7 +41,8 @@
 
 #include "nsIMutableArray.h"
 #include "sbCOMArray.h"
-#include "nsCOMPtr.h"
+#include "nsCOMPtr.h"s
+#include <mozilla/Mutex.h>
 
 #define SB_THREADSAFE_ARRAY_CLASSNAME \
   "threadsafe nsIArray implementation"
@@ -54,9 +55,6 @@
 #define SB_THREADSAFE_ARRAY_CONTRACTID \
   "@songbirdnest.com/moz/xpcom/threadsafe-array;1"
 
-namespace mozilla {
-  class sbMozHackMutex;
-}
 // threadsafe (i.e. spuriously locked) version of nsArray, which is an
 // adapter class to map nsIArray->nsCOMArray
 // do NOT declare this as a stack or member variable, use
@@ -75,7 +73,7 @@ private:
     ~sbArray();
 
     sbCOMArray_base mArray;
-    mozilla::sbMozHackMutex* mLock;
+    mozilla::Mutex mLock;
 };
 
 #endif

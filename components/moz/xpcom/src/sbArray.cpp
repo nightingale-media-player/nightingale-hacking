@@ -36,10 +36,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <mozilla/Mutex.h>
 #include "sbArray.h"
 #include "nsArrayEnumerator.h"
 #include "nsWeakReference.h"
-#include <sbMozHackMutex.h>
 
 // used by IndexOf()
 struct findIndexOfClosure
@@ -58,24 +58,18 @@ NS_INTERFACE_MAP_BEGIN(sbArray)
 NS_INTERFACE_MAP_END
 
 sbArray::sbArray()
-{
-    mLock = new mozilla::sbMozHackMutex("nsThreadsafeArray::mLock");
-    NS_ASSERTION(mLock, "Failed to create lock");
+{	
+	: mLock("nsThreadsafeArray::mLock");
 }
 sbArray::sbArray(const sbCOMArray_base& aBaseArray)
     : mArray(aBaseArray)
 {
-    mLock = new mozilla::sbMozHackMutex("nsThreadsafeArray::mLock");
-    NS_ASSERTION(mLock, "Failed to create lock");
+	: mLock("nsThreadsafeArray::mLock");
 }
 
 sbArray::~sbArray()
 {
     Clear();
-    if (mLock) {
-        delete mLock;
-        mLock = NULL;
-    }
 }
 
 NS_IMPL_THREADSAFE_ADDREF(sbArray)
@@ -84,7 +78,7 @@ NS_IMPL_THREADSAFE_RELEASE(sbArray)
 NS_IMETHODIMP
 sbArray::GetLength(PRUint32* aLength)
 {
-    mozilla::sbMozHackMutexAutoLock lock(*mLock);
+    MutexAutoLock lock(mLock);
     *aLength = mArray.Count();
     return NS_OK;
 }
@@ -94,7 +88,7 @@ sbArray::QueryElementAt(PRUint32 aIndex,
                         const nsIID& aIID,
                         void ** aResult)
 {
-    mozilla::sbMozHackMutexAutoLock lock(*mLock);
+    MutexAutoLock lock(mLock);
     nsISupports * obj = mArray.SafeObjectAt(aIndex);
         if (!obj) return NS_ERROR_ILLEGAL_VALUE;
 
@@ -107,7 +101,7 @@ NS_IMETHODIMP
 sbArray::IndexOf(PRUint32 aStartIndex, nsISupports* aElement,
                  PRUint32* aResult)
 {
-    mozilla::sbMozHackMutexAutoLock lock(*mLock);
+    MutexAutoLock lock(mLock);
 
     // optimize for the common case by forwarding to mArray
     if (aStartIndex == 0) {
@@ -146,14 +140,14 @@ sbArray::AppendElement(nsISupports* aElement, bool aWeak)
         if (!elementRef)
             return NS_ERROR_FAILURE;
         { /* scope */
-            mozilla::sbMozHackMutexAutoLock lock(*mLock);
+            MutexAutoLock lock(mLock);
             result = mArray.AppendObject(elementRef);
         }
     }
 
     else {
         // add the object directly
-        mozilla::sbMozHackMutexAutoLock lock(*mLock);
+        MutexAutoLock lock(mLock);
         result = mArray.AppendObject(aElement);
     }
     return result ? NS_OK : NS_ERROR_FAILURE;
@@ -162,7 +156,7 @@ sbArray::AppendElement(nsISupports* aElement, bool aWeak)
 NS_IMETHODIMP
 sbArray::RemoveElementAt(PRUint32 aIndex)
 {
-    mozilla::sbMozHackMutexAutoLock lock(*mLock);
+    MutexAutoLock lock(mLock);
     bool result = mArray.RemoveObjectAt(aIndex);
     return result ? NS_OK : NS_ERROR_FAILURE;
 }
@@ -182,7 +176,7 @@ sbArray::InsertElementAt(nsISupports* aElement, PRUint32 aIndex, bool aWeak)
         elementRef = aElement;
     }
     { /* scope */
-        mozilla::sbMozHackMutexAutoLock lock(*mLock);
+        MutexAutoLock lock(mLock);
         bool result = mArray.InsertObjectAt(elementRef, aIndex);
         return result ? NS_OK : NS_ERROR_FAILURE;
     }
@@ -203,7 +197,7 @@ sbArray::ReplaceElementAt(nsISupports* aElement, PRUint32 aIndex, bool aWeak)
         elementRef = aElement;
     }
     { /* scope */
-        mozilla::sbMozHackMutexAutoLock lock(*mLock);
+        MutexAutoLock lock(mLock);
         bool result = mArray.ReplaceObjectAt(elementRef, aIndex);
         return result ? NS_OK : NS_ERROR_FAILURE;
     }
@@ -212,7 +206,7 @@ sbArray::ReplaceElementAt(nsISupports* aElement, PRUint32 aIndex, bool aWeak)
 NS_IMETHODIMP
 sbArray::Clear()
 {
-    mozilla::sbMozHackMutexAutoLock lock(*mLock);
+    MutexAutoLock lock(mLock);
     mArray.Clear();
     return NS_OK;
 }
