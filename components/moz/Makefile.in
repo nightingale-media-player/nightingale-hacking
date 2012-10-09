@@ -40,10 +40,10 @@ SUBDIRS = strings \
           dirprovider \
           filedownloader \
           fileutils \
+          threads \
           prompter \
           temporaryfileservice \
           threadpoolservice \
-          threads \
           urlformatter \
           variant \
           windowwatcher \
