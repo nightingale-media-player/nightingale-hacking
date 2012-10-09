@@ -411,7 +411,10 @@ private:
     nsresult WriteBasic(
       TagLib::PropertyMap           *properties);
     nsresult WriteSeparatedNumbers(
-      TagLib::PropertyMap           *properties);
+      TagLib::PropertyMap           *properties,
+      TagLib::String                target,
+      const nsAString               &baseProperty,
+      const nsAString               &countProperty);
     nsresult WriteAPE(
         TagLib::APE::Tag            *tag);
     nsresult WriteASF(
