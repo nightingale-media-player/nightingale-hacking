@@ -33,6 +33,7 @@
 #include <nsIVariant.h>
 #include <nsStringGlue.h>
 #include <xpt_struct.h>
+#include <mozilla/Mutex.h>
 
 /** 
 * Map the nsAUTF8String, nsUTF8String classes to the nsACString and
@@ -181,7 +182,7 @@ private:
 
 protected:
   nsDiscriminatedUnion mData;
-  PRLock*              mDataLock;
+  mozilla::Mutex mDataLock;
 
   PRBool               mWritable;
 };
