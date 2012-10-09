@@ -921,7 +921,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)();
+    return ((*BaseType::mTarget).*BaseType::mMethod)();
   }
 };
 
@@ -968,7 +968,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)(mArg1);
+    return ((*BaseType::mTarget).*BaseType::mMethod)(mArg1);
   }
 
 
@@ -1025,7 +1025,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2);
+    return ((*BaseType::mTarget).*BaseType::mMethod)(mArg1, mArg2);
   }
 
 
@@ -1088,7 +1088,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2, mArg3);
+    return ((*BaseType::mTarget).*BaseType::mMethod)(mArg1, mArg2, mArg3);
   }
 
 
@@ -1157,7 +1157,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2, mArg3, mArg4);
+    return ((*BaseType::mTarget).*BaseType::mMethod)(mArg1, mArg2, mArg3, mArg4);
   }
 
 
@@ -1232,7 +1232,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2, mArg3, mArg4, mArg5);
+    return ((*BaseType::mTarget).*BaseType::mMethod)(mArg1, mArg2, mArg3, mArg4, mArg5);
   }
 
 
@@ -1311,7 +1311,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)
+    return ((*BaseType::mTarget).*BaseType::mMethod)
              (mArg1, mArg2, mArg3, mArg4, mArg5, mArg6);
   }
 
@@ -1397,7 +1397,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)
+    return ((*BaseType::mTarget).*BaseType::mMethod)
              (mArg1, mArg2, mArg3, mArg4, mArg5, mArg6, mArg7);
   }
 
@@ -1489,7 +1489,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)
+    return ((*BaseType::mTarget).*BaseType::mMethod)
              (mArg1, mArg2, mArg3, mArg4, mArg5, mArg6, mArg7, mArg8);
   }
 
@@ -1592,7 +1592,7 @@ protected:
    */
   virtual ResultType OnRun()
   {
-    return (BaseType::mTarget->*BaseType::mMethod)
+    return ((*BaseType::mTarget).*BaseType::mMethod)
              (mArg1, mArg2, mArg3, mArg4, mArg5, mArg6, mArg7, mArg8, mArg9, mArg10);
   }
 
