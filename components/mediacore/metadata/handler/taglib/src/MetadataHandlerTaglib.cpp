@@ -105,7 +105,8 @@
   tmp_result = mpMetadataPropertyArray->GetPropertyValue(   \
     NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
   if (NS_SUCCEEDED(tmp_result)) {                           \
-    TagLib::String key = TagLib::String(taglibName);        \
+    TagLib::String key = TagLib::String(taglibName,         \
+      TagLib::String::UTF8);                                \
     TagLib::String value = TagLib::String(                  \
       NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),  \
       TagLib::String::UTF8);                                \
@@ -3082,7 +3083,6 @@ nsresult sbMetadataHandlerTaglib::WriteBasic(
     TagLib::PropertyMap         *properties)
 {
   LOG(("Writing Tag-unspecific values"));
-  nsresult result = NS_OK;
   nsAutoString propertyValue;
 
   // Basic stuff
@@ -3095,7 +3095,7 @@ nsresult sbMetadataHandlerTaglib::WriteBasic(
   // Taglib uses "DATE" internally, so I guess "YEAR" is deprecated.
   WRITE_PROPERTY(tmp_result, SB_PROPERTY_YEAR, "DATE");
   if (NS_SUCCEEDED(tmp_result)) {
-    TagLib::String key = TagLib::String("YEAR");
+    TagLib::String key = TagLib::String("YEAR", TagLib::String::UTF8);
     properties->erase(key);
   }
 
@@ -3119,7 +3119,7 @@ nsresult sbMetadataHandlerTaglib::WriteBasic(
   // WRITE_PROPERTY(tmp_result, SB_PROPERTY_TRACKNUMBER, "TRACKNUMBER");
   // WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
 
-  return result;
+  return NS_OK;
 }
 
 /*
@@ -3138,10 +3138,11 @@ nsresult sbMetadataHandlerTaglib::WriteSeparatedNumbers(
   TagLib::StringList valueList;
   nsAutoString propertyValue;
   bool changed;
-  TagLib::String TRACKNUM = TagLib::String("TRACKNUMBER");
-  TagLib::String DISCNUM = TagLib::String("DISCNUMBER");
-  TagLib::String SEP = TagLib::String("/");
-  TagLib::String DEFAULT = TagLib::String("0");
+  TagLib::String TRACKNUM = TagLib::String("TRACKNUMBER",
+    TagLib::String::UTF8);
+  TagLib::String DISCNUM = TagLib::String("DISCNUMBER", TagLib::String::UTF8);
+  TagLib::String SEP = TagLib::String("/", TagLib::String::UTF8);
+  TagLib::String DEFAULT = TagLib::String("0", TagLib::String::UTF8);
 
   // Track number / count
   changed = false;
