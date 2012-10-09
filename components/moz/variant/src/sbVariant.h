@@ -33,6 +33,7 @@
 #include <nsIVariant.h>
 #include <nsStringGlue.h>
 #include <xpt_struct.h>
+#include <mozilla/Mutex.h>
 
 /** 
 * Map the nsAUTF8String, nsUTF8String classes to the nsACString and
@@ -100,9 +101,6 @@ struct nsDiscriminatedUnion
  * This class is threadsafe.
  */
 
-namespace mozilla {
-  class sbMozHackMutex;
-}
 class sbVariant : public nsIWritableVariant
 {
 public:
@@ -184,7 +182,7 @@ private:
 
 protected:
   nsDiscriminatedUnion mData;
-  mozilla::sbMozHackMutex* mDataLock;
+  mozilla::Mutex mDataLock;
 
   bool               mWritable;
 };
