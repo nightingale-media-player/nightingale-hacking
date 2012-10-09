@@ -44,6 +44,9 @@ private:
       mReferent->NoticeProxyDestruction();
     }
 
+    if (mReferentLock) {
+      delete mReferentLock;
+    }
   }
 
   void NoticeReferentDestruction() {
@@ -61,7 +64,7 @@ sbSupportsWeakReference::GetWeakReference(nsIWeakReference** aInstancePtr)
 {
   NS_ENSURE_ARG_POINTER(aInstancePtr);
 
-  mozilla::Mutex Lock(mProxyLock);
+  mozilla::Mutex lock(mProxyLock);
 
   if (!mProxy) {
     mProxy = new sbWeakReference(this);
@@ -85,7 +88,7 @@ sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr)
 {
   NS_ENSURE_TRUE(mReferentLock, NS_ERROR_NOT_INITIALIZED);
 
-  mozilla::Mutex Lock(mReferentLock);
+  mozilla::Mutex lock(mReferentLock);
   return mReferent ? 
     mReferent->QueryInterface(aIID, aInstancePtr) : NS_ERROR_NULL_POINTER;
 }
@@ -93,7 +96,7 @@ sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr)
 void
 sbSupportsWeakReference::ClearWeakReferences() 
 {
-  mozilla::Mutex Lock(mProxyLock);
+  mozilla::Mutex lock(mProxyLock);
 
   if (mProxy) {
     mProxy->NoticeReferentDestruction();
