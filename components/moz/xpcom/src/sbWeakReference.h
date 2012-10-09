@@ -53,7 +53,7 @@ private:
   friend class sbWeakReference;
 
   void NoticeProxyDestruction() {
-    mozilla::Mutex autoLock(mProxyLock);
+    mozilla::Mutex Lock(mProxyLock);
     // ...called (only) by an |nsWeakReference| from _its_ dtor.
     mProxy = nsnull;
   }
