@@ -3126,129 +3126,74 @@ nsresult sbMetadataHandlerTaglib::WriteBasic(
  * WriteSeparatedNumbers
  * 
  *   --> properties             PropertyMap to write the metadata to
- *   This function adds tracknumber, total track count, discnumber and total
- * disc count as slash-combined values into the TRACKNUMBER and DISCNUMBER
- * fields of the given PropertyMap. This preserves existing values when only
- * one part of the tag is changed.
+ *   --> target                 TagLib-Key in properties to write to
+ *   --> baseProperty           Nightingale-Property of the base value
+ *   --> countProperty          Nightingale-Property of the count value
+ *   This function adds a combined "base/count" entry to a property map,
+ * as required for track- and discnumber. The function preserves existing
+ * values in the tag if they haven't been changed.
  */
 nsresult sbMetadataHandlerTaglib::WriteSeparatedNumbers(
-  TagLib::PropertyMap         *properties)
+  TagLib::PropertyMap           *properties,
+  TagLib::String                target,
+  const nsAString               &baseProperty,
+  const nsAString               &countProperty)
 {
-  nsresult tmp_result;
   TagLib::StringList valueList;
   nsAutoString propertyValue;
-  bool changed;
-  TagLib::String TRACKNUM = TagLib::String("TRACKNUMBER",
-    TagLib::String::UTF8);
-  TagLib::String DISCNUM = TagLib::String("DISCNUMBER", TagLib::String::UTF8);
   TagLib::String SEP = TagLib::String("/", TagLib::String::UTF8);
   TagLib::String DEFAULT = TagLib::String("0", TagLib::String::UTF8);
 
-  // Track number / count
-  changed = false;
-  TagLib::String tracknum = DEFAULT;
-  TagLib::String trackcount = DEFAULT;
+  bool changed = false;
+  TagLib::String base = DEFAULT;
+  TagLib::String count = DEFAULT;
 
-  valueList = (*properties)[TRACKNUM];
+  valueList = (*properties)[target];
   if (!valueList.isEmpty()){
     TagLib::StringList old = valueList[0].split(SEP);
     if (!old.isEmpty()){
-      tracknum = old[0];
+      base = old[0];
       if (old.size() > 1){
-        trackcount = old[1];
+        count = old[1];
       }
     }
   }
 
-  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
-    NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), propertyValue);
+  nsresult tmp_result = mpMetadataPropertyArray->GetPropertyValue(
+    baseProperty, propertyValue);
   if (NS_SUCCEEDED(tmp_result)) {
     changed = true;
     TagLib::String value = TagLib::String(
       NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
       TagLib::String::UTF8);
     if (value.isEmpty()){
-      tracknum = DEFAULT;
+      base = DEFAULT;
     } else {
-      tracknum = value;
+      base = value;
     }
   }
   tmp_result = mpMetadataPropertyArray->GetPropertyValue(
-    NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS), propertyValue);
+    countProperty, propertyValue);
   if (NS_SUCCEEDED(tmp_result)) {
     changed = true;
     TagLib::String value = TagLib::String(
       NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
       TagLib::String::UTF8);
     if (value.isEmpty()){
-      trackcount = DEFAULT;
+      count = DEFAULT;
     } else {
-      trackcount = value;
+      count = value;
     }
   }
 
   if (changed){
-    if (trackcount != DEFAULT){
-      tracknum += SEP;
-      tracknum += trackcount;
+    if (count != DEFAULT){
+      base += SEP;
+      base += count;
     }
-    properties->erase(TRACKNUM);
-    if (tracknum != DEFAULT){
-      properties->insert(TRACKNUM, tracknum);
-    }
-  }
-
-  // Disc number / count
-  changed = false;
-  TagLib::String discnum = DEFAULT;
-  TagLib::String disccount = DEFAULT;
-
-  valueList = (*properties)[DISCNUM];
-  if (!valueList.isEmpty()){
-    TagLib::StringList old = valueList[0].split(SEP);
-    if (!old.isEmpty()){
-      discnum = old[0];
-      if (old.size() > 1){
-        disccount = old[1];
-      }
-    }
-  }
-
-  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
-    NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER), propertyValue);
-  if (NS_SUCCEEDED(tmp_result)) {
-    changed = true;
-    TagLib::String value = TagLib::String(
-      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-      TagLib::String::UTF8);
-    if (value.isEmpty()){
-      discnum = DEFAULT;
-    } else {
-      discnum = value;
-    }
-  }
-  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
-    NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS), propertyValue);
-  if (NS_SUCCEEDED(tmp_result)) {
-    changed = true;
-    TagLib::String value = TagLib::String(
-      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-      TagLib::String::UTF8);
-    if (value.isEmpty()){
-      disccount = DEFAULT;
-    } else {
-      disccount = value;
-    }
-  }
-
-  if (changed){
-    if (disccount != DEFAULT){
-      discnum += SEP;
-      discnum += disccount;
-    }
-    properties->erase(DISCNUM);
-    if (discnum != DEFAULT){
-      properties->insert(DISCNUM, discnum);
+    properties->erase(target);
+    if (base != DEFAULT){
+      properties->insert(target, base);
     }
   }
 
@@ -3278,7 +3223,17 @@ nsresult sbMetadataHandlerTaglib::WriteAPE(
   }
 
   // Track- and discnumbers
-  result = WriteSeparatedNumbers(properties);
+  result = WriteSeparatedNumbers(properties,
+    TagLib::String("TRACKNUMBER", TagLib::String::UTF8),
+    NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS));
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+  result = WriteSeparatedNumbers(properties,
+    TagLib::String("DISCNUMBER", TagLib::String::UTF8),
+    NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS));
   if (!NS_SUCCEEDED(result)) {
     return result;
   }
@@ -3384,7 +3339,17 @@ nsresult sbMetadataHandlerTaglib::WriteID3v2(
   }
 
   // Track- and discnumbers
-  result = WriteSeparatedNumbers(properties);
+  result = WriteSeparatedNumbers(properties,
+    TagLib::String("TRACKNUMBER", TagLib::String::UTF8),
+    NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS));
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+  result = WriteSeparatedNumbers(properties,
+    TagLib::String("DISCNUMBER", TagLib::String::UTF8),
+    NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS));
   if (!NS_SUCCEEDED(result)) {
     return result;
   }
@@ -3463,7 +3428,17 @@ nsresult sbMetadataHandlerTaglib::WriteXiphComment(
   }
 
   // Track- and discnumbers
-  result = WriteSeparatedNumbers(properties);
+  result = WriteSeparatedNumbers(properties,
+    TagLib::String("TRACKNUMBER", TagLib::String::UTF8),
+    NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS));
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+  result = WriteSeparatedNumbers(properties,
+    TagLib::String("DISCNUMBER", TagLib::String::UTF8),
+    NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS));
   if (!NS_SUCCEEDED(result)) {
     return result;
   }
