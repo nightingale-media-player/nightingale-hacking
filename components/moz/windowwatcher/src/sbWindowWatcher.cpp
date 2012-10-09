@@ -50,6 +50,7 @@
 #include <sbThreadUtils.h>
 
 // Mozilla imports.
+#include <mozilla/Mutex.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
@@ -468,8 +469,8 @@ sbWindowWatcher::OnQuitApplicationGranted()
  */
 
 sbWindowWatcher::sbWindowWatcher() :
-  mMonitor("sbWindowWatcher::mMonitor"),
   mSentMainWinPresentedNotification(PR_FALSE),
+  mMonitor("sbWindowWatcher::mMonitor"),
   mIsShuttingDown(PR_FALSE),
   mServicingCallWithWindowList(PR_FALSE)
 {
