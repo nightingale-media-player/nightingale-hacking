@@ -47,7 +47,7 @@
 #include "sbServiceManager.h"
 
 // Songbird imports.
-#include <sbThreadUtilsXPCOM.h>
+#include "sbThreadUtilsXPCOM.h"
 
 // Mozilla imports.
 #include <nsServiceManagerUtils.h>

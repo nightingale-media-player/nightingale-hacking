@@ -47,6 +47,7 @@ CPP_EXTRA_INCLUDES = \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
                $(DEPS_DIR)/wpdsdk/Include \
+               $(topsrcdir)/components/include \
                $(NULL)
 
 # build a component (ie: a dynamically loadable module)
