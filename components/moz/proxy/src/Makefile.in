@@ -43,20 +43,12 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 include $(topsrcdir)/build/rules.mk
 
-MODULE		= xpcom
-LIBRARY_NAME	= xpcomproxy_s
-MOZILLA_INTERNAL_API = 1
-
-
-CPPSRCS		= \
+CPP_SRCS		= \
 		nsProxyEvent.cpp \
 		nsProxyEventClass.cpp \
 		nsProxyEventObject.cpp \
 		nsProxyObjectManager.cpp \
 		$(NULL)
-
-DEFINES		+=  -D_IMPL_NS_COM -DEXPORT_XPTC_API
-LOCAL_INCLUDES += -I$(top_srcdir)/xpcom/threads/
 
 # No shared lib; Force creation of static lib
 FORCE_STATIC_LIB = 1
