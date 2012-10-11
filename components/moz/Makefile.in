@@ -39,6 +39,7 @@ SUBDIRS = strings \
           clipboard \
           dirprovider \
           filedownloader \
+          proxy \
           fileutils \
           threads \
           prompter \

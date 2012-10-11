@@ -31,7 +31,13 @@ include $(DEPTH)/build/autodefs.mk
 
 STATIC_LIB = sbMozThreads
 
-CPP_SRCS = sbThreadUtils.cpp \
+CPP_SRCS = sbProxiedComponentManager.cpp \
+           sbThreadUtils.cpp \
            $(NULL)
+           
+CPP_EXTRA_INCLUDES = \
+               $(topsrcdir)/components/moz/proxy/src \
+               $(topsrcdir)/components/moz/proxy/public \
+               $(NULL)
 
 include $(topsrcdir)/build/rules.mk

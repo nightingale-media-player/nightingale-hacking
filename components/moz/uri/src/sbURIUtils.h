@@ -35,6 +35,8 @@
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
 
+#include <sbProxiedComponentManager.h>
+
 static inline nsresult
 sbGetFileExtensionFromURI(nsIURI* aURI, nsACString& _retval)
 {
