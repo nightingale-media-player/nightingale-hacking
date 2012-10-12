@@ -37,7 +37,7 @@ CPP_SRCS = sbProxiedComponentManager.cpp \
            
 CPP_EXTRA_INCLUDES = \
                $(topsrcdir)/components/moz/proxy/src \
-               $(topsrcdir)/components/moz/proxy/public \
+               $(DEPTH)/components/moz/proxy/public \
                $(NULL)
 
 include $(topsrcdir)/build/rules.mk
