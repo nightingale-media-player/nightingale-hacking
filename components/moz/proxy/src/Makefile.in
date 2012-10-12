@@ -41,7 +41,6 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
-include $(topsrcdir)/build/rules.mk
 
 CPP_SRCS		= \
 		nsProxyEvent.cpp \
@@ -50,5 +49,10 @@ CPP_SRCS		= \
 		nsProxyObjectManager.cpp \
 		$(NULL)
 
-# No shared lib; Force creation of static lib
-FORCE_STATIC_LIB = 1
+CPP_EXTRA_INCLUDES = \
+		$(DEPTH)/components/moz/proxy/public \
+		$(NULL)
+
+STATIC_LIB = nsProxyObject
+
+include $(topsrcdir)/build/rules.mk

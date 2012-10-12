@@ -39,23 +39,21 @@
 #ifndef nsProxyEventPrivate_h__
 #define nsProxyEventPrivate_h__
 
-#include "nsISupports.h"
-#include "nsIFactory.h"
-#include "nsIEventTarget.h"
-#include "nsIInterfaceInfo.h"
 #include "nsIProxyObjectManager.h"
 
-#include "nsXPTCUtils.h"
+#include <nsISupports.h>
+#include <nsIFactory.h>
+#include <nsIEventTarget.h>
+#include <nsIInterfaceInfo.h>
+#include <nsXPTCUtils.h>
+#include <mozilla/Mutex.h>
+#include <nsAutoPtr.h>
+#include <nsCOMPtr.h>
+#include <nsThreadUtils.h>
+#include <nsClassHashtable.h>
+#include <nsHashtable.h>
 
-#include "mozilla/Mutex.h"
-#include "nsAutoPtr.h"
-#include "nsCOMPtr.h"
-#include "nsThreadUtils.h"
-
-#include "nsClassHashtable.h"
-#include "nsHashtable.h"
-
-#include "prlog.h"
+#include <prlog.h>
 
 class nsProxyEventObject;
 
@@ -302,7 +300,7 @@ private:
     ~nsProxyObjectManager();
 
     static nsProxyObjectManager* gInstance;
-    nsHashtable  mProxyObjectMap;
+    nsHashtable mProxyObjectMap;
     nsClassHashtable<nsIDHashKey, nsProxyEventClass> mProxyClassMap;
     Mutex mProxyCreationLock;
 };
