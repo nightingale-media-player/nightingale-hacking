@@ -118,6 +118,8 @@
     }                                                       \
   }                                                         \
   PR_END_MACRO
+#define GET_PROPERTY(taglibid)                             \
+  properties[TagLib::String(taglibid)].toString(", ")
 
 // Property namespace for Gracenote properties
 // Note that this must match those used in sbGracenoteDefines.h, so
@@ -2287,6 +2289,35 @@ void sbMetadataHandlerTaglib::CompleteRead()
     mCompleted = PR_TRUE;
 }
 
+/*
+ * AddSeparatedNumbers
+ *
+ *   --> value                  Value read from taglib
+ *   --> baseProperty           Nightingale property for the base value
+ *   --> countProperty          Nightingale property for the count value
+ *
+ *   This function adds an value consisting of a base value and an optional
+ * count. Example: "1/2" -> baseProperty will become 1, countProperty 2.
+ */
+
+nsresult sbMetadataHandlerTaglib::AddSeparatedNumbers(
+    TagLib::String                value,
+    const char                    *baseProperty,
+    const char                    *countProperty)
+{
+  TagLib::String SEP = TagLib::String("/", TagLib::String::UTF8);
+  
+  TagLib::StringList val = value.split(SEP);
+  if (!val.isEmpty()){
+    AddMetadataValue(baseProperty, (PRUint64) val[0].toInt());
+    if (val.size() > 1){
+      AddMetadataValue(countProperty, (PRUint64) val[1].toInt());
+    }
+  }
+
+  return NS_OK;
+}
+
 
 /*
  * ReadFile
@@ -2316,7 +2347,7 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
 
   pTag = pTagFile->tag();
   if (pTag) {
-    // yay random charset guessing!
+    TagLib::PropertyMap properties = pTag->properties();
     
     // Default tags
     AddMetadataValue(SB_PROPERTY_TRACKNAME,       pTag->title(), aCharset);
@@ -2325,28 +2356,44 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     AddMetadataValue(SB_PROPERTY_COMMENT,         pTag->comment(), aCharset);
     AddMetadataValue(SB_PROPERTY_GENRE,           pTag->genre(), aCharset);
     AddMetadataValue(SB_PROPERTY_YEAR,            (PRUint64)pTag->year());
-    AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     (PRUint64)pTag->track());
-    
-    /* TODO: this stuff IS NOT HANDLED YET, must do some filetype-specific work here!
-    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME, pTag->albumArtist(), aCharset);
-    AddMetadataValue(SB_PROPERTY_LYRICS,          pTag->lyrics(), aCharset);
+
+    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME,
+      GET_PROPERTY("ALBUMARTIST"), aCharset);
+    AddMetadataValue(SB_PROPERTY_LYRICS,
+      GET_PROPERTY("LYRICS"), aCharset);
 // Disabling producer: it's not exposed anywhere in the UI anyway.
 //    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    pTag->producer(), aCharset);
-    AddMetadataValue(SB_PROPERTY_COMPOSERNAME,    pTag->composer(), aCharset);
-    AddMetadataValue(SB_PROPERTY_CONDUCTORNAME,   pTag->conductor(), aCharset);
-    AddMetadataValue(SB_PROPERTY_LYRICISTNAME,    pTag->lyricist(), aCharset);
-    AddMetadataValue(SB_PROPERTY_RECORDLABELNAME, pTag->recordLabel(), aCharset);
-    AddMetadataValue(SB_PROPERTY_RATING,          pTag->rating(), aCharset);
-    AddMetadataValue(SB_PROPERTY_LANGUAGE,        pTag->language(), aCharset);
-    AddMetadataValue(SB_PROPERTY_KEY,             pTag->key(), aCharset);
-    AddMetadataValue(SB_PROPERTY_COPYRIGHT,       pTag->license(), aCharset);
-    AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,    pTag->licenseUrl(), aCharset);
-    AddMetadataValue(SB_PROPERTY_TOTALTRACKS,     (PRUint64)pTag->totalTracks());
-    AddMetadataValue(SB_PROPERTY_DISCNUMBER,      (PRUint64)pTag->disc());
-    AddMetadataValue(SB_PROPERTY_TOTALDISCS,      (PRUint64)pTag->totalDiscs());
-    AddMetadataValue(SB_PROPERTY_BPM,             (PRUint64)pTag->bpm());
-    AddMetadataValue(SB_PROPERTY_CONTENTTYPE,     NS_LITERAL_STRING("audio"));
-    AddMetadataValue(SB_PROPERTY_ISPARTOFCOMPILATION, pTag->isCompilation());*/
+    AddMetadataValue(SB_PROPERTY_COMPOSERNAME,
+      GET_PROPERTY("COMPOSER"), aCharset);
+    AddMetadataValue(SB_PROPERTY_CONDUCTORNAME,
+      GET_PROPERTY("CONDUCTOR"), aCharset);
+    AddMetadataValue(SB_PROPERTY_LYRICISTNAME,
+      GET_PROPERTY("LYRICIST"), aCharset);
+    AddMetadataValue(SB_PROPERTY_RECORDLABELNAME,
+      GET_PROPERTY("PUBLISHER"), aCharset);
+    AddMetadataValue(SB_PROPERTY_LANGUAGE,
+      GET_PROPERTY("LANGUAGE"), aCharset);
+    AddMetadataValue(SB_PROPERTY_KEY,
+      GET_PROPERTY("INITIALKEY"), aCharset);
+    AddMetadataValue(SB_PROPERTY_COPYRIGHT,
+      GET_PROPERTY("COPYRIGHT"), aCharset);
+    AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,
+      GET_PROPERTY("COPYRIGHTURL"), aCharset);
+
+    TagLib::String bpm_value = GET_PROPERTY("BPM");
+    AddMetadataValue(SB_PROPERTY_BPM, (PRUint64) bpm_value.toInt());
+
+    AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("audio"));
+
+    AddSeparatedNumbers(GET_PROPERTY("DISCNUMBER"), SB_PROPERTY_DISCNUMBER,
+      SB_PROPERTY_TOTALDISCS);
+    AddSeparatedNumbers(GET_PROPERTY("TRACKNUMBER"), SB_PROPERTY_TRACKNUMBER,
+      SB_PROPERTY_TOTALTRACKS);
+
+    AddMetadataValue(SB_PROPERTY_RATING, GET_PROPERTY("NIGHTINGALE-RATING"), aCharset);
+    
+    // Disabled, as we have no write support for this, see WriteID3v2 for details.
+    // AddMetadataValue(SB_PROPERTY_ISPARTOFCOMPILATION, pTag->isCompilation());
   }
 
   pAudioProperties = pTagFile->audioProperties();
@@ -3110,7 +3157,6 @@ nsresult sbMetadataHandlerTaglib::WriteBasic(
   WRITE_PROPERTY(tmp_result, SB_PROPERTY_LANGUAGE, "LANGUAGE");
   WRITE_PROPERTY(tmp_result, SB_PROPERTY_COPYRIGHT, "COPYRIGHT");
   WRITE_PROPERTY(tmp_result, SB_PROPERTY_COPYRIGHTURL, "COPYRIGHTURL");
-  WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
   WRITE_PROPERTY(tmp_result, SB_PROPERTY_BPM, "BPM");
   WRITE_PROPERTY(tmp_result, SB_PROPERTY_KEY, "INITIALKEY");
 
