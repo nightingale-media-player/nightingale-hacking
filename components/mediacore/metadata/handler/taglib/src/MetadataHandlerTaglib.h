@@ -365,6 +365,11 @@ private:
 
     void CompleteRead();
 
+    nsresult AddSeparatedNumbers(
+      TagLib::String                value,
+      const char                    *baseProperty,
+      const char                    *countProperty);
+
     PRBool ReadFile(
         TagLib::File                *pTagFile,
         const char                  *aCharset = 0);
