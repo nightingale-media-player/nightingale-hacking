@@ -50,6 +50,6 @@ EXPORTS		= \
 		nsProxiedService.h \
 		$(NULL)
 
-XPIDL_HEADER_SRCS	= \
+XPIDL_SRCS	= \
 		nsIProxyObjectManager.idl  \
 		$(NULL)
