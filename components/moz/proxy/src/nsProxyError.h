@@ -1,5 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
-/* vim:set ts=4 sw=4 sts=4 ci et: */
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -21,7 +20,6 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Pierre Phaneuf <pp@ludusdesign.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -37,52 +35,35 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "nsProxyEventPrivate.h"
-
-#include <nsIComponentManager.h>
-#include <nsIServiceManager.h>
-#include <nsCOMPtr.h>
-
-#include <nsMemory.h>
-#include <nsTHashtable.h>
-
-#include <xptcall.h>
-
-// LIFETIME_CACHE will cache class for the entire cyle of the application.
-#define LIFETIME_CACHE
-
-static uint32 zero_methods_descriptor;
+#ifndef nsProxyError_h__
+#define nsProxyError_h__
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//  nsProxyEventClass
-//////////////////////////////////////////////////////////////////////////////////////////////////
+#include <nsError.h>
 
-nsProxyEventClass::nsProxyEventClass(REFNSIID aIID, nsIInterfaceInfo* aInfo)
-    : mIID(aIID),
-      mInfo(aInfo),
-      mDescriptors(NULL)
-{
-    uint16 methodCount;
-    if(NS_SUCCEEDED(mInfo->GetMethodCount(&methodCount)))
-    {
-        if(methodCount)
-        {
-            int wordCount = (methodCount/32)+1;
-            if(NULL != (mDescriptors = new uint32[wordCount]))
-            {
-                memset(mDescriptors, 0, wordCount * sizeof(uint32));
-            }
-        }
-        else
-        {
-            mDescriptors = &zero_methods_descriptor;
-        }
-    }
-}
+/* For COM compatibility reasons, we want to use exact error code numbers
+   for NS_ERROR_PROXY_INVALID_IN_PARAMETER and NS_ERROR_PROXY_INVALID_OUT_PARAMETER.
+   The first matches:
 
-nsProxyEventClass::~nsProxyEventClass()
-{
-    if (mDescriptors && mDescriptors != &zero_methods_descriptor)
-        delete [] mDescriptors;
-}
+     #define RPC_E_INVALID_PARAMETER          _HRESULT_TYPEDEF_(0x80010010L)
+
+   Errors returning this mean that the xpcom proxy code could not create a proxy for
+   one of the in paramaters.
+
+   Because of this, we are ignoring the convention if using a base and offset for
+   error numbers.
+
+*/
+
+/* Returned when a proxy could not be create a proxy for one of the IN parameters
+   This is returned only when the "real" method has NOT been invoked.
+*/
+
+#define NS_ERROR_PROXY_INVALID_IN_PARAMETER        ((nsresult) 0x80010010L)
+
+/* Returned when a proxy could not be create a proxy for one of the OUT parameters
+   This is returned only when the "real" method has ALREADY been invoked.
+*/
+
+#define NS_ERROR_PROXY_INVALID_OUT_PARAMETER       ((nsresult) 0x80010011L)
+#endif

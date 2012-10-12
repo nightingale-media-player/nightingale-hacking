@@ -51,7 +51,7 @@
 #include <nsCOMPtr.h>
 #include <nsThreadUtils.h>
 #include <nsClassHashtable.h>
-#include <nsHashtable.h>
+#include <nsTHashtable.h>
 
 #include <prlog.h>
 
@@ -300,7 +300,7 @@ private:
     ~nsProxyObjectManager();
 
     static nsProxyObjectManager* gInstance;
-    nsHashtable mProxyObjectMap;
+    nsTHashtable<nsStringHashKey> mProxyObjectMap;
     nsClassHashtable<nsIDHashKey, nsProxyEventClass> mProxyClassMap;
     Mutex mProxyCreationLock;
 };

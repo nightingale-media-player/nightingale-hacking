@@ -36,20 +36,18 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-
-#include "prprf.h"
-#include "prmem.h"
-
-#include "nscore.h"
+ 
 #include "nsProxyEventPrivate.h"
-#include "nsIThreadInternal.h"
+#include "nsProxyError.h"
 
-#include "nsServiceManagerUtils.h"
-
-#include "nsHashtable.h"
-
-#include "nsIInterfaceInfoManager.h"
-#include "xptcall.h"
+#include <prprf.h>
+#include <prmem.h>
+#include <nscore.h>
+#include <nsIThreadInternal.h>
+#include <nsServiceManagerUtils.h>
+#include <nsTHashtable.h>
+#include <nsIInterfaceInfoManager.h>
+#include <xptcall.h>
 
 using namespace mozilla;
 
