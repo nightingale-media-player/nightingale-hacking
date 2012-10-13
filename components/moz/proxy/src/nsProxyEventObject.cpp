@@ -40,10 +40,14 @@
 #include "nsProxyEventPrivate.h"
 #include "nsProxyError.h"
 
+//hack below
+#include "nsIThreadInternal.h" 
+/*nasty freaking hack atop this proxy 
+in and of itself is an even nastier hack...chicken and egg here*/
+
 #include <prprf.h>
 #include <prmem.h>
 #include <nscore.h>
-#include <nsIThreadInternal.h>
 #include <nsServiceManagerUtils.h>
 #include <nsTHashtable.h>
 #include <nsIInterfaceInfoManager.h>
