@@ -47,15 +47,14 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include "nsProxyEventPrivate.h"
-
-#include "nsIComponentManager.h"
 #include "nsIProxyObjectManager.h"
-#include "nsIServiceManager.h"
-#include "nsIThread.h"
 
-#include "nsCOMPtr.h"
-#include "nsThreadUtils.h"
-#include "xptiprivate.h"
+#include <nsIComponentManager.h>
+#include <nsIServiceManager.h>
+#include <nsIThread.h>
+#include <nsCOMPtr.h>
+#include <nsThreadUtils.h>
+#include <xptiprivate.h>
 
 using namespace mozilla;
 

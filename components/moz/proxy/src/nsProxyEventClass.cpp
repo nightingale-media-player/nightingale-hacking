@@ -42,7 +42,6 @@
 #include <nsIComponentManager.h>
 #include <nsIServiceManager.h>
 #include <nsCOMPtr.h>
-
 #include <nsMemory.h>
 #include <nsTHashtable.h>
 

@@ -53,18 +53,17 @@
 #include "nsProxyEventPrivate.h"
 #include "nsProxyRelease.h"
 #include "nsIProxyObjectManager.h"
-#include "nsCRT.h"
 
-#include "pratom.h"
-#include "prmem.h"
-#include "xptcall.h"
-
-#include "nsXPCOMCID.h"
-#include "nsServiceManagerUtils.h"
-#include "nsIComponentManager.h"
-#include "nsThreadUtils.h"
-#include "nsEventQueue.h"
-#include "nsMemory.h"
+#include <nsCRT.h>
+#include <pratom.h>
+#include <prmem.h>
+#include <xptcall.h>
+#include <nsXPCOMCID.h>
+#include <nsServiceManagerUtils.h>
+#include <nsIComponentManager.h>
+#include <nsThreadUtils.h>
+#include <nsEventQueue.h>
+#include <nsMemory.h>
 
 using namespace mozilla;
 
