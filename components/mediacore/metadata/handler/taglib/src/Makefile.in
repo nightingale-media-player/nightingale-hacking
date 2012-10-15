@@ -60,9 +60,6 @@ CPP_EXTRA_INCLUDES = \
  $(MOZSDK_IDL_DIR) \
  $(NULL)
 
-CPP_EXTRA_DEFS = -DTAGLIB_STATIC \
-                 $(NULL)
-
 DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
                             plds4 \
                             $(NULL)
@@ -91,10 +88,20 @@ ifeq (solaris,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
 endif
 
-CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
-					  /usr/include/taglib \
-					  /usr/local/include/taglib \
-                      $(NULL)
+ifeq (linux,$(SB_PLATFORM))
+	DYNAMIC_LIB_RAW_IMPORTS += $(TAGLIB_LIBS) \
+						  $(NULL)
+						  
+	CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
+						  $(NULL)
+
+else
+	CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
+						  $(NULL)
+						  
+	CPP_EXTRA_DEFS = -DTAGLIB_STATIC \
+					 $(NULL)
+endif
         
 IS_COMPONENT = 1                     
 
