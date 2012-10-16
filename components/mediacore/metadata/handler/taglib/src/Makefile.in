@@ -67,7 +67,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag$(LIB_SUFFIX) \
  $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
@@ -96,6 +95,10 @@ ifeq (linux,$(SB_PLATFORM))
 						  $(NULL)
 
 else
+	DYNAMIC_LIB_STATIC_IMPORTS += \
+		$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag$(LIB_SUFFIX) \
+		$(NULL)
+
 	CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
 						  $(NULL)
 						  
