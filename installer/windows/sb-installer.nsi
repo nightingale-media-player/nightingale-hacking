@@ -144,9 +144,6 @@ Section "-Application" Section1
 
    Call startAskToolbarInstaller
 
-   ; This macro is hiding in sb-devicdrivers.nsi.in
-   !insertmacro InstallDeviceDrivers
-   
    ${If} $UnpackMode == ${FALSE}
       Call InstallAppRegistryKeys
    
