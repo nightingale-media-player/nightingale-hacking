@@ -91,6 +91,7 @@
 #include <uniquefileidentifierframe.h>
 #include <textidentificationframe.h>
 #include <tpropertymap.h>
+#include <tagunion.h>
 
 /* C++ std imports. */
 #include <sstream>
@@ -118,8 +119,36 @@
     }                                                       \
   }                                                         \
   PR_END_MACRO
-#define GET_PROPERTY(taglibid)                             \
+#define GET_PROPERTY(taglibid)                              \
   properties[TagLib::String(taglibid)].toString(", ")
+#define TAGLIB1_PROPERTIES_WORKAROUND(pTag)                 \
+  PR_BEGIN_MACRO                                            \
+  if (dynamic_cast<TagLib::APE::Tag*>(pTag)){               \
+    properties.merge(dynamic_cast<TagLib::APE::Tag*>(pTag)  \
+      ->properties());                                      \
+  }                                                         \
+  if (dynamic_cast<TagLib::ASF::Tag*>(pTag)){               \
+    properties.merge(dynamic_cast<TagLib::ASF::Tag*>(pTag)  \
+      ->properties());                                      \
+  }                                                         \
+  if (dynamic_cast<TagLib::ID3v1::Tag*>(pTag)){             \
+    properties.merge(dynamic_cast<TagLib::ID3v1::Tag*>(pTag)\
+      ->properties());                                      \
+  }                                                         \
+  if (dynamic_cast<TagLib::ID3v2::Tag*>(pTag)){             \
+    properties.merge(dynamic_cast<TagLib::ID3v2::Tag*>(pTag)\
+      ->properties());                                      \
+  }                                                         \
+  if (dynamic_cast<TagLib::MP4::Tag*>(pTag)){               \
+    properties.merge(dynamic_cast<TagLib::MP4::Tag*>(pTag)  \
+      ->properties());                                      \
+  }                                                         \
+  if (dynamic_cast<TagLib::Ogg::XiphComment*>(pTag)){       \
+    properties.merge(                                       \
+      dynamic_cast<TagLib::Ogg::XiphComment*>(pTag)         \
+      ->properties());                                      \
+  }                                                         \
+  PR_END_MACRO
 
 // Property namespace for Gracenote properties
 // Note that this must match those used in sbGracenoteDefines.h, so
@@ -2348,6 +2377,23 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
   pTag = pTagFile->tag();
   if (pTag) {
     TagLib::PropertyMap properties = pTag->properties();
+
+    // We need to emulate virtual here, as taglib can't mark them as virtual
+    // for now. The following stuff can be deleted once taglib2 is used.
+    if (dynamic_cast<TagLib::TagUnion*>(pTag)){
+      TagLib::TagUnion* tagUnion = dynamic_cast<TagLib::TagUnion*>(pTag);
+      if (tagUnion->tag(2)){
+        TAGLIB1_PROPERTIES_WORKAROUND(tagUnion->tag(2));
+      }
+      if (tagUnion->tag(1)){
+        TAGLIB1_PROPERTIES_WORKAROUND(tagUnion->tag(1));
+      }
+      if (tagUnion->tag(0)){
+        TAGLIB1_PROPERTIES_WORKAROUND(tagUnion->tag(0));
+      }
+    } else {
+      TAGLIB1_PROPERTIES_WORKAROUND(pTag);
+    }
     
     // Default tags
     AddMetadataValue(SB_PROPERTY_TRACKNAME,       pTag->title(), aCharset);
