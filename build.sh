@@ -9,8 +9,17 @@ set -e
 build="release"
 buildir="$(pwd)"
 version=1.11
-# we'll use wget as default. OS without wget should override this.
-DOWNLOADER="wget"
+
+download() {
+  if which wget &>/dev/null ; then
+    wget "$1"
+  elif which curl &>/dev/null ; then
+    curl --location -o "${1##*/}" "$1"
+  else
+    echo "Failed to find downloader to fetch $1" >&2
+    exit 1
+  fi
+}
 
 md5_verify() {
   md5_fail() {
@@ -44,29 +53,33 @@ md5_verify() {
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
   linux*)
-    arch=`uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!s/.*/i686/'`
+    case "$(uname -m)" in
+      *64*) arch=x86_64 ;;
+      *86)  arch=i686 ;;
+      *) echo "Unknown arch" >&2 ; exit 1 ;;
+    esac
     depdirn="linux-$arch"
     patch=1
-    export CXXFLAGS="-fpermissive"
+    version=2.2.0
+    #if you have a dep built on a differing date for either arch, just use a conditional to set this
+    depdate=20120929
+    export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
-    cd dependencies
- 
-    if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
-      md5_verify "$depdirn-$version.tar.lzma"
-    fi
-    
-    if [ ! -d "$depdirn" ] ; then
-		tar xvf "$depdirn-$version.tar.lzma"
-	fi
-	
-    cd ../
+    ( cd dependencies && {
+		if [ ! -d "$depdirn" ] ; then
+			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
+				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version-$depdate-release.tar.lzma"
+				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
+			fi
+			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
+		fi
+	} ; )
     
     # use our own gstreamer libs
-    for dir in /usr/lib /usr/lib64 /usr/lib/$(uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!s/.*/i386/')-linux-gnu ; do
+    for dir in /usr/lib /usr/lib64 /usr/lib/${arch}-linux-gnu ; do
       if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-        export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
+        export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
         break
       elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
         export GST_PLUGIN_PATH=${dir}/gstreamer0.10
@@ -74,6 +87,7 @@ case $OSTYPE in
       fi
     done
     
+    [ -f nightingale.config ] || touch nightingale.config
     grep -q -E 'ac_add_options\s+--with-media-core=gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
     ;;
   msys*)
@@ -136,7 +150,7 @@ esac
 cd dependencies
 
 if [ ! -f "vendor-$version.zip" ] ; then
-	$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+	download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
 	md5_verify "vendor-$version.zip"
 fi
 

@@ -227,6 +227,19 @@ fi
 AC_SUBST(SB_SQLITE_DEBUG)
 
 #
+#  Check for --enable-device-drivers
+#
+
+AC_ARG_ENABLE(device-drivers,
+              [  --enable-device-drivers  include device drivers (default=yes)])
+if test "$enable_device_drivers" == "no"; then
+  SB_ENABLE_DEVICE_DRIVERS=0
+else
+  SB_ENABLE_DEVICE_DRIVERS=1
+fi
+AC_SUBST(SB_ENABLE_DEVICE_DRIVERS)
+
+#
 # Check platform
 #
 
@@ -770,8 +783,11 @@ case "$SB_PLATFORM" in
         15)
             _CC_SUITE=9
             ;;
+        16)
+            _CC_SUITE=10
+            ;;
     esac
-    if test "$_CC_MAJOR_VERSION" -ne "$_CC_SUPPORTED_MAJOR_VERSION"; then
+    if test "$_CC_MAJOR_VERSION" -lt "$_CC_SUPPORTED_MAJOR_VERSION"; then
         if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
             AC_MSG_WARN([This version of the MSVC compiler, $CC_VERSION, is unsupported. Songbird Bugzilla reports should not be filed against builds produced using it.])
         else
@@ -855,7 +871,7 @@ case "$SB_PLATFORM" in
     # Always disable warning 4624, because the XPCOM elicits this warning.
     # Also disable warning 4800, it isn't useful, and using nsString with
     # std::map causes it
-    CFLAGS_WARNING_IS_ERROR="-WX -wd4624 -wd4800"
+    CFLAGS_WARNING_IS_ERROR="-wd4624 -wd4800"
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL $MSVC_DLL_LINKER_FLAGS"
     LDFLAGS_BIN=""
@@ -957,7 +973,11 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
-
+        
+    PKG_CHECK_MODULES(TAGLIB, taglib >= 1.8.0)
+	AC_SUBST(TAGLIB_LIBS)
+	AC_SUBST(TAGLIB_CFLAGS)
+		
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"

@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS += lib
+SUBDIRS += lib \
+           $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
    SUBDIRS += win32 \

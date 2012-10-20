@@ -42,6 +42,7 @@ EXIT_ON_ERROR = set -e; # Shell loops continue past errors without this.
 # check for missing vendor-binaries and mozbrowser dir (common errors)
 ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
    $(error Please check out or build vendor-binaries - \
+	  $(MOZSDK_SCRIPTS_DIR) \
       see https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
 endif
 
@@ -102,6 +103,10 @@ endif
 
 ifdef SB_ENABLE_TEST_HARNESS
    PPDEFINES += -DSB_ENABLE_TEST_HARNESS=1
+endif
+
+ifdef SB_ENABLE_DEVICE_DRIVERS
+   PPDEFINES += -DSB_ENABLE_DEVICE_DRIVERS=1
 endif
 
 ifdef SB_ENABLE_BREAKPAD

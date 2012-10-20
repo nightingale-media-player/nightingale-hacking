@@ -63,6 +63,8 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
+   DeleteRegKey /ifempty HKCU "Software\Modern UI Test\Unicode"
+  
    ; Disabled for now; see bug 22964
    ; Call un.RDSConfigRemove
    Call un.RemoveCdrip
@@ -72,7 +74,6 @@ Section "Uninstall"
 
    ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro un.UninstallFiles
-
    ; Refresh desktop.
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
 SectionEnd
@@ -157,10 +158,13 @@ Function un.RemoveAppRegistryKeys
 
    ; Remove the last of the registry keys
    DeleteRegKey HKLM "$RootAppRegistryKey"
+   DeleteRegKey HKLM "Software\Philips Songbird\FirmwareImages\IniFile"
 
    ; And if we're the last installed copy of Songbird, delete all our reg keys
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\$InstallerType"
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}"
+   DeleteRegKey /ifempty HKLM "Software\Philips Songbird"
+
 FunctionEnd 
  
 ;
@@ -210,6 +214,8 @@ Function un.DeleteUpdateAddedFiles
       deleteAddedFilesDone:
          Delete "$INSTDIR\${AddedFilesList}"
    ${EndIf}
+   ; Delete the ini file we created
+   Delete "$INSTDIR\Philips\Devices\Firmware\DefaultFirmwareImages.ini"
 FunctionEnd
 
 ; Based off an original CleanVirtualStore function written by Rob Strong 
@@ -266,5 +272,7 @@ FunctionEnd
 
 Function un.onInit
    ${UAC.U.Elevate.AdminOnly} ${FileUninstallEXE}
+
+  !insertmacro MUI_UNGETLANGUAGE
    Call un.CommonInstallerInit
 FunctionEnd

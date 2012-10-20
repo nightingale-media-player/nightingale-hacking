@@ -655,6 +655,12 @@
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
 <!ENTITY first_run.import_media.scan_directories.watch.label "Watch this directory for changes">
 
+<!-- DLNA How To page terms -->
+<!ENTITY first_run.DLNA.name "Songbird Media Server">
+<!ENTITY first_run.DLNA.header.label "Media Sharing Add-on">
+<!ENTITY first_run.DLNA.description "The &first_run.DLNA.name; allows you to share your &brandShortName; library (music and videos) with selected devices in your home network.">
+<!ENTITY first_run.DLNA.point "To turn Media Sharing on or off, open the dialog by clicking on the Media Sharing icon (circled) in the &brandShortName; statusbar.">
+
 <!-- First-run install add-ons entities. -->
 <!ENTITY first_run.install_add_ons.title "Downloading Add-ons">
 

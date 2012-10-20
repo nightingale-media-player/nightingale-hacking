@@ -47,7 +47,6 @@
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 
-
 //------------------------------------------------------------------------------
 //
 // First-run wizard dialog defs.
@@ -64,6 +63,147 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+var SBLanguage = {
+    DEFAULT_LOCALE: "en-US",
+    locale: "",
+    firstRunWizard: null,
+    getCountry: function() {
+      /** ******************************************** */
+      /* try to get the country from the preferences */
+      /** ******************************************** */
+       // Default country is United States
+       var localeVal = SBLanguage.DEFAULT_LOCALE; // Default to english
+       var regCountryVal = "1033";
+       
+       var langLocaleMap = {
+           "1046": "pt-BR",
+           "2052": "zh-CN",
+           "1029":"cs",
+           "1030":"da",
+           "1035":"fi",
+           "1036":"fr",
+           "1031":"de",
+           "1032":"el",
+           "1038":"hu",
+           "1040":"it",
+           "1041":"ja",
+           "1042":"ko",
+           "1025":"ar",
+           "1043":"nl",
+           "1044":"nb-NO",
+           "1045":"pl",
+           "2070":"pt",
+           "1049":"ru",
+           "1051":"sk",
+           "1034":"es-ES",
+           "1053":"sv-SE" ,
+           "1028":"zh-TW",
+           "1054":"th",
+           "1055":"tr",
+           "1033":"en-US" 
+       };
+       try {
+         var wrk = Cc["@mozilla.org/windows-registry-key;1"]
+           .createInstance(Ci.nsIWindowsRegKey);
+         if (wrk) {
+           wrk.open(wrk.ROOT_KEY_LOCAL_MACHINE,
+               "SOFTWARE\\Songbird",
+               wrk.ACCESS_READ);
+           if (wrk.hasValue("Installer Country")) {
+             regCountryVal = wrk.readStringValue("Installer Country");
+           }
+           wrk.close();
+         }
+       }
+       catch (e) {
+         // Just continue if there is an error
+       }
+     
+       // Convert the country code in country name
+       if ( !isNaN(regCountryVal)) {
+         localeVal = langLocaleMap["" + regCountryVal];
+       }
+       return localeVal;
+    },
+     
+    exists: function (array, value) {
+      for (i in array) {
+        if (array[i] == value)
+          return true;
+      }
+      return false;
+    },
+    menubar_locales_bundle: null,
+    menubarLocalesBundleCB: {
+      onDownloadComplete: function(bundle) {
+        try {
+          for (var i=0; i < bundle.bundleExtensionCount; i++) {
+            var thisLocale = bundle.getExtensionAttribute(i, "languageTag");
+            if (thisLocale == SBLanguage.locale) {
+              for (var x = 0; x < bundle.bundleExtensionCount; x++) {
+                bundle.setExtensionInstallFlag(x, x == i);
+              }
+              var res = bundle.installFlaggedExtensions(window);
+              
+              if (res == bundle.BUNDLE_INSTALL_SUCCESS) {
+                SBLanguage.firstRunWizard._markFirstRunComplete = false;
+                switchLocale(SBLanguage.locale, false);
+                restartApp();
+              } 
+              else {
+                gPrompt.alert( window, 
+                              SBString( "locales.installfailed.title", "Language Download" ),
+                              SBString( "locales.installfailed.msg", "Language installation failed, check your network connectivity!" ) );
+              }
+              break;
+            }
+          }
+        }
+        catch (e)
+        {
+          dump("Exception: " + e.toString() + "\n");
+        }
+      },
+      onError: function(bundle) { dump("DWB: Error downloading bundles\n"); },
+      QueryInterface : function(aIID) {
+        if (!aIID.equals(Components.interfaces.sbIBundleDataListener) &&
+            !aIID.equals(Components.interfaces.nsISupports)) 
+        {
+          throw Components.results.NS_ERROR_NO_INTERFACE;
+        }
+        return this;
+      }
+    },
+    loadLocaleFromRegistry : function(firstRunWizard) {
+      SBLanguage.firstRunWizard = firstRunWizard;
+      try {
+        SBLanguage.locale = SBLanguage.getCountry();
+        var prefLocaleVal = Application.prefs.getValue("general.useragent.locale" , "");
+        var prefLocaleFirstRun = Application.prefs.getValue("general.useragent.locale.firstrun", true);
+        Application.prefs.setValue("general.useragent.locale.firstrun", false);
+        // We only want to do this on first run, else if the users switches the
+        // language we'll
+        // end up switching it back here
+        if (prefLocaleFirstRun && SBLanguage.locale != prefLocaleVal) {
+          switchLocale(SBLanguage.locale);
+          try {
+            var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
+            menubar_locales_bundle = new sbIBundle();
+            menubar_locales_bundle.bundleId = "locales";
+            menubar_locales_bundle.bundleURL = Application.prefs.getValue("songbird.url.locales", "default");
+            menubar_locales_bundle.addBundleDataListener(this.menubarLocalesBundleCB);
+            menubar_locales_bundle.retrieveBundleData(MENUBAR_LOCALESBUNDLE_TIMEOUT);
+          } catch ( err ) {
+            SB_LOG("initLocalesBundle", "" + err );
+          }
+        }
+      }
+      catch (e)
+      {
+        dump("Exception:" + e.toString() + "\n");
+      }
+    }     
+}
 
 //------------------------------------------------------------------------------
 //
@@ -404,6 +544,8 @@ var firstRunWizard = {
     if (this._initialized)
       return;
 
+    SBLanguage.loadLocaleFromRegistry(this);
+    
     // Get the wizard element.
     this.wizardElem = document.getElementById("first_run_wizard");
 

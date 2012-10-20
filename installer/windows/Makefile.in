@@ -43,10 +43,6 @@ endif
 
 ifeq ($(SB_PLATFORM),windows)
 SONGBIRD_DIST += \
-    $(DEPS_DIR)/private/ask/ApnIC.dll \
-    $(DEPS_DIR)/private/ask/ApnStub.exe \
-    $(DEPS_DIR)/private/ask/ApnToolbarInstaller.exe \
-    $(DEPS_DIR)/private/ask/AskToolbar.bmp \
     $(NULL)
 endif
 
@@ -100,7 +96,7 @@ include $(topsrcdir)/build/rules.mk
 
 libs::
 	cd $(SONGBIRD_DISTDIR) && \
-	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "Apn*$(DLL_SUFFIX)" -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
+	  $(FIND) . '(' -name "extensions" -o -name ')' -a -prune -o -name "Apn*$(DLL_SUFFIX)" -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
 	    sort -o rebase.txt && \
 	  $(REBASE) -v -b 62000000 @rebase.txt && \
 	  $(RM) rebase.txt
@@ -110,5 +106,5 @@ libs::
 	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
 	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-filelist.nsi.in > $(CURDIR)/sb-filelist.nsi
-	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
+	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.46/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
 	$(MV) $(SONGBIRD_DISTDIR)/$(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(FULL_INSTALLER_NAME)
