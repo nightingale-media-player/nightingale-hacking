@@ -42,7 +42,6 @@ Section "-Application" Section1
 
    ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro InstallFiles
-   
    ${If} $UnpackMode == ${FALSE}
       Call InstallAppRegistryKeys
    

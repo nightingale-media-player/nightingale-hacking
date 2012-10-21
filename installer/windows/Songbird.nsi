@@ -62,7 +62,6 @@ RequestExecutionLevel user
 !addincludedir ..\..\installer\windows
 
 ; and add includes/plugins for nsProcess... and UAC
-<<<<<<< HEAD
 !addincludedir ..\..\dependencies\windows-i686\nsis-2.45\extra-plugins\nsProcess\include
 !addplugindir ..\..\dependencies\windows-i686\nsis-2.45\extra-plugins\nsProcess\Plugin
 
@@ -297,7 +296,6 @@ BrandingText " "
 ; defines.nsi is generated from defines.nsi.in!
 !include common.nsh
 !include sb-filelist.nsi
-!include sb-devicedrivers.nsi
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Product version information. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
