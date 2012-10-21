@@ -92,6 +92,7 @@ ifeq (linux,$(SB_PLATFORM))
 						  $(NULL)
 						  
 	CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
+						 -frtti \
 						  $(NULL)
 
 else
