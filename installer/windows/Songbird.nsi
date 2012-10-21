@@ -297,7 +297,6 @@ BrandingText " "
 ; defines.nsi is generated from defines.nsi.in!
 !include common.nsh
 !include sb-filelist.nsi
-!include sb-devicedrivers.nsi
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Product version information. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
