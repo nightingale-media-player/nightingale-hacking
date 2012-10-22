@@ -1,0 +1,116 @@
+.nothing-playing {
+  background-color: rgb(102,102,102); /* rgb(87,86,100); */
+  padding-right: 50px;
+  background-image: url(chrome://mashTape/skin/mashtape-big-bird.png);
+  background-position: 95% center;
+  background-repeat: no-repeat;
+}
+
+#nothing-playing-firstrun-text {
+  padding-right: 350px;
+  padding-bottom: 40px;
+  padding-left: 35px;
+}
+#nothing-playing-firstrun-text > description {
+  font-size: 18px;
+  font-family: Helvetica, Arial, Sans;
+  margin: 0px;
+  padding: 0px;
+}
+.nothing-playing-text {
+  padding-left: 35px;
+  padding-bottom: 40px;
+}
+
+/* The entire mashTape panel when something is playing */
+#mashTape-content-vbox {
+  background-color: rgb(102,102,102); /* rgb(87,86,100); */
+  border-bottom: 1px solid rgb(70,69,80);
+}
+
+/* Just the navigation elements */
+#mashTape-nav {
+  background-image: url(chrome://mashTape/skin/mashtape-tab-bkg.png);
+  background-repeat: repeat-x;
+  height: 21px;
+  min-height: 21px;
+  margin: 1px;
+}
+#mashTape-nav > radiogroup {
+  padding: 0px;
+  margin: 0px;
+  background-color: transparent;
+}
+#mashTape-nav > radiogroup > radio {
+  margin: 0px;
+  padding: 0px;
+  background-image: url(chrome://mashTape/skin/mashtape-tab-delimiter.png);
+  background-repeat: no-repeat;
+  background-position: right;
+  cursor: pointer;
+}
+#mashTape-nav > radiogroup > radio > image {
+  display: none;
+}
+#mashTape-nav > radiogroup > radio > hbox {
+  background-image: none;
+  margin-right: 1px;
+}
+#mashTape-nav > radiogroup > radio > hbox > .radio-label {
+  font-family: Helvetica, Arial;
+  font-weight: bold;
+  font-size: 11px;
+  color: rgb(209,208,217);
+  padding: 5px 25px;
+  height: 21px;
+}
+
+/* Hover state for nav */
+#mashTape-nav > radiogroup > radio:hover > hbox > .radio-label {
+  color: white;
+}
+
+/* Selected state for nav */
+#mashTape-nav > radiogroup > radio[selected="true"] {
+  cursor: auto;
+}
+#mashTape-nav > radiogroup > radio[selected="true"] > hbox {
+  background-image: url(chrome://mashTape/skin/mashtape-tab-active-bkg.png);
+}
+#mashTape-nav > radiogroup > radio[selected="true"] > hbox > .radio-label {
+  padding-top: 4px;
+  color: white;
+  background-image: url(chrome://mashTape/skin/selector-notch.png);
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  max-height: 21px;
+}
+#mashTape-nav .radio-label-box {
+  max-height: 21px;
+}
+
+/* The actual content frame area */
+#mashTape-content-deck {
+  padding: 10px 10px 7px 10px;
+}
+
+.no-data-found-hbox,
+.content-frame {
+  background-color: rgb(77,76,89);
+  border: 1px solid rgba(63,61,72,0.6);
+  -moz-border-bottom-colors: rgba(255,255,255,0.13) rgba(63,61,72,0.6);
+  border-bottom: 2px solid;
+}
+
+.mashTape-splitter {
+  border: none;
+  border-left: 2px solid;
+  -moz-border-left-colors: rgb(42,42,53) rgb(64,64,76);
+  border-right: 2px solid;
+  -moz-border-right-colors: rgb(77,76,89) rgb(64,64,76);
+}
+
+iframe.index-frame {
+  width: 300px;
+  min-width: 100px;
+}
