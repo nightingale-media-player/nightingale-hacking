@@ -977,6 +977,10 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(TAGLIB, taglib >= 1.8.0)
 	AC_SUBST(TAGLIB_LIBS)
 	AC_SUBST(TAGLIB_CFLAGS)
+	
+    PKG_CHECK_MODULES(SQLITE, sqlite3)
+	AC_SUBST(SQLITE_LIBS)
+	AC_SUBST(SQLITE_CFLAGS)
 		
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
