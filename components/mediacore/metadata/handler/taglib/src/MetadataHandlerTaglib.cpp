@@ -43,6 +43,8 @@
 
 /* Local file imports. */
 #include "MetadataHandlerTaglib.h"
+#include "tagunion.h" /* a taglib import, but internal use only...
+						 here until taglib2 where it won't be necessary*/
 
 /* Local module imports. */
 #include "TaglibChannelFileIO.h"
