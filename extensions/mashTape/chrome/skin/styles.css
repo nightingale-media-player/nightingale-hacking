@@ -1,5 +1,5 @@
 .nothing-playing {
-  background-color: rgb(87,86,100);
+  background-color: rgb(102,102,102); /* rgb(87,86,100); */
   padding-right: 50px;
   background-image: url(chrome://mashTape/skin/mashtape-big-bird.png);
   background-position: 95% center;
@@ -24,7 +24,7 @@
 
 /* The entire mashTape panel when something is playing */
 #mashTape-content-vbox {
-  background-color: rgb(87,86,100);
+  background-color: rgb(102,102,102); /* rgb(87,86,100); */
   border-bottom: 1px solid rgb(70,69,80);
 }
 
