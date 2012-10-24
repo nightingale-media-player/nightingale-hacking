@@ -96,6 +96,7 @@
             if (self.remote_lastVolume.stringValue == "") {
                 self.lastValue = self.value;
             }
+            window.removeEventListener('load', this, false);
         }, false);
       ]]>
     </constructor>
