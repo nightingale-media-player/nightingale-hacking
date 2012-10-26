@@ -72,7 +72,7 @@ ArtistInfo.prototype = {
 		var bioReq = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo" +
-			"&api_key=b25b959554ed76058ac220b7b2e0a026" +
+			"&api_key=ad68d3b69dee88a912b193a35d235a5b" +
 			"&artist=" + encodeURIComponent(artist);
 		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
 			.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.");
@@ -400,7 +400,7 @@ ArtistInfo.prototype = {
 
 	getAlbumMetadata : function(i, data, updateFn) {
 		var url = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo" +
-			"&api_key=b25b959554ed76058ac220b7b2e0a026" +
+			"&api_key=ad68d3b69dee88a912b193a35d235a5b" +
 			"&mbid=" + data[i].mbid;
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
