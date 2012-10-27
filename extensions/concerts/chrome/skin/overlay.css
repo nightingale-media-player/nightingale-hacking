@@ -7,7 +7,7 @@
 
 #concerts-firstrun-page description,
 #concerts-firstrun-page label {
-  color: rgb(79,61,99);
+  color: rgb(171,74,35); /*rgb(79,61,99);*/
   line-height: 25px;
 }
 
@@ -74,7 +74,7 @@ hbox#command-buttons {
   padding-left: 5em;
 }
 button#pref-cancel-button > hbox > label {
-  color: rgb(79,61,99);
+color: rgb(171,74,35); /*rgb(79,61,99);*/
 }
 button#pref-cancel-button {
 	visibility: hidden;
