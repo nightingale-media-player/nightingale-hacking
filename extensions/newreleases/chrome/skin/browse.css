@@ -16,8 +16,8 @@ body {
 	font-family:Arial,Helvetica,FreeSans,sans-serif;
 	font-size:62.5%;
 	line-height:1.25;
-	color:#777;
-	background:#fff;
+	color:#777; /*bright purple*/
+	background:#fff;/*bright pink*/
 	margin:10px;
   padding-top: 20px;
   padding-left: 5px;
@@ -40,7 +40,7 @@ img {
 	width:48px;
 	font-size:3.6em;
 	text-align:center;
-	color: rgb(185,185,185);
+	color: rgb(185,185,185); /*grey*/
 	background-color: rgb(225,224,232);
 	border:1px solid rgb(212,212,219);
 	float:left;
@@ -52,7 +52,7 @@ img {
 }
 .dateIndex-box{
 	width:48px;
-	color:#aaa;
+	color:#aaa; /*bright purple*/
 	background:#f3f3f3;
 	padding:2px 0 3px;
 	border:1px solid #ddd;
@@ -69,7 +69,7 @@ img {
 .dateIndex-day{
 	font-size:1.1em;
 	line-height:1.27;
-	color:#aaa;
+	color:#aaa; /*bright purple*/
 	margin-bottom:20px;
 }
 
@@ -101,7 +101,7 @@ img {
   background-color: rgb(240,240,242);
   padding: 5px;
   margin-left: 4px;
-  color: rgb(100,85,146);
+  color: rgb(171,74,35); /*rgb(100,85,146); purple rain*/
 }
 .location-change {
   -moz-border-radius: 2px;
@@ -140,13 +140,13 @@ img {
   -moz-border-radius-topright: 5px;
   background-color: rgb(98,98,106);
   padding: 5px 10px 5px 10px;
-  color: rgb(180,180,184);
+  color: rgb(180,180,184); /*grey*/
   margin-bottom: 1px;
   font-size: 12px;
   text-align: right;
 }
 .newReleases-nav-view {
-  color: rgb(180,180,184);
+  color: rgb(180,180,184); /*grey*/
   float: left;
   margin-top: 3px;
 }
@@ -169,7 +169,7 @@ img {
 }
 .newReleases-nav-releases,
 .newReleases-nav-artists {
-  color: rgb(180,180,184);
+  color: rgb(180,180,184); /*grey*/
   margin-top: 3px;
   padding-left: 6px;
   float: left
@@ -178,10 +178,10 @@ img {
   padding-right: 6px;
 }
 .newReleases-nav-artists:not(.newReleases-nav-selected) {
-  border-left: 1px solid rgb(142,142,142);
+  border-left: 1px solid rgb(142,142,142); /*grey*/
 }
 .newReleases-nav-releases:not(.newReleases-nav-selected) {
-  border-right: 1px solid rgb(142,142,142);
+  border-right: 1px solid rgb(142,142,142); /*grey*/
 }
 
 .newReleases-nav-letter,
@@ -225,7 +225,7 @@ img {
 	line-height:1.5;
 }
 .releaseListing .artistBlock .mainArtistName a{
-  color: rgb(80,47,126);
+   color: rgb(171,74,35); /*rgb(100,85,146); purple rain*/
 }
 .releaseListing .artistBlock .mainArtistName a:hover{
 }
