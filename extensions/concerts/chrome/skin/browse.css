@@ -39,7 +39,7 @@ img {
 }
 .dateIndex-box{
 	width:48px;
-	color:#aaa;
+	color:#aaa;/*purple - will probably change this*/
 	background:#f3f3f3;
 	padding:2px 0 3px;
 	border:1px solid #ddd;
@@ -62,7 +62,7 @@ img {
 .dateIndex-day{
 	font-size:1.1em;
 	line-height:1.27;
-	color:#aaa;
+	color:#aaa;/*purple - will probably change this*/
 	margin-bottom:20px;
 }
 
@@ -97,7 +97,7 @@ img {
   background-color: rgb(240,240,242);
   padding: 5px;
   margin-left: 4px;
-  color: rgb(100,85,146);
+  color: rgb(171,74,35); /*rgb(100,85,146);*/
 }
 .location-change {
   -moz-border-radius: 2px;
@@ -134,15 +134,15 @@ img {
   -moz-border-radius: 0px;
   -moz-border-radius-topleft: 5px;
   -moz-border-radius-topright: 5px;
-  background-color: rgb(98,98,106);
+  background-color: rgb(98,98,106); /*grey*/
   padding: 5px 10px 5px 10px;
-  color: rgb(180,180,184);
+  color: rgb(180,180,184); /*grey*/
   margin-bottom: 1px;
   font-size: 12px;
   text-align: right;
 }
 .concerts-nav-view {
-  color: rgb(180,180,184);
+  color: rgb(180,180,184); /*grey*/
   float: left;
   margin-top: 3px;
 }
@@ -164,7 +164,7 @@ img {
 }
 .concerts-nav-concerts,
 .concerts-nav-artists {
-  color: rgb(180,180,184);
+  color: rgb(180,180,184); /*grey*/
   margin-top: 3px;
   padding-left: 6px;
   float: left
@@ -221,7 +221,7 @@ img {
 	line-height:1.5;
 }
 .concertListing .artistBlock .mainArtistName a{
-  color: rgb(80,47,126);
+  color: rgb(80,47,126); /*purple - will probably change this*/
 }
 .concertListing .artistBlock .mainArtistName a:hover{
 }
@@ -292,7 +292,7 @@ td.venue{
 #concerts-loading {
 	font-size:2.4em;
 	line-height:1.5;
-  color: rgb(80,47,126);
+  color: rgb(80,47,126);/*purple - will probably change this*/
   text-align: center;
 }
 
@@ -300,7 +300,7 @@ td.venue{
 #ft{
 	font-size:1.1em;
 	line-height:1.27;
-	color:#aaa;
+	color:#aaa; /*purple - will probably change this*/
 	padding:4px 5px;
 	margin-top:20px;
 	clear:both;
