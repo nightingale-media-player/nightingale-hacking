@@ -56,6 +56,7 @@
     <em:name>New Releases</em:name>
 	<em:creator>PJ Ople (pjople@songbirdnest.com)</em:creator>
 	<em:contributor>zk7</em:contributor>
+	<em:contributor>Steve W - Coppery theme for Nightingale</em:contributor>
 	<em:description>Upcoming releases by artists in your library.</em:description>
 	<em:iconURL>chrome://newreleases/skin/newReleases-icon.png</em:iconURL>
 	<em:homepageURL>http://addons.songbirdnest.com/addon/1563</em:homepageURL>
