@@ -21,7 +21,7 @@
 
 #newReleases-firstrun-page description,
 #newReleases-firstrun-page label {
-  color: rgb(79,61,99);
+  color: rgb(171,74,35); /*rgb(79,61,99); */
   line-height: 25px;
 }
 
@@ -51,7 +51,7 @@ description.descr-text {
 /* the container for the rest of the doc */
 .newReleases-location-box {
   -moz-border-radius: 5px;
-  background-color: #efefef;
+  background-color: #efefef;/*white*/
   padding: 10px;
 }
 
@@ -106,7 +106,7 @@ hbox#command-buttons {
   padding-left: 5em;
 }
 button#pref-cancel-button > hbox > label {
-  color: rgb(79,61,99);
+  color: rgb(171,74,35);/*coppery was rgb(71,61,99) */
 }
 button#pref-cancel-button {
 	visibility: hidden;
@@ -115,7 +115,7 @@ button#pref-cancel-button {
 }
 
 #library-ontour-box {
-  background-color: rgb(219,219,219);
+  background-color: rgb(219,219,219); /*light grey*/
   -moz-border-radius: 5px;
   padding: 10px;
 }
@@ -192,7 +192,7 @@ label.groupby {
 }
 #box-index-letter > label:not(.text-link),
 #box-index-date > label:not(.text-link) {
-	color: #AAA;
+	color: #AAA;/*bright purple - might change this one, depends where it is*/
 }
 
 #box-index-letter>label {

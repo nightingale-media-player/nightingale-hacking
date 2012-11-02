@@ -562,7 +562,7 @@ if test -z "$MV"; then AC_MSG_ERROR(Mv not found); fi
 AC_CHECK_PROG(PERL, perl, perl)
 if test -z "$PERL"; then AC_MSG_ERROR(Perl not found); fi
 
-AC_CHECK_PROG(PYTHON, python, python)
+AC_CHECK_PROGS(PYTHON, python2 python, python)
 if test -z "$PYTHON"; then AC_MSG_ERROR(Python not found); fi
 
 AC_CHECK_PROG(RM, rm, rm)

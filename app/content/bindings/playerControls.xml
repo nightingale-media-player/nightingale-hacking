@@ -88,16 +88,16 @@
         this.trackingVolume = false;
 
         // The slider value cannot be set correctly until the boxObject
-        // dimensions are set.
+        // dimensions are set. This waits until the window is loaded
         var self = this;
-        window.setTimeout(function() {
-          self.value = parseFloat(self.remote_volume.stringValue) *
-                       self.sliderScale;
-          // initialize lastValue if it wasn't set
-          if (self.remote_lastVolume.stringValue == "") {
-            self.lastValue = self.value;
-          }
-        }, 1000);
+        window.addEventListener('load', function() {
+            self.value = parseFloat(self.remote_volume.stringValue) * self.sliderScale;
+            // initialize lastValue if it wasn't set
+            if (self.remote_lastVolume.stringValue == "") {
+                self.lastValue = self.value;
+            }
+            window.removeEventListener('load', this, false);
+        }, false);
       ]]>
     </constructor>
     <destructor>
