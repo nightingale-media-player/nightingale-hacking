@@ -84,6 +84,7 @@
 #include <sbITagLibChannelFileIOManager.h>
 
 /* TagLib imports. */
+#include <flacfile.h>
 #include <fileref.h>
 #include <mpegfile.h>
 #include <asffile.h>
@@ -292,6 +293,12 @@ private:
         PRUint32                    *aDataLen,
         PRUint8                     **aData);
 
+    nsresult ReadImageFlac(	
+        TagLib::List<TagLib::FLAC::Picture>	*artworkList,
+        PRInt32                     aType,
+        nsACString                  &aMimeType,
+        PRUint32                    *aDataLen,
+        PRUint8                     **aData);
     /*
      * Private taglib metadata handler ID3v2 services.
      */

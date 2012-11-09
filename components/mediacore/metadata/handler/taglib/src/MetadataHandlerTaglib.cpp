@@ -998,6 +998,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   PRBool                      isMP3;
   PRBool                      isM4A;
   PRBool                      isOGG;
+  PRBool					  isFLAC;
   nsresult                    result = NS_OK;
 
   /* Get the channel URL info. */
@@ -1018,7 +1019,8 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     isM4A = fileExt.Equals(NS_LITERAL_CSTRING("m4a"));
     isOGG = fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
             fileExt.Equals(NS_LITERAL_CSTRING("oga"));
-    if (!isMP3 && !isM4A && !isOGG) {
+    isFLAC = fileExt.Equals(NS_LITERAL_CSTRING("flac"));
+    if (!isMP3 && !isM4A && !isOGG && !isFLAC) {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
 
@@ -1076,7 +1078,18 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
             static_cast<TagLib::Ogg::XiphComment*>(pTagFile->tag()),
             aType, aMimeType, aDataLen, aData);
       }
-    }
+    } else if (isFLAC) {
+      nsAutoPtr<TagLib::FLAC::File> pTagFile;
+      nsAutoPtr<TagLib::List<TagLib::FLAC::Picture> > picList;
+      pTagFile = new TagLib::FLAC::File(filePath.BeginReading());
+      NS_ENSURE_STATE(pTagFile);
+      
+      if(pTagFile->xiphComment()) {
+		picList = pTagFile->pictureList();
+		/* Read the metadata file. */
+		result = ReadImageFlac(picList, aType, aMimeType, aDataLen, aData);
+	  }
+	}
   } else {
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -1645,6 +1658,56 @@ nsresult sbMetadataHandlerTaglib::ReadImageOgg(TagLib::Ogg::XiphComment  *aTag,
    * Extract the requested image from the metadata
    */
   StringList artworkList = aTag->fieldListMap()["METADATA_BLOCK_PICTURE"];
+  if(!artworkList.isEmpty()){
+    for (StringList::Iterator it = artworkList.begin();
+      it != artworkList.end();
+      ++it)
+    {
+      TagLib::FLAC::Picture* picture = new TagLib::FLAC::Picture();
+      String encodedData = *it;
+      if (encodedData.isNull())
+      {
+        break;
+      }
+      std::string decodedData = base64_decode(encodedData.to8Bit());
+      if (decodedData.empty())
+        break;
+      ByteVector bv;
+      bv.setData(decodedData.data(), decodedData.size());
+      if (!picture->parse(bv))
+      {
+        delete picture;
+        break;
+      }
+      if (picture->type() == aType) {
+        *aDataLen = picture->data().size();
+        aMimeType.Assign(picture->mimeType().toCString());
+        *aData = static_cast<PRUint8 *>(
+            nsMemory::Clone(picture->data().data(), *aDataLen));
+        NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
+      }
+      delete picture;
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult sbMetadataHandlerTaglib::ReadImageFlac(TagLib::List<TagLib::FLAC::Picture>	*artworkList,
+                                               PRInt32           aType,
+                                               nsACString        &aMimeType,
+                                               PRUint32          *aDataLen,
+                                               PRUint8           **aData)
+{
+  NS_ENSURE_ARG_POINTER(artworkList);
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_ARG_POINTER(aDataLen);
+  nsCOMPtr<nsIThread> mainThread;
+  
+  /*
+   * Extract the requested image from the metadata
+   */
+     
   if(!artworkList.isEmpty()){
     for (StringList::Iterator it = artworkList.begin();
       it != artworkList.end();
