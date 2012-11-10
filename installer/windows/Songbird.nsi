@@ -140,7 +140,6 @@ BrandingText " "
 ;--------------------------------
 
 ;Languages
-!include defines.nsi
 !include MUI2.nsh
 !include MUI_Country.nsh
 
@@ -275,47 +274,8 @@ BrandingText " "
 !insertmacro MUI_COUNTRY "Venezuela" "Venezuela"
 
 !insertmacro MUI_RESERVEFILE_LANGDLL
-  
-; From NSIS
-!include FileFunc.nsh
-!include LogicLib.nsh
-!include TextFunc.nsh
-!include WinMessages.nsh
-!include WinVer.nsh
-!include WordFunc.nsh
-!include x64.nsh
-!include nsDialogs.nsh
-
-; Extra plugins
-!include UAC.nsh
-!include nsProcess.nsh
 
 !insertmacro DirState
-
-; The following includes are custom. 
-; defines.nsi is generated from defines.nsi.in!
-!include common.nsh
-!include sb-filelist.nsi
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Product version information. 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-VIProductVersion "${AppVersionWindows}"
-
-VIAddVersionKey "CompanyName"     "${CompanyName}"
-VIAddVersionKey "FileDescription" "${BrandShortName} Installer"
-VIAddVersioNKey "FileVersion"     "${AppVersionWindows}"
-VIAddVersionKey "LegalCopyright"  "© ${CompanyName}"
-VIAddVersionKey "LegalTrademarks" "${LegalTrademarks}"
-VIAddVersionKey "ProductName"     "${BrandFullName}"
-VIAddVersionKey "ProductVersion"  "${AppVersion}"
-VIAddVersionKey "SpecialBuild"    "${DebugBuild}"
-VIAddVersionKey "BuildID"         "${AppBuildNumber}"
-
-Name "${BrandFullName}"
-OutFile "${PreferredInstallerName}"
-InstallDir "${PreferredInstallDir}"
-
-BrandingText " "
 
 !include sb-installer.nsi
 !include sb-uninstaller.nsi
