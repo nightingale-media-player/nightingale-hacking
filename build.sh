@@ -92,6 +92,9 @@ case $OSTYPE in
     ;;
   msys*)
     depdirn="windows-i686"
+    # Nightingale version number and dependency version, change if the deps change.
+    version=1.11
+    depversion="20121110-release"
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -100,14 +103,14 @@ case $OSTYPE in
     
     cd dependencies
     
-    if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-		$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
-		md5_verify "$depdirn-$version.tar.lzma"
+    if [ ! -f "$depdirn-$version-$depversion.tar.lzma" ] ; then
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version-$depversion.tar.lzma"
     fi
     
     if [ ! -d "$depdirn" ] ; then
-		mkdir "$depdirn"
-		tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
+      md5_verify "$depdirn-$version-$depversion.tar.lzma"
+      mkdir "$depdirn"
+      tar --lzma -xvf "$depdirn-$version-$depversion.tar.lzma" -C "$depdirn"
     fi
     cd ../    
     ;;
@@ -130,7 +133,7 @@ case $OSTYPE in
     cd dependencies
     
 	if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-		$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
+		download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
 		md5_verify "$depdirn-$version.tar.bz2"
 	fi
     
