@@ -1107,14 +1107,12 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
       }
     } else if (isFLAC) {
       nsAutoPtr<TagLib::FLAC::File> pTagFile;
-      nsAutoPtr<TagLib::List<TagLib::FLAC::Picture> > picList;
       pTagFile = new TagLib::FLAC::File(filePath.BeginReading());
       NS_ENSURE_STATE(pTagFile);
       
       if(pTagFile->xiphComment()) {
-		picList = pTagFile->pictureList();
 		/* Read the metadata file. */
-		result = ReadImageFlac(picList, aType, aMimeType, aDataLen, aData);
+		result = ReadImageFlac(pTagFile, aType, aMimeType, aDataLen, aData);
 	  }
 	}
   } else {
@@ -1720,21 +1718,23 @@ nsresult sbMetadataHandlerTaglib::ReadImageOgg(TagLib::Ogg::XiphComment  *aTag,
   return NS_OK;
 }
 
-nsresult sbMetadataHandlerTaglib::ReadImageFlac(TagLib::List<TagLib::FLAC::Picture>	*artworkList,
+nsresult sbMetadataHandlerTaglib::ReadImageFlac(TagLib::FLAC::File	*pTagFile,
                                                PRInt32           aType,
                                                nsACString        &aMimeType,
                                                PRUint32          *aDataLen,
                                                PRUint8           **aData)
 {
-  NS_ENSURE_ARG_POINTER(artworkList);
+  NS_ENSURE_ARG_POINTER(pTagFile);
   NS_ENSURE_ARG_POINTER(aData);
   NS_ENSURE_ARG_POINTER(aDataLen);
   nsCOMPtr<nsIThread> mainThread;
+  TagLib::List<TagLib::FLAC::Picture*> artworkList;
   
   /*
    * Extract the requested image from the metadata
    */
-     
+  
+  artworkList = pTagFile.pictureList();     
   if(!artworkList.isEmpty()){
     for (StringList::Iterator it = artworkList.begin();
       it != artworkList.end();

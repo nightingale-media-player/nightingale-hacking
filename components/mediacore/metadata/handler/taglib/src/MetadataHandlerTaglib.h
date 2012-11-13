@@ -294,7 +294,7 @@ private:
         PRUint8                     **aData);
 
     nsresult ReadImageFlac(	
-        TagLib::List<TagLib::FLAC::Picture>	*artworkList,
+        TagLib::FLAC::File			*pTagFile,
         PRInt32                     aType,
         nsACString                  &aMimeType,
         PRUint32                    *aDataLen,
