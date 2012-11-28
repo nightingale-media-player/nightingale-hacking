@@ -323,7 +323,8 @@ var AlbumArt = {
             height: img.height,
             aspectRatio: (img.height/img.width)
           }
-          img.removeEventListener("load", arguments.callee, false);
+          AlbumArt.onServicepaneResize();
+		  img.removeEventListener("load", arguments.callee, false);
           delete img;
       }, false);
       img.src = aNewURL;

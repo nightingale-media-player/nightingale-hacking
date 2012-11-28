@@ -232,8 +232,21 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       //   * ogv (all platforms)
       //   * wmv (windows only)
       //   * mp4/m4v/mov (w/ qtvideowrapper plugin)
-      //   * divx/avi/mkv (w/ ewmpeg4dec plugin)
+
+      // Story 25411567
+      // ewmpeg4dec plugin is no more, so allow divx/avi/mkv unconditionally
+      // PLUS VOB
+
       videoExtensions.AppendElement(NS_LITERAL_STRING("ogv"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("mkv"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("vob"));
+      // must allow mpg/mpeg unconditionally, support is duplicated
+      // in windowsmedia plugin but is expected to be importable on Mac too
+      videoExtensions.AppendElement(NS_LITERAL_STRING("mpg"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("mpeg"));
+
 #ifdef XP_WIN
       videoExtensions.AppendElement(NS_LITERAL_STRING("wmv"));
 #endif
@@ -265,27 +278,9 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       bool foundQTPlugin = PR_FALSE;
       GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
       if (plugin) {
-        foundQTPlugin = PR_TRUE;
         videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("m4v"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("mov"));
-        gst_object_unref(plugin);
-      }
-
-      // Check for the 'ewmpeg4dec' plugin to add divx/avi extensions.
-      plugin = gst_default_registry_find_plugin("ewmpeg4dec");
-      if (plugin) {
-        videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
-        videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
-        videoExtensions.AppendElement(NS_LITERAL_STRING("mkv"));
-
-        // This plugin will also handle "mp4" and "m4v", only append those
-        // extensions if they haven't been added already.
-        if (!foundQTPlugin) {
-          videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
-          videoExtensions.AppendElement(NS_LITERAL_STRING("m4v"));
-        }
-
         gst_object_unref(plugin);
       }
     }
