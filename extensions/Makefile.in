@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 DEFAULT_EXTENSIONS = AlbumArt \
                      concerts \
                      xpcom_helloworld \
+                     artistprofile \
                      $(NULL)
 
 # The ipod extension should build out-of-the-box on Linux and Mac, but needs
