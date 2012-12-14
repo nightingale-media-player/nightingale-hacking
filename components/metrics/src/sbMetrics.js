@@ -30,7 +30,8 @@ const SONGBIRD_METRICS_CLASSNAME = "Songbird Metrics Service Interface";
 const SONGBIRD_METRICS_CID = Components.ID("{1066527d-b135-4e0c-9ea4-f6109ae97d02}");
 const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;
 
-const SONGBIRD_POSTMETRICS_PREFKEY = "songbird.url.metrics";
+const SONGBIRD_METRICS_GA_PROPERTYKEY = "app.metrics.ga.property";
+const SONGBIRD_METRICS_GA_PROPERTYDEF = "UA-114360-23";
 
 const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 1; // every day
 
@@ -46,11 +47,20 @@ Metrics.prototype = {
   QueryInterface:   XPCOMUtils.generateQI([
     SONGBIRD_METRICS_IID,
     Components.interfaces.nsIWebProgressListener,
-    Components.interfaces.nsISupportsWeakReference
+    Components.interfaces.nsISupportsWeakReference 
   ]),
 
-  _postreq: null,
+  _getreq: null,
   _dbquery: null,
+
+  _eventMatchArray: [
+    [new RegExp(/^firstrun\.mediaimport\.(.+)$/g),
+      "install","first run media import"],
+    [new RegExp(/^app\.appstart$/g),
+      "usage","start"],
+    [new RegExp(/^mediacore\.play\.attempt\.(.+)$/g),
+      "usage","media playback"],
+  ],
   
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
@@ -122,16 +132,6 @@ Metrics.prototype = {
     
     // build xml
     
-    var xml = "";
-    xml += '<metrics schema_version="2.0" guid="' + user_install_uuid 
-            + '" version="' + appInfo.version 
-            + '" build="' + appInfo.appBuildID
-            + '" product="' + appInfo.name
-            + '" platform="' + platform
-            + '" os="' + user_os 
-            + '" timezone="' + tz 
-            + '">\n';
-
     for (var i = 0; i < metrics.length; i++) 
     {
       var key = metrics[i][0];
@@ -142,53 +142,32 @@ Metrics.prototype = {
         if (dot >= 0) {
           var timestamp = key.substr(0, dot);
           var cleanKey = key.substr(dot + 1);
-          var date = new Date();
-          date.setTime(timestamp);
           
-          var hourstart = date.getFullYear() + "-" + 
-                          this.formatDigits(date.getMonth()+1,2) + "-" + 
-                          this.formatDigits(date.getDate(),2) + " " + 
-                          this.formatDigits(date.getHours(),2) + ":" + 
-                          this.formatDigits(date.getMinutes(),2) + ":" + 
-                          this.formatDigits(date.getSeconds(),2);
-          xml += '\t<item hour_start="' + hourstart + '" key="' + encodeURIComponent(cleanKey) + '" value="' + val + '"/>\n';
+          // TODO ???
         }
       }
     }
-    xml += '</metrics>';
 
-/*
-    // Happy little self-contained test display
-    var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                          .getService(Components.interfaces.nsIPromptService);
-    gPrompt.alert( null, "METRICS XML", xml );
-*/
-
-    // upload xml
-
-    var domparser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
-                      .getService(Components.interfaces.nsIDOMParser);   
-    var document = domparser.parseFromString(xml, "text/xml");
-
-    var onpostload = { 
+    var ongetload = { 
       _that: null, 
-      handleEvent: function( event ) { this._that.onPostLoad(); } 
+      handleEvent: function( event ) { this._that.onGetLoad(); } 
     };
-    onpostload._that = this;
+    ongetload._that = this;
     
-    var onposterror = { 
+    var ongeterror = { 
       _that: null, 
-      handleEvent: function( event ) { this._that.onPostError(); } 
+      handleEvent: function( event ) { this._that.onGetError(); } 
     };
-    onposterror._that = this;
+    ongeterror._that = this;
 
-    var postURL = this.prefs.getCharPref(SONGBIRD_POSTMETRICS_PREFKEY);
+    var getURL = "http://www.google-analytics.com/__ga.gif?";
+    // todo
     
-    this._postreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
-    this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onpostload, false);
-    this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", onposterror, false);
-    this._postreq.open('POST', postURL, true); 
-    this._postreq.send(document);
+//    this._getreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
+//    this._getreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", ongetload, false);
+//    this._getreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", ongeterror, false);
+//    this._getreq.open('GET', getURL, true); 
+//    this._getreq.send(null);
   },
   
   formatDigits: function(str, n) {
@@ -197,11 +176,11 @@ Metrics.prototype = {
     return str;
   },
 
-  onPostLoad: function() {
-    this.LOG("POST metrics done: "  + this._postreq.status + " - " + this._postreq.responseText);
+  onGetLoad: function() {
+    this.LOG("GET metrics done: "  + this._getreq.status + " - " + this._getreq.responseText);
     
-    // POST successful, reset all metrics to 0
-    if (this._postreq.status == 200 && this._postreq.responseText == "OK") 
+    // GET successful, reset all metrics to 0
+    if (this._getreq.status == 200 && this._getreq.responseText == "OK") 
     {
       this._emptyTable();
       var pref = Components.classes["@mozilla.org/preferences-service;1"]
@@ -217,12 +196,12 @@ Metrics.prototype = {
     }    
     else 
     {
-      this.LOG("POST metrics failed: " + this._postreq.responseText);
+      this.LOG("GET metrics failed: " + this._getreq.responseText);
     }
   },
 
-  onPostError: function() {
-    this.LOG("POST metrics error");
+  onGetError: function() {
+    this.LOG("GET metrics error");
   },
   
   
@@ -310,7 +289,7 @@ Metrics.prototype = {
    */  
   _getUpdateCount: function() {
     var updateManager = Components.classes["@mozilla.org/updates/update-manager;1"].getService(Components.interfaces.nsIUpdateManager);
-    return updateManager.updateCount;    
+    return updateManager.updateCount;
   },
   
   
@@ -337,7 +316,7 @@ Metrics.prototype = {
         this.prefs.setCharPref("app.player_uuid", uuid);
     }
     
-    return uuid;     
+    return uuid;
   },
   
   metricsInc: function( aCategory, aUniqueID, aExtraString ) {
@@ -345,40 +324,65 @@ Metrics.prototype = {
   },
   
   metricsAdd: function( aCategory, aUniqueID, aExtraString, aIntValue ) {
+    var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+    .getService(Components.interfaces.nsIPromptService);
+      
+    // Cook up the key string
+    var key = aCategory + "." + aUniqueID;    
+    if (aExtraString != null && aExtraString != "") key = key + "." + aExtraString;
+
+    var eventCode = null;
+    for(var iPattern = 0; iPattern < this._eventMatchArray.length; iPattern++ ) {
+      var match = this._eventMatchArray[iPattern][0].exec(key);      
+      if(match && (match.length > 0) && (match[0] == key)) {
+        eventCode = "5({0}*{1}*{2})(1)";
+        eventCode = eventCode.replace("{0}", this._eventMatchArray[iPattern][1]);
+        eventCode = eventCode.replace("{1}", this._eventMatchArray[iPattern][2]);
+        eventCode = eventCode.replace("{2}", (match.length > 1) ? match[1] : "");        
+        break;
+      }
+    }
+    if(!eventCode) {
+      return;
+    }
+
+//  gPrompt.alert(null,key,eventCode);
+
     // timestamps are recorded as UTC !
     var d = new Date();
-    var timestamp = (Math.floor(d.getTime() / 3600000) * 3600000) + (d.getTimezoneOffset() * 60000);
+    /// getTime() is in ms, round to nearest second
+    var timestamp = (Math.floor(d.getTime() / 3600000) * 3600) + (d.getTimezoneOffset() * 60);
+    /// GA hashing algorithm is intended for URLs and doesn't like certain characters
+    var gaCompliantUUID = this._getPlayerUUID().replace(/[{}-]/g,"");
+    // GA cookie
+    var cookie = [
+      this._gaHash("songbirdnest.com"),
+      this._gaHash(gaCompliantUUID),
+      timestamp,timestamp,timestamp,
+      1
+      ].join(".");
+    var rand = Math.floor(Math.random()*1000000000);
+//    var gaPropKey = this.prefs.getCharPref(SONGBIRD_METRICS_GA_PROPERTYKEY);
+  	var gaPropKey = SONGBIRD_METRICS_GA_PROPERTYDEF;
+    var getParams = [
+      "utmwv=5.3.8",
+      "utmac=" + gaPropKey,
+      "utmcc=__utma%3D" + cookie,
+      "utmp=index.html",
+      "utmt=event",
+      "utme=" + eventCode,
+      "utmn=" + rand
+      ].join("&"); 
 
-    // Cook up the key string
-    var key = timestamp + "." + aCategory + "." + aUniqueID;
-    if (aExtraString != null && aExtraString != "") key = key + "." + aExtraString;
-    
-    try {
-      // Don't record things if we're disabled.
-      if (!this._isEnabled()) return;
+//    gPrompt.alert(null,key,getParams);
 
-      // Make sure it's an actual int.      
-      intvalue = parseInt(aIntValue);
-    
-      // Then add our value to the old value and write it back
-      var cur = this._getValue( key );
-      var newval = cur + intvalue;
-      this._setValue( key, newval );
-    } 
-    catch(e) { 
-      this.LOG("error: metricsAdd( " + 
-               aCategory +
-               ", " +
-               aUniqueID + 
-               ", " + 
-               aExtraString + 
-               ", " + 
-               aIntValue + 
-               " ) == '" + 
-               key + 
-               "'\n\n" + 
-               e);
-    }
+    var getURL = "http://www.google-analytics.com/__utm.gif?"
+      + getParams;
+
+    this._getreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
+      .createInstance(Components.interfaces.nsIXMLHttpRequest); 
+    this._getreq.open('GET', getURL, false); 
+    this._getreq.send(null);  
   },
   
   _initDB: function() {
@@ -442,6 +446,23 @@ Metrics.prototype = {
     this._dbquery.addQuery("DELETE FROM metrics");
     this._dbquery.execute();
   },
+  
+  _gaHash : function(aString) {
+    var result = 1;
+    var partial = 0;
+    var charIndex = 0;
+    var charCode = 0;
+  if( aString ) {
+      result = 0;
+    for( charIndex = aString["length"]-1; charIndex>=0; charIndex--) {
+      charCode = aString.charCodeAt(charIndex);
+      result = (result<<6&268435455)+charCode+(charCode<<14);
+      partial = result&266338304;
+      result = (partial!=0) ? result^partial>>21 : result;
+    }
+  }
+  return result;
+  },    
 } // Metrics.prototype
 
 function NSGetModule(compMgr, fileSpec) {
