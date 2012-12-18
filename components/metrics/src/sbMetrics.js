@@ -314,6 +314,7 @@ Metrics.prototype = {
         var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
         uuid = aUUIDGenerator.generateUUID();
         this.prefs.setCharPref("app.player_uuid", uuid);
+        uuid = this.prefs.getCharPref("app.player_uuid"); // force string type
     }
     
     return uuid;
