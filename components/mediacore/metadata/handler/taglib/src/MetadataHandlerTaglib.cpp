@@ -1734,28 +1734,13 @@ nsresult sbMetadataHandlerTaglib::ReadImageFlac(TagLib::FLAC::File	*pTagFile,
    * Extract the requested image from the metadata
    */
   
-  artworkList = pTagFile.pictureList();     
+  artworkList = pTagFile->pictureList();     
   if(!artworkList.isEmpty()){
-    for (StringList::Iterator it = artworkList.begin();
+    for (TagLib::List<TagLib::FLAC::Picture*>::Iterator it = artworkList.begin();
       it != artworkList.end();
       ++it)
     {
-      TagLib::FLAC::Picture* picture = new TagLib::FLAC::Picture();
-      String encodedData = *it;
-      if (encodedData.isNull())
-      {
-        break;
-      }
-      std::string decodedData = base64_decode(encodedData.to8Bit());
-      if (decodedData.empty())
-        break;
-      ByteVector bv;
-      bv.setData(decodedData.data(), decodedData.size());
-      if (!picture->parse(bv))
-      {
-        delete picture;
-        break;
-      }
+      TagLib::FLAC::Picture* picture = *it;
       if (picture->type() == aType) {
         *aDataLen = picture->data().size();
         aMimeType.Assign(picture->mimeType().toCString());
