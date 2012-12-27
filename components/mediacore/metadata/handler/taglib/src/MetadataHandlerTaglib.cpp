@@ -44,7 +44,7 @@
 /* Local file imports. */
 #include "MetadataHandlerTaglib.h"
 #include "tagunion.h" /* a taglib import, but internal use only...
-						 here until taglib2 where it won't be necessary*/
+                         here until taglib2 where it won't be necessary*/
 
 /* Local module imports. */
 #include "TaglibChannelFileIO.h"
@@ -1111,10 +1111,10 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
       NS_ENSURE_STATE(pTagFile);
       
       if(pTagFile->xiphComment()) {
-		/* Read the metadata file. */
-		result = ReadImageFlac(pTagFile, aType, aMimeType, aDataLen, aData);
-	  }
-	}
+        /* Read the metadata file. */
+        result = ReadImageFlac(pTagFile, aType, aMimeType, aDataLen, aData);
+      }
+    }
   } else {
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -1736,7 +1736,8 @@ nsresult sbMetadataHandlerTaglib::ReadImageFlac(TagLib::FLAC::File	*pTagFile,
   
   artworkList = pTagFile->pictureList();     
   if(!artworkList.isEmpty()){
-    for (TagLib::List<TagLib::FLAC::Picture*>::Iterator it = artworkList.begin();
+    for (
+      TagLib::List<TagLib::FLAC::Picture*>::Iterator it = artworkList.begin();
       it != artworkList.end();
       ++it)
     {
@@ -1747,8 +1748,8 @@ nsresult sbMetadataHandlerTaglib::ReadImageFlac(TagLib::FLAC::File	*pTagFile,
         *aData = static_cast<PRUint8 *>(
             nsMemory::Clone(picture->data().data(), *aDataLen));
         NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
+        break; // We can not handle more than one image currently
       }
-      delete picture;
     }
   }
 
