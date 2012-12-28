@@ -54,7 +54,7 @@ For more information, visit http://developer.songbirdnest.com/
 /*
 @import url(chrome://songbird-bindings/skin/bindings.css); 
 */
-@import url(chrome://coppery/content/bindings/bindings.css); 
+@import url(chrome://bluemonday/content/bindings/bindings.css); 
 
 /* baseline styles - needs to reorganize and consolidate */
 @import url(colors.css); 

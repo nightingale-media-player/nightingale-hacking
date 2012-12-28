@@ -13,8 +13,8 @@
 ./chrome/pinkmartini.manifest
 ./chrome/purplerain.jar
 ./chrome/purplerain.manifest
-./chrome/coppery.jar
-./chrome/coppery.manifest
+./chrome/bluemonday.jar
+./chrome/bluemonday.manifest
 ./chrome/songbird.jar
 ./chrome/songbird.manifest
 ./components/DeviceDeviceTester.xpt
@@ -305,6 +305,8 @@
 ./extensions/pinkmartini@songbirdnest.com/install.rdf
 ./extensions/purplerain@songbirdnest.com/chrome.manifest
 ./extensions/purplerain@songbirdnest.com/install.rdf
+./extensions/bluemonday@getnightingale.com/chrome.manifest
+./extensions/bluemonday@getnightingale.com/install.rdf
 ./extensions/sharing@songbirdnest.com/chrome.manifest
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/content/iconPopup.js
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/content/iconStatusObserver.js

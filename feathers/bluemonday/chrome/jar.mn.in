@@ -1,0 +1,14 @@
+bluemonday.jar:
+% skin  songbird  bluemonday  %feathers/bluemonday/songbird/chrome/skin/
+% skin  songbird-os-specific  bluemonday  %feathers/bluemonday/songbird/chrome/skin/os-specific/
+% skin  bluemonday  bluemonday  %feathers/bluemonday/songbird/chrome/skin/
+% skin  global  bluemonday  chrome://songbird-global/skin/
+% skin  mozapps  bluemonday  chrome://songbird-mozapps/skin/
+% content bluemonday  %feathers/bluemonday/songbird/chrome/content/
+% locale  bluemonday  en-US  %feathers/bluemonday/songbird/chrome/locale/en-US/
+# TODO these can be migrated to os-specific dir
+% override chrome://songbird/skin/icons/displaypane-contentpane-bottom.png chrome://songbird/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-servicepane-bottom.png chrome://songbird/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-right-sidebar.png chrome://songbird/skin/icons/mac/displaypane-right-sidebar.png os=darwin
+#
+@include_all_to feathers/bluemonday/songbird/chrome/

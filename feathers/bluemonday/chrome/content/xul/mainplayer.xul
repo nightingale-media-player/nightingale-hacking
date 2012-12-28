@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
-<?xml-stylesheet href="chrome://coppery/content/css/mainplayer.css" type="text/css"?>
+<?xml-stylesheet href="chrome://bluemonday/content/css/mainplayer.css" type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
@@ -372,7 +372,7 @@
                 <hbox flex="1" id="faceplate-inactive-splash-prince">
                   <observes type="dataremote"
                             id="active-faceplate-prince-observes"
-                            key="coppery.prince"
+                            key="bluemonday.prince"
                             attribute="hidden"
                             boolean="true"
                             inverted="true" />
@@ -380,7 +380,7 @@
                 <hbox flex="1" id="faceplate-inactive-splash">
                   <observes type="dataremote"
                             id="inactive-faceplate-prince-observes"
-                            key="coppery.prince"
+                            key="bluemonday.prince"
                             attribute="hidden"
                             boolean="true"
                             inverted="false" />

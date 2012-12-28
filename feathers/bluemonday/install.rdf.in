@@ -3,9 +3,9 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
      xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:id>coppery@getnightingale.com</em:id>
+    <em:id>bluemonday@getnightingale.com</em:id>
     <em:type>2</em:type>
-    <em:name>Coppery Feather</em:name>
+    <em:name>Blue Monday Feather</em:name>
     <em:version>@EXTENSION_VER@</em:version>
 
     <em:description>Default feather for Nightingale</em:description>
@@ -23,16 +23,16 @@
          See http://developer.getnightingale.com/feathers/ -->
     <songbird:skin>
       <Description>
-        <songbird:name>Coppery</songbird:name>
-        <songbird:internalName>coppery</songbird:internalName>
+        <songbird:name>Blue Monday</songbird:name>
+        <songbird:internalName>bluemonday</songbird:internalName>
         <songbird:compatibleLayout>
           <Description>
-            <songbird:layoutURL>chrome://coppery/content/xul/mainplayer.xul</songbird:layoutURL>
+            <songbird:layoutURL>chrome://bluemonday/content/xul/mainplayer.xul</songbird:layoutURL>
             <songbird:showChrome>true</songbird:showChrome>
             <songbird:onTop>false</songbird:onTop>
           </Description>
           <Description>
-            <songbird:layoutURL>chrome://coppery/content/xul/miniplayer.xul</songbird:layoutURL>
+            <songbird:layoutURL>chrome://bluemonday/content/xul/miniplayer.xul</songbird:layoutURL>
             <songbird:showChrome>false</songbird:showChrome>
             <songbird:onTop>true</songbird:onTop>
           </Description>
@@ -42,11 +42,11 @@
     <songbird:layout>
       <Description>
         <songbird:name>chrome://songbird/locale/songbird.properties#feathers.name.mainlayout</songbird:name>
-        <songbird:url>chrome://coppery/content/xul/mainplayer.xul</songbird:url>
+        <songbird:url>chrome://bluemonday/content/xul/mainplayer.xul</songbird:url>
       </Description>
       <Description>
         <songbird:name>chrome://songbird/locale/songbird.properties#feathers.name.minilayout</songbird:name>
-        <songbird:url>chrome://coppery/content/xul/miniplayer.xul</songbird:url>
+        <songbird:url>chrome://bluemonday/content/xul/miniplayer.xul</songbird:url>
       </Description>
     </songbird:layout>
 

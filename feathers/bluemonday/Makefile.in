@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTENSION_UUID = coppery@getnightingale.com
+EXTENSION_UUID = bluemonday@getnightingale.com
 EXTENSION_DIR = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 
 EXTENSION_VER = $(SB_MILESTONE)
