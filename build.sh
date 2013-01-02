@@ -69,7 +69,7 @@ case $OSTYPE in
     ( cd dependencies && {
 		if [ ! -d "$depdirn" ] ; then
 			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
-				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version-$depdate-release.tar.lzma"
+				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depdate-release.tar.lzma"
 				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
 			fi
 			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
