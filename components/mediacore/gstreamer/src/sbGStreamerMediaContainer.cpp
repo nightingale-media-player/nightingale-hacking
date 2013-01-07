@@ -204,7 +204,8 @@ sbGStreamerMediaContainer::AcquireMimeType_Priv()
 	
   // Get the MIME type if typefind got caps:
   if (mCaps) {
-    GetMimeTypeForCaps(mCaps, mMimeType);
+    nsresult rv = GetMimeTypeForCaps(mCaps, mMimeType);
+    NS_ENSURE_SUCCESS(rv,rv);
   }
 
   // Set the bus message callback for pipeline shutdown:
