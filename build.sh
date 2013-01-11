@@ -93,8 +93,8 @@ case $OSTYPE in
   msys*)
     depdirn="windows-i686"
     # Nightingale version number and dependency version, change if the deps change.
-    version=1.11
-    depversion="20121110-release"
+    version=1.12
+    depversion="20130111-release"
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -104,7 +104,7 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version-$depversion.tar.lzma" ] ; then
-      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version-$depversion.tar.lzma"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depversion.tar.lzma"
     fi
     
     if [ ! -d "$depdirn" ] ; then
@@ -168,5 +168,16 @@ cd $buildir
 make -f nightingale.mk clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make -f nightingale.mk
+
+# Build Inno Setup installer for Windows
+case $OSTYPE in
+  msys*)
+    dependencies//windows-i686//inno-5.5.2//ISCC.exe "installer//windows//Nightingale.iss"
+    # Replace the nsis installer md5
+    cd compiled//_built_installer
+    md5sum *.exe > *.md5
+    cd ..//..
+  ;;
+esac
 
 echo "Build finished!"
