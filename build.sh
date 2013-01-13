@@ -104,6 +104,8 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version-$depversion.tar.lzma" ] ; then
+      # We want the new deps instead of the old ones...
+      rm -rf "$depdirn"
       download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depversion.tar.lzma"
     fi
     
@@ -132,10 +134,12 @@ case $OSTYPE in
     
     cd dependencies
     
-	if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-		download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
-		md5_verify "$depdirn-$version.tar.bz2"
-	fi
+    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+      # We want the new deps instead of the old ones...
+      rm -rf "$depdirn"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
+      md5_verify "$depdirn-$version.tar.bz2"
+    fi
     
 	if [ ! -d "$depdirn" ] ; then
 		mkdir "$depdirn"
@@ -153,8 +157,10 @@ esac
 cd dependencies
 
 if [ ! -f "vendor-$version.zip" ] ; then
-	download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
-	md5_verify "vendor-$version.zip"
+  #We want the new deps instead of the old ones...
+  rm -rf "vendor"
+  download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+  md5_verify "vendor-$version.zip"
 fi
 
 if [ ! -d "vendor" ] ; then
