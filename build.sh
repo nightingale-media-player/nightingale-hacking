@@ -175,15 +175,4 @@ make -f nightingale.mk clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make -f nightingale.mk
 
-# Build Inno Setup installer for Windows
-case $OSTYPE in
-  msys*)
-    dependencies//windows-i686//inno-5.5.2//ISCC.exe "installer//windows//Nightingale.iss"
-    # Replace the nsis installer md5
-    cd compiled//_built_installer
-    md5sum *.exe > *.md5
-    cd ..//..
-  ;;
-esac
-
 echo "Build finished!"
