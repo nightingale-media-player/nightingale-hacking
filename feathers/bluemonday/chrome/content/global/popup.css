@@ -1,0 +1,4 @@
+.popup-internal-box {
+    -moz-appearance: menupopup !important;
+    padding: 0 !important;
+}

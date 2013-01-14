@@ -7,6 +7,7 @@ menubar {
   -moz-box-align:center;
 }
 menubar {
+    background: Menu !important;
 }
 
 .toolbar-holder {
