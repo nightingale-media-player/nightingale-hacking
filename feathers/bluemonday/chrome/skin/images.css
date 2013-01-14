@@ -375,7 +375,7 @@ notification[type="critical"],
   min-height:44px;
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-splash.png');
   background-repeat:no-repeat;
-  background-position:right center;
+  background-position:center center;
   margin-right: 10px;
 }
 #faceplate-inactive-splash-prince {
