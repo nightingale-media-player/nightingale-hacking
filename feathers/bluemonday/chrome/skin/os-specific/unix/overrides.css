@@ -42,11 +42,13 @@ window:root[sizemode="maximized"] .sb-sys-outer-frame-resizer {
   visibility: collapse;
 }
 
-popup,
-menupopup,
-tooltip,
 panel {
   border:1px solid rgb(131,131,131);
+}
+
+#main-menubar>menu>label {
+  font-family: inherit;
+  padding: 0px 5px 1px 5px !important;
 }
 
 wizard[hidechrome]:not([resizers]),

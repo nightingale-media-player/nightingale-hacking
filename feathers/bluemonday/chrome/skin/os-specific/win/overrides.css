@@ -66,9 +66,9 @@ dialog[sb-native-hidechrome][resizers="none"] {
   font-size:11px;
 }
 
-menu label {
+#main-menubar>menu>label {
   font-family: inherit;
-  padding-bottom: 2px !important;
+  padding: 2px 6px 3px 6px !important;
 }
 
 label#sb-sys-title-title {
