@@ -94,7 +94,7 @@ case $OSTYPE in
     depdirn="windows-i686"
     # Nightingale version number and dependency version, change if the deps change.
     version=1.12
-    depversion="20130111-release"
+    depversion="20130121-release"
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
