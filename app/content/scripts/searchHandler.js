@@ -32,15 +32,15 @@ Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const LOG = DebugUtils.generateLogFunction("searchHandler", 2);
 
-// Searches using engines tagged with "songbird:internal" are not
+// Searches using engines tagged with "ngInternal" are not
 // sent to the browser
-const SEARCHENGINE_TAG_INTERNAL = "songbird:internal";
+const SEARCHENGINE_TAG_INTERNAL = "ngInternal";
 
-// Enable live search for engines tagged with "songbird:livesearch"
-const SEARCHENGINE_TAG_LIVESEARCH = "songbird:livesearch";
+// Enable live search for engines tagged with "ngLivesearch"
+const SEARCHENGINE_TAG_LIVESEARCH = "ngLivesearch";
 
 // Alias identifying the Songbird search engine
-const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
+const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search-ngInternal-ngLivesearch";
 
 /**
  * \brief Songbird Search Handler.
@@ -226,8 +226,7 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (currentEngine.tags &&
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+    if (currentEngine.alias.split(/-/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
@@ -449,8 +448,7 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (!currentEngine.tags ||
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) < 0)
+    if (currentEngine.alias.split(/-/).indexOf(SEARCHENGINE_TAG_INTERNAL) < 0)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
@@ -462,15 +460,16 @@ const gSearchHandler = {
       // Get the current active node.
       var node = gServicePane.activeNode;
       if (node) {
-        alias = "songbird-" + node.searchtype + "-search";
+        alias = "songbird-" + node.searchtype + "-search-" +
+            SEARCHENGINE_TAG_INTERNAL + "-" + SEARCHENGINE_TAG_LIVESEARCH;
       }
     }
     var engine = this.getSongbirdSearchEngine(alias);
 
     var liveSearchEnabled = false;
     // Live search is disabled for search engines whose tags do not
-    // contain "livesearch".
-    if (engine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_LIVESEARCH) > -1) {
+    // contain "ngLivesearch".
+    if (engine.alias.split(/-/).indexOf(SEARCHENGINE_TAG_LIVESEARCH) > -1) {
       liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
     }
@@ -511,8 +510,7 @@ const gSearchHandler = {
 
     // If this engine has no tags or not been tagged as internal,
     // we need to restore the engine active prior to us.
-    if (currentEngine.tags &&
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+    if (currentEngine.alias.split(/-/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause
