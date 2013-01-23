@@ -161,7 +161,7 @@
    -->
   <wizardpage id="first_run_import_media_page"
               pageid="first_run_import_media_page"
-              next="first_run_dlna_page"
+              next="first_run_add_ons_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();"
               class="first-run-wizard-page"
