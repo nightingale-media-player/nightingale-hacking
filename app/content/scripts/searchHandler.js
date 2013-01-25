@@ -82,7 +82,7 @@ const gSearchHandler = {
                               function (event) { gSearchHandler.onSearchEvent(event); },
                               true);
                               
-    this.registerSearchEngineHandler(SEARCHENGINE_ALIAS_SONGBIRD,true);
+    this.registerInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD,true);
   },
 
 
@@ -91,7 +91,7 @@ const gSearchHandler = {
    */
   uninit: function SearchHandler_uninit() {
     // Hmm, nothing to do?
-    //this.removeSearchEngineHandler("songbird-internal-search");
+    //this.unregisterInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD);
   },
 
 
@@ -695,8 +695,8 @@ const gSearchHandler = {
     searchBar.value = queryString;
   },
   
-  registerSearchEngineHandler :
-    function SearchHandler_registerSearchEngineHandler(searchEngineAlias, liveSearch) {
+  registerInternalSearchEngine :
+    function SearchHandler_registerInternalSearchEngine(searchEngineAlias, liveSearch) {
         var engine = this.getSongbirdSearchEngine(searchEngineAlias);
         
         // Only continue if the engine isn't yet registered and exists
@@ -718,8 +718,8 @@ const gSearchHandler = {
         return false;
     },
     
-  removeSearchEngineHandler :
-    function SearchHandler_removeSearchEngineHandler(searchEngineAlias) {
+  unregisterInternalSearchEngine :
+    function SearchHandler_unregisterInternalSearchEngine(searchEngineAlias) {
         var engine = this.getSongbirdSearchEngine(searchEngineAlias);
         if(this._internalEngines[searchEngineAlias]) {
             // reset the hidden property to the default
@@ -756,5 +756,5 @@ window.addEventListener("unload",
   false);
   
 // global search engine rerouting
-const registerSearchEngineHandler = gSearchHandler.registerSearchEngineHandler(searchEngineAlias,liveSearch);
-const removeSearchEngineHandler = gSearchHandler.removeSearchEngineHandler(searchEngineAlias);
+const registerInternalSearchEngine = gSearchHandler.registerInternalSearchEngine(searchEngineAlias,liveSearch);
+const unregisterInternalSearchEngine = gSearchHandler.unregisterInternalSearchEngine(searchEngineAlias);
