@@ -16,9 +16,6 @@
      the Firefox search system to meet Songbird's needs. 
      This is guaranteed to change at some point in the future. 
      
-     Note that engines with songbird:internal are hidden on startup, and need to 
-     be programmatically shown.     
-     
      See searchHandler.js and sbSearch.xml for more information.
   -->
 <Url type="text/html" method="GET" template="http://0/this_URL_is_not_used"/>

@@ -705,12 +705,12 @@ const gSearchHandler = {
             if(liveSearch === undefined)
                 liveSearch = false;
                 
-            var hidden = engine.hidden;
+            this._internalEngines[searchEngineAlias] = {'liveSearch':liveSearch,'wasHidden':engine.hidden};
+            
             // If the engine is hidden, make it visible
-            if(hidden)
+            if(engine.hidden)
                 engine.hidden = false;
                 
-            this._internalEngines[searchEngineAlias] = {'liveSearch':liveSearch,'wasHidden':hidden};
             return true;
         }
         LOG("\n\nCouldn't register a search engine handler for \"" + searchEngineAlias +
