@@ -412,7 +412,7 @@ SB_MACOSX_SDK_DEFAULT=
 
 case $SB_PLATFORM in
   macosx)
-    SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_DEV_ROOT/SDKs/MacOSX10.4u.sdk
+    SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_DEV_ROOT/SDKs/MacOSX10.5.sdk
   ;;
 esac
 
@@ -421,7 +421,7 @@ esac
 #
 
 AC_ARG_WITH(macosx-sdk,
-            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=<dev-tools>/SDKs/MacOSX10.4u.sdk) ],
+            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=<dev-tools>/SDKs/MacOSX10.5.sdk) ],
             [ SB_MACOSX_SDK=$withval ],
             [ SB_MACOSX_SDK=$SB_MACOSX_SDK_DEFAULT])
 
@@ -492,7 +492,7 @@ _SAVE_CFLAGS=$CFLAGS
 _SAVE_CXXFLAGS=$CXXFLAGS
 
 #
-# Must use gcc 4.0 on Mac OS X with the 10.4u SDK.
+# Must use gcc 4.x on Mac OS X with the 10.5 SDK.
 # NOTE: gcc4.0 is the default compiler on 10.5 but not on 10.6 and we still
 #       support back to 10.4. See bug 17752 for juicy details.
 #

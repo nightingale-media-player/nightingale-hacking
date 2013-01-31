@@ -117,34 +117,35 @@ case $OSTYPE in
     cd ../    
     ;;
   darwin*)
-	# no wget on OSX, use curl
-    DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
+    depversion="20130130"
     arch_flags="-m32 -arch i386"
     export CFLAGS="$arch_flags" 
     export CXXFLAGS="$arch_flags" 
     export CPPFLAGS="$arch_flags"
     export LDFLAGS="$arch_flags" 
     export OBJCFLAGS="$arch_flags"
+    export CC="gcc"
+    export CXX="g++"
 
-    echo 'ac_add_options --with-macosx-sdk=/Developer/SDKs/MacOSX10.4u.sdk' > nightingale.config
+    echo 'ac_add_options --with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk' > nightingale.config
     echo 'ac_add_options --enable-installer' >> nightingale.config
     echo 'ac_add_options --enable-official' >> nightingale.config
     echo 'ac_add_options --enable-compiler-environment-checks=no' >> nightingale.config
     
     cd dependencies
-    
-    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+
+    if [ ! -f "$depdirn-$version-$depversion-$build.tar.bz2" ] ; then
       # We want the new deps instead of the old ones...
       rm -rf "$depdirn"
-      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
-      md5_verify "$depdirn-$version.tar.bz2"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depversion-$build.tar.bz2"
     fi
     
-	if [ ! -d "$depdirn" ] ; then
-		mkdir "$depdirn"
-		tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
+    if [ ! -d "$depdirn" ] ; then
+      md5_verify "$depdirn-$version-$depversion-$build.tar.bz2"
+      tar xvf "$depdirn-$version-$depversion-$build.tar.bz2"
     fi
+
     cd ../
     ;;
   *)
