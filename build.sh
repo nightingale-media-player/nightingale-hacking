@@ -174,6 +174,6 @@ cd $buildir
 
 make -f nightingale.mk clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
-make -f nightingale.mk || echo "Build Error!" && exit 1
+make -f nightingale.mk
 
-echo "Build Succeeded!" && exit 0
+echo "Build Succeeded!"
