@@ -26,3 +26,4 @@ compiled-release*
 config.log
 conftest.o
 confdefs.h
+.directory
