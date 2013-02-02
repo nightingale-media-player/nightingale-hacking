@@ -27,3 +27,4 @@ config.log
 conftest.o
 confdefs.h
 thumbs.db
+.directory
