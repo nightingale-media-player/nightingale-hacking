@@ -37,6 +37,13 @@ Ubuntu and Debian users should note you'll need:
 libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
+Also note that because of Ubuntu and Debian's incompatible taglib,
+you'll want to use 
+
+ac_add_options --with-taglib-source=packaged
+
+option to your nightingale.config
+
 More information can be gleaned from the Songbird wiki:
 
 Windows: http://tinyurl.com/3jfo6lv
@@ -54,7 +61,7 @@ Configure Options:
 ========================================================================
 
   ac_add_options (option here)
-  
+  --with-taglib-source=[system,packaged] use system taglib or not
   --enable-debug                        whether or not to compile debug
   --enable-jars                         whether or not to create jars
   --enable-installer                    whether or not to make installer
