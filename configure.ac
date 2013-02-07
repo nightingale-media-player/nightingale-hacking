@@ -973,13 +973,8 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
-        
-    PKG_CHECK_MODULES(TAGLIB, taglib >= 1.8.0)
-	AC_SUBST(TAGLIB_LIBS)
-	AC_SUBST(TAGLIB_CFLAGS)
 		
     # Breakpad needs stabs debugging data, so always explicitly request it with
-    # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
@@ -1174,6 +1169,55 @@ if test -z "$SB_DEPENDENCIES_DIR"; then
   SB_DEPENDENCIES_DIR=dependencies/$DEPS_SUBDIR
 fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
+
+
+#
+# Are we going to use system or packaged taglib?
+#
+
+SB_SYSTEM_TAGLIB=
+AC_ARG_WITH(taglib-source,
+			[  --with-taglib-source=system,packaged,default  Taglib to use],
+			[ SB_TAGLIB=$withval ],
+			[ SB_TAGLIB=default ])
+for option in `echo $SB_TAGLIB | sed 's/,/ /g'`; do
+	if test "$option" = "default"; then
+		case "$SB_PLATFORM" in
+		windows)
+			SB_TAGLIB=packaged
+		;;
+		macosx)
+			SB_TAGLIB=packaged
+		;;
+		solaris)
+			SB_TAGLIB=packaged
+		;;
+		linux)
+			SB_TAGLIB=system
+		;;
+		*)
+			AC_MSG_ERROR([No platform default taglib found; please manually specify --with-taglib-source=])
+		;;
+		esac
+	elif test "$option" = "system"; then
+		SB_TAGLIB=system
+	elif test "$option" = "packaged"; then
+		SB_TAGLIB=packaged
+	else
+		AC_MSG_ERROR([Unknown --with-taglib-source option $option])
+	fi
+done
+AC_SUBST(SB_TAGLIB)
+
+#	
+# If we're building with SYSTEM_TAGLIB, find it
+#
+
+if test "$SB_TAGLIB" = "system"; then
+	PKG_CHECK_MODULES(TAGLIB, taglib >= 1.8.0)
+	AC_SUBST(TAGLIB_LIBS)
+	AC_SUBST(TAGLIB_CFLAGS)
+fi
 
 #
 # Check for media cores to enable
