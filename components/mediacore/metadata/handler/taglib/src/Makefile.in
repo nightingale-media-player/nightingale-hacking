@@ -26,6 +26,7 @@ DEPTH = ../../../../../../
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+ZERO = 0
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -87,14 +88,13 @@ ifeq (solaris,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
 endif
 
-ifeq (linux,$(SB_PLATFORM))
-	DYNAMIC_LIB_RAW_IMPORTS += $(TAGLIB_LIBS) \
-						  $(NULL)
-						  
-	CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
-						 -frtti \
-						  $(NULL)
+CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
+					 -frtti \
+					  $(NULL)
 
+ifeq (system,$(SB_TAGLIB))
+	DYNAMIC_LIB_RAW_IMPORTS += $(TAGLIB_LIBS) \
+						  $(NULL)					  
 else
 	DYNAMIC_LIB_STATIC_IMPORTS += \
 		$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag$(LIB_SUFFIX) \

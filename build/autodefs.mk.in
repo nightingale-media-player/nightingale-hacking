@@ -96,6 +96,9 @@ MEDIA_CORE_QT = @MEDIA_CORE_QT@
 FORCE_MEDIA_CORE_WMP = @FORCE_MEDIA_CORE_WMP@
 FORCE_MEDIA_CORE_QT = @FORCE_MEDIA_CORE_QT@
 
+# taglib location
+SB_TAGLIB = @SB_TAGLIB@
+
 #
 # Autodetected variables set by configure
 #
