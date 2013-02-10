@@ -64,6 +64,11 @@ ifeq (1,$(NIGHTINGALE_LIBNOTIFY))
     DEFAULT_EXTENSIONS += libnotify-notifs
 endif
 
+# Unity Integration
+ifeq (1,$(NIGHTINGALE_UNITY))
+    DEFAULT_EXTENSIONS += UnityIntegration
+endif
+
 SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
           $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
 
