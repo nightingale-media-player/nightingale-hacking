@@ -1346,6 +1346,17 @@ fi
 AC_SUBST(HAVE_FLUENDO_MP3)
 
 #
+#  Check for --enable-unity-integration
+#
+
+AC_ARG_ENABLE(unity-integration,
+              [  --enable-unity-integration        integration with unity (default=no)])
+if test "$enable_unity_integration" == "yes"; then
+  NIGHTINGALE_UNITY=1
+fi
+AC_SUBST(NIGHTINGALE_UNITY)
+
+#
 # Checks for libraries.
 #
 
