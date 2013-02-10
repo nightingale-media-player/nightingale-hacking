@@ -1,0 +1,70 @@
+#preedTODO: add copyright
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+
+IS_EXTENSION = 1
+
+CPP_SRCS = UnityProxy.cpp \
+		   UnityProxyModule.cpp \
+		   $(NULL)
+
+CPP_DEFS = -DXPCOM_GLUE -DXPCOM_GLUE_USE_NSPR
+
+CPP_FLAGS = -Wall -O2 -fno-rtti -fno-exceptions -shared
+
+
+# The 64 bit version needs -fPIC, I don't know if it'll harm
+# the 32 bit version though. It wasn't used for the 32 bit 
+# version before, but I don't want to break it.
+
+ifeq ($(SB_ARCH),"x86_64")
+	CPP_FLAGS += -fPIC
+endif
+
+
+# The main problem with the extension not working previously was 
+# not linking to the 64 bit SDK. This issue is solved pretty easily
+# because MOZSDK_DIR points to the 32 or 64 bit SDK. Also need to 
+# include the public dir where IUnityProxy.h gets generated
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/extensions/UnityIntegration/components/public \
+					 $(MOZSDK_INCLUDE_DIR) \
+					 $(NULL)
+
+
+CPP_RAW_INCLUDES = `pkg-config --cflags gtk+-2.0` `pkg-config --cflags unity`
+
+# build a component (ie: a dynamically loadable module)
+IS_COMPONENT = 1
+
+# Build the library - UnityProxy.so
+DYNAMIC_LIB = UnityProxy
+
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(MOZSDK_LIB_DIR) \
+								 $(NULL)
+
+DYNAMIC_LIB_EXTRA_FLAGS = -Wall \
+						  -O2 \
+						  -DXPCOM_GLUE \
+						  -DXPCOM_GLUE_USE_NSPR \
+						  $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = xpcomglue_s \
+							xul \
+							xpcom \
+							plds4 \
+							plc4 \
+							nspr4 \
+							pthread \
+							$(NULL)
+
+DYNAMIC_LIB_RAW_IMPORTS = -ldl `pkg-config --libs gtk+-2.0` -lunity `pkg-config --libs libnotify`
+
+
+include $(topsrcdir)/build/rules.mk

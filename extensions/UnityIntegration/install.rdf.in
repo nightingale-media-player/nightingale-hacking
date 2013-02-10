@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<!-- ***************************************************************************
+ *******************************************************************************
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * TODO: License
+ *
+ *******************************************************************************
+ *
+ * Install file for the Unity Integration extension for Nightingale.
+ *
+ *******************************************************************************
+ *************************************************************************** -->
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:NC="http://home.netscape.com/NC-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:type>2</em:type>
+    <em:name>Unity Integration</em:name>
+    <em:creator>LookingMan</em:creator>
+    
+    <em:contributor>johnmurrayvi</em:contributor>
+
+    <em:description>Integration into Unity's sound menu</em:description>
+    <em:iconURL>chrome://unity-integration/skin/icon.png</em:iconURL>
+    <em:optionsURL>chrome://unity-integration/content/options.xul</em:optionsURL>
+
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>1.2.*</em:minVersion>
+        <em:maxVersion>2.2.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    
+    <em:hidden>false</em:hidden>
+    <em:appManaged>false</em:appManaged>
+  </Description>
+</RDF>
