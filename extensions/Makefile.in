@@ -61,7 +61,7 @@ endif
 
 # Unity Integration
 ifeq (1,$(NIGHTINGALE_UNITY))
-    DEFAULT_EXTENSIONS += UnityIntegration
+    DEFAULT_EXTENSIONS += unity-integration
 endif
 
 SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
