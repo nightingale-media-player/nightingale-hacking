@@ -31,5 +31,3 @@ EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
 
 # Override to create dynamic libary in /components instead of platform
 EXTENSION_ARCH = $(NULL)
-
-include $(topsrcdir)/build/rules.mk

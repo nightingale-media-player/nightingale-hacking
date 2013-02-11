@@ -1,7 +1,7 @@
 unity-integration.jar:
-% content   unity-integration chrome/content/
+% content   unity-integration %content/
 % resource  unity-integration modules/
-% skin      unity-integration classic/1.0 chrome/skin/
-% locale        unity-integration en-US chrome/locale/en-US/
+% skin      unity-integration classic/1.0 %skin/
+% locale    unity-integration en-US %locale/en-US/
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://unity-integration/content/base.xul
 @include_all_to

@@ -16,16 +16,18 @@ CPP_SRCS = UnityProxy.cpp \
 
 CPP_DEFS = -DXPCOM_GLUE -DXPCOM_GLUE_USE_NSPR
 
-CPP_FLAGS = -Wall -O2 -fno-rtti -fno-exceptions -shared
-
 
 # The 64 bit version needs -fPIC, I don't know if it'll harm
 # the 32 bit version though. It wasn't used for the 32 bit 
 # version before, but I don't want to break it.
 
-ifeq ($(SB_ARCH),"x86_64")
-	CPP_FLAGS += -fPIC
-endif
+#ifeq ($(SB_ARCH),"x86_64")
+#	CPP_FLAGS = -Wall -O2 -fno-rtti -fno-exceptions -shared -fPIC
+#else
+#	CPP_FLAGS = -Wall -O2 -fno-rtti -fno-exceptions -shared
+#endif
+
+CPP_EXTRA_FLAGS = -Wall -O2 -fno-rtti -fno-exceptions -shared -fPIC
 
 
 # The main problem with the extension not working previously was 
@@ -33,7 +35,7 @@ endif
 # because MOZSDK_DIR points to the 32 or 64 bit SDK. Also need to 
 # include the public dir where IUnityProxy.h gets generated
 
-CPP_EXTRA_INCLUDES = $(DEPTH)/extensions/UnityIntegration/components/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/extensions/unity-integration/components/public \
 					 $(MOZSDK_INCLUDE_DIR) \
 					 $(NULL)
 
@@ -49,11 +51,11 @@ DYNAMIC_LIB = UnityProxy
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(MOZSDK_LIB_DIR) \
 								 $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS = -Wall \
-						  -O2 \
-						  -DXPCOM_GLUE \
-						  -DXPCOM_GLUE_USE_NSPR \
-						  $(NULL)
+#DYNAMIC_LIB_EXTRA_FLAGS = -Wall \
+#						  -O2 \
+#						  -DXPCOM_GLUE \
+#						  -DXPCOM_GLUE_USE_NSPR \
+#						  $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = xpcomglue_s \
 							xul \
