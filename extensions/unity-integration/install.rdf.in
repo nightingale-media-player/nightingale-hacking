@@ -23,14 +23,14 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>@EXTENSION_UUID@</em:id>
     <em:type>2</em:type>
+    <em:targetPlatform>Linux</em:targetPlatform>
     <em:name>Unity Integration</em:name>
-    <em:creator>LookingMan</em:creator>
-    
-    <em:contributor>johnmurrayvi</em:contributor>
-
     <em:description>Integration into Unity's sound menu</em:description>
     <em:iconURL>chrome://unity-integration/skin/icon.png</em:iconURL>
     <em:optionsURL>chrome://unity-integration/content/options.xul</em:optionsURL>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:creator>LookingMan</em:creator>
+    <em:contributor>johnmurrayvi</em:contributor>
 
     <em:targetApplication>
       <Description>
@@ -47,8 +47,6 @@
         <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
       </Description>
     </em:targetApplication>
-    
-    <em:hidden>false</em:hidden>
-    <em:appManaged>false</em:appManaged>
+
   </Description>
 </RDF>
