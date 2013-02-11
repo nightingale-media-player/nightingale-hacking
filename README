@@ -37,6 +37,18 @@ Ubuntu and Debian users should note you'll need:
 libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
+To build components for integration with Unity's sound menu you need:
+libunity-dev
+libnotify-dev
+libgtk2.0-dev
+libgtk-3-dev
+
+To enable building the extension, add
+
+ac_add_options --enable-unity-integration
+
+to nightingale.config
+
 More information can be gleaned from the Songbird wiki:
 
 Windows: http://tinyurl.com/3jfo6lv
@@ -65,6 +77,8 @@ Configure Options:
   --enable-breakpad                     whether or not to enable breakpad
   --enable-static                       single-component static build
   --enable-compiler-environment-checks  only allow supported compilers
+  --enable-unity-integration            whether or not to enable support
+                                        for unity's sound menu
 
 ========================================================================
 Contributions:
