@@ -46,7 +46,7 @@ UnityIntegration.soundMenu = {
 		if (this.xulAppInfo.name == "Songbird")
 			this.unityServiceProxy.InitializeFor("songbird.desktop", windowTitle);
 		else if (this.xulAppInfo.name == "Nightingale")
-			this.unityServiceProxy.InitializeFor("nightingale-git.desktop", windowTitle);
+			this.unityServiceProxy.InitializeFor("nightingale.desktop", windowTitle);
 		else {
 			alert("Unity Integration: Unexpected error - your application is not supported")
 			return;
