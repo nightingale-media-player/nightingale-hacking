@@ -82,6 +82,7 @@ const gSearchHandler = {
                               function (event) { gSearchHandler.onSearchEvent(event); },
                               true);
                               
+    // register the library search and activate live search
     this.registerInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD,true);
   },
 
@@ -695,6 +696,14 @@ const gSearchHandler = {
     searchBar.value = queryString;
   },
   
+  /**
+   * Method used to register a searchengine which should be treated as internal.
+   * If the engine was hidden it will now be visible.
+   * @param: searchEngineAlias:  Alias of the targeted engine
+   *         liveSearch:         boolean; Whether the search should be triggered
+   *                             on every keydown or only on submit
+   * @return true if registered successfully, else false.
+   */
   registerInternalSearchEngine :
     function SearchHandler_registerInternalSearchEngine(searchEngineAlias, liveSearch) {
         var engine = this.getSongbirdSearchEngine(searchEngineAlias);
@@ -705,7 +714,8 @@ const gSearchHandler = {
             if(liveSearch === undefined)
                 liveSearch = false;
                 
-            this._internalEngines[searchEngineAlias] = {'liveSearch':liveSearch,'wasHidden':engine.hidden};
+            this._internalEngines[searchEngineAlias] =
+                           {'liveSearch':liveSearch,'wasHidden':engine.hidden};
             
             // If the engine is hidden, make it visible
             if(engine.hidden)
@@ -717,7 +727,11 @@ const gSearchHandler = {
             "\".There either is already a handler for the search engine with this alias or there is no engine with this alias registered.\n");
         return false;
     },
-    
+  
+  /**
+   * Removes the internal binding from the searchengine specified with searchEngineAlias
+   * and rehides it, if it was hidden before being registered
+   */  
   unregisterInternalSearchEngine :
     function SearchHandler_unregisterInternalSearchEngine(searchEngineAlias) {
         var engine = this.getSongbirdSearchEngine(searchEngineAlias);
@@ -754,7 +768,3 @@ window.addEventListener("unload",
     gSearchHandler.uninit();
   },
   false);
-  
-// global search engine rerouting
-const registerInternalSearchEngine = gSearchHandler.registerInternalSearchEngine(searchEngineAlias,liveSearch);
-const unregisterInternalSearchEngine = gSearchHandler.unregisterInternalSearchEngine(searchEngineAlias);
