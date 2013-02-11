@@ -1307,8 +1307,8 @@ AC_SUBST(NIGHTINGALE_LIBNOTIFY)
 
 AC_ARG_ENABLE(unity-integration,
               [  --enable-unity-integration        integration with unity (default=no)])
-if test "$enable_unity_integration" == "yes"; then
-  NIGHTINGALE_UNITY=1
+if test "$SB_PLATFORM" = "linux" -a "$enable_unity_integration" = "yes"; then
+    NIGHTINGALE_UNITY=1
 fi
 AC_SUBST(NIGHTINGALE_UNITY)
 
