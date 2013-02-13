@@ -64,9 +64,11 @@ DYNAMIC_LIB_EXTRA_IMPORTS = xpcomglue_s \
 							plc4 \
 							nspr4 \
 							pthread \
+							dl \
+							unity \
 							$(NULL)
 
-DYNAMIC_LIB_RAW_IMPORTS = -ldl `pkg-config --libs gtk+-2.0` -lunity `pkg-config --libs libnotify`
+DYNAMIC_LIB_RAW_IMPORTS = `pkg-config --libs gtk+-2.0` `pkg-config --libs libnotify`
 
 
 include $(topsrcdir)/build/rules.mk
