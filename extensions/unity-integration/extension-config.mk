@@ -29,5 +29,15 @@ EXTENSION_VER = 1.1.12.1
 EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
 EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
 
+# Overriding EXTENSION_ARCH does not work anymore:
+# See r14481 note in:
+# http://developer.songbirdnest.com/builds/trunk/1214/changes.txt
+
 # Override to create dynamic libary in /components instead of platform
-EXTENSION_ARCH = $(NULL)
+#EXTENSION_ARCH = $(NULL)
+
+# This will force it to create UnityProxy.so in /components
+EXTENSION_NO_BINARY_COMPONENTS = 1
+
+# This is needed to build since targetPlatform can't be set install.rdf
+EXTENSION_SUPPORTED_PLATFORMS = linux

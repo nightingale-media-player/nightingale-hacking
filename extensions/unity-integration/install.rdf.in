@@ -23,9 +23,8 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>@EXTENSION_UUID@</em:id>
     <em:type>2</em:type>
-    <em:targetPlatform>Linux</em:targetPlatform>
     <em:name>Unity Integration</em:name>
-    <em:description>Integration into Unity's sound menu</em:description>
+    <em:description>Integration into Unity's sound menu and notifications</em:description>
     <em:iconURL>chrome://unity-integration/skin/icon.png</em:iconURL>
     <em:optionsURL>chrome://unity-integration/content/options.xul</em:optionsURL>
     <em:version>@EXTENSION_VER@</em:version>
