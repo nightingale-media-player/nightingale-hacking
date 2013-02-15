@@ -10,13 +10,20 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-# compile these IDL files
 XPIDL_SRCS = IUnityProxy.idl \
-			 $(NULL)
+             $(NULL)
 
+# Causes circular dependency, so fix with headers and typelibs
 # into this xpt (an xpt is like a compiled IDL read at runtime)
-XPIDL_MODULE = IUnityProxy.xpt
+#XPIDL_MODULE = IUnityProxy.xpt \
+#       $(NULL)
 
-## Do the header and xpt files need to be exported to the xpi?
+XPIDL_HEADERS = IUnityProxy.h \
+                $(NULL)
+
+XPIDL_TYPELIBS = IUnityProxy.xpt \
+                 $(NULL)
+
+## XXX: header and xpt files exported to the extension?
 
 include $(topsrcdir)/build/rules.mk
