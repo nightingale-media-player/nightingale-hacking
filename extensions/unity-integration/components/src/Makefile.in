@@ -23,20 +23,16 @@ CPP_DEFS = -DXPCOM_GLUE \
 # version before, but I don't want to break it.
 
 ifeq (i686,$(SB_ARCH))
-   CPP_FLAGS = -Wall \
-               -O2 \
-               -fno-rtti \
-               -fno-exceptions \
-               -shared \
-               $(NULL)
+   CPP_EXTRA_FLAGS += -fno-rtti \
+                      -fno-exceptions \
+                      -shared \
+                      $(NULL)
 else
-   CPP_FLAGS = -Wall \
-               -O2 \
-               -fno-rtti \
-               -fno-exceptions \
-               -shared \
-               -fPIC \
-               $(NULL)
+   CPP_EXTRA_FLAGS += -fno-rtti \
+                      -fno-exceptions \
+                      -shared \
+                      -fPIC \
+                      $(NULL)
 endif
 
 # The main problem with the extension not working previously was 
@@ -45,6 +41,7 @@ endif
 # include the public dir where IUnityProxy.h gets generated
 
 CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/unity-integration/components/public \
+                      $(MOZSDK_DIR) \
                       $(NULL)
 
 CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
@@ -72,9 +69,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                              unity \
                              $(NULL)
 
-DYNAMIC_LIB_RAW_IMPORTS = $(GTK_LIBS) \
-                          $(LNTFY_LIBS) \
-                          $(NULL)
+DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
+                           $(LNTFY_LIBS) \
+                           $(NULL)
 
 
 include $(topsrcdir)/build/rules.mk
