@@ -963,6 +963,15 @@ case "$SB_PLATFORM" in
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
 
+    # libnotify for unity notifications
+    PKG_CHECK_MODULES(LNTFY, libnotify)
+    AC_SUBST(LNTFY_CFLAGS)
+    AC_SUBST(LNTFY_LIBS)
+
+    PKG_CHECK_MODULES(UNITY, unity)
+    AC_SUBST(UNITY_CFLAGS)
+    AC_SUBST(UNITY_LIBS)
+
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread --std=gnu++0x"
