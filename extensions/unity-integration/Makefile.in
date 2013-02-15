@@ -33,15 +33,15 @@ IS_EXTENSION = 1
 INSTALL_EXTENSION = 1
 
 SUBDIRS = chrome \
-		  components \
-		  defaults \
-		  $(NULL)
+          components \
+          defaults \
+          $(NULL)
 
 CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-			 $(SONGBIRD_PREFERENCESDIR) \
-			 $(NULL)
-
-#export::
-#		$(INSTALL) $(srcdir)/README $(EXTENSION_STAGE_DIR)
+             $(SONGBIRD_PREFERENCESDIR) \
+             $(NULL)
 
 include $(topsrcdir)/build/rules.mk
+
+export::
+	$(INSTALL_FILE) $(srcdir)/README $(EXTENSION_STAGE_DIR)/README

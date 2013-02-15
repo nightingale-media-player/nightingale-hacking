@@ -13,17 +13,15 @@ IS_EXTENSION = 1
 XPIDL_SRCS = IUnityProxy.idl \
              $(NULL)
 
-# Causes circular dependency, so fix with headers and typelibs
-# into this xpt (an xpt is like a compiled IDL read at runtime)
-#XPIDL_MODULE = IUnityProxy.xpt \
-#       $(NULL)
-
-XPIDL_HEADERS = IUnityProxy.h \
-                $(NULL)
+XPIDL_HEADERS =  IUnityProxy.h \
 
 XPIDL_TYPELIBS = IUnityProxy.xpt \
                  $(NULL)
 
-## XXX: header and xpt files exported to the extension?
+export::
+	$(INSTALL_FILE) $(srcdir)/IUnityProxy.idl $(EXTENSION_STAGE_DIR)/components/IUnityProxy.idl
 
 include $(topsrcdir)/build/rules.mk
+
+libs::
+	$(INSTALL_FILE) IUnityProxy.xpt $(EXTENSION_STAGE_DIR)/components/IUnityProxy.xpt
