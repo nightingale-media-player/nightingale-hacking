@@ -2185,7 +2185,38 @@ void sbMetadataHandlerTaglib::ReadAPETags(
 void sbMetadataHandlerTaglib::ReadXiphTags(
     TagLib::Ogg::XiphComment    *pTag)
 {
-  // nothing to do here. all the xiph properties we're interested in are already being read
+  nsresult result = NS_OK;
+
+  // If this is a local file, cache common album art in order to speed
+  // up any subsequent calls to GetImageData.
+  PRBool isFileURI;
+  result = mpURL->SchemeIs("file", &isFileURI);
+  NS_ENSURE_SUCCESS(result, /* void */);
+  if (isFileURI) {
+    nsAutoPtr<sbAlbumArt> art(new sbAlbumArt());
+    NS_ENSURE_TRUE(art, /* void */);
+    result = ReadImageOgg(
+                    pTag,
+                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
+                    art->mimeType, &(art->dataLen), &(art->data));
+    NS_ENSURE_SUCCESS(result, /* void */);
+    art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
+    nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
+    NS_ENSURE_TRUE(cacheSlot, /* void */);
+    *cacheSlot = art;
+
+    art = new sbAlbumArt();
+    NS_ENSURE_TRUE(art, /* void */);
+    result = ReadImageOgg(
+                    pTag,
+                    sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
+                    art->mimeType, &(art->dataLen), &(art->data));
+    NS_ENSURE_SUCCESS(result, /* void */);
+    art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER;
+    cacheSlot = mCachedAlbumArt.AppendElement();
+    NS_ENSURE_TRUE(cacheSlot, /* void */);
+    *cacheSlot = art;
+  }
 }
 
 /*******************************************************************************
@@ -2637,6 +2668,40 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile()
     if (NS_SUCCEEDED(result) && isValid)
         ReadXiphTags(pTagFile->xiphComment());
 
+    /* FLAC has an additional album cover handler */
+    // If this is a local file, cache common album art in order to speed
+    // up any subsequent calls to GetImageData.
+    PRBool isFileURI;
+    result = mpURL->SchemeIs("file", &isFileURI);
+    NS_ENSURE_SUCCESS(result, PR_FALSE);
+    if (isFileURI) {
+      // We clear the cache from the XiphComment, to ensure FLAC is first
+      mCachedAlbumArt.Clear();
+      nsAutoPtr<sbAlbumArt> art(new sbAlbumArt());
+      NS_ENSURE_TRUE(art, PR_FALSE);
+      result = ReadImageFlac(
+                      pTagFile,
+                      sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
+                      art->mimeType, &(art->dataLen), &(art->data));
+      NS_ENSURE_SUCCESS(result, PR_FALSE);
+      art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
+      nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
+      NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
+      *cacheSlot = art;
+      
+      art = new sbAlbumArt();
+      NS_ENSURE_TRUE(art, PR_FALSE);
+      result = ReadImageFlac(
+                      pTagFile,
+                      sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
+                      art->mimeType, &(art->dataLen), &(art->data));
+      NS_ENSURE_SUCCESS(result, PR_FALSE);
+      art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER;
+      cacheSlot = mCachedAlbumArt.AppendElement();
+      NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
+      *cacheSlot = art;
+    }
+
     /* File is invalid on any error. */
     if (NS_FAILED(result))
         isValid = PR_FALSE;
@@ -2961,39 +3026,6 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile()
     /* Read the Xiph metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         ReadXiphTags(pTagFile->tag());
-
-    if (NS_SUCCEEDED(result) && isValid) {
-      // If this is a local file, cache common album art in order to speed
-      // up any subsequent calls to GetImageData.
-      PRBool isFileURI;
-      result = mpURL->SchemeIs("file", &isFileURI);
-      NS_ENSURE_SUCCESS(result, PR_FALSE);
-      if (isFileURI) {
-        nsAutoPtr<sbAlbumArt> art(new sbAlbumArt());
-        NS_ENSURE_TRUE(art, PR_FALSE);
-        result = ReadImageOgg(
-                        static_cast<TagLib::Ogg::XiphComment*>(pTagFile->tag()),
-                        sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
-                        art->mimeType, &(art->dataLen), &(art->data));
-        NS_ENSURE_SUCCESS(result, PR_FALSE);
-        art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
-        nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
-        NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
-        *cacheSlot = art;
-
-        art = new sbAlbumArt();
-        NS_ENSURE_TRUE(art, PR_FALSE);
-        result = ReadImageOgg(
-                        static_cast<TagLib::Ogg::XiphComment*>(pTagFile->tag()),
-                        sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
-                        art->mimeType, &(art->dataLen), &(art->data));
-        NS_ENSURE_SUCCESS(result, PR_FALSE);
-        art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER;
-        cacheSlot = mCachedAlbumArt.AppendElement();
-        NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
-        *cacheSlot = art;
-      }
-    }
 
     /* File is invalid on any error. */
     if (NS_FAILED(result))
