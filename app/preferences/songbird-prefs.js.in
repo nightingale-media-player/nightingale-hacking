@@ -14,11 +14,11 @@ pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 // Default feather settings:
 // @see sbFeathersManager.js for more information about each pref
 
-pref("general.skins.selectedSkin", "coppery");
-pref("songbird.feathers.default_skin_internalname", "coppery");
-pref("songbird.feathers.default_feather_id", "coppery@getnightingale.com");
-pref("songbird.feathers.default_main_layout", "chrome://coppery/content/xul/mainplayer.xul");
-pref("songbird.feathers.default_secondary_layout", "chrome://coppery/content/xul/miniplayer.xul");
+pref("general.skins.selectedSkin", "bluemonday");
+pref("songbird.feathers.default_skin_internalname", "bluemonday");
+pref("songbird.feathers.default_feather_id", "bluemonday@getnightingale.com");
+pref("songbird.feathers.default_main_layout", "chrome://bluemonday/content/xul/mainplayer.xul");
+pref("songbird.feathers.default_secondary_layout", "chrome://bluemonday/content/xul/miniplayer.xul");
 
 pref("accessibility.typeaheadfind", false);
 pref("accessibility.typeaheadfind.timeout", 5000);

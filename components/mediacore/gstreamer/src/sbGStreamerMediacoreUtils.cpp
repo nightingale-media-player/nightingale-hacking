@@ -823,8 +823,13 @@ GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType aType )
 nsresult
 GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
 {
+  NS_ENSURE_ARG_POINTER(aCaps);
   GstStructure *structure = gst_caps_get_structure (aCaps, 0);
+  NS_ENSURE_STATE(structure);
+  // ^ throws NS_ERROR_UNEXPECTED which is more appropriate for the situation
+  // than NS_ERROR_INVALID_POINTER of NS_ENSURE_ARG_POINTER
   const gchar *capsName = gst_structure_get_name (structure);
+  NS_ENSURE_STATE(capsName);
 
   // Need to special-case some of these
   if (!strcmp(capsName, "video/quicktime")) {

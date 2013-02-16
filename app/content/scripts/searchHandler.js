@@ -32,13 +32,6 @@ Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const LOG = DebugUtils.generateLogFunction("searchHandler", 2);
 
-// Searches using engines tagged with "songbird:internal" are not
-// sent to the browser
-const SEARCHENGINE_TAG_INTERNAL = "songbird:internal";
-
-// Enable live search for engines tagged with "songbird:livesearch"
-const SEARCHENGINE_TAG_LIVESEARCH = "songbird:livesearch";
-
 // Alias identifying the Songbird search engine
 const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
 
@@ -88,13 +81,9 @@ const gSearchHandler = {
     document.addEventListener("search",
                               function (event) { gSearchHandler.onSearchEvent(event); },
                               true);
-
-    // Show the songbird search engine
-    // (All songbird: tagged engines are hidden on startup)
-    var songbirdEngines = this.getSongbirdSearchEngines();
-    for (let i = 0; i < songbirdEngines.length; ++i) {
-      songbirdEngines[i].hidden = false;
-    }
+                              
+    // register the library search and activate live search
+    this.registerInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD,true);
   },
 
 
@@ -103,6 +92,7 @@ const gSearchHandler = {
    */
   uninit: function SearchHandler_uninit() {
     // Hmm, nothing to do?
+    //this.unregisterInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD);
   },
 
 
@@ -226,8 +216,7 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (currentEngine.tags &&
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+    if (this._internalEngines[currentEngine.alias])
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
@@ -449,8 +438,7 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (!currentEngine.tags ||
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) < 0)
+    if (!this._internalEngines[currentEngine.alias])
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
@@ -468,9 +456,8 @@ const gSearchHandler = {
     var engine = this.getSongbirdSearchEngine(alias);
 
     var liveSearchEnabled = false;
-    // Live search is disabled for search engines whose tags do not
-    // contain "livesearch".
-    if (engine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_LIVESEARCH) > -1) {
+    // Live search is disabled for search engines who don't support livesearch
+    if (this._internalEngines[alias].liveSearch) {
       liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
     }
@@ -509,10 +496,9 @@ const gSearchHandler = {
       searchBar.setEngineDisplayText(currentEngine, null);
     }
 
-    // If this engine has no tags or not been tagged as internal,
+    // If this engine has not been registered as internal,
     // we need to restore the engine active prior to us.
-    if (currentEngine.tags &&
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+    if (this._internalEngines[currentEngine.alias])
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause
@@ -708,7 +694,59 @@ const gSearchHandler = {
     // Find out what search is filtering this medialist
     var queryString = this._getMediaPageSearch();
     searchBar.value = queryString;
-  }
+  },
+  
+  /**
+   * Method used to register a searchengine which should be treated as internal.
+   * If the engine was hidden it will now be visible.
+   * @param: searchEngineAlias:  Alias of the targeted engine
+   *         liveSearch:         boolean; Whether the search should be triggered
+   *                             on every keydown or only on submit
+   * @return true if registered successfully, else false.
+   */
+  registerInternalSearchEngine :
+    function SearchHandler_registerInternalSearchEngine(searchEngineAlias, liveSearch) {
+        var engine = this.getSongbirdSearchEngine(searchEngineAlias);
+        
+        // Only continue if the engine isn't yet registered and exists
+        if(!this._internalEngines[searchEngineAlias]&&engine) {
+            // default liveSearch to false
+            if(liveSearch === undefined)
+                liveSearch = false;
+                
+            this._internalEngines[searchEngineAlias] =
+                           {'liveSearch':liveSearch,'wasHidden':engine.hidden};
+            
+            // If the engine is hidden, make it visible
+            if(engine.hidden)
+                engine.hidden = false;
+                
+            return true;
+        }
+        LOG("\n\nCouldn't register a search engine handler for \"" + searchEngineAlias +
+            "\".There either is already a handler for the search engine with this alias or there is no engine with this alias registered.\n");
+        return false;
+    },
+  
+  /**
+   * Removes the internal binding from the searchengine specified with searchEngineAlias
+   * and rehides it, if it was hidden before being registered
+   */  
+  unregisterInternalSearchEngine :
+    function SearchHandler_unregisterInternalSearchEngine(searchEngineAlias) {
+        var engine = this.getSongbirdSearchEngine(searchEngineAlias);
+        if(this._internalEngines[searchEngineAlias]) {
+            // reset the hidden property to the default
+            if(this._internalEngines[searchEngineAlias].wasHidden)
+                engine.hidden = false;
+                
+            delete this._internalEngines[searchEngineAlias];
+        }
+        LOG("\n\nThere is no internal search engine for the alias \""
+            + searchEngineAlias + "\" registered.\n");
+    },
+    
+    _internalEngines: {}
 }  // End of gSearchHandler
 
 
@@ -730,4 +768,3 @@ window.addEventListener("unload",
     gSearchHandler.uninit();
   },
   false);
-
