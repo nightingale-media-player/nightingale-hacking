@@ -1,3 +1,4 @@
+*.anjuta*
 dependencies/linux-*
 .DS_Store
 dependencies/vendor
