@@ -131,7 +131,8 @@ $(OBJDIR) $(DISTDIR):
 makefiles: $(OBJDIR) $(DISTDIR) run_configure
 
 clean:
-	$(MAKE) -C $(OBJDIR) clean
+	$(RM) $(CLOBBER_TRASH)
+	$(RM) -r $(OBJDIR)
 
 clobber:
 	$(RM) $(CLOBBER_TRASH)
