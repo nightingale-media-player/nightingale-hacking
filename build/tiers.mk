@@ -71,7 +71,7 @@ tier_componentsbase_dirs = \
    components/mediamanager \
    components/feathers \
    components/playqueue \
-   components/inernalsearch \
+   components/internalsearch \
    $(NULL)
 
 tier_componentsall_dirs = \
