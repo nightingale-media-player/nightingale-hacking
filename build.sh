@@ -161,8 +161,8 @@ fi
 cd ../
 cd $buildir
 
-make -f nightingale.mk clobber
+make clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
-make -f nightingale.mk
+make
 
 echo "Build Succeeded!"
