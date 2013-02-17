@@ -1,0 +1,9 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(738e3a66-d7b3-4c7d-94ec-a158eb753203)]
+interface ngIInternalSearchEnginesHandler : nsISupports
+{
+  boolean registerInternalSearchEngine(in AString searchEngineAlias, in boolean liveSearch);
+  void unregisterInternalSearchEngine(in AString searchEngineAlias);
+  readonly attribute jsval internalEngines;
+};  
