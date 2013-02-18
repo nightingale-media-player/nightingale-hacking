@@ -7,17 +7,23 @@ Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const LOG = DebugUtils.generateLogFunction("ngInternalSearchService", 2);
 
+var ngInternalSearchServiceInstance;
+
 function ngInternalSearchService()
 {
+    if(ngInternalSearchServiceInstance)
+        return ngInternalSearchServiceInstance;
+    ngInternalSearchServiceInstance = this;    
+        
     this.searchService =
-      Components.classes["@mozilla.org/browser/search-service;1"].getService(nsIBrowserSearchService);
+      Components.classes["@mozilla.org/browser/search-service;1"].getService(Components.interfaces.nsIBrowserSearchService);
 }
 
 ngInternalSearchService.prototype = {
     classDescription: "Nightingale Internal Search Engine Registering Serivce",
     classID:          Components.ID("{738e3a66-d7b3-4c7d-94ec-a158eb753203}"),
     contractID:       "@getnightingale.com/Nightingale/internal-search-service;1",
-    QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIInernalSearchEnginesService]),
+    QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIInternalSearchEnginesService]),
 
     /**
    * Method used to register a searchengine which should be treated as internal.
@@ -69,7 +75,7 @@ ngInternalSearchService.prototype = {
     },
     
     getInternalSearchEngine: function(searchEngineAlias) {
-        return this.internalEngines[alias];
+        return this.internalEngines[searchEngineAlias];
     },
     
     internalEngines: {}

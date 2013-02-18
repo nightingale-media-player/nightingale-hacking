@@ -82,7 +82,7 @@ const gSearchHandler = {
                               function (event) { gSearchHandler.onSearchEvent(event); },
                               true);
     
-    this.internalSearchService = Components.classes["@getnightingale.com/Nightingale/internal-search-service;1"].getService(ngIInternalSearchEnginesService);
+    this.internalSearchService = Cc["@getnightingale.com/Nightingale/internal-search-service;1"].getService(Ci.ngIInternalSearchEnginesService);
     
     // register the library search and activate live search
     this.internalSearchService.registerInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD,true);
@@ -440,7 +440,7 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (!this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
