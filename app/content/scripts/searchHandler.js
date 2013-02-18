@@ -218,7 +218,7 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (this.internalSearchService.internalEngines[currentEngine.alias])
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
@@ -440,7 +440,7 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (!this.internalSearchService.internalEngines[currentEngine.alias])
+    if (!this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
@@ -459,7 +459,7 @@ const gSearchHandler = {
 
     var liveSearchEnabled = false;
     // Live search is disabled for search engines who don't support livesearch
-    if (this.internalSearchService.internalEngines[alias].liveSearch) {
+    if (this.internalSearchService.getInternalSearchEngine(alias).liveSearch) {
       liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
     }
@@ -500,7 +500,7 @@ const gSearchHandler = {
 
     // If this engine has not been registered as internal,
     // we need to restore the engine active prior to us.
-    if (this.internalSearchService.internalEngines[currentEngine.alias])
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause

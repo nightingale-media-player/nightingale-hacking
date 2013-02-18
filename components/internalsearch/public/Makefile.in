@@ -29,9 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = ngIInternalSearchEnginesHandler.idl \
+XPIDL_SRCS = ngIInternalSearchEnginesService.idl \
+             ngIInternalSearchEngine.idl \
              $(NULL)
 
-XPIDL_MODULE = ngInternalSearchService.xpt
+XPIDL_MODULE = ngInternalSearchEngines.xpt
 
 include $(topsrcdir)/build/rules.mk

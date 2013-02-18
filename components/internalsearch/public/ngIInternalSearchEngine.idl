@@ -1,0 +1,8 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(cc9be575-95e6-40b3-9634-ad472d7acc50)]
+interface ngIInternalSearchEngine : nsISupports
+{
+  attribute boolean liveSearch;
+  attribute boolean wasHidden;
+};

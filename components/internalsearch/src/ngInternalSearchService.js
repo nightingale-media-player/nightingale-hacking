@@ -17,7 +17,7 @@ ngInternalSearchService.prototype = {
     classDescription: "Nightingale Internal Search Engine Registering Serivce",
     classID:          Components.ID("{738e3a66-d7b3-4c7d-94ec-a158eb753203}"),
     contractID:       "@getnightingale.com/Nightingale/internal-search-service;1",
-    QueryInterface:   XPCOMUtils.generateQI([Ci.ngIInernalSearchEnginesService]),
+    QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIInernalSearchEnginesService]),
 
     /**
    * Method used to register a searchengine which should be treated as internal.
@@ -66,6 +66,10 @@ ngInternalSearchService.prototype = {
         }
         LOG("\n\nThere is no internal search engine for the alias \""
             + searchEngineAlias + "\" registered.\n");
+    },
+    
+    getInternalSearchEngine: function(searchEngineAlias) {
+        return this.internalEngines[alias];
     },
     
     internalEngines: {}
