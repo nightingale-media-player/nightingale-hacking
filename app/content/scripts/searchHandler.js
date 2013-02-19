@@ -218,7 +218,7 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==null)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
@@ -440,7 +440,7 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)===null)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
@@ -500,7 +500,7 @@ const gSearchHandler = {
 
     // If this engine has not been registered as internal,
     // we need to restore the engine active prior to us.
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==undefined)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==null)
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause

@@ -75,7 +75,9 @@ ngInternalSearchService.prototype = {
     },
     
     getInternalSearchEngine: function(searchEngineAlias) {
-        return this.internalEngines[searchEngineAlias];
+        if(this.internalEngines.hasOwnProperty(searchEngineAlias))
+            return this.internalEngines[searchEngineAlias];
+        return null;
     },
     
     internalEngines: {}
