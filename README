@@ -41,7 +41,6 @@ To build components for integration with Unity's sound menu you need:
 libunity-dev
 libnotify-dev
 libgtk2.0-dev
-libgtk-3-dev
 
 To enable building the extension, add
 
