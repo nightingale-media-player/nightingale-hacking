@@ -1,12 +1,12 @@
 #include "nsIGenericFactory.h"
 #include "UnityProxy.h"
 
-// Создаём конструктор (фабрику) нашего компонента. Этот макрос
-// создаёт static функцию с именем <имя_аргумента>Constructor, в нашем случае
-// UnityProxyConstructor, которая далее используется в структуре components.
+// Create the constructor (factory) of our component. this macro
+// creates a static function named <ArgumentName>Constructor, in our case
+// UnityProxyConstructor, which is then used in the structure of the components.
 NS_GENERIC_FACTORY_CONSTRUCTOR(UnityProxy)
 
-// Структура с описанием нашего компонента
+// Structure containing module info
 static nsModuleComponentInfo components[] =
 {
     {
@@ -17,7 +17,5 @@ static nsModuleComponentInfo components[] =
     }
 };
 
-// Создаём точку входа с необходимой информацией. Это аналогично extern "C" функциям
-// в С++ библиотеках, загружаемых через dlopen(), и которые создают и возвращают указатель
-// на объект класса.
-NS_IMPL_NSGETMODULE("UnityProxysModule", components)
+// Create an entry point to the required nsIModule interface
+NS_IMPL_NSGETMODULE("UnityProxyModule", components)
