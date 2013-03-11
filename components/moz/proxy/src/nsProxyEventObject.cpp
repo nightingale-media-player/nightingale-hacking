@@ -242,7 +242,9 @@ nsProxyEventObject::CallMethod(PRUint16 methodIndex,
 
     // Post synchronously
 
-    nsIThread *thread = NS_GetCurrentThread();
+    nsIThread **thread;
+    NS_GetCurrentThread(thread);
+    
     nsCOMPtr<nsIThreadInternal> threadInt = do_QueryInterface(thread);
     NS_ENSURE_STATE(threadInt);
 
