@@ -66,5 +66,7 @@
       </Description>
     </em:targetApplication>
 
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
   </Description>
 </RDF>
