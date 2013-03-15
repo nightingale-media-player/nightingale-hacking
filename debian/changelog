@@ -1,5 +1,5 @@
-nightingale (1.11.0-71) squeeze; urgency=low
+nightingale (1.11.0-1) unstable; urgency=low
 
   * New upstream version
 
- -- David Rogers <ezekiel000@lavabit.com>  Sat, 31 Mar 2012 21:16:39 +0000
+ -- David Rogers <ezekiel000@lavabit.com>  Fri, 15 Mar 2013 01:03:02 -0400

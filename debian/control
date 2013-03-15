@@ -2,8 +2,16 @@ Source: nightingale
 Section: sound 
 Priority: optional
 Maintainer: David Rogers <ezekiel000@lavabit.com> 
-Build-Depends: cdbs, debhelper (>= 5), libsqlite0-dev, libtag1-dev, libgstreamer-plugins-base0.10-dev, zip, libdbus-glib-1-dev, autoconf, build-essential, subversion, libgtk2.0-dev
-Standards-Version: 3.9.1
+Build-Depends: autoconf,
+ autotools-dev,
+ cdbs,
+ debhelper (>= 7),
+ libsqlite0-dev,
+ libtag1-dev,
+ libgstreamer-plugins-base0.10-dev,
+ libdbus-glib-1-dev,
+ libgtk2.0-dev
+Standards-Version: 3.9.4
 Homepage: http://www.getnightingale.com
 
 Package: nightingale
