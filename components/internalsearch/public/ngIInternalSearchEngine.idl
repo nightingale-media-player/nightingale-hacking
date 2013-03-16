@@ -4,5 +4,6 @@
 interface ngIInternalSearchEngine : nsISupports
 {
   attribute boolean liveSearch;
+  attribute AString contractID;
   attribute boolean wasHidden;
 };

@@ -89,7 +89,7 @@ const gSearchHandler = {
     this.internalSearchService = Cc["@getnightingale.com/Nightingale/internal-search-service;1"].getService(Ci.ngIInternalSearchEnginesService);
     
     // register the library search and activate live search
-    this.internalSearchService.registerInternalSearchEngine(this.SEARCHENGINE_NAME_SONGBIRD,true);
+    this.internalSearchService.registerInternalSearchEngine(this.SEARCHENGINE_NAME_SONGBIRD,"songbird-internal-search",true);
   },
 
 
@@ -222,19 +222,16 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.name)!==null)
+    var engineEntry = this.internalSearchService.getInternalSearchEngine(currentEngine.name);
+    if (engineEntry!==null)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
 
       // Special case for our internal search. Other people can add their
       // own listeners as well.
-      var contractSearchEngineName = currentEngine.name;
-      if(contractSearchEngineName == this.SEARCHENGINE_NAME_SONGBIRD) {
-        contractSearchEngineName = "internal";
-      }
       var contractID =
-        "@songbirdnest.com/Songbird/songbird-" + contractSearchEngineName + "-search;1";
+        "@songbirdnest.com/Songbird/" + engineEntry.contractID + ";1";
       if (contractID in Cc) {
         var searchEngine = Cc[contractID].getService(Ci.sbISearchEngine);
         searchEngine.doSearch(window, searchBar.value);

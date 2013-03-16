@@ -29,11 +29,13 @@ ngInternalSearchService.prototype = {
    * Method used to register a searchengine which should be treated as internal.
    * If the engine was hidden it will now be visible.
    * @param: searchEngineName:   Name of the targeted engine
+   *         contractID:         part of the ID of the search engine handler
+   *                             contract (implementing sbISearchEngine)                           
    *         liveSearch:         boolean; Whether the search should be triggered
    *                             on every keydown or only on submit
    * @return true if registered successfully, else false.
    */
-  registerInternalSearchEngine : function(searchEngineName, liveSearch) {
+  registerInternalSearchEngine : function(searchEngineName, contractID, liveSearch) {
         var engine = this.searchService.getEngineByName(searchEngineName);
         
         // Only continue if the engine isn't yet registered and exists
@@ -43,7 +45,8 @@ ngInternalSearchService.prototype = {
                 liveSearch = false;
                 
             this.internalEngines[searchEngineName] =
-                           {'liveSearch':liveSearch,'wasHidden':engine.hidden};
+                           {'liveSearch':liveSearch,'contractID':contractID,
+                                                    'wasHidden':engine.hidden};
             
             // If the engine is hidden, make it visible
             if(engine.hidden)

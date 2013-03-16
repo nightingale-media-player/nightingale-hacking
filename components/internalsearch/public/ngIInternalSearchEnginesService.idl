@@ -5,7 +5,7 @@ interface ngIInternalSearchEngine;
 [scriptable, uuid(d154ac90-7953-11e2-b92a-0800200c9a66)]
 interface ngIInternalSearchEnginesService : nsISupports
 {
-  boolean registerInternalSearchEngine(in AString searchEngineName, in boolean liveSearch);
+  boolean registerInternalSearchEngine(in AString searchEngineName, in AString contractID, in boolean liveSearch);
   void unregisterInternalSearchEngine(in AString searchEngineName);
   ngIInternalSearchEngine getInternalSearchEngine(in AString searchEngineName);
 };
