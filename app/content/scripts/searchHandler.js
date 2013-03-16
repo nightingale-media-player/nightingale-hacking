@@ -29,11 +29,8 @@
  */
 
 Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
-
 const LOG = DebugUtils.generateLogFunction("searchHandler", 2);
 
-// Alias identifying the Songbird search engine
-const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
 
 /**
  * \brief Songbird Search Handler.
@@ -52,6 +49,8 @@ const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
  */
 const gSearchHandler = {
 
+  // name identifying the standard library search, gets adjusted in init
+  SEARCHENGINE_NAME_SONGBIRD: "Nightingale",
 
   /**
    * Register search handler listeners
@@ -82,10 +81,15 @@ const gSearchHandler = {
                               function (event) { gSearchHandler.onSearchEvent(event); },
                               true);
     
+    // get the brand strings to get the name of the library search
+    var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
+    var brand = stringBundleService.createBundle("chrome://branding/locale/brand.properties");
+    this.SEARCHENGINE_NAME_SONGBIRD = brand.GetStringFromName("brandShortName");
+    
     this.internalSearchService = Cc["@getnightingale.com/Nightingale/internal-search-service;1"].getService(Ci.ngIInternalSearchEnginesService);
     
     // register the library search and activate live search
-    this.internalSearchService.registerInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD,true);
+    this.internalSearchService.registerInternalSearchEngine(this.SEARCHENGINE_NAME_SONGBIRD,true);
   },
 
 
@@ -94,7 +98,7 @@ const gSearchHandler = {
    */
   uninit: function SearchHandler_uninit() {
     // Hmm, nothing to do?
-    this.internalSearchService.unregisterInternalSearchEngine(SEARCHENGINE_ALIAS_SONGBIRD);
+    this.internalSearchService.unregisterInternalSearchEngine(this.SEARCHENGINE_NAME_SONGBIRD);
   },
 
 
@@ -218,15 +222,19 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==null)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.name)!==null)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
 
       // Special case for our internal search. Other people can add their
       // own listeners as well.
+      var contractSearchEngineName = currentEngine.name;
+      if(contractSearchEngineName == this.SEARCHENGINE_NAME_SONGBIRD) {
+        contractSearchEngineName = "internal";
+      }
       var contractID =
-        "@songbirdnest.com/Songbird/" + currentEngine.alias + ";1";
+        "@songbirdnest.com/Songbird/songbird-" + contractSearchEngineName + "-search;1";
       if (contractID in Cc) {
         var searchEngine = Cc[contractID].getService(Ci.sbISearchEngine);
         searchEngine.doSearch(window, searchBar.value);
@@ -373,14 +381,14 @@ const gSearchHandler = {
    * Returns the Songbird internal search engine
    */
   getSongbirdSearchEngine:
-    function SearchHandler_getSongbirdSearchEngine(aAlias) {
-    if (!aAlias)
-      aAlias = SEARCHENGINE_ALIAS_SONGBIRD;
+    function SearchHandler_getSongbirdSearchEngine(aName) {
+    if (!aName||aName=="internal")
+      aName = this.SEARCHENGINE_NAME_SONGBIRD;
     var songbirdEngine = this.getSearchBar()
                              .searchService
-                             .getEngineByAlias(aAlias);
+                             .getEngineByName(aName);
     if (!songbirdEngine) {
-      LOG("\n\nThe Songbird search engine with alias \"" + aAlias +
+      LOG("\n\nThe Songbird search engine with name \"" + aName +
           "\" could not be found.\n");
     }
     return songbirdEngine;
@@ -440,26 +448,28 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)===null)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.name)===null)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
     }
 
     // Get the corresponding search engine for the service pane node.
-    var alias = null;
+    var name = null;
     if (gServicePane) {
       // Get the current active node.
       var node = gServicePane.activeNode;
       if (node) {
-        alias = "songbird-" + node.searchtype + "-search";
+        name = node.searchtype;
       }
     }
-    var engine = this.getSongbirdSearchEngine(alias);
-
+    var engine = this.getSongbirdSearchEngine(name);
+    if(engine.name!="")
+        name = engine.name;
+    
     var liveSearchEnabled = false;
     // Live search is disabled for search engines who don't support livesearch
-    if (this.internalSearchService.getInternalSearchEngine(alias).liveSearch) {
+    if (this.internalSearchService.getInternalSearchEngine(name).liveSearch) {
       liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
     }
@@ -477,7 +487,7 @@ const gSearchHandler = {
     }
 
     // Set the query to match the state of the media page
-    this._syncSearchBarToMediaPage(alias);
+    this._syncSearchBarToMediaPage(name);
 
     searchBar.updateDisplay();
   },
@@ -500,7 +510,7 @@ const gSearchHandler = {
 
     // If this engine has not been registered as internal,
     // we need to restore the engine active prior to us.
-    if (this.internalSearchService.getInternalSearchEngine(currentEngine.alias)!==null)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.name)!==null)
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause
@@ -672,7 +682,7 @@ const gSearchHandler = {
    * the state of the current media list view
    */
   _syncSearchBarToMediaPage:
-    function SearchHandler__syncSearchBarToMediaPage(aAlias) {
+    function SearchHandler__syncSearchBarToMediaPage(aName) {
     // if we are not currently showing a view (iem we're showing a web site)
     // then do not change anything, we want the content of the search bar to
     // persist
@@ -689,7 +699,7 @@ const gSearchHandler = {
     // the current search context.
     var mediaPageName = this._getMediaPageDisplayName();
     if (mediaPageName != "") {
-      var engine = this.getSongbirdSearchEngine(aAlias);
+      var engine = this.getSongbirdSearchEngine(aName);
       searchBar.setEngineDisplayText(engine, mediaPageName);
     }
 
