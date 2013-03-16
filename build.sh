@@ -62,16 +62,18 @@ case $OSTYPE in
     patch=1
     version=1.12
     depdate=20130316
+    fname="$depdirn-$version-$depdate-$build-final.tar.lzma"
+    
     export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
     ( cd dependencies && {
 		if [ ! -d "$depdirn" ] ; then
-			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
-				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depdate-$build-final.tar.lzma"
-				md5_verify "$depdirn-$version-$depdate-$build-final.tar.lzma"
+			if [ ! -f "$fname" ] ; then
+				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+				md5_verify "$fname"
 			fi
-			tar xvf "$depdirn-$version-$depdate-$build-final.tar.lzma"
+			tar xvf "$fname"
 		fi
 	} ; )
     
