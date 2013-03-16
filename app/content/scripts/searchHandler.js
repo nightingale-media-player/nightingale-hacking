@@ -231,10 +231,10 @@ const gSearchHandler = {
       // own listeners as well.
       var contractSearchEngineName = currentEngine.name;
       if(contractSearchEngineName == this.SEARCHENGINE_NAME_SONGBIRD) {
-        contractSearchEngineName = "songbird-internal-search";
+        contractSearchEngineName = "internal";
       }
       var contractID =
-        "@songbirdnest.com/Songbird/" + contractSearchEngineName + ";1";
+        "@songbirdnest.com/Songbird/songbird-" + contractSearchEngineName + "-search;1";
       if (contractID in Cc) {
         var searchEngine = Cc[contractID].getService(Ci.sbISearchEngine);
         searchEngine.doSearch(window, searchBar.value);
