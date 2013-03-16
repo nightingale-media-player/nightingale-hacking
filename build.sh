@@ -69,9 +69,9 @@ case $OSTYPE in
 		if [ ! -d "$depdirn" ] ; then
 			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
 				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depdate-$build-final.tar.lzma"
-				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
+				md5_verify "$depdirn-$version-$depdate-$build-final.tar.lzma"
 			fi
-			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
+			tar xvf "$depdirn-$version-$depdate-$build-final.tar.lzma"
 		fi
 	} ; )
     
