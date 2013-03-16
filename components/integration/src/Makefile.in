@@ -42,17 +42,17 @@ CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/xpcom \
                      $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-   SUBDIRS += win32
-endif
-
-ifeq (macosx,$(SB_PLATFORM))
-	SUBDIRS += macosx
-endif
-
-ifeq (linux,$(SB_PLATFORM))
-	SUBDIRS += linux
+  SUBDIRS += win32
 else
-	SUBDIRS += $(SB_PLATFORM)
+  ifeq (linux,$(SB_PLATFORM))
+    SUBDIRS += linux
+  else
+    ifeq (macosx,$(SB_PLATFORM))
+      SUBDIRS += macosx
+    else
+      SUBDIRS += $(SB_PLATFORM)
+    endif
+  endif
 endif
 
 include $(topsrcdir)/build/rules.mk
