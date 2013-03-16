@@ -61,15 +61,14 @@ case $OSTYPE in
     depdirn="linux-$arch"
     patch=1
     version=1.12
-    #if you have a dep built on a differing date for either arch, just use a conditional to set this
-    depdate=20130101
+    depdate=20130316
     export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
     ( cd dependencies && {
 		if [ ! -d "$depdirn" ] ; then
 			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
-				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depdate-release.tar.lzma"
+				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depdate-$build-final.tar.lzma"
 				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
 			fi
 			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
