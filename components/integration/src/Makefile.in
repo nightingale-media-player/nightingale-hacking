@@ -48,7 +48,9 @@ else
     SUBDIRS += linux
   else
     ifeq (macosx,$(SB_PLATFORM))
-      SUBDIRS += macosx
+	  # XXX Mook/ilikenwf - osx still b0rked
+      #SUBDIRS += macosx
+      SUBDIRS += linux
     else
       SUBDIRS += $(SB_PLATFORM)
     endif
