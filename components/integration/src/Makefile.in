@@ -41,15 +41,20 @@ CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/xpcom \
                      $(MOZSDK_INCLUDE_DIR)/webbrwsr \
                      $(NULL)
 
-# XXX Mook: for now everybody else is linux (including solaris)
 ifeq (windows,$(SB_PLATFORM))
-   SUBDIRS += win32
+  SUBDIRS += win32
 else
-   ifeq (,$(wildcard $(srcdir)/$(SB_PLATFORM)))
+  ifeq (linux,$(SB_PLATFORM))
+    SUBDIRS += linux
+  else
+    ifeq (macosx,$(SB_PLATFORM))
+	  # XXX Mook/ilikenwf - osx still b0rked
+      #SUBDIRS += macosx
       SUBDIRS += linux
-   else
+    else
       SUBDIRS += $(SB_PLATFORM)
-   endif
+    endif
+  endif
 endif
 
 include $(topsrcdir)/build/rules.mk
