@@ -4,20 +4,28 @@ Priority: optional
 Maintainer: David Rogers <ezekiel000@lavabit.com> 
 Build-Depends: autoconf,
  autotools-dev,
- cdbs,
- debhelper (>= 7),
+ debhelper (>= 9),
+ libasound2,
+ libdbus-glib-1-dev,
+ libgstreamer-plugins-base0.10-dev,
+ libgtk2.0-dev,
+ libidl0,
  libsqlite0-dev,
  libtag1-dev,
- libgstreamer-plugins-base0.10-dev,
- libdbus-glib-1-dev,
- libgtk2.0-dev
+ libnotify-dev,
+ libunity-dev,
+ python (>=2.6),
+ unzip,
+ wget,
+ zip
 Standards-Version: 3.9.4
 Homepage: http://www.getnightingale.com
 
 Package: nightingale
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, iceweasel|firefox, gstreamer0.10-plugins-good
+Depends: ${shlibs:Depends}, ${misc:Depends}, gstreamer0.10-plugins-good
+Suggests: firefox | iceweasel
 Description: Nightingale is a desktop media player
  a digital jukebox and Web browser mash-up. It supports extensions
- and skins feathers. Like Firefox/Iceweasel, it is built from the Mozilla,
+ and skins feathers. Like Firefox/Iceweasel, it is built from the Mozilla
  cross-platform and open source framework, based on Songbird.

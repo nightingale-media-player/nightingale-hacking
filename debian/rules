@@ -1,10 +1,22 @@
 #!/usr/bin/make -f
+# debian/rules makefile that uses debhelper.
+#
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
 
-include /usr/share/cdbs/1/rules/debhelper.mk
+override_dh_auto_build:
+	echo 'ac_add_options --with-taglib-source=packaged' >> $(CURDIR)/nightingale.config
+	echo 'ac_add_options --enable-unity-integration' >> $(CURDIR)/nightingale.config
+	$(CURDIR)/build.sh
+	mv $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
+	mv $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
 
-DEB_DH_SHLIBDEPS_ARGS_ALL := -X nightingale
+override_dh_auto_clean:
+	rm -f $(CURDIR)/nightingale.config $(CURDIR)/config.log
+	make clobber
 
-makebuilddir/nightingale::
-	./build.sh
-	cp -r $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
-	cp $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
+override_dh_shlibdeps:
+	dh_makeshlibs -Xnightingale
+
+%:
+	dh $@
