@@ -32,15 +32,14 @@ include $(DEPTH)/build/autodefs.mk
 DEFAULT_EXTENSIONS = AlbumArt \
                      concerts \
                      xpcom_helloworld \
-					 foldersync \
-					 foldersync-ng \
-					 playlistfolders \
+                     foldersync \
+                     foldersync-ng \
+                     playlistfolders \
                      $(NULL)
 
 # AlbumArt is not on the list because it's used internally by the bird, so
 # we need to build it regardless of platform
-NOARCH_EXTENSIONS = 7digital \
-                    albumartlastfm \
+NOARCH_EXTENSIONS = albumartlastfm \
                     lastfm \
                     mashTape \
                     shoutcast \
