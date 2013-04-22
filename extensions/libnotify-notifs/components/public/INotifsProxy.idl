@@ -1,0 +1,11 @@
+#include "nsISupports.idl"
+#include "nsIObserverService.idl"
+
+[scriptable, uuid(b08fc6c2-3968-4fc6-9a08-1b1905cade96)]
+interface INotifyProxy : nsISupports
+{
+  void InitializeFor(in string desktopFileName, in string windowTitle);
+  void HideWindow();
+  void ShowWindow();
+  void EnableNotifications(in PRBool needEnable);
+};
