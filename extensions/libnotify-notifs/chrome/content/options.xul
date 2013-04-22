@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://mlyrics/skin/options.css" type="text/css"?>
+
+<!DOCTYPE page [
+	<!ENTITY % sbDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+	%sbDTD;
+	<!ENTITY % libnotify-notif-DTD SYSTEM "chrome://libnotify-notif/locale/overlay.dtd">
+	%libnotify-notif-DTD;
+]>
+
+<prefwindow id="unity-integration-prefs" 
+			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+			title="&libnotify-notif.options.title;">
+	
+	<prefpane label="&libnotify-notif.options.title;">
+		<preferences>
+			<preference id="pref_hideOnClose" name="extensions.libnotify-notif.hideOnClose" type="bool" />
+			<preference id="pref_enableNotifications" name="extensions.libnotify-notif.enableNotifications" type="bool" />
+		</preferences>
+
+		<groupbox>
+			<caption label="General"/>
+			
+			<checkbox preference="pref_hideOnClose" label="&libnotify-notif.options.hideOnClose;" />
+			<checkbox preference="pref_enableNotifications" label="&libnotify-notif.options.enableNotifications;" />
+		</groupbox>
+	</prefpane>
+
+</prefwindow>

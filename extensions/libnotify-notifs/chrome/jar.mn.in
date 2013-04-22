@@ -1,0 +1,7 @@
+unity-integration.jar:
+% content   libnotify-notif %content/
+% resource  libnotify-notif modules/
+% skin      libnotify-notif classic/1.0 %skin/
+% locale    libnotify-notif en-US %locale/en-US/
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://libnotify-notif/content/base.xul
+@include_all_to
