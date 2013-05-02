@@ -91,7 +91,7 @@ NS_IMETHODIMP UnityProxy::InitializeFor (const char* desktopFileName, const char
 		playerName = g_key_file_get_string (keyFile, "Desktop Entry", "Name", NULL);
 		playerIcon = g_key_file_get_string (keyFile, "Desktop Entry", "Icon", NULL);
 	}
-	g_free (keyFile);
+	g_key_file_free (keyFile);
 	
 	if (!playerName || !playerIcon) return NS_ERROR_UNEXPECTED;
 	
