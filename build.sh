@@ -78,7 +78,12 @@ case $OSTYPE in
 	} ; )
     
     [ -f nightingale.config ] || touch nightingale.config
-    grep -q -E 'ac_add_options\s+--with-media-core=gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
+    grep -q -E 'gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
+    
+    # the below needs to be nested...in my testing it won't work otherwise
+    if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
+		grep -Fxq taglib nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
+    fi
     ;;
   msys*)
     depdirn="windows-i686"
