@@ -52,15 +52,15 @@ interface sbIMetadataChannel : nsIStreamListener
   * \brief The current read position (for the read methods)
   * \todo Make "SetPos()" work past the end of the buffer.  Right now, nothing is seekable.
   */
-  attribute PRUInt64 pos;
+  attribute PRUint64 pos;
   /**
   * \brief The current internal buffer position (everything the channel has sent)
   */
-  readonly attribute PRUInt64 buf;
+  readonly attribute PRUint64 buf;
   /**
   * \brief The size of the file targeted by the nsIChannel
   */
-  readonly attribute PRUInt64 size;
+  readonly attribute PRUint64 size;
   /**
   * \brief If the datastream is seekable
   * \todo Make "GetSeekable()" work.  Right now, nothing is seekable.
