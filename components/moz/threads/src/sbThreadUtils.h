@@ -1971,7 +1971,7 @@ nsresult sbInvokeOnThread2Async(T & aObject,
  *
  * \return PR_TRUE              Current thread is main thread.
  */
-bool SB_IsMainThread(nsIThreadManager* aThreadManager = nsnull);
+PRBool SB_IsMainThread(nsIThreadManager* aThreadManager = nsnull);
 
 
 #endif // __SB_THREAD_UTILS_H__
