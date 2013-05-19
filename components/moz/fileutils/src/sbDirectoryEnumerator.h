@@ -141,7 +141,7 @@ private:
   //
 
   PRBool                        mIsInitialized;
-  PRLock*                       mEnumeratorLock;
+  mozilla::sbMozHackMutex*      mEnumeratorLock;
   nsCOMArray<nsISimpleEnumerator>
                                 mEntriesEnumStack;
   nsCOMPtr<nsIFile>             mNextFile;
