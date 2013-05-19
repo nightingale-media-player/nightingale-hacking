@@ -44,7 +44,7 @@
 #include <sbIMediaListListener.h>
 
 // Mozilla imports.
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
 

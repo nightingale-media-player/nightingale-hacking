@@ -31,7 +31,8 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+//#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsILocalFile.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
@@ -44,7 +45,7 @@
 #include <sbILibraryManagerListener.h>
 
 #include <nsArrayEnumerator.h>
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>
@@ -54,7 +55,7 @@
 #include <sbLibraryUtils.h>
 #include <sbDebugUtils.h>
 #include <sbThreadUtils.h>
-#include <sbProxiedComponentManager.h>
+//#include <sbProxiedComponentManager.h>
 
 /* for sbILibraryUtils::GetCanonicalPath */
 #if XP_WIN

@@ -54,7 +54,6 @@
 #include "sbBaseMediacoreVolumeControl.h"
 #include "sbMediacoreEvent.h"
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 

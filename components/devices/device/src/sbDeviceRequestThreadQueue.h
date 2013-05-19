@@ -27,7 +27,7 @@
 #ifndef SBDEVICEREQUESTTHREADQUEUE_H_
 #define SBDEVICEREQUESTTHREADQUEUE_H_
 
-// Mozzila includes
+// Mozilla includes
 #include <nsAutoPtr.h>
 #include <pldhash.h>
 

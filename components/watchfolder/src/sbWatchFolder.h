@@ -37,7 +37,6 @@
 
 #include <nsITimer.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
 #include <nsIFile.h>
 #include <nsTArray.h>
 #include <nsIMutableArray.h>

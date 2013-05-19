@@ -44,7 +44,7 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaItemController.h>
 
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringAPI.h>
@@ -54,7 +54,7 @@
 #include <sbDebugUtils.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
-#include <sbProxiedComponentManager.h>
+//#include <sbProxiedComponentManager.h>
 
 #include <algorithm>
 

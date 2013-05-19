@@ -37,7 +37,7 @@
 #include <sbILibraryUtils.h>
 
 #include <nsCategoryCache.h>
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsClassHashtable.h>

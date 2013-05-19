@@ -44,7 +44,7 @@
 
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
@@ -74,7 +74,7 @@
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
 #include <sbIDeviceProperties.h>
-#include <sbIDownloadDevice.h>
+//#include <sbIDownloadDevice.h>
 #include <sbIJobCancelable.h>
 #include <sbILibrary.h>
 #include <sbILibraryDiffingService.h>
@@ -84,7 +84,7 @@
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
-#include <sbIMediaFileManager.h>
+//#include <sbIMediaFileManager.h>
 #include <sbIMediaInspector.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaItemController.h>

@@ -33,7 +33,7 @@
 #include <list>
 
 // Mozilla includes
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 

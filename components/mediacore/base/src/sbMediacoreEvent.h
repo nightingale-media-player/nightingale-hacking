@@ -40,7 +40,6 @@
 #include <sbIMediacoreError.h>
 #include <sbIMediacoreEventTarget.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
 class sbMediacoreEvent : public sbIMediacoreEvent

@@ -112,17 +112,18 @@ interface sbICDDeviceEvent : sbIDeviceEvent
   //
   // @brief CD rip has completed.
   //
-  const unsigned long EVENT_CDRIP_COMPLETED = EVENT_CLIENT_DEFINED + 4;
+  //const unsigned long EVENT_CDRIP_COMPLETED = EVENT_CLIENT_DEFINED + 4;
+  const unsigned long REQUEST_CDLOOKUP = 0x80000000 + 1;
 
   //
   // @brief Request constants
   //
-  const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
-
+  //const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
   //
   // @brief State constants
   //
-  const unsigned long STATE_LOOKINGUPCD = sbIDevice::STATE_USER + 1;
+  //const unsigned long STATE_LOOKINGUPCD = sbIDevice::STATE_USER + 1;
+  const unsigned long STATE_LOOKINGUPCD = 0x20000000 + 1;
 };
 
 //------------------------------------------------------------------------------

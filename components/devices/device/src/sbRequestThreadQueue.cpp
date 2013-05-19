@@ -31,7 +31,7 @@
 
 // Mozilla includes
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
