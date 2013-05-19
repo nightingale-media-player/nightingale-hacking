@@ -65,6 +65,7 @@ private:
 protected:
   void ClearWeakReferences();
   PRBool HasWeakReferences() const {
+
     mozilla::Mutex Lock(mProxyLock);
     return mProxy != 0; 
   }

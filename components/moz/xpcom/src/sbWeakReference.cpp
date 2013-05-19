@@ -43,6 +43,7 @@ private:
     if (mReferent) {
       mReferent->NoticeProxyDestruction();
     }
+
   }
 
   void NoticeReferentDestruction() {
