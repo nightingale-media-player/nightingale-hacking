@@ -35,27 +35,25 @@ private:
   friend class sbSupportsWeakReference;
 
   sbWeakReference(sbSupportsWeakReference* referent) 
-    : mReferentLock("sbWeakReference::mReferentLock"); 
-    , mReferent(referent) {}
+    : mReferentMutex("sbWeakReference::mReferentMutex")
+    , mReferent(referent) {
+    // ...I can only be constructed by an |sbSupportsWeakReference|
+  }
 
   ~sbWeakReference() {
     // ...I will only be destroyed by calling |delete| myself.
     if (mReferent) {
       mReferent->NoticeProxyDestruction();
     }
-
-    if (mReferentLock) {
-      delete mReferentLock;
-    }
   }
 
   void NoticeReferentDestruction() {
-    mozilla::Mutex Lock(mReferentLock);
+    mozilla::MutexAutoLock lock(mReferentMutex);
     // ...called (only) by an |sbSupportsWeakReference| from _its_ dtor.
     mReferent = nsnull;
   }
 
-  mozilla::Mutex mReferentLock;
+  mozilla::Mutex mReferentMutex;
   sbSupportsWeakReference*  mReferent;
 };
 
@@ -64,7 +62,7 @@ sbSupportsWeakReference::GetWeakReference(nsIWeakReference** aInstancePtr)
 {
   NS_ENSURE_ARG_POINTER(aInstancePtr);
 
-  mozilla::Mutex lock(mProxyLock);
+  mozilla::MutexAutoLock Lock(mProxyLock);
 
   if (!mProxy) {
     mProxy = new sbWeakReference(this);
@@ -86,9 +84,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbWeakReference, nsIWeakReference)
 NS_IMETHODIMP
 sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr) 
 {
-  NS_ENSURE_TRUE(mReferentLock, NS_ERROR_NOT_INITIALIZED);
-
-  mozilla::Mutex lock(mReferentLock);
+  mozilla::MutexAutoLock lock(mReferentMutex);
   return mReferent ? 
     mReferent->QueryInterface(aIID, aInstancePtr) : NS_ERROR_NULL_POINTER;
 }
@@ -96,7 +92,7 @@ sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr)
 void
 sbSupportsWeakReference::ClearWeakReferences() 
 {
-  mozilla::Mutex lock(mProxyLock);
+  mozilla::MutexAutoLock Lock(mProxyLock);
 
   if (mProxy) {
     mProxy->NoticeReferentDestruction();

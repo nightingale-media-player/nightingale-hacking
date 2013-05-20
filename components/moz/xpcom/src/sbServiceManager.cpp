@@ -238,7 +238,7 @@ sbServiceManager::Initialize()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // Get a proxied observer service.
-  mObserverService = do_ProxiedGetService("@mozilla.org/observer-service;1",
+  mObserverService = do_GetService("@mozilla.org/observer-service;1",
                                           &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 

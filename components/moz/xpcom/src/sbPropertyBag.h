@@ -52,10 +52,10 @@
 // Set IMETHOD_VISIBILITY to empty so that the class-level NS_COM declaration
 // controls member method visibility.
 #undef  IMETHOD_VISIBILITY
-#define IMETHOD_VISIBILITY
+#define IMETHOD_VISIBILITY NS_COM_GLUE
 
-class NS_COM sbPropertyBag : public nsIWritablePropertyBag,
-                             public nsIWritablePropertyBag2
+class NS_COM_GLUE sbPropertyBag : public nsIWritablePropertyBag,
+                                  public nsIWritablePropertyBag2
 {
 public:
   sbPropertyBag() { }
@@ -83,7 +83,7 @@ protected:
 
 // Note: NS_NewHashPropertyBag returns a HPB that
 // uses a non-thread-safe internal hash
-extern "C" NS_COM nsresult
+extern "C" NS_COM_GLUE nsresult
 SB_NewHashPropertyBag(nsIWritablePropertyBag* *_retval);
 
 #endif /* nsHashPropertyBag_h___ */

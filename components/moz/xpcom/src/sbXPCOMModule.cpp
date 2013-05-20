@@ -27,7 +27,7 @@
 #include "sbArray.h"
 #include "sbPropertyBag.h"
 #include "sbServiceManager.h"
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyBag, Init)
@@ -38,29 +38,34 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
    {0x135c8890, 0xd9da, 0x4a1c, \
      {0xb3, 0x45, 0x3b, 0xb2, 0xfe, 0xe8, 0xfa, 0xb5}}
 #define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SB_THREADSAFE_ARRAY_CLASSNAME,
-    SB_THREADSAFE_ARRAY_CID,
-    SB_THREADSAFE_ARRAY_CONTRACTID,
-    sbArrayConstructor
-  },
-  {
-    SB_PROPERTYBAG_CLASSNAME,
-    SB_PROPERTYBAG_CID,
-    SB_PROPERTYBAG_CONTRACTID,
-    sbPropertyBagConstructor
-  },
-  {
-    SB_SERVICE_MANAGER_CLASSNAME,
-    SB_SERVICE_MANAGER_CID,
-    SB_SERVICE_MANAGER_CONTRACTID,
-    sbServiceManagerConstructor
-  }
+
+NS_DEFINE_NAMED_CID(SB_THREADSAFE_ARRAY_CID);
+NS_DEFINE_NAMED_CID(SB_PROPERTYBAG_CID);
+NS_DEFINE_NAMED_CID(SB_SERVICE_MANAGER_CID);
+
+static const mozilla::Module::CIDEntry kSongbirdXPCOMLibCIDs[] = {
+  { &kSB_THREADSAFE_ARRAY_CID, false, NULL, sbArrayConstructor },
+  { &kSB_PROPERTYBAG_CID, false, NULL, sbPropertyBagConstructor },
+  { &kSB_SERVICE_MANAGER_CID, false, NULL, sbServiceManagerConstructor },
+  { NULL }
 };
 
-// create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdXPCOMLib, components)
+static const mozilla::Module::ContractIDEntry kSongbirdXPCOMLibContracts[] = {
+  { SB_THREADSAFE_ARRAY_CONTRACTID, &kSB_THREADSAFE_ARRAY_CID },
+  { SB_PROPERTYBAG_CONTRACTID, &kSB_PROPERTYBAG_CID },
+  { SB_SERVICE_MANAGER_CONTRACTID, &kSB_SERVICE_MANAGER_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kSongbirdXPCOMLibCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kSongbirdXPCOMLibModule = {
+  mozilla::Module::kVersion,
+  kSongbirdXPCOMLibCIDs,
+  kSongbirdXPCOMLibContracts,
+  kSongbirdXPCOMLibCategories
+};
+ 
+NSMODULE_DEFN(SongbirdXPCOMLib) = &kSongbirdXPCOMLibModule;

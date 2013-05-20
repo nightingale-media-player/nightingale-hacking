@@ -50,6 +50,7 @@
 #include <sbThreadUtils.h>
 
 // Mozilla imports.
+#include <mozilla/Mutex.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
@@ -122,7 +123,7 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
 nsresult
 sbWindowWatcher::CallWithWindow_Proxy(const nsAString&           aWindowType,
                                   sbICallWithWindowCallback* aCallback,
-                                  bool                     aWait)
+                                  PRBool                     aWait)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aCallback);
@@ -134,7 +135,7 @@ sbWindowWatcher::CallWithWindow_Proxy(const nsAString&           aWindowType,
   if (!SB_IsMainThread(mThreadManager)) {
     nsRefPtr<sbRunnable_<nsresult>> job =
       new sbRunnableMethod3_<nsresult,sbWindowWatcher,
-      const nsAString&,sbICallWithWindowCallback*,bool>(
+      const nsAString&,sbICallWithWindowCallback*,PRBool>(
           *this,&sbWindowWatcher::CallWithWindow_Proxy,
           aWindowType,aCallback,aWait);
 
@@ -469,8 +470,8 @@ sbWindowWatcher::OnQuitApplicationGranted()
  */
 
 sbWindowWatcher::sbWindowWatcher() :
-  mMonitor("sbWindowWatcher::mMonitor"),
   mSentMainWinPresentedNotification(PR_FALSE),
+  mMonitor("sbWindowWatcher::mMonitor"),
   mIsShuttingDown(PR_FALSE),
   mServicingCallWithWindowList(PR_FALSE)
 {
@@ -629,10 +630,10 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   windowInfo->window = aWindow;
 
   // Get the window event target.
-  nsCOMPtr<nsIDOMWindow2> window2 = do_QueryInterface(aWindow, &rv);
+  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(aWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIDOMEventTarget> windowEventTarget;
-  rv = window2->GetWindowRoot(getter_AddRefs(windowEventTarget));
+  rv = window->GetWindowRoot(getter_AddRefs(windowEventTarget));
   NS_ENSURE_SUCCESS(rv, rv);
   windowInfo->eventTarget = windowEventTarget;
 
@@ -862,39 +863,6 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
 
   return NS_OK;
 }
-
-
-/**
- * Return this instance proxied to the main thread in aWindowWatcher.
- *
- * \param aWindowWatcher        Returned proxied window watcher.
- */
-
-nsresult
-sbWindowWatcher::GetProxiedWindowWatcher(sbIWindowWatcher** aWindowWatcher)
-{
-  // Validate arguments.
-  NS_ASSERTION(aWindowWatcher, "aWindowWatcher is null");
-
-  // Function variables.
-  nsresult rv;
-
-  // Create a main thread proxy for the window watcher.
-  nsCOMPtr<nsIProxyObjectManager>
-    proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = proxyObjectManager->GetProxyForObject
-                             (NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbIWindowWatcher),
-                              NS_ISUPPORTS_CAST(sbIWindowWatcher *, this),
-                                nsIProxyObjectManager::INVOKE_SYNC |
-                                nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                              (void**) aWindowWatcher);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

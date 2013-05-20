@@ -25,21 +25,30 @@
  */
 
 #include "sbVariant.h"
-#include <nsIGenericFactory.h>
-
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbVariant)
-
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_VARIANT_CLASSNAME,
-    SONGBIRD_VARIANT_CID,
-    SONGBIRD_VARIANT_CONTRACTID,
-    sbVariantConstructor
-  }
+#include <mozilla/ModuleUtils.h>
+ 
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbVariant);
+NS_DEFINE_NAMED_CID(SONGBIRD_VARIANT_CID);
+ 
+static const mozilla::Module::CIDEntry kVariantCIDs[] = {
+  { &kSONGBIRD_VARIANT_CID, false, NULL, sbVariantConstructor },
+  { NULL }
 };
 
-// create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdVariantUtilities, components)
+static const mozilla::Module::ContractIDEntry kVariantContracts[] = {
+  { SONGBIRD_VARIANT_CONTRACTID, &kSONGBIRD_VARIANT_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kVariantCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kVariantModule = {
+  mozilla::Module::kVersion,
+  kVariantCIDs,
+  kVariantContracts,
+  kVariantCategories
+};
+ 
+NSMODULE_DEFN(sbVariant) = &kVariantModule;

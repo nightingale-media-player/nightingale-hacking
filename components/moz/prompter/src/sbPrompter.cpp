@@ -130,7 +130,6 @@ sbPrompter::OpenDialogImpl(nsIDOMWindow*    aParent,
         nsISupports*,nsIDOMWindow**>(
           *this,&sbPrompter::OpenDialogImpl,
           aParent,aUrl,aName,aOptions,aExtraArgument,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -222,7 +221,6 @@ sbPrompter::OpenWindowImpl(nsIDOMWindow*    aParent,
         nsISupports*,nsIDOMWindow**>(
           *this,&sbPrompter::OpenWindowImpl,
           aParent,aUrl,aName,aOptions,aExtraArgument,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -268,7 +266,6 @@ sbPrompter::OpenWindowImpl(nsIDOMWindow*    aParent,
 /**
  * Cancel and close the current prompter window.
  */
-
 NS_IMETHODIMP
 sbPrompter::Cancel()
 {
@@ -279,7 +276,6 @@ nsresult
 sbPrompter::CancelImpl()
 {
   nsresult rv;
-
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
     nsRefPtr<sbRunnable_<nsresult>> job =
@@ -288,7 +284,6 @@ sbPrompter::CancelImpl()
     NS_DispatchToMainThread(job);
     rv = job->Wait();
     NS_ENSURE_SUCCESS(rv, rv);
-
     return NS_OK;
   }
 
@@ -412,7 +407,8 @@ sbPrompter::AlertImpl(nsIDOMWindow*    aParent,
           *this,&sbPrompter::AlertImpl,aParent,aDialogTitle,aText);
     while (1) {
       // Call the proxied prompter.
-      rv = prompter->Alert(aParent, aDialogTitle, aText);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -482,7 +478,7 @@ sbPrompter::AlertCheckImpl(nsIDOMWindow*    aParent,
                        const PRUnichar* aDialogTitle,
                        const PRUnichar* aText,
                        const PRUnichar* aCheckMsg,
-                       bool*          aCheckState)
+                       PRBool*          aCheckState)
 {
   nsresult rv;
 
@@ -494,10 +490,9 @@ sbPrompter::AlertCheckImpl(nsIDOMWindow*    aParent,
     nsRefPtr<sbRunnable_<nsresult>> job =
       new sbRunnableMethod5_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,
-        const PRUnichar*,bool*>(
+        const PRUnichar*,PRBool*>(
           *this,&sbPrompter::AlertCheckImpl,
           aParent,aDialogTitle,aText,aCheckMsg,aCheckState);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -577,7 +572,7 @@ nsresult
 sbPrompter::ConfirmImpl(nsIDOMWindow*    aParent,
                     const PRUnichar* aDialogTitle,
                     const PRUnichar* aText,
-                    bool*          _retval)
+                    PRBool*          _retval)
 {
   nsresult rv;
 
@@ -588,9 +583,8 @@ sbPrompter::ConfirmImpl(nsIDOMWindow*    aParent,
   if (!NS_IsMainThread()) {
     nsRefPtr<sbRunnable_<nsresult>> job =
       new sbRunnableMethod4_<nsresult,sbPrompter,
-        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,bool*>(
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRBool*>(
           *this,&sbPrompter::ConfirmImpl,aParent,aDialogTitle,aText,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -671,8 +665,8 @@ sbPrompter::ConfirmCheckImpl(nsIDOMWindow*    aParent,
                          const PRUnichar* aDialogTitle,
                          const PRUnichar* aText,
                          const PRUnichar* aCheckMsg,
-                         bool*          aCheckState,
-                         bool*          _retval)
+                         PRBool*          aCheckState,
+                         PRBool*          _retval)
 {
   nsresult rv;
 
@@ -682,20 +676,16 @@ sbPrompter::ConfirmCheckImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod6_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,const PRUnichar*,
+        PRBool*,PRBool*>(
+          *this,&sbPrompter::ConfirmCheckImpl,
+          aParent,aDialogTitle,aText,aCheckMsg,aCheckState,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->ConfirmCheck(aParent,
-                                  aDialogTitle,
-                                  aText,
-                                  aCheckMsg,
-                                  aCheckState,
-                                  _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -791,7 +781,7 @@ sbPrompter::ConfirmExImpl(nsIDOMWindow*    aParent,
                       const PRUnichar* aButton1Title,
                       const PRUnichar* aButton2Title,
                       const PRUnichar* aCheckMsg,
-                      bool*          aCheckState,
+                      PRBool*          aCheckState,
                       PRInt32*         _retval)
 {
   nsresult rv;
@@ -802,11 +792,10 @@ sbPrompter::ConfirmExImpl(nsIDOMWindow*    aParent,
       new sbRunnableMethod10_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUint32,
         const PRUnichar*,const PRUnichar*,const PRUnichar*,const PRUnichar*,
-        bool*,PRInt32*>(
+        PRBool*,PRInt32*>(
           *this,&sbPrompter::ConfirmExImpl,aParent,aDialogTitle,aText,
           aButtonFlags,aButton0Title,aButton1Title,aButton2Title,
           aCheckMsg,aCheckState,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -879,8 +868,8 @@ sbPrompter::PromptImpl(nsIDOMWindow*    aParent,
                    const PRUnichar* aText,
                    PRUnichar**      aValue,
                    const PRUnichar* aCheckMsg,
-                   bool*          aCheckState,
-                   bool*          _retval)
+                   PRBool*          aCheckState,
+                   PRBool*          _retval)
 {
   nsresult rv;
 
@@ -889,10 +878,9 @@ sbPrompter::PromptImpl(nsIDOMWindow*    aParent,
     nsRefPtr<sbRunnable_<nsresult>> job =
       new sbRunnableMethod7_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUnichar**,
-        const PRUnichar*,bool*,bool*>(
+        const PRUnichar*,PRBool*,PRBool*>(
           *this,&sbPrompter::PromptImpl,aParent,aDialogTitle,aText,
           aValue,aCheckMsg,aCheckState,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -965,8 +953,8 @@ sbPrompter::PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
                                       PRUnichar**      aUsername,
                                       PRUnichar**      aPassword,
                                       const PRUnichar* aCheckMsg,
-                                      bool*          aCheckState,
-                                      bool*          _retval)
+                                      PRBool*          aCheckState,
+                                      PRBool*          _retval)
 {
   nsresult rv;
 
@@ -976,11 +964,10 @@ sbPrompter::PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
       new sbRunnableMethod8_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,
         PRUnichar**,PRUnichar**,
-        const PRUnichar*,bool*,bool*>(
+        const PRUnichar*,PRBool*,PRBool*>(
           *this,&sbPrompter::PromptUsernameAndPasswordImpl,
           aParent,aDialogTitle,aText,
           aUsername,aPassword,aCheckMsg,aCheckState,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -1052,8 +1039,8 @@ sbPrompter::PromptPasswordImpl(nsIDOMWindow*    aParent,
                            const PRUnichar* aText,
                            PRUnichar**      aPassword,
                            const PRUnichar* aCheckMsg,
-                           bool*          aCheckState,
-                           bool*          _retval)
+                           PRBool*          aCheckState,
+                           PRBool*          _retval)
 {
   nsresult rv;
 
@@ -1062,11 +1049,10 @@ sbPrompter::PromptPasswordImpl(nsIDOMWindow*    aParent,
     nsRefPtr<sbRunnable_<nsresult>> job =
       new sbRunnableMethod7_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUnichar**,
-        const PRUnichar*,bool*,bool*>(
+        const PRUnichar*,PRBool*,PRBool*>(
           *this,&sbPrompter::PromptPasswordImpl,
           aParent,aDialogTitle,aText,
           aPassword,aCheckMsg,aCheckState,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       // Call the proxied prompter.
@@ -1148,11 +1134,10 @@ nsresult rv;
     nsRefPtr<sbRunnable_<nsresult>> job =
       new sbRunnableMethod7_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUint32,
-        const PRUnichar**,PRInt32*,bool*>(
+        const PRUnichar**,PRInt32*,PRBool*>(
           *this,&sbPrompter::SelectImpl,
           aParent,aDialogTitle,aText,aCount,
           aSelectList,aOutSelection,_retval);
-
     // Call proxied prompter until a window is available.
     while (1) {
       NS_DispatchToMainThread(job);
@@ -1260,8 +1245,7 @@ sbPrompter::sbPrompter() :
 
 sbPrompter::~sbPrompter()
 {
-  // Dispose of prompter lock.
-  //pretty sure this is automatic?
+
 }
 
 
@@ -1272,7 +1256,7 @@ sbPrompter::~sbPrompter()
 nsresult
 sbPrompter::Init()
 {
-  nsresult rv;	
+  nsresult rv;  
 
   // Set defaults.
   {
@@ -1378,39 +1362,6 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   return NS_OK;
 }
 
-
-/**
- * Return this prompter proxied to the main thread in aPrompter.
- *
- * \param aPrompter             Returned proxied prompter.
- */
-
-nsresult
-sbPrompter::GetProxiedPrompter(sbIPrompter** aPrompter)
-{
-  // Validate arguments.
-  NS_ASSERTION(aPrompter, "aPrompter is null");
-
-  // Function variables.
-  nsresult rv;
-
-  // Create a main thread proxy for the prompter.
-  nsCOMPtr<nsIProxyObjectManager>
-    proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = proxyObjectManager->GetProxyForObject
-                             (NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbIPrompter),
-                              NS_ISUPPORTS_CAST(sbIPrompter*, this),
-                              nsIProxyObjectManager::INVOKE_SYNC |
-                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                              (void**) aPrompter);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
 /**
  * Present the prompter dialog using the parent window specified by aParent and
  * dialog parameter block specified by aParamBlock.
@@ -1448,4 +1399,3 @@ sbPrompter::PresentPrompterDialog(nsIDOMWindow*        aParent,
 
   return NS_OK;
 }
-

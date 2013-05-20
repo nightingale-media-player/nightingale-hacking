@@ -101,7 +101,7 @@ public:
 
 
     // Invoke method.
-    ReturnType returnValue = (mObject->*mMethod)(mArg1Value);
+    ReturnType returnValue = ((*mObject).*mMethod)(mArg1Value);
     {
       mReturnValue = returnValue;
     }

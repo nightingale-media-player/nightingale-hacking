@@ -42,6 +42,7 @@
 #include "nsIMutableArray.h"
 #include "sbCOMArray.h"
 #include "nsCOMPtr.h"
+#include <mozilla/Mutex.h>
 
 #define SB_THREADSAFE_ARRAY_CLASSNAME \
   "threadsafe nsIArray implementation"
@@ -53,8 +54,6 @@
 
 #define SB_THREADSAFE_ARRAY_CONTRACTID \
   "@songbirdnest.com/moz/xpcom/threadsafe-array;1"
-
-struct PRLock;
 
 // threadsafe (i.e. spuriously locked) version of nsArray, which is an
 // adapter class to map nsIArray->nsCOMArray
@@ -74,7 +73,7 @@ private:
     ~sbArray();
 
     sbCOMArray_base mArray;
-    PRLock* mLock;
+    mozilla::Mutex mLock;
 };
 
 #endif

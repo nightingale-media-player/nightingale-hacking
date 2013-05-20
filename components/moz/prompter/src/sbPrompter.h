@@ -113,13 +113,13 @@ private:
   //   mRenderHTML
   //
 
-  mozilla::Mutex* 	            mPrompterLock;
+  mozilla::Mutex  	            mPrompterLock;
   nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
   nsCOMPtr<nsIPromptService>    mPromptService;
   nsString                      mParentWindowType;
-  PRBool                        mWaitForWindow;
-  PRBool                        mRenderHTML;
+  PRBool                          mWaitForWindow;
+  PRBool                          mRenderHTML;
   nsCOMPtr<nsIDOMWindow>        mCurrentWindow;
 
 
@@ -162,21 +162,21 @@ private:
                          const PRUnichar* aDialogTitle,
                          const PRUnichar* aText,
                          const PRUnichar* aCheckMsg,
-                         bool*          aCheckState);
+                         PRBool*          aCheckState);
 
   nsresult
   ConfirmImpl(nsIDOMWindow*    aParent,
                       const PRUnichar* aDialogTitle,
                       const PRUnichar* aText,
-                      bool*          _retval);
+                      PRBool*          _retval);
 
   nsresult
   ConfirmCheckImpl(nsIDOMWindow*    aParent,
                            const PRUnichar* aDialogTitle,
                            const PRUnichar* aText,
                            const PRUnichar* aCheckMsg,
-                           bool*          aCheckState,
-                           bool*          _retval);
+                           PRBool*          aCheckState,
+                           PRBool*          _retval);
   nsresult
   ConfirmExImpl(nsIDOMWindow*    aParent,
                         const PRUnichar* aDialogTitle,
@@ -186,7 +186,7 @@ private:
                         const PRUnichar* aButton1Title,
                         const PRUnichar* aButton2Title,
                         const PRUnichar* aCheckMsg,
-                        bool*          aCheckState,
+                        PRBool*          aCheckState,
                         PRInt32*         _retval);
 
   nsresult
@@ -195,8 +195,8 @@ private:
                      const PRUnichar* aText,
                      PRUnichar**      aValue,
                      const PRUnichar* aCheckMsg,
-                     bool*          aCheckState,
-                     bool*          _retval);
+                     PRBool*          aCheckState,
+                     PRBool*          _retval);
 
   nsresult
   PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
@@ -205,8 +205,8 @@ private:
                                         PRUnichar**      aUsername,
                                         PRUnichar**      aPassword,
                                         const PRUnichar* aCheckMsg,
-                                        bool*          aCheckState,
-                                        bool*          _retval);
+                                        PRBool*          aCheckState,
+                                        PRBool*          _retval);
 
   nsresult
   PromptPasswordImpl(nsIDOMWindow*    aParent,
@@ -214,8 +214,8 @@ private:
                              const PRUnichar* aText,
                              PRUnichar**      aPassword,
                              const PRUnichar* aCheckMsg,
-                             bool*          aCheckState,
-                             bool*          _retval);
+                             PRBool*          aCheckState,
+                             PRBool*          _retval);
 
   nsresult
   SelectImpl(nsIDOMWindow*     aParent,
@@ -224,7 +224,7 @@ private:
                      PRUint32          aCount,
                      const PRUnichar** aSelectList,
                      PRInt32*          aOutSelection,
-                     bool*           _retval);
+                     PRBool*           _retval);
 };
 
 
