@@ -103,7 +103,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbStoragePropertyUnitConverter);
 NS_DEFINE_NAMED_CID(SB_STORAGEPROPERTYUNITCONVERTER_CID);
 
 
-static const mozilla::Module::CIDEntry kSongbirdPropertiesModuleCIDs[] = {
+static const mozilla::Module::CIDEntry kSongbirdPropertiesCIDs[] = {
   { &kSB_MUTABLEPROPERTYARRAY_CID, false, NULL, sbPropertyArrayConstructor },
   { &kSB_PROPERTYFACTORY_CID, false, NULL, sbPropertyFactoryConstructor },
   { &kSB_PROPERTYMANAGER_CID, false, NULL, sbPropertyManagerConstructor },
@@ -126,7 +126,7 @@ static const mozilla::Module::CIDEntry kSongbirdPropertiesModuleCIDs[] = {
   { NULL }
 };
 
-static const mozilla::Module::ContractIDEntry kSongbirdPropertiesModuleContracts[] = {
+static const mozilla::Module::ContractIDEntry kSongbirdPropertiesContracts[] = {
   { SB_MUTABLEPROPERTYARRAY_CONTRACTID, &kSB_MUTABLEPROPERTYARRAY_CID },
   { SB_PROPERTYFACTORY_CONTRACTID, &kSB_PROPERTYFACTORY_CID },
   { SB_PROPERTYMANAGER_CONTRACTID, &kSB_PROPERTYMANAGER_CID },
@@ -149,15 +149,15 @@ static const mozilla::Module::ContractIDEntry kSongbirdPropertiesModuleContracts
   { NULL }
 };
 
-static const mozilla::Module::CategoryEntry kSongbirdPropertiesModuleCategories[] = {
+static const mozilla::Module::CategoryEntry kSongbirdPropertiesCategories[] = {
   { NULL }
 };
 
 static const mozilla::Module kSongbirdPropertiesModule = {
   mozilla::Module::kVersion,
-  kSongbirdPropertiesModuleCIDs,
-  kSongbirdPropertiesModuleContracts,
-  kSongbirdPropertiesModuleCategories
+  kSongbirdPropertiesCIDs,
+  kSongbirdPropertiesContracts,
+  kSongbirdPropertiesCategories
 };
 
-NSMODULE_DEFN(SongbirdPropertiesModule) = &kSongbirdPropertiesModule;
+NSMODULE_DEFN(sbProperties) = &kSongbirdPropertiesModule;

@@ -68,7 +68,7 @@ NS_DEFINE_NAMED_CID(SONGBIRD_MEDIALISTENUMERATORWRAPPER_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemControllerCleanup);
 NS_DEFINE_NAMED_CID(SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdLibraryManagerModuleCIDs[] = {
+static const mozilla::Module::CIDEntry kSongbirdLibraryManagerCIDs[] = {
   { &kSONGBIRD_LIBRARY_CONSTRAINT_CID, false, NULL, sbLibraryConstraintConstructor },
   { &kSONGBIRD_LIBRARY_CONSTRAINTBUILDER_CID, false, NULL, sbLibraryConstraintBuilderConstructor },
   { &kSONGBIRD_LIBRARYMANAGER_CID, false, NULL, sbLibraryManagerConstructor },
@@ -82,7 +82,7 @@ static const mozilla::Module::CIDEntry kSongbirdLibraryManagerModuleCIDs[] = {
   { NULL }
 };
 
-static const mozilla::Module::ContractIDEntry kSongbirdLibraryManagerModuleContracts[] = {
+static const mozilla::Module::ContractIDEntry kSongbirdLibraryManagerContracts[] = {
   { SONGBIRD_LIBRARY_CONSTRAINT_CONTRACTID, &kSONGBIRD_LIBRARY_CONSTRAINT_CID },
   { SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &kSONGBIRD_LIBRARY_CONSTRAINTBUILDER_CID },
   { SONGBIRD_LIBRARYMANAGER_CONTRACTID, &kSONGBIRD_LIBRARYMANAGER_CID },
@@ -95,15 +95,15 @@ static const mozilla::Module::ContractIDEntry kSongbirdLibraryManagerModuleContr
   { NULL }
 };
 
-static const mozilla::Module::CategoryEntry kSongbirdLibraryManagerModuleCategories[] = {
+static const mozilla::Module::CategoryEntry kSongbirdLibraryManagerCategories[] = {
   { NULL }
 };
 
 static const mozilla::Module kSongbirdLibraryManagerModule = {
   mozilla::Module::kVersion,
-  kSongbirdLibraryManagerModuleCIDs,
-  kSongbirdLibraryManagerModuleContracts,
-  kSongbirdLibraryManagerModuleCategories
+  kSongbirdLibraryManagerCIDs,
+  kSongbirdLibraryManagerContracts,
+  kSongbirdLibraryManagerCategories
 };
 
-NSMODULE_DEFN(SongbirdLibraryManagerModule) = &kSongbirdLibraryManagerModule;
+NSMODULE_DEFN(SongbirdLibraryManager) = &kSongbirdLibraryManagerModule;

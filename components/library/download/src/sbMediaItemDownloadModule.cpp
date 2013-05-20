@@ -69,4 +69,4 @@ static const mozilla::Module kMediaItemDownloadModule = {
   kMediaItemDownloadCategories
 };
 
-NSMODULE_DEFN(sbMediaItemDownloadModule) = &kMediaItemDownloadModule;
+NSMODULE_DEFN(sbMediaItemDownload) = &kMediaItemDownloadModule;

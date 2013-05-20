@@ -58,11 +58,11 @@ public:
 
   sbLocalDatabaseDiffingService();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
+  // static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
+  //                               nsIFile* aPath,
+  //                               const char* aLoaderStr,
+  //                               const char* aType,
+  //                               const nsModuleComponentInfo *aInfo);
 
   /**
    * Initialize the local database diffing service.

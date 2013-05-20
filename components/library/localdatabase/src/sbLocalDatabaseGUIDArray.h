@@ -29,6 +29,7 @@
 #include "sbILocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseGUIDArrayLengthCache.h"
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -227,7 +228,7 @@ private:
   nsTArray<FilterSpec> mFilters;
 
   // Monitor to protect mCache
-  PRMonitor* mCacheMonitor;
+  mozilla::ReentrantMonitor mCacheMonitor;
   // Ordered array of GUIDs
   nsTArray<nsAutoPtr<ArrayItem> > mCache;
 

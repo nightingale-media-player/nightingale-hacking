@@ -43,7 +43,7 @@ class sbILibraryManager;
 class sbLibraryLoaderInfo;
 class sbLocalDatabaseLibraryFactory;
 
-struct nsModuleComponentInfo;
+// struct nsModuleComponentInfo;
 
 class sbLocalDatabaseLibraryLoader : public sbILibraryLoader,
                                      public nsIObserver
