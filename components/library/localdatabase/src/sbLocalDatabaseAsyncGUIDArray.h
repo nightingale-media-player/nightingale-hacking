@@ -30,6 +30,7 @@
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseGUIDArray.h>
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsIObserver.h>
@@ -102,10 +103,10 @@ private:
   sbCommandQueue mQueue;
 
   // This monitor protects methods that are called synchronously
-  PRMonitor* mSyncMonitor;
+  mozilla::ReentrantMonitor mSyncMonitor;
 
   // Monitor over mQueue and calls to InitalizeThread()
-  PRMonitor* mQueueMonitor;
+  mozilla::ReentrantMonitor mQueueMonitor;
 
   // Background thread
   nsCOMPtr<nsIThread> mThread;

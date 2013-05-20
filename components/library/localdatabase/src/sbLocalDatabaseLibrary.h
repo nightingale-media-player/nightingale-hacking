@@ -33,10 +33,10 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include "sbLocalDatabaseMediaListBase.h"
-#include <sbProxiedComponentManager.h>
+//#include <sbProxiedComponentManager.h>
 
 #include <prmon.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsCOMArray.h>

@@ -28,7 +28,7 @@
 
 #include <utility>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsTArray.h>
 
 /**
