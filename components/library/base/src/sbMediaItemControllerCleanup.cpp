@@ -44,7 +44,7 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaItemController.h>
 
-//#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringAPI.h>
@@ -54,7 +54,7 @@
 #include <sbDebugUtils.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
-//#include <sbProxiedComponentManager.h>
+#include <sbProxiedComponentManager.h>
 
 #include <algorithm>
 
@@ -97,7 +97,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbMediaItemControllerCleanup,
 sbMediaItemControllerCleanup::sbMediaItemControllerCleanup()
   : mAvailableTypesInitialized(false),
     mIdleServiceRegistered(false),
-    mState(STATE_IDLE)
+    mState(STATE_IDLE),
+    mMutex(nsnull)
 {
   SB_PRLOG_SETUP(sbMediaItemControllerCleanup);
   TRACE_FUNCTION("");
@@ -130,7 +131,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
 
   if (!strcmp(aTopic, "idle")) {
     // idle observer: we are now idle
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mMutex);
     if (mState == STATE_QUEUED) {
       TRACE("preparing to run: STATE->RUNNING");
       mState = STATE_RUNNING;
@@ -149,7 +150,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
     else {
       // we no longer need to hold on to the lock for anything; let it go now
       // because do_ProxiedGetService may cause a nested event loop
-      lock.unlock();
+      // lock.unlock();
       TRACE("nothing to do, ignoring idle notification");
       nsCOMPtr<nsIObserverService> obs =
         do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
@@ -171,7 +172,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
   }
   else if (!strcmp(aTopic, "back")) {
     // idle observer: we are busy again
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mMutex);
     if (mState == STATE_RUNNING) {
       TRACE("Stopping due to activity: STATE->STOPPING");
       mState = STATE_STOPPING;
@@ -195,8 +196,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     mBackgroundEventTarget = do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    mLock = nsAutoLock::NewLock(__FUNCTION__);
-    NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+    mozilla::MutexAutoLock lock(mMutex);
   }
   else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC)) {
     nsCOMPtr<sbILibraryManager> libManager =
@@ -269,7 +269,7 @@ sbMediaItemControllerCleanup::Run()
   nsresult rv = NS_OK;
   bool stateOK = true;
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mMutex);
     NS_PRECONDITION(mState == STATE_RUNNING || mState == STATE_STOPPING,
                     "the act of getting things queued should have put"
                     " us into the running state");
@@ -286,7 +286,7 @@ sbMediaItemControllerCleanup::Run()
 
   PRBool complete = true;
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mMutex);
     mListener = nsnull;
     NS_POSTCONDITION(mState == STATE_RUNNING || mState == STATE_STOPPING,
                     "should not have exit running!?");
@@ -479,7 +479,7 @@ sbMediaItemControllerCleanup::OnLibraryRegistered(sbILibrary *aLibrary)
       mIdleServiceRegistered = true;
     }
     { /* scope */
-      nsAutoLock lock(mLock);
+      mozilla::MutexAutoLock lock(mMutex);
       mLibraries[aLibrary] = types;
       if (mState == STATE_IDLE) {
         TRACE("Libraries added: STATE->QUEUED");
@@ -529,7 +529,7 @@ sbMediaItemControllerCleanup::OnLibraryUnregistered(sbILibrary *aLibrary)
                   " should be called on the main thread!");
   NS_ENSURE_ARG_POINTER(aLibrary);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mMutex);
   
   if (mListener) {
     nsCOMPtr<sbIMediaList> list = mListener->GetMediaList();
@@ -610,7 +610,7 @@ sbMediaItemControllerCleanup::ProcessLibraries()
     nsCOMPtr<sbILibrary> lib;
     types_t types;
     { /* scope */
-      nsAutoLock lock(mLock);
+      mozilla::MutexAutoLock lock(mMutex);
       if (mLibraries.empty()) {
         break;
       }
@@ -679,7 +679,7 @@ sbMediaItemControllerCleanup::ProcessLibraries()
       nsCOMPtr<sbIMediaList> list = do_QueryInterface(lib, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       { /* scope */
-        nsAutoLock lock(mLock);
+        mozilla::MutexAutoLock lock(mMutex);
         mListener = new sbEnumerationHelper(list, propsToFilter, propsToSet);
         NS_ENSURE_TRUE(mListener, NS_ERROR_OUT_OF_MEMORY);
       }
@@ -689,7 +689,7 @@ sbMediaItemControllerCleanup::ProcessLibraries()
       TRACE("batch complete");
 
       { /* scope */
-        nsAutoLock lock(mLock);
+        mozilla::MutexAutoLock lock(mMutex);
         if (!mListener->Completed() && mLibraries.find(lib) != mLibraries.end()) {
           // abort the run; since we didn't actually finish this type,
           // do not remove it from the list, nor do we remove the library from
@@ -732,14 +732,14 @@ sbMediaItemControllerCleanup::ProcessLibraries()
 
     // all types in this library are processed
     { /* scope */
-      nsAutoLock lock(mLock);
+      mozilla::MutexAutoLock lock(mMutex);
       mLibraries.erase(lib);
     }
   }
   
   #if PR_LOGGING
   {
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mMutex);
     TRACE("completed? %s",
           mLibraries.empty() ? "yes" : "no");
   }
@@ -750,30 +750,30 @@ sbMediaItemControllerCleanup::ProcessLibraries()
 
 ///// static
 /* static */
-NS_METHOD
-sbMediaItemControllerCleanup::RegisterSelf(nsIComponentManager* aCompMgr,
-                                           nsIFile* aPath,
-                                           const char* aLoaderStr,
-                                           const char* aType,
-                                           const nsModuleComponentInfo *aInfo)
-{
-  SB_PRLOG_SETUP(sbMediaItemControllerCleanup);
-  TRACE_FUNCTION("");
+// NS_METHOD
+// sbMediaItemControllerCleanup::RegisterSelf(nsIComponentManager* aCompMgr,
+//                                            nsIFile* aPath,
+//                                            const char* aLoaderStr,
+//                                            const char* aType,
+//                                            const nsModuleComponentInfo *aInfo)
+// {
+//   SB_PRLOG_SETUP(sbMediaItemControllerCleanup);
+//   TRACE_FUNCTION("");
 
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+//   nsresult rv = NS_ERROR_UNEXPECTED;
+//   nsCOMPtr<nsICategoryManager> categoryManager =
+//     do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+//   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = categoryManager->AddCategoryEntry(APPSTARTUP_TOPIC,
-                                         SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CLASSNAME,
-                                         "service,"
-                                         SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CONTRACTID,
-                                         PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
+//   rv = categoryManager->AddCategoryEntry(APPSTARTUP_TOPIC,
+//                                          SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CLASSNAME,
+//                                          "service,"
+//                                          SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CONTRACTID,
+//                                          PR_TRUE, PR_TRUE, nsnull);
+//   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
+//   return NS_OK;
+// }
 
 
 ///// sbIMediaListEnumerationListener helper class impl

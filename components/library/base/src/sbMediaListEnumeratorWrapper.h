@@ -28,7 +28,7 @@
 #define SBMEDIALISTENUMERATORWRAPPER_H_
 
 // Mozilla includes
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsISimpleEnumerator.h>
@@ -55,7 +55,7 @@ class sbMediaListEnumeratorWrapper: public sbIMediaListEnumeratorWrapper,
 private:
   virtual ~sbMediaListEnumeratorWrapper();
 
-  PRMonitor* mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   nsCOMPtr<nsISimpleEnumerator> mEnumerator;
   nsCOMPtr<sbIMediaListEnumeratorWrapperListener> mListener;
 };

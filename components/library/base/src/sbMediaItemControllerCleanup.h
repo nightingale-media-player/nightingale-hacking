@@ -32,7 +32,6 @@
  * controllers which are no longer available
  */
 
-//#include <nsIGenericFactory.h>
 #include <mozilla/ModuleUtils.h>
 #include <nsIObserver.h>
 #include <nsIRunnable.h>
@@ -42,6 +41,7 @@
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
 
+#include <mozilla/Mutex.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 
@@ -50,7 +50,6 @@
 #include <string>
 
 class nsIEventTarget;
-struct PRLock;
 
 class sbMediaItemControllerCleanup : public nsIObserver,
                                      public nsIRunnable,
@@ -65,11 +64,11 @@ public:
   sbMediaItemControllerCleanup();
   ~sbMediaItemControllerCleanup();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
+  // static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
+  //                               nsIFile* aPath,
+  //                               const char* aLoaderStr,
+  //                               const char* aType,
+  //                               const nsModuleComponentInfo *aInfo);
 
 protected:
   ///// helper class
@@ -182,7 +181,7 @@ protected:
    *  - mState
    *  - mLibraries
    */
-  PRLock* mLock;
+  mozilla::Mutex mMutex;
 };
 
 #define SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CONTRACTID \

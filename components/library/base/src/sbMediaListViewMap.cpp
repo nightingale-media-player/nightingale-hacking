@@ -34,14 +34,14 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISupportsPrimitives.h>
 
 #include <nsArrayEnumerator.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>

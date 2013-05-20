@@ -261,7 +261,7 @@ sbHTTPMediaItemDownloader::CreateDownloadJob
 //------------------------------------------------------------------------------
 
 // Component registration implementation.
-SB_MEDIA_ITEM_DOWNLOADER_REGISTERSELF_IMPL(sbHTTPMediaItemDownloader)
+// SB_MEDIA_ITEM_DOWNLOADER_REGISTERSELF_IMPL(sbHTTPMediaItemDownloader)
 
 
 //-------------------------------------

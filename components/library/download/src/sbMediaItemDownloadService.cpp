@@ -258,60 +258,60 @@ sbMediaItemDownloadService::~sbMediaItemDownloadService()
 // RegisterSelf
 //
 
-/* static */ NS_METHOD
-sbMediaItemDownloadService::RegisterSelf
-                              (nsIComponentManager*         aCompMgr,
-                               nsIFile*                     aPath,
-                               const char*                  aLoaderStr,
-                               const char*                  aType,
-                               const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
+// /* static */ NS_METHOD
+// sbMediaItemDownloadService::RegisterSelf
+//                               (nsIComponentManager*         aCompMgr,
+//                                nsIFile*                     aPath,
+//                                const char*                  aLoaderStr,
+//                                const char*                  aType,
+//                                const nsModuleComponentInfo* aInfo)
+// {
+//   nsresult rv;
 
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+//   // Get the category manager.
+//   nsCOMPtr<nsICategoryManager> categoryManager =
+//                                  do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+//                                                &rv);
+//   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add self to the application startup category.
-  rv = categoryManager->AddCategoryEntry
-                          ("app-startup",
-                           SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME,
-                           "service," SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
+//   // Add self to the application startup category.
+//   rv = categoryManager->AddCategoryEntry
+//                           ("app-startup",
+//                            SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME,
+//                            "service," SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID,
+//                            PR_TRUE,
+//                            PR_TRUE,
+//                            nsnull);
+//   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
+//   return NS_OK;
+// }
 
 
-/* static */ NS_METHOD
-sbMediaItemDownloadService::UnregisterSelf
-                              (nsIComponentManager*         aCompMgr,
-                               nsIFile*                     aPath,
-                               const char*                  aLoaderStr,
-                               const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
+// /* static */ NS_METHOD
+// sbMediaItemDownloadService::UnregisterSelf
+//                               (nsIComponentManager*         aCompMgr,
+//                                nsIFile*                     aPath,
+//                                const char*                  aLoaderStr,
+//                                const nsModuleComponentInfo* aInfo)
+// {
+//   nsresult rv;
 
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+//   // Get the category manager.
+//   nsCOMPtr<nsICategoryManager> categoryManager =
+//                                  do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+//                                                &rv);
+//   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Delete self from the application startup category.
-  rv = categoryManager->DeleteCategoryEntry
-                          ("app-startup",
-                           SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME,
-                           PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
+//   // Delete self from the application startup category.
+//   rv = categoryManager->DeleteCategoryEntry
+//                           ("app-startup",
+//                            SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME,
+//                            PR_TRUE);
+//   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
+//   return NS_OK;
+// }
 
 
 //------------------------------------------------------------------------------

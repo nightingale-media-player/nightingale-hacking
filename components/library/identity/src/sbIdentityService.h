@@ -33,7 +33,7 @@
 #include "sbIIdentityService.h"
 
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsCOMArray.h>
 #include <nsStringAPI.h>
 #include <sbIMediaItem.h>

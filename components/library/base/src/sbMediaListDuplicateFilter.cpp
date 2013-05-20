@@ -29,6 +29,7 @@
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsStringAPI.h>
 
 // Mozilla interfaces
@@ -60,16 +61,15 @@ sbMediaListDuplicateFilter::sbMediaListDuplicateFilter() :
   mSBPropKeys(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mDuplicateItems(0),
   mTotalItems(0),
-  mRemoveDuplicates(PR_FALSE)
+  mRemoveDuplicates(PR_FALSE),
+  mMonitor(nsnull)
 {
   mKeys.Init();
 }
 
 sbMediaListDuplicateFilter::~sbMediaListDuplicateFilter()
 {
-  if (mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+
 }
 
 NS_IMETHODIMP
@@ -82,8 +82,7 @@ sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   
-  mMonitor = nsAutoMonitor::NewMonitor("sbMediaListDuplicateFilter::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   nsCOMPtr<sbIMutablePropertyArray> propArray = 
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
@@ -115,7 +114,7 @@ NS_IMETHODIMP
 sbMediaListDuplicateFilter::GetDuplicateItems(PRUint32 * aDuplicateItems)
 {
   NS_ENSURE_ARG_POINTER(aDuplicateItems);
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
   *aDuplicateItems = mDuplicateItems;
   return NS_OK;
 }
@@ -124,7 +123,7 @@ NS_IMETHODIMP
 sbMediaListDuplicateFilter::GetTotalItems(PRUint32 * aTotalItems)
 {
   NS_ENSURE_ARG_POINTER(aTotalItems);
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
   *aTotalItems = mTotalItems;
   return NS_OK;
 }
@@ -206,7 +205,7 @@ sbMediaListDuplicateFilter::SaveItemKeys(sbIMediaItem * aItem)
   nsresult rv;
   nsString key;
   
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   rv = aItem->GetProperties(mSBPropertyArray, getter_AddRefs(mItemProperties));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -261,7 +260,7 @@ sbMediaListDuplicateFilter::Advance()
 {
   nsresult rv;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   if (!mInitialized) {
     // Only enumerate if we need to check for duplicates.

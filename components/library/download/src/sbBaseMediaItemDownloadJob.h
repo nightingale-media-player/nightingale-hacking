@@ -55,6 +55,7 @@
 #include <sbIMediaItemDownloadJob.h>
 #include <sbIPropertyArray.h>
 #include <sbITemporaryFileFactory.h>
+#include <mozilla/Mutex.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
@@ -129,7 +130,7 @@ protected:
   // mStatus                    Download status.
   //
 
-  PRLock*                       mLock;
+  mozilla::Mutex                mLock;
   nsCOMPtr<sbIMediaItem>        mMediaItem;
   nsCOMPtr<sbIMutablePropertyArray>
                                 mProperties;

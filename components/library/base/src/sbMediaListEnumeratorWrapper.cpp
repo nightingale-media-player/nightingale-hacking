@@ -33,6 +33,7 @@
 #include <nsMemory.h>
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
+#include <mozilla/ReentrantMonitor.h>
 
 // Songbird includes
 #include <sbProxiedComponentManager.h>
@@ -52,7 +53,7 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbMediaListEnumeratorWrapper,
                              sbIMediaListEnumeratorWrapper,
                              nsISimpleEnumerator,
                              nsIClassInfo);
-NS_DECL_CLASSINFO(sbMediaListEnumeratorWrapper);
+// NS_DECL_CLASSINFO(sbMediaListEnumeratorWrapper);
 NS_IMPL_THREADSAFE_CI(sbMediaListEnumeratorWrapper);
 
 sbMediaListEnumeratorWrapper::sbMediaListEnumeratorWrapper()
@@ -62,9 +63,7 @@ sbMediaListEnumeratorWrapper::sbMediaListEnumeratorWrapper()
 
 sbMediaListEnumeratorWrapper::~sbMediaListEnumeratorWrapper()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+
 }
 
 NS_IMETHODIMP
@@ -74,9 +73,7 @@ sbMediaListEnumeratorWrapper::Initialize(
 {
   NS_ENSURE_ARG_POINTER(aEnumerator);
   
-  mMonitor = 
-    nsAutoMonitor::NewMonitor("sbMediaListEnumeratorWrapper::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   mEnumerator = aEnumerator;
 
@@ -100,17 +97,15 @@ sbMediaListEnumeratorWrapper::Initialize(
 NS_IMETHODIMP
 sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mEnumerator, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
   nsresult rv = mEnumerator->HasMoreElements(aMore);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(mListener) {
     nsCOMPtr<nsISimpleEnumerator> grip(mEnumerator);
     nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener(mListener);
-    mon.Exit();
 
     rv = listener->OnHasMoreElements(grip, *aMore);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onHasMoreElements returned an error");
@@ -122,10 +117,9 @@ sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
 NS_IMETHODIMP
 sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   nsCOMPtr<nsISupports> supports;
   nsresult rv = mEnumerator->GetNext(getter_AddRefs(supports));
@@ -179,7 +173,6 @@ sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
   if(mListener) {
     nsCOMPtr<nsISimpleEnumerator> grip(mEnumerator);
     nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener(mListener);
-    mon.Exit();
 
     rv = listener->OnGetNext(grip, mediaItem);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onGetNext returned an error");

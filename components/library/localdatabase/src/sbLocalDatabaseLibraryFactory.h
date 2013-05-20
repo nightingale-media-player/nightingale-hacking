@@ -33,7 +33,7 @@
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsStringGlue.h>
 
 #define SB_LOCALDATABASE_LIBRARYFACTORY_TYPE               \

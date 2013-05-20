@@ -53,7 +53,7 @@
 #include <sbTArrayStringEnumerator.h>
 
 // Mozilla imports.
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 
@@ -152,7 +152,7 @@ sbBaseMediaItemDownloadJob::GetDownloadedFile(nsIFile** aDownloadedFile)
   // Get the file downloader under the lock.
   nsCOMPtr<sbIFileDownloader> fileDownloader;
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     fileDownloader = mFileDownloader;
   }
   NS_ENSURE_TRUE(fileDownloader, NS_ERROR_NOT_AVAILABLE);
@@ -178,7 +178,7 @@ sbBaseMediaItemDownloadJob::GetProperties(sbIPropertyArray** aProperties)
   NS_ENSURE_ARG_POINTER(aProperties);
   nsCOMPtr<sbIMutablePropertyArray> properties;
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     properties = mProperties;
   }
   return CallQueryInterface(properties, aProperties);
@@ -197,7 +197,7 @@ sbBaseMediaItemDownloadJob::GetTemporaryFileFactory
                               (sbITemporaryFileFactory** aTemporaryFileFactory)
 {
   NS_ENSURE_ARG_POINTER(aTemporaryFileFactory);
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   NS_IF_ADDREF(*aTemporaryFileFactory = mTemporaryFileFactory);
   return NS_OK;
 }
@@ -206,7 +206,7 @@ NS_IMETHODIMP
 sbBaseMediaItemDownloadJob::SetTemporaryFileFactory
                               (sbITemporaryFileFactory* aTemporaryFileFactory)
 {
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mTemporaryFileFactory = aTemporaryFileFactory;
   return NS_OK;
 }
@@ -233,7 +233,7 @@ sbBaseMediaItemDownloadJob::AddJobProgressListener
   NS_ENSURE_ARG_POINTER(aListener);
 
   // Add the listener to the list of listeners.
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   if (!mListenerList.Contains(aListener)) {
     nsCOMPtr<sbIJobProgressListener>*
       appendedElement = mListenerList.AppendElement(aListener);
@@ -262,7 +262,7 @@ sbBaseMediaItemDownloadJob::RemoveJobProgressListener
   NS_ENSURE_ARG_POINTER(aListener);
 
   // Remove the listener from the list of listeners.
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   if (mListenerList.Contains(aListener)) {
     mListenerList.RemoveElement(aListener);
   }
@@ -289,7 +289,7 @@ NS_IMETHODIMP
 sbBaseMediaItemDownloadJob::GetStatus(PRUint16* aStatus)
 {
   NS_ENSURE_ARG_POINTER(aStatus);
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aStatus = mStatus;
   return NS_OK;
 }
@@ -543,7 +543,7 @@ sbBaseMediaItemDownloadJob::OnProgress()
   // Get the listeners under the lock.
   nsTArray< nsCOMPtr<sbIJobProgressListener> > listenerList;
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     listenerList = mListenerList;
   }
 
@@ -576,7 +576,7 @@ sbBaseMediaItemDownloadJob::OnComplete()
   // Get the file downloader under the lock.
   nsCOMPtr<sbIFileDownloader> fileDownloader;
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     fileDownloader = mFileDownloader;
   }
   NS_ENSURE_TRUE(fileDownloader, NS_ERROR_NOT_AVAILABLE);
@@ -593,7 +593,7 @@ sbBaseMediaItemDownloadJob::OnComplete()
   // Update status and get the listeners under the lock.
   nsTArray< nsCOMPtr<sbIJobProgressListener> > listenerList;
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
 
     // Update status.
     if (succeeded)
@@ -630,11 +630,6 @@ sbBaseMediaItemDownloadJob::OnComplete()
 sbBaseMediaItemDownloadJob::~sbBaseMediaItemDownloadJob()
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
-
-  // Dispose of the lock.
-  if (mLock)
-    nsAutoLock::DestroyLock(mLock);
-  mLock = nsnull;
 }
 
 
@@ -690,7 +685,7 @@ sbBaseMediaItemDownloadJob::Start(nsIURI* aURI)
 
   // Set the file downloader under the lock.
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     mFileDownloader = fileDownloader;
   }
 
@@ -733,7 +728,7 @@ sbBaseMediaItemDownloadJob::GetDownloadURI(nsIURI** aURI)
   // Get the media item under the lock.
   nsCOMPtr<sbIMediaItem> mediaItem;
   {
-    nsAutoLock autoLock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     mediaItem = mMediaItem;
   }
 
@@ -759,8 +754,7 @@ sbBaseMediaItemDownloadJob::Initialize()
   nsresult rv;
 
   // Create the lock.
-  mLock = nsAutoLock::NewLock("sbBaseMediaItemDownloadJob::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::MutexAutoLock lock(mLock);
 
   // Create the downloaded media item properties array.
   mProperties = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
@@ -780,7 +774,8 @@ sbBaseMediaItemDownloadJob::sbBaseMediaItemDownloadJob
                                sbILibrary*   aTargetLibrary) :
   mMediaItem(aMediaItem),
   mTargetLibrary(aTargetLibrary),
-  mStatus(sbIJobProgress::STATUS_RUNNING)
+  mStatus(sbIJobProgress::STATUS_RUNNING),
+  mLock(nsnull)
 {
   // Initialize logging.
 #ifdef PR_LOGGING
