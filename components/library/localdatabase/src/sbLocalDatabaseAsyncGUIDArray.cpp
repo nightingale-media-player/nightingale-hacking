@@ -65,7 +65,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS4(sbLocalDatabaseAsyncGUIDArray,
                               nsISupportsWeakReference)
 
 sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
-  mThreadShouldExit(PR_FALSE)
+  mThreadShouldExit(PR_FALSE), mSyncMonitor(nsnull), mQueueMonitor(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseAsyncGUIDArrayLog) {
@@ -286,7 +286,7 @@ sbLocalDatabaseAsyncGUIDArray::CloneAsyncArray(sbILocalDatabaseAsyncGUIDArray** 
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsRefPtr<sbLocalDatabaseAsyncGUIDArray> newArray;
-  NS_NEWXPCOM(newArray, sbLocalDatabaseAsyncGUIDArray);
+  newArray = new sbLocalDatabaseAsyncGUIDArray;
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = newArray->Init();
@@ -829,8 +829,7 @@ CommandProcessor::Run()
     // it off the top and exit the monitor.  If we time out without getting 
     // any work, shut down.
     {
-      NS_ENSURE_TRUE(mFriendArray->mQueueMonitor, NS_ERROR_FAILURE);
-      nsAutoMonitor mon(mFriendArray->mQueueMonitor);
+      mozilla::ReentrantMonitorAutoEnter mon(mFriendArray->mQueueMonitor);
   
       while (mFriendArray->mQueue.Length() == 0 &&
             !mFriendArray->mThreadShouldExit) {
@@ -916,7 +915,7 @@ CommandProcessor::Run()
 
     // Sync lock here so we don't run over synchronous usage of the array
     {
-      nsAutoMonitor monitor(mFriendArray->mSyncMonitor);
+      mozilla::ReentrantMonitorAutoEnter monitor(mFriendArray->mSyncMonitor);
 
       // Just for convenience
       nsCOMPtr<sbILocalDatabaseGUIDArray> inner(mFriendArray->mInner);

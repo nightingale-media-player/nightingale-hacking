@@ -30,7 +30,7 @@
 #include <sbPropertiesCID.h>
 
 #include <DatabaseQuery.h>
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIObserverService.h>
@@ -109,14 +109,6 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
-  if (mDependentGUIDArrayMonitor) {
-    nsAutoMonitor::DestroyMonitor(mDependentGUIDArrayMonitor);
-  }
-
-  if (mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
-
   MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
 }
 
@@ -147,13 +139,6 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  mDependentGUIDArrayMonitor =
-    nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mDependentGUIDArrayMonitor");
-  NS_ENSURE_TRUE(mDependentGUIDArrayMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -698,7 +683,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
   // thread coming in behind us and thinking there's misses when they're
   // going to be loaded.
   {
-    nsAutoMonitor mon(mMonitor);
+	  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
 
@@ -782,7 +767,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
   PRUint32 i;
   PRBool cacheUpdated = PR_FALSE;
 
-  nsAutoMonitor mon(mMonitor);
+
 
   for (i = 0; i < aGUIDArrayCount; i++) {
 
@@ -795,13 +780,10 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
       // Write will acquire the lock as necessary. Write will 
       // also potentially have to call back into the property 
       // cache on the main thread to invalidate the GUID arrays.
-      mon.Exit();
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
       rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
-
-      // Relock.
-      mon.Enter();
     }
 
     bag = mCache.Get(guid);
@@ -897,7 +879,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   // Scoped locking. Must always avoid calling Write with monitor acquired.
   {
-    nsAutoMonitor mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
       nsDependentString const guid(aGUIDArray[i]);
       nsRefPtr<sbLocalDatabaseResourcePropertyBag> bag;
@@ -1132,7 +1114,7 @@ sbLocalDatabasePropertyCache::Write()
     DirtyItems dirtyItems;
 
     //Lock it.
-    nsAutoMonitor mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if (!mDirty.Count()) {
       return NS_OK;

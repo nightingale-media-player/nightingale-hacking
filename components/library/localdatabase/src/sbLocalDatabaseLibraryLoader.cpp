@@ -27,7 +27,7 @@
 #include <nsICategoryManager.h>
 #include <nsIAppStartup.h>
 #include <nsIFile.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsILocalFile.h>
 #include <nsIObserverService.h>
 #include <nsIIOService.h>
@@ -52,7 +52,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsTHashtable.h>
 #include <nsXPCOMCID.h>
-#include <nsXPFEComponentsCID.h>
+#include <nsToolkitCompsCID.h>
 #include <prlog.h>
 #include <sbLibraryManager.h>
 #include <sbMemoryUtils.h>
