@@ -859,7 +859,7 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_ENSURE_ARG_POINTER(_retval);
 
   sbLocalDatabaseGUIDArray* newArray;
-  NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
+  newArray = new sbLocalDatabaseGUIDArray;
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray(newArray);
@@ -939,7 +939,7 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsresult rv;
 
-  mozilla::ReentrantMonitorAutoEnter autoMonitormCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1066,7 +1066,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 
   nsresult rv;
 
-  mozilla::ReentrantMonitorAutoEnter autoMonitormCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
