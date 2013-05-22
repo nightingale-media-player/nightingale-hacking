@@ -36,6 +36,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
+#include <mozilla/Mutex.h>
 #include <prlock.h>
 #include <sbIFilterableMediaListView.h>
 #include <sbIMediaListListener.h>
@@ -153,7 +154,7 @@ private:
    */
   nsresult HasCommonProperty(sbIPropertyArray* aBag1,
                              sbIPropertyArray* aBag2,
-                             nsStringArray * aPropertiesToIgnore,
+                             nsTArray<nsString> * aPropertiesToIgnore,
                              PRBool* aHasCommonProperty);
 
   nsresult HasCommonProperty(sbIPropertyArray* aBag,
@@ -213,7 +214,7 @@ private:
   sbLibraryBatchHelper mBatchHelper;
 
   // The lock to protect our listener table.
-  PRLock* mListenerTableLock;
+  mozilla::Mutex mListenerTableLock;
 
   // Our listener table, stores nsISupports entries that are either strong
   // references to sbIMediaListViewListener instances or
@@ -229,7 +230,7 @@ private:
    * This holds the list of properties that should be ignored when considering
    * whether to invalidate the view.
    */
-  nsStringArray mIgnoreSystemProperties;
+  nsTArray<nsString> mIgnoreSystemProperties;
 };
 
 class sbMakeSortableStringEnumerator : public nsIStringEnumerator

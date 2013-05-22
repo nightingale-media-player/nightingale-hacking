@@ -42,7 +42,7 @@
 #include <nsIFileURL.h>
 #include <nsIStringEnumerator.h>
 #include <nsIVariant.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsNetUtil.h>
 #include <nsXPCOM.h>
 #include <prprf.h>
@@ -89,15 +89,10 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 
 sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
-  if(mPropertyBagLock) {
-    nsAutoLock::DestroyLock(mPropertyBagLock);
-  }
-
   // If we've kept an owning reference to the library, release it here
   if (mLibrary && mOwnsLibrary) {
     NS_RELEASE(mLibrary);
   }
-
 }
 
 /**
@@ -125,9 +120,7 @@ sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
     NS_ADDREF(mLibrary);
   }
 
-  mPropertyBagLock =
-    nsAutoLock::NewLock("sbLocalDatabaseMediaItem::mPropertyBagLock");
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::MutexAutoLock lock(mPropertyBagLock);
 
   return NS_OK;
 }
@@ -138,7 +131,7 @@ sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
 nsresult
 sbLocalDatabaseMediaItem::EnsurePropertyBag()
 {
-  nsAutoLock lock(mPropertyBagLock);
+  mozilla::MutexAutoLock lock(mPropertyBagLock);
 
   if (mPropertyBag)
     return NS_OK;
@@ -272,8 +265,6 @@ sbLocalDatabaseMediaItem::GetGuid(nsAString& aGuid)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 {
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   NS_ENSURE_ARG_POINTER(aCreated);
 
   nsAutoString str;
@@ -293,8 +284,6 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 {
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   NS_ENSURE_ARG_POINTER(aUpdated);
 
   nsAutoString str;
@@ -314,8 +303,6 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
 {
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   NS_ENSURE_ARG_POINTER(aUserEditable);
 
   // Item is not editable if the item or its parent have
@@ -391,12 +378,10 @@ sbLocalDatabaseMediaItem::GetPropertyIDs(nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mPropertyBagLock);
+  mozilla::MutexAutoLock lock(mPropertyBagLock);
 
   rv = mPropertyBag->GetIds(_retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -411,12 +396,10 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetProperty(const nsAString& aID,
                                       nsAString& _retval)
 {
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mPropertyBagLock);
+  mozilla::MutexAutoLock lock(mPropertyBagLock);
 
   rv = mPropertyBag->GetProperty(aID, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -431,8 +414,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
                                       const nsAString& aValue)
 {
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   // XXXsk Don't let the GUID property to be set.  We shouldn't need this
   // if it were a read only property, so remvoe this when bug 3099 is fixed.
   if (aID.EqualsLiteral(SB_PROPERTY_GUID)) {
@@ -455,7 +436,7 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    nsAutoLock lock(mPropertyBagLock);
+    mozilla::MutexAutoLock lock(mPropertyBagLock);
 
     nsAutoString oldValue;
     rv = mPropertyBag->GetProperty(aID, oldValue);
@@ -482,7 +463,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -517,7 +497,7 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    nsAutoLock lock(mPropertyBagLock);
+	mozilla::MutexAutoLock lock(mPropertyBagLock);
 
     for (PRUint32 i = 0; i < propertyCount; i++) {
       nsCOMPtr<sbIProperty> property;
@@ -560,8 +540,6 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
   nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -569,7 +547,7 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mPropertyBagLock);
+  mozilla::MutexAutoLock lock(mPropertyBagLock);
 
   if (aProperties) {
     PRUint32 propertyCount;

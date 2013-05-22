@@ -34,6 +34,7 @@
 #include <nsHashKeys.h>
 #include <nsTArray.h>
 #include <prlock.h>
+#include <mozilla/Mutex.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
@@ -203,7 +204,7 @@ private:
 
   nsTArray<sbListenerInfoAutoPtr> mListenerArray;
 
-  PRLock* mListenerArrayLock;
+  mozilla::Mutex mListenerArrayLock;
 
   PRUint32 mBatchDepth;
 };

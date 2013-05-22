@@ -31,6 +31,7 @@
 
 #include <DatabaseQuery.h>
 #include <mozilla/ReentrantMonitor.h>
+#include <VideoUtils.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIObserverService.h>
@@ -49,6 +50,7 @@
 #include <nsIStringBundle.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsStringAPI.h>
 
 #include "sbDatabaseResultStringEnumerator.h"
 #include "sbLocalDatabaseGUIDArray.h"
@@ -779,6 +781,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
       // Write will acquire the lock as necessary. Write will 
       // also potentially have to call back into the property 
       // cache on the main thread to invalidate the GUID arrays.
+
       mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
       rv = Write();
@@ -1401,7 +1404,7 @@ sbLocalDatabasePropertyCache::AddDependentGUIDArray(
 {
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
 
-  nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
   nsCOMPtr<nsISupports> supports =
     do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
   nsCOMPtr<nsIWeakReference> weakRef =
@@ -1416,7 +1419,7 @@ sbLocalDatabasePropertyCache::RemoveDependentGUIDArray(
                                 sbLocalDatabaseGUIDArray *aGUIDArray)
 {
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
-  nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
 
   nsCOMPtr<nsISupports> supports =
     do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
@@ -1566,8 +1569,6 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   NS_ENSURE_ARG_POINTER(aBag);
   nsAutoString guid(aGuid);
 
-  nsAutoMonitor mon(mMonitor);
-
   // If another bag for the same guid is already in the dirty list, then we
   // risk losing information if we don't write out immediately.
   if (mDirty.Get(guid, nsnull)) {
@@ -1577,13 +1578,10 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
     // Never call Write with monitor acquired. Write may have to proxy
     // invalidation of the GUID arrays to the main thread which requires
     // acquiring the monitor.
-    mon.Exit();
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
     rv = Write();
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Relock.
-    mon.Enter();
   }
 
   mDirty.Put(guid, aBag);
@@ -1615,7 +1613,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   nsCOMArray<sbILocalDatabaseGUIDArray> arrays;
 
   {
-    nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
     DependentGUIDArrays_t::iterator cit = mDependentGUIDArrays.begin();
     DependentGUIDArrays_t::iterator end = mDependentGUIDArrays.end();
     while (cit != end) {
@@ -1640,7 +1638,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   // Copy the data into a temporary set to avoid invalidating the guid arrays
   // with the property cache lock held.
   {
-    nsAutoMonitor mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     std::insert_iterator<std::vector<PRUint32> > insertIter(dirtyPropIDs,
                                                             dirtyPropIDs.end());
     std::copy(mDirtyForInvalidation.begin(),
@@ -1809,8 +1807,20 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseSortInvalidateJob,
                              sbIMediaListEnumerationListener,
                              nsIObserver)
 
-NS_DECL_CLASSINFO(sbLocalDatabaseSortInvalidateJob)
-NS_IMPL_THREADSAFE_CI(sbLocalDatabaseSortInvalidateJob)
+//NS_DECL_CLASSINFO(sbLocalDatabaseSortInvalidateJob);
+NS_IMPL_THREADSAFE_CI(sbLocalDatabaseSortInvalidateJob);
+
+//NS_IMPL_CLASSINFO(sbLocalDatabaseSortInvalidateJob,
+//				  NULL,
+//				  nsIClassInfo::THREADSAFE,
+//				  NS_GET_IID(sbLocalDatabaseSortInvalidateJob));
+
+//NS_IMPL_ISUPPORTS5_CI(sbLocalDatabaseSortInvalidateJob,
+//					  nsIClassInfo,
+//					  sbIJobProgress,
+//					  nsIRunnable,
+//					  sbIMediaListEnumerationListener,
+//					  nsIObserver);
 
 sbLocalDatabaseSortInvalidateJob::sbLocalDatabaseSortInvalidateJob() :
   mShouldShutdown(PR_FALSE),

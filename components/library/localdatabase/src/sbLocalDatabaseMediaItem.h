@@ -35,6 +35,7 @@
 #include <nsIRequestObserver.h>
 #include <sbWeakReference.h>
 
+#include <mozilla/Mutex.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -95,7 +96,7 @@ protected:
   PRBool mItemControllerFetched;
 
 private:
-  PRLock* mPropertyBagLock;
+  mozilla::Mutex mPropertyBagLock;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
 };
 

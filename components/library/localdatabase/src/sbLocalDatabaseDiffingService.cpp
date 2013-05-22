@@ -494,30 +494,6 @@ sbLocalDatabaseDiffingService::~sbLocalDatabaseDiffingService()
 {
 }
 
-/*static*/
-NS_METHOD sbLocalDatabaseDiffingService::RegisterSelf(
-                          nsIComponentManager* aCompMgr,
-                          nsIFile* aPath,
-                          const char* aLoaderStr,
-                          const char* aType,
-                          const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
-                                         SB_LOCALDATABASE_DIFFINGSERVICE_DESCRIPTION,
-                                         "service," SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID,
-                                         PR_TRUE,
-                                         PR_TRUE,
-                                         nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 template <class T, class M>
 T FindNextUsable(T aIter, T aEnd, M aMember)
 {

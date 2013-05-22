@@ -66,7 +66,8 @@
 
 #include <DatabaseQuery.h>
 #include <sbIDatabaseEngine.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -553,9 +554,6 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Destructed", this));
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
 }
 
 nsresult
@@ -720,8 +718,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseLibrary::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
 
   // Library initialized, ensure others can get notifications
   nsCOMPtr<sbILocalDatabaseMediaItem> item =
@@ -1626,12 +1623,12 @@ sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
 
 /**
  * Helper method to convert the URI array (or a URI spec string array)
- * to a nsStringArray.
+ * to a nsTArray<nsString>.
  *
  * @params:
  * aURIs: the nsIArray contains either the spec string in UTF16 format wrapped
  * inside the nsSupportsString object or the URI object itself.
- * aStringArray: the nsStringArray which will contain the spec string in UTF16
+ * aStringArray: the nsTArray<nsString> which will contain the spec string in UTF16
  * format upon successful return.
  * @return: NS_OK on successful return.
  * Note:
@@ -1639,7 +1636,7 @@ sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
  * that case, we detect it and convert them to their corresponding spec strings.
  */
 nsresult
-sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aStringArray)
+sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsTArray<nsString>** aStringArray)
 {
   TRACE(("ConvertURIsToStrings[0x%.8x] - ConvertURIsToStrings()", this));
 
@@ -1651,7 +1648,7 @@ sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aS
   rv = aURIs->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<nsStringArray> strArray(new nsStringArray(length));
+  nsAutoPtr< nsTArray<nsString> > strArray(new nsTArray<nsString>(length));
 
   for (PRUint32 i = 0; i < length; i++) {
     nsAutoString uriSpec;
@@ -1669,7 +1666,7 @@ sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aS
       rv = uriStr->GetData(uriSpec);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    strArray->AppendString(uriSpec);
+    strArray->AppendElement(uriSpec);
   }
   *aStringArray = strArray.forget();
   return NS_OK;
@@ -1734,10 +1731,10 @@ sbLocalDatabaseLibrary::ContainsCopy(sbIMediaItem* aMediaItem,
 
 nsresult
 sbLocalDatabaseLibrary::FilterExistingItems
-                          (nsStringArray* aURIs,
+                          (nsTArray<nsString>* aURIs,
                            nsIArray* aPropertyArrayArray,
                            nsTArray<PRUint32>* aFilteredIndexArray,
-                           nsStringArray** aFilteredURIs,
+                           nsTArray<nsString>** aFilteredURIs,
                            nsIArray** aFilteredPropertyArrayArray)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - FilterExistingItems()", this));
@@ -1748,7 +1745,7 @@ sbLocalDatabaseLibrary::FilterExistingItems
   if (aFilteredIndexArray)
     aFilteredIndexArray->Clear();
 
-  PRUint32 length = aURIs->Count();
+  PRUint32 length = aURIs->Length();
   // If the incoming array is empty, do nothing
   if (length == 0) {
     *aFilteredURIs = aURIs;
@@ -1791,7 +1788,7 @@ sbLocalDatabaseLibrary::FilterExistingItems
   PRUint32 noOfDups = 0;
   for (PRUint32 i = 0; i < length; i++) {
     nsAutoString uriSpec;
-    aURIs->StringAt(i, uriSpec);
+    uriSpec = aURIs->ElementAt(i);
     // We want to build a list of unique URIs, and also only add these unique
     // URIs to the query
     if (!uniques.GetEntry(uriSpec)) {
@@ -1860,7 +1857,7 @@ sbLocalDatabaseLibrary::FilterExistingItems
   }
   // Now uniques should contain all the final items we need to insert to the
   // destination arrays.
-  nsAutoPtr<nsStringArray> filteredURIs(new nsStringArray(length - rowCount - noOfDups));
+  nsAutoPtr< nsTArray<nsString> > filteredURIs(new nsTArray<nsString>(length - rowCount - noOfDups));
   nsCOMPtr<nsIMutableArray> filteredPropertyArrayArray;
   if (aPropertyArrayArray) {
     filteredPropertyArrayArray =
@@ -1870,14 +1867,15 @@ sbLocalDatabaseLibrary::FilterExistingItems
 
   for (PRUint32 i = 0; i < length; i++) {
     nsAutoString uriSpec;
-    aURIs->StringAt(i, uriSpec);
+    uriSpec = aURIs->ElementAt(i);
     if (uniques.GetEntry(uriSpec)) {
       if (aFilteredIndexArray) {
         NS_ENSURE_TRUE(aFilteredIndexArray->AppendElement(i),
                        NS_ERROR_OUT_OF_MEMORY);
       }
 
-      PRBool success = filteredURIs->AppendString(uriSpec);
+      nsAutoString *ret = filteredURIs->AppendElement(uriSpec);
+      PRBool success = (ret == nsnull) ? PR_FALSE : PR_TRUE;
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
       if (aPropertyArrayArray && filteredPropertyArrayArray) {
@@ -2784,11 +2782,12 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   // If we don't allow duplicates, check to see if there is already a media
   // item with this uri.  If so, return it.
   if (!aAllowDuplicates) {
-    nsAutoPtr<nsStringArray> strArray(new nsStringArray());
-    PRBool success = strArray->AppendString(NS_ConvertUTF8toUTF16(spec));
+    nsAutoPtr< nsTArray<nsString> > strArray(new nsTArray<nsString>());
+    nsAutoString *ret = strArray->AppendElement(NS_ConvertUTF8toUTF16(spec));
+    PRBool success = (ret == nsnull) ? PR_FALSE : PR_TRUE;
     NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
 
-    nsAutoPtr<nsStringArray> filtered;
+    nsAutoPtr< nsTArray<nsString> > filtered;
 
     rv = FilterExistingItems(strArray,
                              nsnull,
@@ -2798,7 +2797,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
 
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 length = filtered->Count();
+    PRUint32 length = filtered->Length();
     NS_ENSURE_SUCCESS(rv, rv);
 
     // The uri was filtered out, therefore it exists.  Get it and return it
@@ -3072,7 +3071,7 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> strongMediaItem;
@@ -3520,12 +3519,12 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
 
   nsresult rv;
 
-  nsAutoPtr<nsStringArray> strArray;
+  nsAutoPtr< nsTArray<nsString> > strArray;
   // Convert URI objects into String objects
   rv = ConvertURIsToStrings(aURIArray, getter_Transfers(strArray));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<nsStringArray> filteredArray;
+  nsAutoPtr< nsTArray<nsString> > filteredArray;
   nsCOMPtr<nsIArray> filteredPropertyArrayArray;
   nsTArray<PRUint32> createdMediaItemIndexArray;
   if (aAllowDuplicates) {
@@ -4795,7 +4794,7 @@ sbBatchCreateHelper::sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
 
 nsresult
 sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
-                               nsStringArray* aURIArray,
+							   nsTArray<nsString>* aURIArray,
                                nsIArray* aPropertyArrayArray)
 {
   TRACE(("sbBatchCreateHelper[0x%.8x] - InitQuery()", this));
@@ -4808,13 +4807,13 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Iterate over all items in the URI array, creating media items.
-  PRUint32 listLength = mURIArray->Count();
+  PRUint32 listLength = mURIArray->Length();
 
   // Add a query to insert each new item and record the guids that were
   // generated for the future inserts
   for (PRUint32 i = 0; i < listLength; i++) {
     nsAutoString uriSpec;
-    mURIArray->StringAt(i, uriSpec);
+    uriSpec = mURIArray->ElementAt(i);
 
     nsAutoString guid;
     rv = mLibrary->AddNewItemQuery(aQuery,

@@ -46,7 +46,7 @@
 
 #include <DatabaseQuery.h>
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -57,6 +57,9 @@
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbSQLBuilderCID.h>
+#include <nsThreadUtils.h>
+#include <nsIProxyObjectManager.h>
+#include <sbProxiedComponentManager.h>
 
 #define DEFAULT_SORT_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
 #define DEFAULT_FETCH_SIZE 1000

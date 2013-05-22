@@ -37,6 +37,7 @@
 
 #include <prmon.h>
 #include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsCOMArray.h>
@@ -431,7 +432,7 @@ private:
   PRBool mPreventAddedNotification;
 
   // This monitor protects calls to GetMediaItem.
-  PRMonitor *mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   // Hashtable that holds all the copy listeners.
   nsInterfaceHashtableMT<nsISupportsHashKey,

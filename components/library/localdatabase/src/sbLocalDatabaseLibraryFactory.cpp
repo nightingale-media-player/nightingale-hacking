@@ -141,30 +141,6 @@ GetDBFolder()
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory, sbILibraryFactory)
 
-/*static*/ NS_METHOD
-sbLocalDatabaseLibraryFactory::RegisterSelf(nsIComponentManager* aCompMgr,
-                                            nsIFile* aPath,
-                                            const char* aLoaderStr,
-                                            const char* aType,
-                                            const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
-                                         SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
-                                         "service,"
-                                         SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
-                                         PR_TRUE,
-                                         PR_TRUE,
-                                         nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 
 nsresult
 sbLocalDatabaseLibraryFactory::Init()
