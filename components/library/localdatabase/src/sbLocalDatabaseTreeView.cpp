@@ -1851,7 +1851,7 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   // cause events to be fired, or use synchronous proxies, as you risk    //
   // crashing in recursive painting/frame construction.                   //
   //////////////////////////////////////////////////////////////////////////
-
+/*
   PRUint32 count;
   properties->Count(&count);
   nsString props;
@@ -1859,13 +1859,14 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
     nsCOMPtr<nsIAtom> atom;
     properties->QueryElementAt(i, NS_GET_IID(nsIAtom), getter_AddRefs(atom));
     if (atom) {
+      // XXX BREAKS HERE
       nsString s;
       atom->ToString(s);
       props.Append(s);
       props.AppendLiteral(" ");
     }
   }
-
+*/
   if (IsAllRow(row)) {
     rv = TokenizeProperties(NS_LITERAL_STRING("all"), properties);
     NS_ENSURE_SUCCESS(rv, rv);
