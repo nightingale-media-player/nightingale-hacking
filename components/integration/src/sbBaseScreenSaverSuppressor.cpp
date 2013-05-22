@@ -26,7 +26,7 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIObserverService.h>
 
 #include <nsServiceManagerUtils.h>

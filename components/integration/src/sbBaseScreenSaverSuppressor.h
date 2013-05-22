@@ -29,7 +29,7 @@
 
 #include <nsIObserver.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>

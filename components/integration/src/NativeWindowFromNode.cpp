@@ -38,8 +38,6 @@
 #include <nsCOMPtr.h>
 #include "nsIServiceManager.h"
 #include "nsIDOMDocument.h"
-#include "nsIDOMDocumentView.h"
-#include "nsIDOMAbstractView.h"
 #include "nsIWebNavigation.h"
 #include "nsIDocShellTreeItem.h"
 #include "nsIDocShellTreeOwner.h"
@@ -66,21 +64,9 @@ NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 
 nsIWidget *NativeWindowFromNode::getWidget(nsISupports *window)
 {
-  nsCOMPtr<nsIDOMAbstractView> domAbstractView;
-  nsCOMPtr<nsIDOMDocumentView> domDocumentView(do_QueryInterface(window));
+  nsCOMPtr<nsIDOMDocument> doc(do_QueryInterface(window));
 
-  //The <window> xul element does not implement nsIDOMDocumentView, 
-  //so check for AbstractView if there is no DocumentView.
-  if (!domDocumentView) {
-    domAbstractView = do_QueryInterface(window);
-    if (!domAbstractView) return NULL;
-  }
-  else {
-    domDocumentView->GetDefaultView(getter_AddRefs(domAbstractView)); 
-    if (!domAbstractView) return NULL;
-  }
-
-  nsCOMPtr<nsIWebNavigation> webNavigation(do_GetInterface(domAbstractView)); 
+  nsCOMPtr<nsIWebNavigation> webNavigation(do_GetInterface(window));
   nsCOMPtr<nsIDocShellTreeItem> docShellTreeItem(do_QueryInterface(webNavigation)); 
   if (!docShellTreeItem) return NULL;
 
