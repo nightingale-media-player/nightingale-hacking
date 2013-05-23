@@ -417,7 +417,7 @@ GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
   const char *stringName = NULL;
   nsresult rv;
 
-  NS_NEWXPCOM(error, sbMediacoreError);
+  error = new sbMediacoreError;
   NS_ENSURE_TRUE (error, NS_ERROR_OUT_OF_MEMORY);
 
   const struct errMap *map = NULL;

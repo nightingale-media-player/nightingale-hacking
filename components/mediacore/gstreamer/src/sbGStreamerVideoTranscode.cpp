@@ -48,6 +48,9 @@
 #include <nsIBinaryInputStream.h>
 #include <sbIMediaItem.h>
 #include <nsIProperty.h>
+#include <nsIClassInfo.h>
+#include <nsIClassInfoImpl.h>
+#include <mozilla/Mutex.h>
 
 #include <gst/tag/tag.h>
 
@@ -69,6 +72,9 @@ static PRLogModuleInfo* gGStreamerVideoTranscode =
 #define TRACE(args) /* nothing */
 #endif /* PR_LOGGING */
 
+
+NS_IMPL_CLASSINFO(sbGStreamerVideoTranscoder, NULL, nsIClassInfo::THREADSAFE, SB_GSTREAMER_VIDEO_TRANSCODE_CID);
+
 NS_IMPL_THREADSAFE_ISUPPORTS8(sbGStreamerVideoTranscoder,
                               nsIClassInfo,
                               sbIGStreamerPipeline,
@@ -87,7 +93,6 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerVideoTranscoder,
                              sbIJobProgressTime,
                              sbIJobCancelable)
 
-NS_DECL_CLASSINFO(sbGStreamerVideoTranscoder);
 NS_IMPL_THREADSAFE_CI(sbGStreamerVideoTranscoder);
 
 sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
@@ -101,12 +106,11 @@ sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
   mVideoQueueSrc(NULL),
   mUseAudio(PR_FALSE),
   mUseVideo(PR_FALSE),
-  mUseMuxer(PR_FALSE)
+  mUseMuxer(PR_FALSE),
+  mBuildLock(nsnull)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  mBuildLock = nsAutoLock::NewLock("VideoTranscoder lock");
-  NS_ENSURE_TRUE (mBuildLock, /* void */);
 }
 
 sbGStreamerVideoTranscoder::~sbGStreamerVideoTranscoder()
@@ -115,10 +119,6 @@ sbGStreamerVideoTranscoder::~sbGStreamerVideoTranscoder()
 
   nsresult rv = CleanupPipeline();
   NS_ENSURE_SUCCESS (rv, /* void */);
-
-  if (mBuildLock) {
-    nsAutoLock::DestroyLock(mBuildLock);
-  }
 }
 
 /* nsITimerCallback interface implementation */
@@ -777,7 +777,7 @@ sbGStreamerVideoTranscoder::TranscodingFatalError (const char *errorName)
 
   nsRefPtr<sbMediacoreError> error;
 
-  NS_NEWXPCOM (error, sbMediacoreError);
+  error = new sbMediacoreError;
   NS_ENSURE_TRUE (error, /* void */);
 
   error->Init (sbIMediacoreError::FAILED, message);
@@ -787,8 +787,7 @@ sbGStreamerVideoTranscoder::TranscodingFatalError (const char *errorName)
 
   /* Stop the pipeline. We might be calling this from a non-main thread, so
      dispatch the shutdown asynchronously. */
-  nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD (
-          sbGStreamerVideoTranscoder, this, AsyncStopPipeline);
+  nsCOMPtr<nsIRunnable> event = new nsRunnableMethod_AsyncStopPipeline(this);
 
   rv = NS_DispatchToMainThread(event, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS (rv, /* void */);
@@ -2138,7 +2137,7 @@ nsresult
 sbGStreamerVideoTranscoder::CheckForAllCaps ()
 {
   // Ensure this isn't called from multiple threads concurrently.
-  nsAutoLock lock(mBuildLock);
+  mozilla::MutexAutoLock lock(mBuildLock);
   nsresult rv = NS_OK;
 
   if (mWaitingForCaps) {
@@ -2185,9 +2184,10 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
       mStatus = sbIJobProgress::STATUS_FAILED;
 
       // unlock before making the proxied error dispatch
-      lock.unlock();
-      TranscodingFatalError("songbird.transcode.error.failed_configuration");
-      lock.lock();
+      {
+        mozilla::MutexAutoUnlock lock(mBuildLock);
+        TranscodingFatalError("songbird.transcode.error.failed_configuration");
+      }
     }
 
     // Done with all building, clean these up.

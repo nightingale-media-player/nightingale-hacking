@@ -36,6 +36,8 @@
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <a11yGeneric.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbIMediacore.h>
 #include <sbIMediacorePlaybackControl.h>
@@ -180,7 +182,7 @@ private:
 
 protected:
   // Protects all access to mPipeline
-  PRMonitor*  mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   PRBool mIsVideoSupported; // true if we have support for video on the current
                             // platform
@@ -259,6 +261,8 @@ protected:
 
   PRBool mHasVideo;          // True if we're playing video currently.
   PRBool mHasAudio;          // True if we're playing audio currently.
+
+  NS_DECL_RUNNABLEMETHOD(sbGStreamerMediacore, AbortAndRestartPlayback);
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

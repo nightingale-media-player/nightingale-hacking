@@ -400,8 +400,7 @@ sbGStreamerMediacoreFactory::Observe(nsISupports *subject,
     return Shutdown();
   }
   else if (!strcmp(topic, NS_PREFBRANCH_PREFCHANGE_TOPIC_ID)) {
-    NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-    nsAutoMonitor mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     mCapabilities = nsnull;
     return NS_OK;

@@ -39,6 +39,7 @@
 #include <nsArrayUtils.h>
 #include <nsNetUtil.h>
 
+#include <nsIClassInfoImpl.h>
 #include <nsIFile.h>
 #include <nsIURI.h>
 #include <nsIFileURL.h>
@@ -63,25 +64,19 @@ static PRLogModuleInfo* gGStreamerTranscode = PR_NewLogModule("sbGStreamerTransc
 #define TRACE(args) /* nothing */
 #endif /* PR_LOGGING */
 
-NS_IMPL_THREADSAFE_ISUPPORTS8(sbGStreamerTranscode,
-                              nsIClassInfo,
-                              sbIGStreamerPipeline,
-                              sbITranscodeJob,
-                              sbIMediacoreEventTarget,
-                              sbIJobProgress,
-                              sbIJobProgressTime,
-                              sbIJobCancelable,
-                              nsITimerCallback)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerTranscode,
-                             sbIGStreamerPipeline,
-                             sbITranscodeJob,
-                             sbIMediacoreEventTarget,
-                             sbIJobProgress,
-                             sbIJobProgressTime,
-                             sbIJobCancelable)
+NS_IMPL_CLASSINFO(sbGStreamerTranscode, NULL, nsIClassInfo::THREADSAFE, SB_GSTREAMER_TRANSCODE_CID);
 
-NS_DECL_CLASSINFO(sbGStreamerTranscode);
+NS_IMPL_ISUPPORTS8_CI(sbGStreamerTranscode,
+                      nsIClassInfo,
+                      sbIGStreamerPipeline,
+                      sbITranscodeJob,
+                      sbIMediacoreEventTarget,
+                      sbIJobProgress,
+                      sbIJobProgressTime,
+                      sbIJobCancelable,
+                      nsITimerCallback);
+
 NS_IMPL_THREADSAFE_CI(sbGStreamerTranscode);
 
 sbGStreamerTranscode::sbGStreamerTranscode() :

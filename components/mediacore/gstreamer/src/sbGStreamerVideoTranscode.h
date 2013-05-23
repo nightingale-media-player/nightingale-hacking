@@ -25,7 +25,8 @@
 #ifndef _SB_GSTREAMER_VIDEO_TRANSCODE_H_
 #define _SB_GSTREAMER_VIDEO_TRANSCODE_H_
 
-#include <nsAutoLock.h>
+#include <a11yGeneric.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsITimer.h>
@@ -255,8 +256,10 @@ private:
 
   // Lock to prevent trying to build the pipeline concurrently from multiple
   // threads.
-  PRLock                                 *mBuildLock;
+  mozilla::Mutex                          mBuildLock;
 
+
+  NS_DECL_RUNNABLEMETHOD(sbGStreamerVideoTranscoder, AsyncStopPipeline);
 protected:
   /* additional members */
 };

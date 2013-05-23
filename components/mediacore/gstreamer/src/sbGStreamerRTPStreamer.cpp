@@ -26,6 +26,7 @@
 
 #include <sbIGStreamerService.h>
 
+#include <nsIClassInfoImpl.h>
 #include <sbClassInfoUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
@@ -50,18 +51,15 @@ static PRLogModuleInfo* gGStreamerRTPStreamer = PR_NewLogModule("sbGStreamerRTPS
 #define TRACE(args) /* nothing */
 #endif /* PR_LOGGING */
 
-NS_IMPL_THREADSAFE_ISUPPORTS4(sbGStreamerRTPStreamer,
-                              sbIGStreamerPipeline,
-                              sbIGStreamerRTPStreamer,
-                              sbIMediacoreEventTarget,
-                              nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbGStreamerRTPStreamer,
-                             sbIGStreamerPipeline,
-                             sbIGStreamerRTPStreamer,
-                             sbIMediacoreEventTarget);
+NS_IMPL_CLASSINFO(sbGStreamerRTPStreamer, NULL, nsIClassInfo::THREADSAFE, SB_GSTREAMERRTPSTREAMER_CID);
 
-NS_DECL_CLASSINFO(sbGstreamerRTPStreamer);
+NS_IMPL_ISUPPORTS4_CI(sbGStreamerRTPStreamer,
+                      sbIGStreamerPipeline,
+                      sbIGStreamerRTPStreamer,
+                      sbIMediacoreEventTarget,
+                      nsIClassInfo);
+
 NS_IMPL_THREADSAFE_CI(sbGStreamerRTPStreamer);
 
 sbGStreamerRTPStreamer::sbGStreamerRTPStreamer() :
