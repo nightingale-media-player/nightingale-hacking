@@ -65,6 +65,8 @@ static PRLogModuleInfo* gMediacoreWrapper = nsnull;
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreWrapper)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreWrapper)
 
+NS_IMPL_CLASSINFO(sbMediacoreWrapper, NULL, nsIClassInfo::THREADSAFE, SB_MEDIACOREWRAPPER_CID)
+
 NS_IMPL_QUERY_INTERFACE8_CI(sbMediacoreWrapper,
                             sbIMediacore,
                             sbIMediacorePlaybackControl,
