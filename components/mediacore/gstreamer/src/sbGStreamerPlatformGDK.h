@@ -72,6 +72,8 @@ private:
                                  // we reparent our video window to, or NULL.
   XID         mWindowXID;        // XID for the actual X window underlying the
                                  // mWindow object.
+
+  NS_DECL_RUNNABLEMETHOD(sbGStreamerMediacore, RequestVideoWindow);
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_GDK_H_
