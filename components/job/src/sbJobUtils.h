@@ -164,7 +164,7 @@ public:
     NS_LOG_RELEASE(this, count, "sbJobErrorEnumerator<>");
     if (0 == count) {
       mRefCnt = 1; /* stabilize */
-      NS_DELETEXPCOM(this);
+      delete this;
     }
     return count;
   }
