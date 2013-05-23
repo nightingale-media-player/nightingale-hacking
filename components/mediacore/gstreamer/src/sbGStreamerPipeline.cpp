@@ -26,12 +26,14 @@
 
 #include <sbIGStreamerService.h>
 
+#include <nsIClassInfoImpl.h>
 #include <sbClassInfoUtils.h>
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIRunnable.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbIMediacoreError.h>
 #include <sbMediacoreError.h>
@@ -53,6 +55,8 @@ static PRLogModuleInfo* gGStreamerPipeline = PR_NewLogModule("sbGStreamerPipelin
 NS_IMPL_THREADSAFE_ADDREF(sbGStreamerPipeline)
 NS_IMPL_THREADSAFE_RELEASE(sbGStreamerPipeline)
 
+//NS_IMPL_CLASSINFO(sbGStreamerPipeline, NULL, nsIClassInfo::THREADSAFE, )
+
 NS_IMPL_QUERY_INTERFACE2_CI(sbGStreamerPipeline,
                             sbIMediacoreEventTarget,
                             nsIClassInfo)
@@ -60,7 +64,6 @@ NS_IMPL_QUERY_INTERFACE2_CI(sbGStreamerPipeline,
 NS_IMPL_CI_INTERFACE_GETTER1(sbGStreamerPipeline,
                              sbIMediacoreEventTarget)
 
-NS_DECL_CLASSINFO(sbGStreamerPipeline)
 NS_IMPL_THREADSAFE_CI(sbGStreamerPipeline)
 
 sbGStreamerPipeline::sbGStreamerPipeline() :

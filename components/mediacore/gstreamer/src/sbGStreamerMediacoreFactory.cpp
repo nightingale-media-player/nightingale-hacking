@@ -32,6 +32,7 @@
 #include <nsIObserverService.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbMediacoreCapabilities.h>
 #include <sbTArrayStringEnumerator.h>
@@ -77,11 +78,10 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbGStreamerMediacoreFactory,
                              sbIMediacoreFactory,
                              nsIObserver)
 
-SB_MEDIACORE_FACTORY_REGISTERSELF_IMPL(sbGStreamerMediacoreFactory, 
-                                       SB_GSTREAMERMEDIACOREFACTORY_DESCRIPTION)
 
 sbGStreamerMediacoreFactory::sbGStreamerMediacoreFactory()
 {
+
 }
 
 sbGStreamerMediacoreFactory::~sbGStreamerMediacoreFactory()
@@ -165,8 +165,7 @@ sbGStreamerMediacoreFactory::OnInitBaseMediacoreFactory()
 sbGStreamerMediacoreFactory::OnGetCapabilities(
                              sbIMediacoreCapabilities **aCapabilities)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // TODO: This function is now a _huge_ mess. We should talk to product about
   // what files we want to import / etc, some time soon - e.g. the current
@@ -177,7 +176,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   nsresult rv;
   if (!mCapabilities) {
     nsRefPtr<sbMediacoreCapabilities> caps;
-    NS_NEWXPCOM(caps, sbMediacoreCapabilities);
+    caps = new sbMediacoreCapabilities;
     NS_ENSURE_TRUE(caps, NS_ERROR_OUT_OF_MEMORY);
 
     rv = caps->Init();
@@ -377,7 +376,7 @@ sbGStreamerMediacoreFactory::OnCreate(const nsAString &aInstanceName,
                                     sbIMediacore **_retval)
 {
   nsRefPtr<sbGStreamerMediacore> mediacore;
-  NS_NEWXPCOM(mediacore, sbGStreamerMediacore);
+  mediacore = new sbGStreamerMediacore;
   NS_ENSURE_TRUE(mediacore, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mediacore->Init();

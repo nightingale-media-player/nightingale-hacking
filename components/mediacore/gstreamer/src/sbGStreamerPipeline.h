@@ -34,7 +34,7 @@
 #include <nsITimer.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIStringBundle.h>
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsIClassInfo.h>
 
 #include <sbBaseMediacoreEventTarget.h>
@@ -105,7 +105,7 @@ protected:
   PRIntervalTime mTimeStarted;
 
   // Protect access to the pipeline
-  PRMonitor *mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   // Pipeline Primary Operation
   GStreamer::pipelineOp_t mPipelineOp;

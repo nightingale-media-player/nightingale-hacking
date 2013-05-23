@@ -30,7 +30,7 @@
 #include <nsDebug.h>
 #include <nsStringGlue.h>
 
-#include <nsIDOMDocumentEvent.h>
+#include <nsIDOMDocument.h>
 #include <nsIDOMEventTarget.h>
 
 /**
@@ -234,13 +234,11 @@ nsresult
 BasePlatformInterface::CreateDOMMouseEvent(nsIDOMMouseEvent **aMouseEvent)
 {
   NS_ENSURE_ARG_POINTER(aMouseEvent);
-  
+
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(mDocument, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIDOMEvent> event;
-  rv = docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"), 
+  rv = mDocument->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                              getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -258,11 +256,9 @@ BasePlatformInterface::CreateDOMKeyEvent(nsIDOMKeyEvent **aKeyEvent)
   NS_ENSURE_ARG_POINTER(aKeyEvent);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(mDocument, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIDOMEvent> event;
-  rv = docEvent->CreateEvent(NS_LITERAL_STRING("keyevents"), 
+  rv = mDocument->CreateEvent(NS_LITERAL_STRING("keyevents"),
                              getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
