@@ -33,37 +33,43 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbTestDummyMediacoreManager.h"
 #include "sbTestMediacoreEventCreator.h"
 #include "sbTestMediacoreStressThreads.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestDummyMediacoreManager);
+NS_DEFINE_NAMED_CID(SB_TEST_DUMMY_MEDIACORE_MANAGER_CID);
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestMediacoreEventCreator);
+NS_DEFINE_NAMED_CID(SB_TEST_MEDIACORE_EVENT_CREATOR_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestMediacoreStressThreads);
+NS_DEFINE_NAMED_CID(SB_TEST_MEDIACORE_STRESS_THREADS_CID);
 
-static nsModuleComponentInfo sbTestMediacoreBaseComponents[] =
-{
-  {
-    SB_TEST_DUMMY_MEDIACORE_MANAGER_CLASSNAME,
-    SB_TEST_DUMMY_MEDIACORE_MANAGER_CID,
-    SB_TEST_DUMMY_MEDIACORE_MANAGER_CONTRACTID,
-    sbTestDummyMediacoreManagerConstructor
-  },
-  {
-    SB_TEST_MEDIACORE_EVENT_CREATOR_CLASSNAME,
-    SB_TEST_MEDIACORE_EVENT_CREATOR_CID,
-    SB_TEST_MEDIACORE_EVENT_CREATOR_CONTRACTID,
-    sbTestMediacoreEventCreatorConstructor
-  },
-  {
-    SB_TEST_MEDIACORE_STRESS_THREADS_CLASSNAME,
-    SB_TEST_MEDIACORE_STRESS_THREADS_CID,
-    SB_TEST_MEDIACORE_STRESS_THREADS_CONTRACTID,
-    sbTestMediacoreStressThreadsConstructor
-  }
+static const mozilla::Module::CIDEntry kTestMediacoreBaseCIDs[] = {
+  { &kSB_TEST_DUMMY_MEDIACORE_MANAGER_CID, false, NULL, sbTestDummyMediacoreManagerConstructor },
+  { &kSB_TEST_MEDIACORE_EVENT_CREATOR_CID, false, NULL, sbTestMediacoreEventCreatorConstructor },
+  { &kSB_TEST_MEDIACORE_STRESS_THREADS_CID, false, NULL, sbTestMediacoreStressThreadsConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdTestBaseMediacore, sbTestMediacoreBaseComponents)
+static const mozilla::Module::ContractIDEntry kTestMediacoreBaseContracts[] = {
+  { SB_TEST_DUMMY_MEDIACORE_MANAGER_CONTRACTID, &kSB_TEST_DUMMY_MEDIACORE_MANAGER_CID },
+  { SB_TEST_MEDIACORE_EVENT_CREATOR_CONTRACTID, &kSB_TEST_MEDIACORE_EVENT_CREATOR_CID },
+  { SB_TEST_MEDIACORE_STRESS_THREADS_CONTRACTID, &kSB_TEST_MEDIACORE_STRESS_THREADS_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kTestMediacoreBaseCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kTestMediacoreBaseComponents = {
+  mozilla::Module::kVersion,
+  kTestMediacoreBaseCIDs,
+  kTestMediacoreBaseContracts,
+  kTestMediacoreBaseCategories
+};
+
+NSMODULE_DEFN(sbTestMediacoreBaseComponents) = &kTestMediacoreBaseComponents;

@@ -28,12 +28,14 @@
 #ifndef sbTestMediacoreStressThreads_h
 #define sbTestMediacoreStressThreads_h
 
+#include <a11yGeneric.h>
 #include <nsIRunnable.h>
 #include <sbIMediacore.h>
 #include <prmon.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIThread.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbIMediacoreEventListener.h>
@@ -63,10 +65,12 @@ private:
   ~sbTestMediacoreStressThreads();
   void OnEvent();
 
+  NS_DECL_RUNNABLEMETHOD(sbTestMediacoreStressThreads, OnEvent);
+
 protected:
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
   PRInt32                               mCounter;
-  PRMonitor*                            mMonitor;
+  mozilla::ReentrantMonitor             mMonitor;
   nsCOMArray<nsIThread>                 mThreads;
 };
 

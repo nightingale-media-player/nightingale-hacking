@@ -27,12 +27,11 @@
 
 #include "sbTestMediacoreStressThreads.h"
 
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
-#include <nsIGenericFactory.h>
 #include <sbBaseMediacoreEventTarget.h>
 
 #include <sbIMediacoreEvent.h>
@@ -55,20 +54,12 @@ sbTestMediacoreStressThreads::sbTestMediacoreStressThreads()
 
 sbTestMediacoreStressThreads::~sbTestMediacoreStressThreads()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
   /* destructor code */
 }
 
 /* void run (); */
 NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
 {
-  NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
-
-  mMonitor = nsAutoMonitor::NewMonitor(__FILE__);
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
   nsresult rv;
 
   mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
@@ -79,9 +70,9 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
   // spin up a *ton* of threads...
   mCounter = 0;
   for (int i = 0; i < 100; ++i) {
-    nsAutoMonitor mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
     nsCOMPtr<nsIRunnable> event =
-      NS_NEW_RUNNABLE_METHOD(sbTestMediacoreStressThreads, this, OnEvent);
+        new nsRunnableMethod_OnEvent(this);
     NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<nsIThread> thread;
@@ -129,7 +120,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
 /* void onMediacoreEvent (in sbMediacoreEvent aEvent); */
 NS_IMETHODIMP sbTestMediacoreStressThreads::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 {
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
   --mCounter;
   if (!NS_IsMainThread()) {
     NS_WARNING("Not on main thread!");

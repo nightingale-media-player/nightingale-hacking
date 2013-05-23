@@ -62,6 +62,8 @@ static PRLogModuleInfo* gMediacoreWrapper = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
+// XXX Need to convert the following macros?
+
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreWrapper)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreWrapper)
 
