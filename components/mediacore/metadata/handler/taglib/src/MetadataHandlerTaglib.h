@@ -97,7 +97,7 @@
 #include <xiphcomment.h>
 #include <attachedpictureframe.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 
 /* *****************************************************************************
  *
@@ -193,7 +193,7 @@ private:
 
 
     // Statics to help manage the single threading of taglib
-    static PRLock* sTaglibLock;
+    static mozilla::Mutex sTaglibLock;
 
     /* Inherited interfaces. */
 public:
