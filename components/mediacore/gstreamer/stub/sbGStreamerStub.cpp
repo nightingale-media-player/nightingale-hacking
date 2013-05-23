@@ -34,6 +34,7 @@
 #include <nsXPCOM.h>
 #include <sbLibraryLoaderUtils.h>
 #include <mozilla-config.h>
+#include <mozilla/Module.h>
 
 #include <nsIEnvironment.h>
 
@@ -100,11 +101,11 @@ NSGetModule(nsIComponentManager* aCompMgr,
   rv = libDirLocal->Load(&lib);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsGetModuleProc getmoduleproc = (nsGetModuleProc)
-    PR_FindFunctionSymbol(lib, "NSGetModule");
-  NS_ENSURE_TRUE(getmoduleproc, NS_ERROR_FAILURE);
-
-  return getmoduleproc(aCompMgr, aLocation, aResult);
+  const mozilla::Module *module = *(mozilla::Module const *const *)
+                                  PR_FindSymbol(lib, "NSModule");
+  if (module)
+    return NS_OK;
+  return NULL;
 }
 
 /*
