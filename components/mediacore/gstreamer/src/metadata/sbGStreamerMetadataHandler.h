@@ -37,7 +37,7 @@
 #include <nsITimer.h>
 
 #include <prlock.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -66,7 +66,7 @@ private:
 protected:
   
   /* protects access to all member variables; use nsAutoLock */
-  PRLock *mLock;
+  mozilla::Mutex mLock;
   GstElement *mPipeline; // owning
 
   // Metadata, both in original GstTagList form, and transformed into an

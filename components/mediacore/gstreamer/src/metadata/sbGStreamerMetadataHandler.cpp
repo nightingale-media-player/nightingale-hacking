@@ -44,6 +44,7 @@
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
 #include <nsUnicharUtils.h>
+#include <mozilla/Mutex.h>
 
 #include <prlog.h>
 #include <prtime.h>
@@ -105,18 +106,13 @@ sbGStreamerMetadataHandler::sbGStreamerMetadataHandler()
 sbGStreamerMetadataHandler::~sbGStreamerMetadataHandler()
 {
   Close();
-  if (mLock) {
-    nsAutoLock::DestroyLock(mLock);
-    mLock = nsnull;
-  }
 }
 
 nsresult
 sbGStreamerMetadataHandler::Init()
 {
   TRACE((__FUNCTION__));
-  mLock = nsAutoLock::NewLock("sbGStreamerMetadataHandler::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::MutexAutoLock lock(mLock);
   
   // initialize GStreamer
   nsresult rv;
@@ -196,7 +192,7 @@ sbGStreamerMetadataHandler::SetChannel(nsIChannel * aChannel)
   rv = Close();
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mChannel = aChannel;
   if (mChannel) {
     nsCOMPtr<nsIURI> uri;
@@ -265,7 +261,7 @@ sbGStreamerMetadataHandler::Vote(const nsAString & aUrl, PRInt32 *_retval)
   nsresult rv;
   
   { /* for scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     if (!mFactory) {
       mFactory = do_GetService(SB_GSTREAMERMEDIACOREFACTORY_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -318,7 +314,7 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
   GstStateChangeReturn stateReturn;
 
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     mProperties = nsnull;
     
     mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
@@ -373,7 +369,7 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
   
   *_retval = -1; // asynchronous
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     mPipeline = pipeline.forget();
   }
   
@@ -424,7 +420,7 @@ sbGStreamerMetadataHandler::Close()
   GstElement *pipeline = NULL;
   
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     mCompleted = PR_FALSE;
     pipeline = mPipeline;
     if (pipeline) {
@@ -444,7 +440,7 @@ sbGStreamerMetadataHandler::Close()
     gst_object_unref (pipeline);
   }
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     if (mPipeline) {
       gst_object_unref(mPipeline);
     }
@@ -468,7 +464,7 @@ sbGStreamerMetadataHandler::Close()
   // the channel is not threadsafe, release it on the main thread instead
   nsIChannel* channel = nsnull;
   { /* scope */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     mChannel.forget(&channel);
   }
   if (channel) {
@@ -494,7 +490,7 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
       HandleTagMessage(message);
       break;
     case GST_MESSAGE_STATE_CHANGED: {
-      nsAutoLock lock(mLock);
+      mozilla::MutexAutoLock lock(mLock);
       if (!mPipeline || mCompleted) {
         // umm, we stopped, don't bother
         return;
@@ -514,7 +510,7 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
           // don't hold the lock around Close()
           nsresult rv2;
           {
-            nsAutoUnlock unlock(mLock);
+            mozilla::MutexAutoUnlock unlock(mLock);
             rv2 = Close();
           }
           mCompleted = PR_TRUE;
@@ -565,13 +561,13 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
         }
       }
 
-      nsAutoLock lock(mLock);
+      mozilla::MutexAutoLock lock(mLock);
       if (!mCompleted) {
         rv = FinalizeTags(PR_FALSE);
         // don't hold the lock around Close()
         nsresult rv2;
         {
-          nsAutoUnlock unlock(mLock);
+          mozilla::MutexAutoUnlock unlock(mLock);
           rv2 = Close();
         }
         mCompleted = PR_TRUE;
@@ -604,7 +600,7 @@ sbGStreamerMetadataHandler::on_pad_added(GstElement *decodeBin,
   
   NS_ENSURE_TRUE(self, /* void */); // can't use goto before mon is initialized
   { /* scope */
-    nsAutoLock lock(self->mLock);
+    mozilla::MutexAutoLock lock(self->mLock);
     if (self->mCompleted) {
       NS_WARNING("pad added after completion (or abort)");
       return;
@@ -680,7 +676,7 @@ sbGStreamerMetadataHandler::on_pad_caps_changed(GstPad *pad,
                                                 sbGStreamerMetadataHandler *self)
 {
   TRACE((__FUNCTION__));
-  nsAutoLock lock(self->mLock);
+  mozilla::MutexAutoLock lock(self->mLock);
   if (self->mCompleted) {
     NS_WARNING("caps changed after completion (or abort)");
     return;
@@ -729,7 +725,7 @@ sbGStreamerMetadataHandler::HandleTagMessage(GstMessage *message)
   TRACE((__FUNCTION__));
   GstTagList *tag_list = NULL;
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   if (mCompleted) {
     NS_WARNING("tag message after completion (or abort)");
     return;
@@ -845,7 +841,7 @@ sbGStreamerMetadataHandler::Notify(nsITimer* aTimer)
   nsCOMPtr<sbIMetadataHandler> kungFuDeathGrip(this);
   
   rv = Close();
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mCompleted = PR_TRUE;
   mProperties = nsnull;
   mHasAudio = PR_FALSE;
