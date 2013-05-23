@@ -31,6 +31,7 @@
 #include "sbMediacoreCapabilities.h"
 
 #include <nsCOMPtr.h>
+#include <mozilla/Mutex.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -72,19 +73,12 @@ sbMediacoreCapabilities::~sbMediacoreCapabilities()
   TRACE(("sbMediacoreCapabilities[0x%x] - Destroyed", this));
 
   MOZ_COUNT_DTOR(sbMediacoreCapabilities);
-
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
 }
 
 nsresult 
 sbMediacoreCapabilities::Init()
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - Init", this));
-
-  mLock = nsAutoLock::NewLock("sbMediacoreCapabilities::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -95,9 +89,7 @@ sbMediacoreCapabilities::SetAudioExtensions(
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetAudioExtensions", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mAudioExtensions = aAudioExtensions;
 
   return NS_OK;
@@ -109,9 +101,7 @@ sbMediacoreCapabilities::SetVideoExtensions(
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetVideoExtensions", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mVideoExtensions = aVideoExtensions;
 
   return NS_OK;
@@ -123,9 +113,7 @@ sbMediacoreCapabilities::SetImageExtensions(
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetImageExtensions", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mImageExtensions = aImageExtensions;
 
   return NS_OK;
@@ -136,9 +124,7 @@ sbMediacoreCapabilities::SetSupportsAudioPlayback(PRBool aSupportsAudioPlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsAudioPlayback", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mSupportsAudioPlayback = aSupportsAudioPlayback;
 
   return NS_OK;
@@ -149,9 +135,7 @@ sbMediacoreCapabilities::SetSupportsVideoPlayback(PRBool aSupportsVideoPlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsVideoPlayback", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mSupportsVideoPlayback = aSupportsVideoPlayback;
 
   return NS_OK;
@@ -162,9 +146,7 @@ sbMediacoreCapabilities::SetSupportsImagePlayback(PRBool aSupportsImagePlayback)
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsImagePlayback", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mSupportsImagePlayback = aSupportsImagePlayback;
 
   return NS_OK;
@@ -175,9 +157,7 @@ sbMediacoreCapabilities::SetSupportsAudioTranscode(PRBool aSupportsAudioTranscod
 {  
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsAudioTranscode", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mSupportsAudioTranscode = aSupportsAudioTranscode;
 
   return NS_OK;
@@ -188,9 +168,7 @@ sbMediacoreCapabilities::SetSupportsVideoTranscode(PRBool aSupportsVideoTranscod
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsVideoTranscode", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mSupportsVideoTranscode = aSupportsVideoTranscode;
 
   return NS_OK;
@@ -201,9 +179,7 @@ sbMediacoreCapabilities::SetSupportsImageTranscode(PRBool aSupportsImageTranscod
 {
   TRACE(("sbMediacoreCapabilities[0x%x] - SetSupportsImageTranscode", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mSupportsImageTranscode = aSupportsImageTranscode;
 
   return NS_OK;
@@ -215,9 +191,8 @@ sbMediacoreCapabilities::GetAudioExtensions(nsIStringEnumerator * *aAudioExtensi
   TRACE(("sbMediacoreCapabilities[0x%x] - GetAudioExtensions", this));
 
   NS_ENSURE_ARG_POINTER(aAudioExtensions);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   nsCOMPtr<nsIStringEnumerator> audioExtensions = 
     new sbTArrayStringEnumerator(&mAudioExtensions);
   NS_ENSURE_TRUE(audioExtensions, NS_ERROR_OUT_OF_MEMORY);
@@ -233,9 +208,8 @@ sbMediacoreCapabilities::GetVideoExtensions(nsIStringEnumerator * *aVideoExtensi
   TRACE(("sbMediacoreCapabilities[0x%x] - GetVideoExtensions", this));
 
   NS_ENSURE_ARG_POINTER(aVideoExtensions);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   nsCOMPtr<nsIStringEnumerator> videoExtensions = 
     new sbTArrayStringEnumerator(&mVideoExtensions);
   NS_ENSURE_TRUE(videoExtensions, NS_ERROR_OUT_OF_MEMORY);
@@ -251,9 +225,8 @@ sbMediacoreCapabilities::GetImageExtensions(nsIStringEnumerator * *aImageExtensi
   TRACE(("sbMediacoreCapabilities[0x%x] - GetImageExtensions", this));
 
   NS_ENSURE_ARG_POINTER(aImageExtensions);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   nsCOMPtr<nsIStringEnumerator> imageExtensions = 
     new sbTArrayStringEnumerator(&mImageExtensions);
   NS_ENSURE_TRUE(imageExtensions, NS_ERROR_OUT_OF_MEMORY);
@@ -269,9 +242,8 @@ sbMediacoreCapabilities::GetSupportsAudioPlayback(PRBool *aSupportsAudioPlayback
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsAudioPlayback", this));
   
   NS_ENSURE_ARG_POINTER(aSupportsAudioPlayback);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aSupportsAudioPlayback = mSupportsAudioPlayback;
 
   return NS_OK;
@@ -283,9 +255,8 @@ sbMediacoreCapabilities::GetSupportsVideoPlayback(PRBool *aSupportsVideoPlayback
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsVideoPlayback", this));
 
   NS_ENSURE_ARG_POINTER(aSupportsVideoPlayback);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aSupportsVideoPlayback = mSupportsVideoPlayback;
 
   return NS_OK;
@@ -297,9 +268,8 @@ sbMediacoreCapabilities::GetSupportsImagePlayback(PRBool *aSupportsImagePlayback
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsImagePlayback", this));
 
   NS_ENSURE_ARG_POINTER(aSupportsImagePlayback);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aSupportsImagePlayback = mSupportsImagePlayback;
 
   return NS_OK;
@@ -311,9 +281,8 @@ sbMediacoreCapabilities::GetSupportsAudioTranscode(PRBool *aSupportsAudioTransco
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsAudioTranscode", this));
 
   NS_ENSURE_ARG_POINTER(aSupportsAudioTranscode);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aSupportsAudioTranscode = mSupportsAudioTranscode;
 
   return NS_OK;
@@ -325,9 +294,8 @@ sbMediacoreCapabilities::GetSupportsVideoTranscode(PRBool *aSupportsVideoTransco
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsVideoTranscode", this));
 
   NS_ENSURE_ARG_POINTER(aSupportsVideoTranscode);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aSupportsVideoTranscode = mSupportsVideoTranscode;
 
   return NS_OK;
@@ -339,9 +307,8 @@ sbMediacoreCapabilities::GetSupportsImageTranscode(PRBool *aSupportsImageTransco
   TRACE(("sbMediacoreCapabilities[0x%x] - GetSupportsImageTranscode", this));
 
   NS_ENSURE_ARG_POINTER(aSupportsImageTranscode);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aSupportsImageTranscode = mSupportsImageTranscode;
 
   return NS_OK;

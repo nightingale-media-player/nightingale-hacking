@@ -31,6 +31,7 @@
 #include "sbMediacoreEvent.h"
 
 #include <nsAutoPtr.h>
+#include <mozilla/Mutex.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -67,10 +68,6 @@ sbMediacoreEvent::~sbMediacoreEvent()
   TRACE(("sbMediacoreEvent[0x%x] - Destroyed", this));
 
   MOZ_COUNT_DTOR(sbMediacoreEvent);
-
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
 }
 
 nsresult
@@ -81,8 +78,7 @@ sbMediacoreEvent::Init(PRUint32 aType,
 {
   TRACE(("sbMediacoreEvent[0x%x] - Init", this));
 
-  mLock = nsAutoLock::NewLock("sbMediacoreEvent::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::MutexAutoLock lock(mLock);
 
   mType = aType;
   mError = aError;
@@ -97,10 +93,9 @@ sbMediacoreEvent::SetTarget(sbIMediacoreEventTarget *aTarget)
 {
   TRACE(("sbMediacoreEvent[0x%x] - SetTarget", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aTarget);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mTarget = aTarget;
 
   return NS_OK;
@@ -111,7 +106,7 @@ sbMediacoreEvent::Dispatch()
 {
   TRACE(("sbMediacoreEvent[0x%x] - Dispatch", this));
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mDispatched = PR_TRUE;
 }
 
@@ -120,7 +115,7 @@ sbMediacoreEvent::WasDispatched()
 {
   TRACE(("sbMediacoreEvent[0x%x] - WasDispatched", this));
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   return mDispatched;
 }
 
@@ -129,8 +124,7 @@ sbMediacoreEvent::GetType(PRUint32 *aType)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetType", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   *aType = mType;
 
@@ -142,8 +136,7 @@ sbMediacoreEvent::GetError(sbIMediacoreError * *aError)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetError", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   NS_IF_ADDREF(*aError = mError);
 
@@ -155,8 +148,7 @@ sbMediacoreEvent::GetData(nsIVariant * *aData)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetData", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   NS_IF_ADDREF(*aData = mData);
 
@@ -168,8 +160,7 @@ sbMediacoreEvent::GetOrigin(sbIMediacore * *aOrigin)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetOrigin", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   NS_IF_ADDREF(*aOrigin = mOrigin);
 
@@ -181,8 +172,7 @@ sbMediacoreEvent::GetTarget(sbIMediacoreEventTarget * *aTarget)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetTarget", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   NS_IF_ADDREF(*aTarget = mTarget);
 

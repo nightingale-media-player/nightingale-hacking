@@ -31,6 +31,7 @@
 #include "sbBaseMediacoreFactory.h"
 
 #include <sbIMediacore.h>
+#include <mozilla/ReentrantMonitor.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -65,19 +66,12 @@ sbBaseMediacoreFactory::~sbBaseMediacoreFactory()
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Destroyed", this));
   MOZ_COUNT_DTOR(sbBaseMediacoreFactory);
-
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
 }
 
 nsresult 
 sbBaseMediacoreFactory::InitBaseMediacoreFactory()
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - InitBaseMediacoreFactory", this));
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacoreFactory::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return OnInitBaseMediacoreFactory();
 }
@@ -86,9 +80,8 @@ nsresult
 sbBaseMediacoreFactory::SetContractID(const nsAString &aContractID)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mContractID = aContractID;
 
   return NS_OK;
@@ -98,9 +91,8 @@ nsresult
 sbBaseMediacoreFactory::SetName(const nsAString &aName)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mName = aName;
 
   return NS_OK;
@@ -110,9 +102,8 @@ NS_IMETHODIMP
 sbBaseMediacoreFactory::GetContractID(nsAString & aContractID)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aContractID = mContractID;
 
   return NS_OK;
@@ -122,9 +113,8 @@ NS_IMETHODIMP
 sbBaseMediacoreFactory::GetName(nsAString & aName)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aName = mName;
 
   return NS_OK;
@@ -135,10 +125,9 @@ sbBaseMediacoreFactory::GetCapabilities(
                           sbIMediacoreCapabilities * *aCapabilities)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - GetCapabilities", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   return OnGetCapabilities(aCapabilities);
 }
 
@@ -147,10 +136,9 @@ sbBaseMediacoreFactory::Create(const nsAString & aInstanceName,
                                sbIMediacore **_retval)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Create", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = OnCreate(aInstanceName, _retval);
   NS_ENSURE_SUCCESS(rv, rv);

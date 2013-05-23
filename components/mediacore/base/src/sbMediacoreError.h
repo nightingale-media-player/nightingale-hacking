@@ -41,7 +41,7 @@
 
 #include <sbIMediacoreError.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsStringGlue.h>
 
 class sbMediacoreError : public sbIMediacoreError
@@ -58,7 +58,7 @@ public:
 protected:
   virtual ~sbMediacoreError();
 
-  PRLock *mLock;
+  mozilla::Mutex mLock;
   
   PRUint32 mCode;
   nsString mMessage;

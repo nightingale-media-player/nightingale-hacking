@@ -35,11 +35,9 @@
 #include <nsIClassInfo.h>
 #include <nsIDOMDataContainerEvent.h>
 #include <nsIDOMDocument.h>
-#include <nsIDOMDocumentEvent.h>
 #include <nsIDOMEventListener.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMWindow.h>
-#include <nsIDOMWindowInternal.h>
 
 #include <sbIMediacoreCapabilities.h>
 #include <sbIMediacoreEventTarget.h>
@@ -54,6 +52,7 @@
 #include "sbBaseMediacoreVolumeControl.h"
 #include "sbMediacoreEvent.h"
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -125,12 +124,13 @@ protected:
 
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
 
-  nsCOMPtr<nsIDOMDocumentEvent> mDocumentEvent;
+  nsCOMPtr<nsIDOMWindow>        mDOMWindow;
+//  nsCOMPtr<nsIDOMDocumentEvent> mDocumentEvent;
   nsCOMPtr<nsIDOMEventTarget>   mDOMEventTarget;
   
-  PRMonitor *                   mProxiedObjectsMonitor;
+  mozilla::ReentrantMonitor     mProxiedObjectsMonitor;
   nsCOMPtr<nsIDOMEventTarget>   mProxiedDOMEventTarget;
-  nsCOMPtr<nsIDOMDocumentEvent> mProxiedDocumentEvent;
+//  nsCOMPtr<nsIDOMDocumentEvent> mProxiedDocumentEvent;
 
   nsCOMPtr<nsIDOMWindow>        mPluginHostWindow;
 

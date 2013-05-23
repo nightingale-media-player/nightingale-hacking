@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale media player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -31,7 +31,7 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbMediacoreCapabilities.h"
 #include "sbMediacoreEqualizerBand.h"
@@ -50,62 +50,51 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatVideo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatAudio);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormat);
 
-static nsModuleComponentInfo sbBaseMediacoreComponents[] =
-{
-  {
-    SB_MEDIACORE_CAPABILITIES_CLASSNAME,
-    SB_MEDIACORE_CAPABILITIES_CID,
-    SB_MEDIACORE_CAPABILITIES_CONTRACTID,
-    sbMediacoreCapabilitiesConstructor
-  },
-  {
-    SB_MEDIACORE_EQUALIZER_BAND_CLASSNAME,
-    SB_MEDIACORE_EQUALIZER_BAND_CID,
-    SB_MEDIACORE_EQUALIZER_BAND_CONTRACTID,
-    sbMediacoreEqualizerBandConstructor
-  },
-  {
-    SB_MEDIACORE_EVENT_CLASSNAME,
-    SB_MEDIACORE_EVENT_CID,
-    SB_MEDIACORE_EVENT_CONTRACTID,
-    sbMediacoreEventConstructor
-  },
-  {
-    SB_MEDIACOREFACTORYWRAPPER_CLASSNAME,
-    SB_MEDIACOREFACTORYWRAPPER_CID,
-    SB_MEDIACOREFACTORYWRAPPER_CONTRACTID,
-    sbMediacoreFactoryWrapperConstructor
-  },
-  {
-    SB_MEDIACOREWRAPPER_CLASSNAME,
-    SB_MEDIACOREWRAPPER_CID,
-    SB_MEDIACOREWRAPPER_CONTRACTID,
-    sbMediacoreWrapperConstructor
-  },
-  {
-    SB_MEDIAFORMATCONTAINER_CLASSNAME,
-    SB_MEDIAFORMATCONTAINER_CID,
-    SB_MEDIAFORMATCONTAINER_CONTRACTID,
-    sbMediaFormatContainerConstructor
-  },
-  {
-    SB_MEDIAFORMATVIDEO_CLASSNAME,
-    SB_MEDIAFORMATVIDEO_CID,
-    SB_MEDIAFORMATVIDEO_CONTRACTID,
-    sbMediaFormatVideoConstructor
-  },
-  {
-    SB_MEDIAFORMATAUDIO_CLASSNAME,
-    SB_MEDIAFORMATAUDIO_CID,
-    SB_MEDIAFORMATAUDIO_CONTRACTID,
-    sbMediaFormatAudioConstructor
-  },
-  {
-    SB_MEDIAFORMAT_CLASSNAME,
-    SB_MEDIAFORMAT_CID,
-    SB_MEDIAFORMAT_CONTRACTID,
-    sbMediaFormatConstructor
-  },
+NS_DEFINE_NAMED_CID(SB_MEDIACORE_CAPABILITIES_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIACORE_EQUALIZER_BAND_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIACORE_EVENT_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIACOREFACTORYWRAPPER_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIACOREWRAPPER_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIAFORMATCONTAINER_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIAFORMATVIDEO_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIAFORMATAUDIO_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIAFORMAT_CID);
+
+static const mozilla::Module::CIDEntry kBaseMediacoreComponentsCIDs[] = {
+  { &kSB_MEDIACORE_CAPABILITIES_CID, false, NULL, sbMediacoreCapabilitiesConstructor },
+  { &kSB_MEDIACORE_EQUALIZER_BAND_CID, false, NULL, sbMediacoreEqualizerBandConstructor },
+  { &kSB_MEDIACORE_EVENT_CID, false, NULL, sbMediacoreEventConstructor },
+  { &kSB_MEDIACOREFACTORYWRAPPER_CID, false, NULL, sbMediacoreFactoryWrapperConstructor },
+  { &kSB_MEDIACOREWRAPPER_CID, false, NULL, sbMediacoreWrapperConstructor },
+  { &kSB_MEDIAFORMATCONTAINER_CID, false, NULL, sbMediaFormatContainerConstructor },
+  { &kSB_MEDIAFORMATVIDEO_CID, false, NULL, sbMediaFormatVideoConstructor },
+  { &kSB_MEDIAFORMATAUDIO_CID, false, NULL, sbMediaFormatAudioConstructor },
+  { &kSB_MEDIAFORMAT_CID, false, NULL, sbMediaFormatConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdBaseMediacore, sbBaseMediacoreComponents)
+static const mozilla::Module::ContractIDEntry kBaseMediacoreComponentsContracts[] = {
+  { SB_MEDIACORE_CAPABILITIES_CONTRACTID, &kSB_MEDIACORE_CAPABILITIES_CID },
+  { SB_MEDIACORE_EQUALIZER_BAND_CONTRACTID, &kSB_MEDIACORE_EQUALIZER_BAND_CID },
+  { SB_MEDIACORE_EVENT_CONTRACTID, &kSB_MEDIACORE_EVENT_CID },
+  { SB_MEDIACOREFACTORYWRAPPER_CONTRACTID, &kSB_MEDIACOREFACTORYWRAPPER_CID },
+  { SB_MEDIACOREWRAPPER_CONTRACTID, &kSB_MEDIACOREWRAPPER_CID },
+  { SB_MEDIAFORMATCONTAINER_CONTRACTID, &kSB_MEDIAFORMATCONTAINER_CID },
+  { SB_MEDIAFORMATVIDEO_CONTRACTID, &kSB_MEDIAFORMATVIDEO_CID },
+  { SB_MEDIAFORMATAUDIO_CONTRACTID, &kSB_MEDIAFORMATAUDIO_CID },
+  { SB_MEDIAFORMAT_CONTRACTID, &kSB_MEDIAFORMAT_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kBaseMediacoreComponentsCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kBaseMediacoreComponentsModule = {
+  mozilla::Module::kVersion,
+  kBaseMediacoreComponentsCIDs,
+  kBaseMediacoreComponentsContracts,
+  kBaseMediacoreComponentsCategories
+};
+
+NSMODULE_DEFN(sbBaseMediacoreComponents) = &kBaseMediacoreComponentsModule;

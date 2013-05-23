@@ -34,7 +34,7 @@
 
 #include <sbIMediacoreMultibandEqualizer.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
@@ -87,7 +87,7 @@ protected:
 
   nsresult EnsureBandIsCached(sbIMediacoreEqualizerBand *aBand);
 
-  PRMonitor*    mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   PRPackedBool  mEqEnabled;
 
   typedef nsInterfaceHashtable<nsUint32HashKey, sbIMediacoreEqualizerBand> eqbands_t;

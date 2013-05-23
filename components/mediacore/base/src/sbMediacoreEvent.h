@@ -40,6 +40,7 @@
 #include <sbIMediacoreError.h>
 #include <sbIMediacoreEventTarget.h>
 
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 
 class sbMediacoreEvent : public sbIMediacoreEvent
@@ -72,7 +73,7 @@ public:
 protected:
   virtual ~sbMediacoreEvent();
 
-  PRLock*  mLock;
+  mozilla::Mutex  mLock;
   PRUint32 mType;
 
   nsCOMPtr<sbIMediacoreError> mError;

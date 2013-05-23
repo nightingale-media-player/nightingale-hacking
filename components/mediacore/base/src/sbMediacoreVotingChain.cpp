@@ -31,6 +31,7 @@
 #include "sbMediacoreVotingChain.h"
 
 #include <nsIMutableArray.h>
+#include <mozilla/Mutex.h>
 
 #include <nsComponentManagerUtils.h>
 
@@ -68,10 +69,6 @@ sbMediacoreVotingChain::~sbMediacoreVotingChain()
   TRACE(("sbMediacoreVotingChain[0x%x] - Destroyed", this));
   MOZ_COUNT_DTOR(sbMediacoreVotingChain);
 
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
-
   mResults.clear();
 }
 
@@ -79,9 +76,6 @@ nsresult
 sbMediacoreVotingChain::Init()
 {
   TRACE(("sbMediacoreVotingChain[0x%x] - Init", this));
-
-  mLock = nsAutoLock::NewLock("sbMediacoreVotingChain::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -91,10 +85,9 @@ sbMediacoreVotingChain::AddVoteResult(PRUint32 aVoteResult,
                                       sbIMediacore *aMediacore)
 {
   TRACE(("sbMediacoreVotingChain[0x%x] - AddVoteResult", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediacore);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mResults[aVoteResult] = aMediacore;
 
   return NS_OK;
@@ -104,10 +97,9 @@ NS_IMETHODIMP
 sbMediacoreVotingChain::GetValid(PRBool *aValid) 
 {
   TRACE(("sbMediacoreVotingChain[0x%x] - GetValid", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aValid);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aValid = !mResults.empty();
 
   return NS_OK;
@@ -117,7 +109,6 @@ NS_IMETHODIMP
 sbMediacoreVotingChain::GetMediacoreChain(nsIArray * *aMediacoreChain)
 {
   TRACE(("sbMediacoreVotingChain[0x%x] - GetMediacoreChain", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediacoreChain);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
@@ -125,7 +116,7 @@ sbMediacoreVotingChain::GetMediacoreChain(nsIArray * *aMediacoreChain)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   votingmap_t::const_reverse_iterator cit = mResults.rbegin();
   votingmap_t::const_reverse_iterator endCit = mResults.rend();
@@ -146,11 +137,10 @@ sbMediacoreVotingChain::GetVote(sbIMediacore *aMediacore,
                                 PRUint32 *_retval)
 {
   TRACE(("sbMediacoreVotingChain[0x%x] - GetVote", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediacore);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   votingmap_t::const_reverse_iterator cit = mResults.rbegin();
   votingmap_t::const_reverse_iterator endCit = mResults.rend();

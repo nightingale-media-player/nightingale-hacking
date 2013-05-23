@@ -29,6 +29,7 @@
 * \brief Songbird Mediacore Equalizer Band Implementation.
 */
 #include "sbMediacoreEqualizerBand.h"
+#include <mozilla/Mutex.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreEqualizerBand,
                               sbIMediacoreEqualizerBand);
@@ -43,18 +44,13 @@ sbMediacoreEqualizerBand::sbMediacoreEqualizerBand()
 
 sbMediacoreEqualizerBand::~sbMediacoreEqualizerBand()
 {
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
+
 }
 
 NS_IMETHODIMP
 sbMediacoreEqualizerBand::Init(PRUint32 aIndex, PRUint32 aFrequency, double aGain)
 {
-  NS_ENSURE_TRUE(!mLock, NS_ERROR_ALREADY_INITIALIZED);
-
-  mLock = nsAutoLock::NewLock("sbMediacoreEqualizerBand::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::MutexAutoLock lock(mLock);
 
   mIndex = aIndex;
   mFrequency = aFrequency;
@@ -67,10 +63,9 @@ sbMediacoreEqualizerBand::Init(PRUint32 aIndex, PRUint32 aFrequency, double aGai
 NS_IMETHODIMP
 sbMediacoreEqualizerBand::GetIndex(PRUint32 *aIndex)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aIndex);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aIndex = mIndex;
 
   return NS_OK;
@@ -79,9 +74,7 @@ sbMediacoreEqualizerBand::GetIndex(PRUint32 *aIndex)
 NS_IMETHODIMP
 sbMediacoreEqualizerBand::SetIndex(PRUint32 aIndex)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mIndex = aIndex;
 
   return NS_OK;
@@ -91,10 +84,9 @@ sbMediacoreEqualizerBand::SetIndex(PRUint32 aIndex)
 NS_IMETHODIMP 
 sbMediacoreEqualizerBand::GetFrequency(PRUint32 *aFrequency)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFrequency);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aFrequency = mFrequency;
 
   return NS_OK;
@@ -103,9 +95,7 @@ sbMediacoreEqualizerBand::GetFrequency(PRUint32 *aFrequency)
 NS_IMETHODIMP 
 sbMediacoreEqualizerBand::SetFrequency(PRUint32 aFrequency)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mFrequency = aFrequency;
 
   return NS_OK;
@@ -115,9 +105,7 @@ sbMediacoreEqualizerBand::SetFrequency(PRUint32 aFrequency)
 NS_IMETHODIMP 
 sbMediacoreEqualizerBand::GetGain(double *aGain)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aGain = mGain;
 
   return NS_OK;
@@ -126,9 +114,7 @@ sbMediacoreEqualizerBand::GetGain(double *aGain)
 NS_IMETHODIMP 
 sbMediacoreEqualizerBand::SetGain(double aGain)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mGain = aGain;
 
   return NS_OK;
@@ -137,8 +123,6 @@ sbMediacoreEqualizerBand::SetGain(double aGain)
 NS_IMETHODIMP
 sbMediacoreEqualizerBand::GetValues(PRUint32 *aIndex, PRUint32 *aFrequency, double *aGain)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
   NS_ENSURE_ARG_POINTER(aIndex);
   NS_ENSURE_ARG_POINTER(aFrequency);
   NS_ENSURE_ARG_POINTER(aGain);
@@ -153,9 +137,7 @@ sbMediacoreEqualizerBand::GetValues(PRUint32 *aIndex, PRUint32 *aFrequency, doub
 NS_IMETHODIMP
 sbMediacoreEqualizerBand::SetValues(PRUint32 aIndex, PRUint32 aFrequency, double aGain)
 {
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   mIndex = aIndex;
   mFrequency = aFrequency;

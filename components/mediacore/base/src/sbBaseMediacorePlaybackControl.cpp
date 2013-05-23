@@ -76,19 +76,12 @@ sbBaseMediacorePlaybackControl::~sbBaseMediacorePlaybackControl()
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   MOZ_COUNT_DTOR(sbBaseMediacorePlaybackControl);
-
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
 }
 
 nsresult 
 sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacorePlaybackControl::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return OnInitBaseMediacorePlaybackControl();
 }
@@ -97,10 +90,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetUri(nsIURI * *aUri)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   NS_IF_ADDREF(*aUri = mUri);  
 
   return NS_OK;
@@ -110,13 +102,12 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::SetUri(nsIURI * aUri)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
   nsresult rv = OnSetUri(aUri);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mUri = aUri;  
 
   return NS_OK;
@@ -126,10 +117,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetPosition(PRUint64 *aPosition)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aPosition);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   nsresult rv = OnGetPosition(aPosition);
   
   if(NS_FAILED(rv)) {
@@ -143,12 +133,11 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::SetPosition(PRUint64 aPosition)
 {
   TRACE(("%s[%p] (%llu)", __FUNCTION__, this, aPosition));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnSetPosition(aPosition);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mPosition = aPosition;
 
   return NS_OK;
@@ -158,12 +147,11 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Seek(PRUint64 aPosition, PRUint32 aFlags)
 {
   TRACE(("%s[%p] (%llu, %llu)", __FUNCTION__, this, aPosition, aFlags));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnSeek(aPosition, aFlags);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mPosition = aPosition;
 
   return NS_OK;
@@ -173,10 +161,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDuration);
 
-  nsAutoMonitor mon(mMonitor);  
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   nsresult rv = OnGetDuration(aDuration);
 
   if(NS_FAILED(rv)) {
@@ -190,10 +177,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aIsPlayingAudio);
 
-  nsAutoMonitor mon(mMonitor);  
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   nsresult rv = OnGetIsPlayingAudio(aIsPlayingAudio);
 
   if(NS_FAILED(rv)) {
@@ -207,10 +193,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aIsPlayingVideo);
 
-  nsAutoMonitor mon(mMonitor);  
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   nsresult rv = OnGetIsPlayingVideo(aIsPlayingVideo);
 
   if(NS_FAILED(rv)) {
@@ -224,13 +209,12 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Play()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
   rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::STREAM_BEFORE_START);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   return OnPlay();
 }
 
@@ -238,13 +222,12 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Pause()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
   rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::STREAM_BEFORE_PAUSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   return OnPause();
 }
 
@@ -252,13 +235,12 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Stop()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
   rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::STREAM_BEFORE_STOP);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   return OnStop();
 }
 

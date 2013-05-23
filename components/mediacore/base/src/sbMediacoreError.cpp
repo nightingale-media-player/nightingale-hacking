@@ -64,10 +64,6 @@ sbMediacoreError::~sbMediacoreError()
 {
   TRACE(("sbMediacoreError[0x%x] - Destroyed", this));
   MOZ_COUNT_DTOR(sbMediacoreError);
-
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
 }
 
 nsresult 
@@ -76,8 +72,7 @@ sbMediacoreError::Init(PRUint32 aCode,
 {
   TRACE(("sbMediacoreError[0x%x] - Init", this));
 
-  mLock = nsAutoLock::NewLock("sbMediacoreError::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mozilla::MutexAutoLock lock(mLock);
 
   mCode = aCode;
   mMessage = aMessage;
@@ -90,10 +85,9 @@ sbMediacoreError::GetCode(PRUint32 *aCode)
 {
   TRACE(("sbMediacoreError[0x%x] - GetCode", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCode);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   *aCode = mCode;
 
   return NS_OK;
@@ -104,9 +98,7 @@ sbMediacoreError::GetMessage(nsAString & aMessage)
 {
   TRACE(("sbMediacoreError[0x%x] - GetMessage", this));
 
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   aMessage = mMessage;
 
   return NS_OK;

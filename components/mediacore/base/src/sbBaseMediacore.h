@@ -40,6 +40,7 @@
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -75,7 +76,7 @@ public:
 protected:
   virtual ~sbBaseMediacore();
 
-  PRMonitor  *mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   
   nsString mInstanceName;
 
