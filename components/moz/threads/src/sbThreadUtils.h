@@ -437,8 +437,7 @@ public:
 
     // Invoke method.
     ReturnType
-      returnValue = (BaseType::mObject->*mMethod)(BaseType::mArg1Value,
-                                                  mArg2Value);
+      returnValue = ((*BaseType::mObject).*(mMethod))(BaseType::mArg1Value, mArg2Value);
     {
       BaseType::mReturnValue = returnValue;
     }

@@ -28,7 +28,10 @@
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 
+#include <a11yGeneric.h>
 #include <nsIClassInfo.h>
+#include <nsIClassInfoImpl.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
@@ -152,7 +155,7 @@ private:
 
   // Monitor used to protect all the following data items, which are modified
   // from both the main thread and from GStreamer streaming threads.
-  PRMonitor *mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   // Adapter used to ensure that data is sent in chunks sized according to
   // mConstraintBlockSize.
@@ -227,6 +230,7 @@ private:
   // mPendingBuffer is only non-NULL while mIsEndOfSection is true.
   GstBuffer *mPendingBuffer;
 
+  NS_DECL_RUNNABLEMETHOD(sbGStreamerAudioProcessor, SendDataToListener);
 };
 
 #define SB_GSTREAMER_AUDIO_PROCESSOR_CLASSNAME \

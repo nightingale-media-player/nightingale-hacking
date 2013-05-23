@@ -37,6 +37,10 @@
 #include <nsThreadUtils.h>
 #include <nsStringAPI.h>
 #include <prlog.h>
+#include <VideoUtils.h>
+#include <mozilla/ReentrantMonitor.h>
+#include <nsIClassInfo.h>
+#include <nsIClassInfoImpl.h>
 
 #include <gst/base/gstadapter.h>
 #include <gst/app/gstappsink.h>
@@ -63,7 +67,6 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbGStreamerAudioProcessor,
                              sbIGStreamerPipeline,
                              sbIMediacoreAudioProcessor);
 
-NS_DECL_CLASSINFO(sbGstreamerAudioProcessor);
 NS_IMPL_THREADSAFE_CI(sbGStreamerAudioProcessor);
 
 sbGStreamerAudioProcessor::sbGStreamerAudioProcessor() :
@@ -96,9 +99,7 @@ sbGStreamerAudioProcessor::sbGStreamerAudioProcessor() :
 
 sbGStreamerAudioProcessor::~sbGStreamerAudioProcessor()
 {
-  if (mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+
 }
 
 /* sbIMediacoreAudioProcessor interface implementation */
@@ -109,8 +110,6 @@ sbGStreamerAudioProcessor::Init(sbIMediacoreAudioProcessorListener *aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   NS_ENSURE_FALSE(mListener, NS_ERROR_ALREADY_INITIALIZED);
-
-  mMonitor = nsAutoMonitor::NewMonitor("AudioProcessor::mMonitor");
 
   mListener = aListener;
   return NS_OK;
@@ -248,7 +247,7 @@ sbGStreamerAudioProcessor::Suspend()
   NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_STATE (mPipeline);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mSuspended = PR_TRUE;
   return NS_OK;
 }
@@ -262,7 +261,7 @@ sbGStreamerAudioProcessor::Resume()
   NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_STATE (mPipeline);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mSuspended = PR_FALSE;
 
   nsresult rv = ScheduleSendDataIfAvailable();
@@ -661,7 +660,7 @@ sbGStreamerAudioProcessor::HasEnoughData()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   guint available = gst_adapter_available (mAdapter);
 
@@ -709,7 +708,7 @@ sbGStreamerAudioProcessor::GetMoreData()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   NS_ENSURE_TRUE (mBuffersAvailable > 0, /* void */);
 
@@ -760,7 +759,7 @@ nsresult
 sbGStreamerAudioProcessor::AppsinkNewBuffer(GstElement *appsink)
 {
   nsresult rv;
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // Once we get the first chunk of data, we can determine what format we will
   // send to consumers.
@@ -790,7 +789,7 @@ sbGStreamerAudioProcessor::ScheduleSendDataIfAvailable()
 
   nsresult rv;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if (HasEnoughData()) {
     rv = ScheduleSendData();
@@ -826,8 +825,7 @@ sbGStreamerAudioProcessor::ScheduleSendData()
   nsresult rv = NS_GetMainThread(getter_AddRefs(mainThread));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbGStreamerAudioProcessor, this, SendDataToListener);
+  nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_SendDataToListener(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
   rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
@@ -903,7 +901,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
   const guint8 *data;
   guint bytesRead = 0;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // It's possible that the pipeline was stopped (on the main thread) before
   // this queued event was run; in that case we just return.
@@ -917,13 +915,14 @@ sbGStreamerAudioProcessor::SendDataToListener()
 
   if (!mHasStarted) {
     mHasStarted = PR_TRUE;
-    // Drop monitor to send event to the listener.
-    mon.Exit();
+    {
+      // Drop monitor to send event to the listener.
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
-    rv = DoStreamStart();
-    NS_ENSURE_SUCCESS(rv, /*void*/);
+      rv = DoStreamStart();
+      NS_ENSURE_SUCCESS(rv, /*void*/);
 
-    mon.Enter();
+    }
 
     if (!mHasStarted || mSuspended) {
       // Got stopped or suspended from the start event; nothing to do now.
@@ -950,31 +949,31 @@ sbGStreamerAudioProcessor::SendDataToListener()
   mSendGap = PR_FALSE;
 
   // Call listener with the monitor released.
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
-  if (sendGap) {
-    rv = SendEventSync(sbIMediacoreAudioProcessorListener::EVENT_GAP, nsnull);
-    NS_ENSURE_SUCCESS(rv, /* void */);
+    if (sendGap) {
+      rv = SendEventSync(sbIMediacoreAudioProcessorListener::EVENT_GAP, nsnull);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+    }
+
+    if (mAudioFormat == FORMAT_INT16) {
+      numSamples = bytesRead / sizeof(PRInt16);
+      PRInt16 *sampleData = (PRInt16 *)data;
+
+      rv = mListener->OnIntegerAudioDecoded(sampleNumber, numSamples, sampleData);
+    }
+    else {
+      numSamples = bytesRead / sizeof(float);
+      float *sampleData = (float *)data;
+
+      rv = mListener->OnFloatAudioDecoded(sampleNumber, numSamples, sampleData);
+    }
+
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Listener failed to receive data");
+    }
   }
-
-  if (mAudioFormat == FORMAT_INT16) {
-    numSamples = bytesRead / sizeof(PRInt16);
-    PRInt16 *sampleData = (PRInt16 *)data;
-
-    rv = mListener->OnIntegerAudioDecoded(sampleNumber, numSamples, sampleData);
-  }
-  else {
-    numSamples = bytesRead / sizeof(float);
-    float *sampleData = (float *)data;
-
-    rv = mListener->OnFloatAudioDecoded(sampleNumber, numSamples, sampleData);
-  }
-
-  if (NS_FAILED(rv)) {
-    NS_WARNING("Listener failed to receive data");
-  }
-
-  mon.Enter();
 
   // If we're no longer started, that means that we got stopped while the
   // monitor was released. Don't try to touch any further state!
@@ -1001,7 +1000,7 @@ sbGStreamerAudioProcessor::AppsinkEOS(GstElement *appsink)
 
   nsresult rv;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // If we have enough data already, then processing is in-progress; we don't
   // need to do anything specific.
@@ -1047,7 +1046,7 @@ sbGStreamerAudioProcessor::SendErrorEvent(PRUint32 errorCode,
   nsString errorMessage = bundle.Get(errorName);
 
   nsRefPtr<sbMediacoreError> error;
-  NS_NEWXPCOM(error, sbMediacoreError);
+  error = new sbMediacoreError;
   error->Init(errorCode, errorMessage);
 
   nsresult rv = SendEventAsync(sbIMediacoreAudioProcessorListener::EVENT_ERROR,
