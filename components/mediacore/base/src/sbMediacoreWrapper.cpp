@@ -686,36 +686,35 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
   nsresult rv = NS_ERROR_UNEXPECTED;
   PRBool isMainThread = NS_IsMainThread();
 
-  nsCOMPtr<nsIDOMDocumentEvent> documentEvent;
+  nsCOMPtr<nsIDOMDocument> doc;
   if(isMainThread) {
-    documentEvent = mDocumentEvent;
+	doc = mDoc;
   }
   else {
     // Scope monitor.
     {
       mozilla::ReentrantMonitorAutoEnter mon(mProxiedObjectsMonitor);
-      if(!mProxiedDocumentEvent) {
-        nsCOMPtr<nsIThread> target;
+      if (!mProxiedDoc) {
+    	nsCOMPtr<nsIThread> target;
         rv = NS_GetMainThread(getter_AddRefs(target));
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = do_GetProxyForObject(target,
-                                  NS_GET_IID(nsIDOMDocumentEvent),
-                                  mDocumentEvent,
-                                  NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                  getter_AddRefs(mProxiedDocumentEvent));
+        						  NS_GET_IID(nsIDOMDocument),
+        						  mDoc,
+        						  NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+        						  getter_AddRefs(mProxiedDoc));
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
-    documentEvent = mProxiedDocumentEvent;
+    doc = mProxiedDoc;
   }
 
   nsCOMPtr<nsIDOMEvent> domEvent;
   nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
 
   if(isMainThread) {
-    rv = documentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
-                                    getter_AddRefs(domEvent));
+	rv = doc->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), getter_AddRefs(domEvent));
     NS_ENSURE_SUCCESS(rv, rv);
 
     dataEvent = do_QueryInterface(domEvent, &rv);
@@ -727,7 +726,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIDOMEvent> tempEvent;
-    rv = documentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
+    rv = doc->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"),
                                     getter_AddRefs(tempEvent));
     NS_ENSURE_SUCCESS(rv, rv);
 

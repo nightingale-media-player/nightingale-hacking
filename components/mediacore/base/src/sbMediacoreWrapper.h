@@ -124,7 +124,8 @@ protected:
 
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
 
-  nsCOMPtr<nsIDOMWindow>        mDOMWindow;
+  nsCOMPtr<nsIDOMDocument>      mDoc;
+  nsCOMPtr<nsIDOMDocument>		mProxiedDoc;
 //  nsCOMPtr<nsIDOMDocumentEvent> mDocumentEvent;
   nsCOMPtr<nsIDOMEventTarget>   mDOMEventTarget;
   
