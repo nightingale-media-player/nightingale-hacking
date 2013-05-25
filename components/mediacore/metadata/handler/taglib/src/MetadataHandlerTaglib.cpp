@@ -78,6 +78,7 @@
 #include <prprf.h>
 #include <nsUnicharUtils.h>
 #include <nsMemory.h>
+#include <mozilla/Mutex.h>
 
 /* TagLib imports */
 #include <flacfile.h>
@@ -172,7 +173,7 @@ static PRLogModuleInfo* gLog = nsnull;
 // the minimum number of chracters to feed into the charset detector
 #define GUESS_CHARSET_MIN_CHAR_COUNT 256
 
-PRLock* sbMetadataHandlerTaglib::sTaglibLock = nsnull;
+mozilla::Mutex sbMetadataHandlerTaglib::sTaglibLock = nsnull;
 
 /*
  *
@@ -320,7 +321,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     PRInt32                     *pReadCount)
 {
   nsresult rv = NS_ERROR_FAILURE;
-  nsAutoLock lock(sTaglibLock);
+  mozilla::MutexAutoLock lock(sTaglibLock);
 
   // Attempt to avoid crashes.  This may only work on windows.
   try {
@@ -533,7 +534,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
     PRInt32                     *pWriteCount)
 {
   nsresult rv = NS_ERROR_FAILURE;
-  nsAutoLock lock(sTaglibLock);
+  mozilla::MutexAutoLock lock(sTaglibLock);
   // Attempt to avoid crashes.  This may only work on windows.
   try {
     rv = WriteInternal(pWriteCount);

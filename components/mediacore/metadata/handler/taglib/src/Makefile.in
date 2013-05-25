@@ -92,6 +92,8 @@ ifeq (solaris,$(SB_PLATFORM))
 endif
 
 CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
+					  /usr/include/taglib \
+					  /usr/local/include/taglib \
                       $(NULL)
         
 IS_COMPONENT = 1                     
