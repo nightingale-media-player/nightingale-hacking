@@ -51,6 +51,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
 ifdef MEDIA_CORE_GST_SYSTEM
    CPP_EXTRA_FLAGS = -DGST_SYSTEM=1 \
                      $(GSTREAMER_CFLAGS) \
+                     -std=gnu++0x \
                      $(NULL)
 
    CPP_RAW_INCLUDES = $(GSTREAMER_CFLAGS) \

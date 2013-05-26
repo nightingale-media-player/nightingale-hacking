@@ -34,5 +34,8 @@ STATIC_LIB = sbMozVariantUtils
 CPP_SRCS = sbVariantUtilsLib.cpp \
            $(NULL)
 
+CPP_EXTRA_FLAGS += -std=gnu++0x \
+                   $(NULL)
+
 include $(topsrcdir)/build/rules.mk
 

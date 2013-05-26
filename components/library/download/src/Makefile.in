@@ -54,6 +54,9 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(topsrcdir)/components/property/src \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += -std=gnu++0x \
+                   $(NULL)
+
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \

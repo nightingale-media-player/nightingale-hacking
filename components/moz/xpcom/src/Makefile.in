@@ -50,6 +50,9 @@ CPP_EXTRA_INCLUDES = \
                $(topsrcdir)/components/include \
                $(NULL)
 
+CPP_EXTRA_FLAGS += -std=gnu++0x \
+                   $(NULL)
+
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
 

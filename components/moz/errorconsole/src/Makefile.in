@@ -34,6 +34,9 @@ STATIC_LIB = sbErrorConsole
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/moz/threads/src \
                      $(null)
 
+CPP_EXTRA_FLAGS += -std=gnu++0x \
+                   $(NULL)
+
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)

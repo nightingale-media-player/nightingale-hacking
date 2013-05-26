@@ -42,6 +42,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/strings/components/public \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += -std=gnu++0x \
+                   $(NULL)
+
 DYNAMIC_LIB = sbStrings
 
 DYNAMIC_LIB_STATIC_IMPORTS = components/moz/strings/src/sbMozStringUtils \

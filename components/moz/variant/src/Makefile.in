@@ -39,6 +39,9 @@ CPP_SRCS = sbVariant.cpp \
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += -std=gnu++0x \
+                   $(NULL)
+
 DYNAMIC_LIB = sbMozVariant
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \

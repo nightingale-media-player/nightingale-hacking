@@ -20,7 +20,9 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/mediacore/playback/gstreamer/src \
 # If this a gstreamer system build, tell the stub loader not to load any
 # dependent libraries
 ifdef MEDIA_CORE_GST_SYSTEM
-   CPP_EXTRA_FLAGS = -DGST_SYSTEM
+   CPP_EXTRA_FLAGS = -DGST_SYSTEM \
+                     -std=gnu++0x \
+                     $(NULL)
 endif
 
 IS_COMPONENT = 1
