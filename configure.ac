@@ -1363,7 +1363,7 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla-1.9.2/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
+echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla-9.0.1/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 
