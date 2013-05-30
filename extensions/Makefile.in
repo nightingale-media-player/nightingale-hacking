@@ -43,6 +43,7 @@ NOARCH_EXTENSIONS = albumartlastfm \
                     lastfm \
                     mashTape \
                     shoutcast \
+                    amazonmusic \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
