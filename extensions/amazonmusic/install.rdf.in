@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Songbird target application. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:id>amazonmusic@songbirdnest.com</em:id>
+    <em:name>Amazon Music Store</em:name>
+    <em:description>Integration with the Amazon music store</em:description>
+    <em:creator>@SB_VENDOR@</em:creator>
+    <em:contributor>Salsita</em:contributor>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:type>2</em:type>
+    <em:iconURL>chrome://amazonmusic/skin/extension-icon.png</em:iconURL>
+  </Description>
+</RDF>
+
