@@ -38,6 +38,7 @@
 #include <nsHashKeys.h>
 #include <nsTHashtable.h>
 #include <prmon.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbIDataRemote.h>
 #include <sbIMediacoreEventListener.h>
@@ -51,8 +52,6 @@
 
 #include <vector>
 #include <map>
-
-class nsAutoMonitor;
 
 class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreEventListener,
@@ -191,7 +190,7 @@ protected:
                                                PRBool *_proceed);
 
 protected:
-  PRMonitor *mMonitor;
+  mozilla::ReentrantMonitor      mMonitor;
 
   PRUint32                       mStatus;
   PRPackedBool                   mIsWaitingForPlayback;

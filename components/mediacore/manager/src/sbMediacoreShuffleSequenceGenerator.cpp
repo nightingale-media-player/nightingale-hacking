@@ -30,7 +30,6 @@
 #include <nsIURI.h>
 #include <nsIURL.h>
 
-#include <nsAutoLock.h>
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
