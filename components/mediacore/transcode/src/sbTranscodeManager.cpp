@@ -26,7 +26,6 @@
 
 #include "sbTranscodeManager.h"
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 
@@ -103,7 +102,7 @@ sbTranscodeManager *sbTranscodeManager::GetSingleton()
     return gTranscodeManager;
   }
 
-  NS_NEWXPCOM(gTranscodeManager, sbTranscodeManager);
+  gTranscodeManager = new sbTranscodeManager;
   if (!gTranscodeManager)
     return nsnull;
 

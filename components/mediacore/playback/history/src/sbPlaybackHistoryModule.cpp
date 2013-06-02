@@ -24,32 +24,38 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIServiceManager.h>
 
 #include "sbPlaybackHistoryEntry.h"
 #include "sbPlaybackHistoryService.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbPlaybackHistoryEntry)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbPlaybackHistoryEntry);
+NS_DEFINE_NAMED_CID(SB_PLAYBACKHISTORYENTRY_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPlaybackHistoryService, Init);
+NS_DEFINE_NAMED_CID(SB_PLAYBACKHISTORYSERVICE_CID);
 
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SB_PLAYBACKHISTORYENTRY_DESCRIPTION,
-    SB_PLAYBACKHISTORYENTRY_CID,
-    SB_PLAYBACKHISTORYENTRY_CONTRACTID,
-    sbPlaybackHistoryEntryConstructor,
-    nsnull
-  },
-  {
-    SB_PLAYBACKHISTORYSERVICE_DESCRIPTION,
-    SB_PLAYBACKHISTORYSERVICE_CID,
-    SB_PLAYBACKHISTORYSERVICE_CONTRACTID,
-    sbPlaybackHistoryServiceConstructor,
-    sbPlaybackHistoryService::RegisterSelf
-  }
+static const mozilla::Module::CIDEntry kPlaybackHistoryComponentCIDs[] = {
+  { &kSB_PLAYBACKHISTORYENTRY_CID, false, NULL, sbPlaybackHistoryEntryConstructor },
+  { &kSB_PLAYBACKHISTORYSERVICE_CID, false, NULL, sbPlaybackHistoryServiceConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(sbPlaybackHistoryComponent, components)
+static const mozilla::Module::ContractIDEntry kPlaybackHistoryComponentContracts[] = {
+  { SB_PLAYBACKHISTORYENTRY_CONTRACTID, &kSB_PLAYBACKHISTORYENTRY_CID },
+  { SB_PLAYBACKHISTORYSERVICE_CONTRACTID, &kSB_PLAYBACKHISTORYSERVICE_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kPlaybackHistoryComponentCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kPlaybackHistoryComponentModule = {
+  mozilla::Module::kVersion,
+  kPlaybackHistoryComponentCIDs,
+  kPlaybackHistoryComponentContracts,
+  kPlaybackHistoryComponentCategories
+};
+
+NSMODULE_DEFN(sbPlaybackHistoryComponent) = &kPlaybackHistoryComponentModule;

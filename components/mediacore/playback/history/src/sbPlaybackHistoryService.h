@@ -33,7 +33,8 @@
 #include <nsIClassInfo.h>
 #include <nsIComponentManager.h>
 #include <nsIFile.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIObserver.h>
 #include <nsIWeakReference.h>
 
@@ -65,12 +66,6 @@ public:
   NS_DECL_NSIOBSERVER
   NS_DECL_SBIMEDIACOREEVENTLISTENER
   NS_DECL_SBIPLAYBACKHISTORYSERVICE
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
 
   static PLDHashOperator PR_CALLBACK AddListenersToCOMArrayCallback(
                                           nsISupportsHashKey::KeyType aKey,
@@ -174,7 +169,7 @@ private:
 
   nsCOMPtr<nsIWeakReference> mMediacoreManager;
 
-  PRMonitor*   mMonitor;
+  mozilla::ReentrantMonitor   mMonitor;
 
   PRPackedBool mCurrentlyTracking;
 

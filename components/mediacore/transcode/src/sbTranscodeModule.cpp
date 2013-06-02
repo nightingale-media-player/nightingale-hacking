@@ -29,7 +29,7 @@
  * \brief Songbird Transcode Component Factory and Main Entry Point.
  */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbTranscodeManager.h"
 #include "sbTranscodeAlbumArt.h"
 #include "sbTranscodeError.h"
@@ -38,60 +38,49 @@
 #include "sbTranscodingConfigurator.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbTranscodeManager,
-        sbTranscodeManager::GetSingleton)
+        sbTranscodeManager::GetSingleton);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeAlbumArt);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeError);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeProfile);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeProfileLoader);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodingConfigurator);
 
-static nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_TRANSCODEMANAGER_CLASSNAME,
-    SONGBIRD_TRANSCODEMANAGER_CID,
-    SONGBIRD_TRANSCODEMANAGER_CONTRACTID,
-    sbTranscodeManagerConstructor
-  },
-  {
-    SONGBIRD_TRANSCODEALBUMART_CLASSNAME,
-    SONGBIRD_TRANSCODEALBUMART_CID,
-    SONGBIRD_TRANSCODEALBUMART_CONTRACTID,
-    sbTranscodeAlbumArtConstructor
-  },
-  {
-    SONGBIRD_TRANSCODEERROR_CLASSNAME,
-    SONGBIRD_TRANSCODEERROR_CID,
-    SONGBIRD_TRANSCODEERROR_CONTRACTID,
-    sbTranscodeErrorConstructor
-  },
-  {
-    SONGBIRD_TRANSCODEPROFILE_CLASSNAME,
-    SONGBIRD_TRANSCODEPROFILE_CID,
-    SONGBIRD_TRANSCODEPROFILE_CONTRACTID,
-    sbTranscodeProfileConstructor
-  },
-  {
-    SONGBIRD_TRANSCODEPROFILELOADER_CLASSNAME,
-    SONGBIRD_TRANSCODEPROFILELOADER_CID,
-    SONGBIRD_TRANSCODEPROFILELOADER_CONTRACTID,
-    sbTranscodeProfileLoaderConstructor
-  },
-  {
-    SONGBIRD_TRANSCODINGCONFIGURATOR_CLASSNAME,
-    SONGBIRD_TRANSCODINGCONFIGURATOR_CID,
-    SONGBIRD_TRANSCODINGCONFIGURATOR_CONTRACTID,
-    sbTranscodingConfiguratorConstructor
-  }
+NS_DEFINE_NAMED_CID(SONGBIRD_TRANSCODEMANAGER_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_TRANSCODEALBUMART_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_TRANSCODEERROR_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_TRANSCODEPROFILE_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_TRANSCODEPROFILELOADER_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_TRANSCODINGCONFIGURATOR_CID);
+
+static const mozilla::Module::CIDEntry kSongbirdTranscodeComponentCIDs[] = {
+  { &kSONGBIRD_TRANSCODEMANAGER_CID, false, NULL, sbTranscodeManagerConstructor },
+  { &kSONGBIRD_TRANSCODEALBUMART_CID, false, NULL, sbTranscodeAlbumArtConstructor },
+  { &kSONGBIRD_TRANSCODEERROR_CID, false, NULL, sbTranscodeErrorConstructor },
+  { &kSONGBIRD_TRANSCODEPROFILE_CID, false, NULL, sbTranscodeProfileConstructor },
+  { &kSONGBIRD_TRANSCODEPROFILELOADER_CID, false, NULL, sbTranscodeProfileLoaderConstructor },
+  { &kSONGBIRD_TRANSCODINGCONFIGURATOR_CID, false, NULL, sbTranscodingConfiguratorConstructor },
+  { NULL }
 };
 
-PR_STATIC_CALLBACK(void)
-DestroyModule(nsIModule* self)
-{
-  sbTranscodeManager::DestroySingleton();
-}
+static const mozilla::Module::ContractIDEntry kSongbirdTranscodeComponentContracts[] = {
+  { SONGBIRD_TRANSCODEMANAGER_CONTRACTID, &kSONGBIRD_TRANSCODEMANAGER_CID },
+  { SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &kSONGBIRD_TRANSCODEALBUMART_CID },
+  { SONGBIRD_TRANSCODEERROR_CONTRACTID, &kSONGBIRD_TRANSCODEERROR_CID },
+  { SONGBIRD_TRANSCODEPROFILE_CONTRACTID, &kSONGBIRD_TRANSCODEPROFILE_CID },
+  { SONGBIRD_TRANSCODEPROFILELOADER_CONTRACTID, &kSONGBIRD_TRANSCODEPROFILELOADER_CID },
+  { SONGBIRD_TRANSCODINGCONFIGURATOR_CONTRACTID, &kSONGBIRD_TRANSCODINGCONFIGURATOR_CID },
+  { NULL }
+};
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdTranscodeComponent,
-                                   components,
-                                   nsnull,
-                                   DestroyModule)
+static const mozilla::Module::CategoryEntry kSongbirdTranscodeComponentCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kSongbirdTranscodeComponentModule = {
+  mozilla::Module::kVersion,
+  kSongbirdTranscodeComponentCIDs,
+  kSongbirdTranscodeComponentContracts,
+  kSongbirdTranscodeComponentCategories
+};
+
+NSMODULE_DEFN(SongbirdTranscodeComponent) = &kSongbirdTranscodeComponentModule;

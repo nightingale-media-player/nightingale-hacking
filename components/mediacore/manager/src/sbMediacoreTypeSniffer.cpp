@@ -29,7 +29,7 @@
 #include <nsIURI.h>
 #include <nsIURL.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -58,17 +58,11 @@ sbMediacoreTypeSniffer::sbMediacoreTypeSniffer()
 
 sbMediacoreTypeSniffer::~sbMediacoreTypeSniffer()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
 }
 
 nsresult
 sbMediacoreTypeSniffer::Init()
 {
-  mMonitor = nsAutoMonitor::NewMonitor("sbMediacoreTypeSniffer::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIMediacoreFactoryRegistrar> factoryRegistrar =
@@ -270,7 +264,7 @@ sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL,
   // The quick and easy way. Verify against file extension if available.
   if(!fileExtension.IsEmpty()) {
 
-    nsAutoMonitor mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if(mAudioExtensions.GetEntry(fileExtension)) {
       return NS_OK;
@@ -314,7 +308,7 @@ sbMediacoreTypeSniffer::IsValidAudioURL(nsIURI *aURL, PRBool *aRetVal)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!fileExtension.IsEmpty()) {
-    nsAutoMonitor mon(mMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if (mAudioExtensions.GetEntry(fileExtension)) {
       return NS_OK;
@@ -344,7 +338,7 @@ sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
   // The quick and easy way. Verify against file extension if available.
   if(!fileExtension.IsEmpty()) {
 
-    nsAutoMonitor mon(mMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if(mVideoExtensions.GetEntry(fileExtension)) {
       return NS_OK;
@@ -381,8 +375,7 @@ sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
 
   // The quick and easy way. Verify against file extension if available.
   if(!fileExtension.IsEmpty()) {
-
-    nsAutoMonitor mon(mMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if(mPlaylistExtensions.GetEntry(fileExtension)) {
       return NS_OK;
@@ -416,7 +409,7 @@ sbMediacoreTypeSniffer::IsValidImageURL(nsIURI *aURL, PRBool *aRetVal)
   GetFileExtensionFromURI(aURL, fileExtension);
 
   if (!fileExtension.IsEmpty()) {
-    nsAutoMonitor mon(mMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if (mImageExtensions.GetEntry(fileExtension)) {
       return NS_OK;
@@ -443,7 +436,7 @@ sbMediacoreTypeSniffer::IsValidWebSafePlaylistURL(nsIURI *aURL,
   nsresult rv = GetFileExtensionFromURI(aURL, fileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!fileExtension.IsEmpty() &&
      !mBannedWebExtensions.GetEntry(fileExtension)) {
@@ -479,7 +472,7 @@ sbMediacoreTypeSniffer::GetAudioFileExtensions(nsIStringEnumerator **_retval)
 
   nsTArray<nsString> allExtensions;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   PRUint32 count = mAudioExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mAudioExtensions.Count(), NS_ERROR_UNEXPECTED);
@@ -500,7 +493,7 @@ sbMediacoreTypeSniffer::GetVideoFileExtensions(nsIStringEnumerator **_retval)
 
   nsTArray<nsString> allExtensions;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   PRUint32 count = mVideoExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mVideoExtensions.Count(), NS_ERROR_UNEXPECTED);
@@ -521,7 +514,7 @@ sbMediacoreTypeSniffer::GetPlaylistFileExtensions(nsIStringEnumerator **_retval)
 
   nsTArray<nsString> allExtensions;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   PRUint32 count = mPlaylistExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                         &allExtensions);
   NS_ENSURE_TRUE(count == mPlaylistExtensions.Count(), NS_ERROR_UNEXPECTED);
@@ -542,7 +535,7 @@ sbMediacoreTypeSniffer::GetImageFileExtensions(nsIStringEnumerator **_retval)
 
   nsTArray<nsString> allExtensions;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   if (mImageExtensions.Count()) {
     PRUint32 count = mImageExtensions.EnumerateEntries
       (EnumerateAllExtensions<nsCStringHashKey>, &allExtensions);
@@ -573,7 +566,7 @@ sbMediacoreTypeSniffer::GetMediaFileExtensions(nsIStringEnumerator **_retval)
 
   nsTArray<nsString> allExtensions;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   PRUint32 count = mAudioExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mAudioExtensions.Count(), NS_ERROR_UNEXPECTED);
@@ -615,7 +608,7 @@ sbMediacoreTypeSniffer::GetUnsupportedVideoFileExtensions(
   for (PRUint32 i = 0; i < knownExtensionsStrArray.Length(); i++) {
     // Validate the current extension against the video and audio known
     // supported extension list.
-    nsAutoMonitor mon(mMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if (mVideoExtensions.GetEntry(knownExtensionsStrArray[i])) {
       continue;

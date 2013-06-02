@@ -159,23 +159,17 @@ EmitMillisecondsToTimeString(PRUint64 aValue,
 //  sbMediacoreSequencer
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ADDREF(sbMediacoreSequencer)
-NS_IMPL_THREADSAFE_RELEASE(sbMediacoreSequencer)
+NS_IMPL_CLASSINFO(sbMediacoreSequencer, NULL, nsIClassInfo::THREADSAFE, SB_MEDIACORE_SEQUENCER_CID);
 
-NS_IMPL_QUERY_INTERFACE7_CI(sbMediacoreSequencer,
-                            sbIMediacoreSequencer,
-                            sbIMediacoreStatus,
-                            sbIMediaListListener,
-                            sbIMediaListViewListener,
-                            sbIMediaItemControllerListener,
-                            nsIClassInfo,
-                            nsITimerCallback)
+NS_IMPL_ISUPPORTS7_CI(sbMediacoreSequencer,
+											sbIMediacoreSequencer,
+											sbIMediacoreStatus,
+											sbIMediaListListener,
+											sbIMediaListViewListener,
+											sbIMediaItemControllerListener,
+											nsIClassInfo,
+											nsITimerCallback);
 
-NS_IMPL_CI_INTERFACE_GETTER2(sbMediacoreSequencer,
-                             sbIMediacoreSequencer,
-                             sbIMediacoreStatus)
-
-NS_DECL_CLASSINFO(sbMediacoreSequencer)
 NS_IMPL_THREADSAFE_CI(sbMediacoreSequencer)
 
 sbMediacoreSequencer::sbMediacoreSequencer()
@@ -1288,11 +1282,10 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
   return NS_OK;
 }
 
-/* 
+/*
 nsresult
-sbMediacoreSequencer::StopPlaybackHelper(nsAutoMonitor& aMonitor)
+sbMediacoreSequencer::StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor)
 {
-
   nsresult rv;
 
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
@@ -1300,10 +1293,13 @@ sbMediacoreSequencer::StopPlaybackHelper(nsAutoMonitor& aMonitor)
      mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
     // Grip.
     nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-    aMonitor.Exit();
-    rv = playbackControl->Stop();
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
-    aMonitor.Enter();
+//    aMonitor.Exit();
+    {
+    	mozilla::ReentrantMonitorAutoExit mon(aMonitor);
+      rv = playbackControl->Stop();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+    }
+//    aMonitor.Enter();
   }
 
   mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -1323,12 +1319,50 @@ sbMediacoreSequencer::StopPlaybackHelper(nsAutoMonitor& aMonitor)
 
   return NS_OK;
 }
- */
+*/
+
+nsresult sbMediacoreSequencer::StopPlaybackHelper()
+{
+	nsresult rv;
+
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+	if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+		 mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
+		 mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
+		// Grip.
+		nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+//    aMonitor.Exit();
+		{
+			mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+			rv = playbackControl->Stop();
+			NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+		}
+//    aMonitor.Enter();
+	}
+
+	mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+
+	rv = StopSequenceProcessor();
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	rv = UpdatePlayStateDataRemotes();
+	NS_ENSURE_SUCCESS(rv, rv);
+
+	if(mSeenPlaying) {
+		mSeenPlaying = PR_FALSE;
+
+		rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+		NS_ENSURE_SUCCESS(rv, rv);
+	}
+
+	return NS_OK;
+}
 
 nsresult
 sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_ARG_POINTER(aEvent);
+  nsresult rv;
 
   {
     mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
@@ -1338,10 +1372,9 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
       mIsWaitingForPlayback = PR_FALSE;
     }
 
-    nsresult rv;
     if(mErrorCount >= MEDIACORE_MAX_SUBSEQUENT_ERRORS) {
       // Too many subsequent errors, stop
-      rv = StopPlaybackHelper(mon);
+      rv = StopPlaybackHelper();
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -1377,7 +1410,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
-        rv = StopPlaybackHelper(mon);
+        rv = StopPlaybackHelper();
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
@@ -2324,7 +2357,7 @@ sbMediacoreSequencer::StartPlayback()
   {
     // Create a mediacore error
     nsCOMPtr<sbMediacoreError> error;
-    NS_NEWXPCOM(error, sbMediacoreError);
+    error = new sbMediacoreError;
     NS_ENSURE_TRUE(error, NS_ERROR_OUT_OF_MEMORY);
 
     // Get the error message

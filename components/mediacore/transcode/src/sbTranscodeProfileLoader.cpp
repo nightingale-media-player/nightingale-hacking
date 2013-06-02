@@ -27,7 +27,7 @@
 
 #include "sbTranscodeProfileLoader.h"
 
-#include <nsIDOM3Node.h>
+//#include <nsIDOM3Node.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMNode.h>

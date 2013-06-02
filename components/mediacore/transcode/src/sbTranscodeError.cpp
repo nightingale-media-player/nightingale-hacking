@@ -27,6 +27,7 @@
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIURI.h>
+#include <mozilla/Mutex.h>
 
 #include <sbIMediaItem.h>
 #include <sbITranscodeManager.h>
@@ -54,9 +55,6 @@ sbTranscodeError::sbTranscodeError()
 
 sbTranscodeError::~sbTranscodeError()
 {
-  if (mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
   /* destructor code */
 }
 
@@ -179,7 +177,7 @@ sbTranscodeError::GetData(nsAString & aData)
   nsCOMPtr<sbIMediaItem> item;
   {
     /* scope, avoid locking for too long */
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     spec = mSrcUri;
     item = mSrcItem;
     if (!item) item = mDestItem;
@@ -261,7 +259,7 @@ sbTranscodeError::GetType(PRUint16 *aType)
 NS_IMETHODIMP
 sbTranscodeError::GetMessageWithItem(nsAString & aMessageWithItem)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   aMessageWithItem.Assign(mMessageWithItem);
   return NS_OK;
 }
@@ -270,7 +268,7 @@ sbTranscodeError::GetMessageWithItem(nsAString & aMessageWithItem)
 NS_IMETHODIMP
 sbTranscodeError::GetMessageWithoutItem(nsAString & aMessageWithoutItem)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   aMessageWithoutItem.Assign(mMessageWithoutItem);
   return NS_OK;
 }
@@ -279,7 +277,7 @@ sbTranscodeError::GetMessageWithoutItem(nsAString & aMessageWithoutItem)
 NS_IMETHODIMP
 sbTranscodeError::GetDetail(nsAString & aDetails)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   aDetails.Assign(mDetails);
   return NS_OK;
 }
@@ -288,14 +286,14 @@ sbTranscodeError::GetDetail(nsAString & aDetails)
 NS_IMETHODIMP
 sbTranscodeError::GetSourceUri(nsAString & aSourceUri)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   aSourceUri.Assign(mSrcUri);
   return NS_OK;
 }
 NS_IMETHODIMP
 sbTranscodeError::SetSourceUri(const nsAString & aSourceUri)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   mSrcUri.Assign(aSourceUri);
   return NS_OK;
 }
@@ -305,14 +303,14 @@ NS_IMETHODIMP
 sbTranscodeError::GetSourceItem(sbIMediaItem * *aSourceItem)
 {
   NS_ENSURE_ARG_POINTER(aSourceItem);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   NS_IF_ADDREF(*aSourceItem = mSrcItem);
   return NS_OK;
 }
 NS_IMETHODIMP
 sbTranscodeError::SetSourceItem(sbIMediaItem * aSourceItem)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   mSrcItem = aSourceItem;
   return NS_OK;
 }
@@ -321,14 +319,14 @@ sbTranscodeError::SetSourceItem(sbIMediaItem * aSourceItem)
 NS_IMETHODIMP
 sbTranscodeError::GetDestUri(nsAString & aDestUri)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   aDestUri.Assign(mDestUri);
   return NS_OK;
 }
 NS_IMETHODIMP
 sbTranscodeError::SetDestUri(const nsAString & aDestUri)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   mDestUri.Assign(aDestUri);
   return NS_OK;
 }
@@ -338,14 +336,14 @@ NS_IMETHODIMP
 sbTranscodeError::GetDestItem(sbIMediaItem * *aDestItem)
 {
   NS_ENSURE_ARG_POINTER(aDestItem);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   NS_IF_ADDREF(*aDestItem = mDestItem);
   return NS_OK;
 }
 NS_IMETHODIMP
 sbTranscodeError::SetDestItem(sbIMediaItem * aDestItem)
 {
-  nsAutoLock lock(mLock);
+	mozilla::MutexAutoLock lock(mLock);
   mDestItem = aDestItem;
   return NS_OK;
 }
@@ -359,10 +357,7 @@ sbTranscodeError::Init(const nsAString & aMessageWithItem,
                        const nsAString & aMessageWithoutItem,
                        const nsAString & aDetails)
 {
-  NS_ENSURE_FALSE(mLock, NS_ERROR_ALREADY_INITIALIZED);
-  mLock = nsAutoLock::NewLock("sbTranscodeError::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   mMessageWithItem.Assign(aMessageWithItem);
   mMessageWithoutItem.Assign(aMessageWithoutItem);
   mDetails.Assign(aDetails);

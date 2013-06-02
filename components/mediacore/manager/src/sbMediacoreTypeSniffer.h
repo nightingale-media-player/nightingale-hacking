@@ -29,6 +29,7 @@
 
 #include <nsIStringEnumerator.h>
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsTHashtable.h>
@@ -54,7 +55,7 @@ private:
                                    nsACString& _retval);
 
 protected:
-  PRMonitor *mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   nsCOMPtr<sbIMediacoreFactoryRegistrar> mFactoryRegistrar;
   

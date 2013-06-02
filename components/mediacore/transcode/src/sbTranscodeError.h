@@ -30,7 +30,7 @@
 
 #include "sbITranscodeError.h"
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -52,7 +52,7 @@ private:
   ~sbTranscodeError();
 
 protected:
-  PRLock *mLock;
+  mozilla::Mutex mLock;
   nsString mMessageWithItem;
   nsString mMessageWithoutItem;
   nsString mDetails;

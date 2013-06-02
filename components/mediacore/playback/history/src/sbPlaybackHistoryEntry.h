@@ -33,6 +33,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <mozilla/Mutex.h>
 
 #include <prlock.h>
 #include <prtime.h>
@@ -52,7 +53,7 @@ protected:
   ~sbPlaybackHistoryEntry();
 
 private:
-  PRLock* mLock;
+  mozilla::Mutex mLock;
 
   PRInt64 mEntryId;
   nsCOMPtr<sbIMediaItem> mItem;

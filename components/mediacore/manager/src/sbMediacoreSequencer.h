@@ -53,6 +53,15 @@
 #include <vector>
 #include <map>
 
+
+#define SB_MEDIACORE_SEQUENCER_CID                                            \
+{ /* d75b1e6a-222e-4947-87ab-ea651210f2f7 */                                  \
+	0xD75B1E6A,                                                                 \
+	0x222E,                                                                     \
+	0x4947,                                                                     \
+	{ 0x87, 0xAB, 0xEA, 0x65, 0x12, 0x10, 0xF2, 0xF7 }                          \
+}
+
 class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreEventListener,
                              public sbIMediacoreStatus,
@@ -178,7 +187,8 @@ protected:
    * Helper function to cleanly stop the playback. The monitor must be locked
    * when this function is called.
    */
-  nsresult StopPlaybackHelper(nsAutoMonitor& aMonitor);
+//  nsresult StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor);
+  nsresult StopPlaybackHelper();
 
   /**
    * Checks for a mediaitemcontroller for the current item, and
