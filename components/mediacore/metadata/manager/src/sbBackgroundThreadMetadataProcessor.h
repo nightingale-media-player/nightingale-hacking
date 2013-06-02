@@ -40,6 +40,8 @@
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 #include <nsTArray.h>
+#include <a11yGeneric.h>
+#include <mozilla/ReentrantMonitor.h>
 
 // CLASSES ====================================================================
 
@@ -87,7 +89,7 @@ protected:
   
   // Monitor used to wake up the thread when more items
   // are added, or when it is time to shut down
-  PRMonitor*                              mMonitor;
+  mozilla::ReentrantMonitor               mMonitor;
 };
 
 #endif // SBBACKGROUNDTHREADMETADATAPROCESSOR_H_

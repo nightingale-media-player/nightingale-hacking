@@ -40,6 +40,7 @@
 #include "sbIMetadataHandler.h"
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <mozilla/Mutex.h>
 
 #include <set>
 #include <list>

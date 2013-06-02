@@ -35,6 +35,8 @@
 #include <nscore.h>
 #include <nsThreadUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <mozilla/ReentrantMonitor.h>
+#include <VideoUtils.h>
 
 #include "sbBackgroundThreadMetadataProcessor.h"
 #include "sbFileMetadataService.h"
@@ -78,9 +80,6 @@ sbBackgroundThreadMetadataProcessor::~sbBackgroundThreadMetadataProcessor()
   Stop();
   mThread = nsnull;
   mJobManager = nsnull;
-  if (mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
 }
 
 nsresult sbBackgroundThreadMetadataProcessor::Start()
@@ -91,13 +90,7 @@ nsresult sbBackgroundThreadMetadataProcessor::Start()
   TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Start", this));
   nsresult rv;
   
-  if (!mMonitor) {
-    mMonitor = nsAutoMonitor::NewMonitor(
-        "sbBackgroundThreadMetadataProcessor::mMonitor");
-    NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  nsAutoMonitor monitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
 
   if (!mThread) {
     mShouldShutdown = PR_FALSE;
@@ -106,9 +99,9 @@ nsresult sbBackgroundThreadMetadataProcessor::Start()
   } 
 
   rv = monitor.Notify();
-  NS_ASSERTION(NS_SUCCEEDED(rv), 
+  NS_ASSERTION(NS_SUCCEEDED(rv),
     "sbBackgroundThreadMetadataProcessor::Start monitor notify failed");
-  
+
   return NS_OK;
 }
 
@@ -120,12 +113,12 @@ nsresult sbBackgroundThreadMetadataProcessor::Stop()
   nsresult rv;
   
   {
-    nsAutoMonitor monitor(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
     // Tell the thread to stop working
     mShouldShutdown = PR_TRUE;
 
     rv = monitor.Notify();
-    NS_ASSERTION(NS_SUCCEEDED(rv), 
+    NS_ASSERTION(NS_SUCCEEDED(rv),
       "sbBackgroundThreadMetadataProcessor::Start monitor notify failed");
   }
 
@@ -156,17 +149,17 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
     // Lock to make sure we dont go to sleep right after
     // a Start() call
     {
-      nsAutoMonitor monitor(mMonitor);
-      
+      mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
+
       rv = mJobManager->GetQueuedJobItem(PR_FALSE, getter_AddRefs(item));
-      
+
       // On error, skip the item and try again
       if (NS_FAILED(rv)) {
         // If there are no more job items available just go to sleep.
         if (rv == NS_ERROR_NOT_AVAILABLE) {
           TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Thread waiting", 
                 this));
-          rv = monitor.Wait();
+          mozilla::ReentrantMonitorAutoExit monitor(mMonitor);
           NS_ASSERTION(NS_SUCCEEDED(rv), 
             "sbBackgroundThreadMetadataProcessor::Run monitor wait failed");
 

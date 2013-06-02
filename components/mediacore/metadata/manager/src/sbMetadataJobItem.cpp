@@ -55,7 +55,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS0(sbMetadataJobItem);
 
 sbMetadataJobItem::sbMetadataJobItem(sbMetadataJob::JobType aJobType, 
                                      sbIMediaItem* aMediaItem,
-                                     nsStringArray* aRequiredProperties, 
+                                     nsTArray<nsString>* aRequiredProperties,
                                      sbMetadataJob* aOwningJob) :
   mJobType(aJobType),
   mMediaItem(aMediaItem),
@@ -172,9 +172,9 @@ nsresult sbMetadataJobItem::GetProperties(sbIMutablePropertyArray** aPropertyArr
   nsCOMPtr<sbIProperty> property;
   nsString propertyId;
   nsString propertyValue;
-  for (PRInt32 current = 0; current < mPropertyList->Count(); ++current) {
+  for (PRInt32 current = 0; current < mPropertyList->Capacity(); ++current) {
     // Get the wanted property
-    mPropertyList->StringAt(current, propertyId);
+	propertyId = mPropertyList->ElementAt(current);
     
     // Get the value for this property and if null make an empty string
     rv = propArray->GetPropertyValue(propertyId, propertyValue);

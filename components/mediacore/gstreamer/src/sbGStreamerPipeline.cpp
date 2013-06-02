@@ -54,7 +54,7 @@ static PRLogModuleInfo* gGStreamerPipeline = PR_NewLogModule("sbGStreamerPipelin
 
 // XXX CID for sbGStreamerPipeline?
 //NS_IMPL_CLASSINFO(sbGStreamerPipeline, NULL, nsIClassInfo::THREADSAFE, sbGStreamerPipeline);
-NS_IMPL_CLASSINFO(sbGStreamerPipeline, NULL, nsIClassInfo::THREADSAFE, 0);
+NS_IMPL_CLASSINFO(sbGStreamerPipeline, NULL, nsIClassInfo::THREADSAFE, SB_GSTREAMER_PIPELINE_CID);
 
 NS_IMPL_ISUPPORTS2_CI(sbGStreamerPipeline, sbIMediacoreEventTarget, nsIClassInfo);
 

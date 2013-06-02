@@ -36,6 +36,7 @@
 #include <nsIFileStreams.h>
 #include <nsIIOService.h>
 #include <nsNetUtil.h>
+#include <nsIAsyncVerifyRedirectCallback.h>
 
 #include "sbMetadataChannel.h"
 
@@ -442,17 +443,20 @@ sbMetadataChannelEventSink::~sbMetadataChannelEventSink()
 {
 }
 
-NS_IMETHODIMP
-sbMetadataChannelEventSink::OnChannelRedirect(nsIChannel* oldChannel,
-                                     nsIChannel* newChannel,
-                                     PRUint32 flags)
+NS_IMETHODIMP sbMetadataChannelEventSink::AsyncOnChannelRedirect(
+		nsIChannel 						*oldChannel,
+		nsIChannel 						*newChannel,
+		PRUint32 						flags,
+		nsIAsyncVerifyRedirectCallback 	*callback)
 {
-  nsresult rv;
+	nsresult rv;
 
-  rv = mMetadataChannel->SetRedirectedChannel(newChannel);
-  NS_ENSURE_SUCCESS(rv, rv);
+	rv = mMetadataChannel->SetRedirectedChannel(newChannel);
+	NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
+	callback->OnRedirectVerifyCallback(NS_OK);
+
+	return NS_OK;
 }
 
 NS_IMETHODIMP

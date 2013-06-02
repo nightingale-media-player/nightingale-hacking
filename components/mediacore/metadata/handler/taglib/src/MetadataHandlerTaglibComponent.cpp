@@ -30,40 +30,41 @@
 * Point.
 */
 
-#include "nsIGenericFactory.h"
+#include "mozilla/ModuleUtils.h"
 #include "MetadataHandlerTaglib.h"
 #include "TaglibChannelFileIOManager.h"
 #include "SeekableChannel.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataHandlerTaglib, Init)
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTagLibChannelFileIOManager, FactoryInit)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataHandlerTaglib, Init);
+NS_DEFINE_NAMED_CID(SONGBIRD_METADATAHANDLERTAGLIB_CID);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTagLibChannelFileIOManager, FactoryInit);
+NS_DEFINE_NAMED_CID(SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSeekableChannel)
+NS_DEFINE_NAMED_CID(SONGBIRD_SEEKABLECHANNEL_CID);
 
-static nsModuleComponentInfo componentInfo[] =
-{
-  {
-    SONGBIRD_METADATAHANDLERTAGLIB_CLASSNAME, 
-    SONGBIRD_METADATAHANDLERTAGLIB_CID,
-    SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID,
-    sbMetadataHandlerTaglibConstructor
-  },
-
-  {
-    SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CLASSNAME, 
-    SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CID,
-    SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CONTRACTID,
-    sbTagLibChannelFileIOManagerConstructor
-  },
-
-  {
-    SONGBIRD_SEEKABLECHANNEL_CLASSNAME, 
-    SONGBIRD_SEEKABLECHANNEL_CID,
-    SONGBIRD_SEEKABLECHANNEL_CONTRACTID,
-    sbSeekableChannelConstructor
-  }
+static const mozilla::Module::CIDEntry kMetadataHandlerTaglibCIDs[] = {
+  { &kSONGBIRD_METADATAHANDLERTAGLIB_CID, false, NULL, sbMetadataHandlerTaglibConstructor },
+  { &kSONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CID, false, NULL, sbTagLibChannelFileIOManagerConstructor },
+  { &kSONGBIRD_SEEKABLECHANNEL_CID, false, NULL, sbSeekableChannelConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataHandlerTaglibComponent,
-                                   componentInfo,
-                                   sbMetadataHandlerTaglib::ModuleConstructor,
-                                   sbMetadataHandlerTaglib::ModuleDestructor)
+static const mozilla::Module::ContractIDEntry kMetadataHandlerTaglibContracts[] = {
+  { SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID, &kSONGBIRD_METADATAHANDLERTAGLIB_CID },
+  { SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CONTRACTID, &kSONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CID },
+  { SONGBIRD_SEEKABLECHANNEL_CONTRACTID, &kSONGBIRD_SEEKABLECHANNEL_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kMetadataHandlerTaglibCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kMetadataHandlerTaglibModule = {
+  mozilla::Module::kVersion,
+  kMetadataHandlerTaglibCIDs,
+  kMetadataHandlerTaglibContracts,
+  kMetadataHandlerTaglibCategories
+};
+
+NSMODULE_DEFN(SongbirdMetadataHandlerTaglibComponent) = &kMetadataHandlerTaglibModule;

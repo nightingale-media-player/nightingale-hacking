@@ -36,7 +36,7 @@
 #include <nscore.h>
 #include <prlock.h>
 #include <prmon.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMArray.h>
@@ -175,7 +175,7 @@ private:
   
   nsCOMPtr<nsIFile>                           mLogFile;
   nsCOMPtr<nsIOutputStream>                   mOutputStream;
-  PRLock*                                     mLock;
+  mozilla::Mutex                              mLock;
   
   // Value of songbird.metadata.simulate.crash.url, if set
   nsCString                                   mSimulateCrashURL;

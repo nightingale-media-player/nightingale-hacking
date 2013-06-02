@@ -50,16 +50,16 @@
  * Seekable channel XPCOM component definitions.
  */
 
-#define SONGBIRD_SEEKABLECHANNEL_CONTRACTID                                    \
-                        "@songbirdnest.com/Songbird/SeekableChannel;1"
-#define SONGBIRD_SEEKABLECHANNEL_CLASSNAME                                     \
-                                    "Songbird Seekable Channel Component"
-#define SONGBIRD_SEEKABLECHANNEL_CID                                           \
-{                                                                              \
-    0x2030739B,                                                                \
-    0x5E60,                                                                    \
-    0x492B,                                                                    \
-    { 0xA1, 0xA7, 0x74, 0x70, 0x67, 0x47, 0x5B, 0xFD }                         \
+#define SONGBIRD_SEEKABLECHANNEL_CONTRACTID                                   \
+	"@songbirdnest.com/Songbird/SeekableChannel;1"
+#define SONGBIRD_SEEKABLECHANNEL_CLASSNAME                                    \
+	"Songbird Seekable Channel Component"
+#define SONGBIRD_SEEKABLECHANNEL_CID                                          \
+{                                                                             \
+	0x2030739B,                                                               \
+	0x5E60,                                                                   \
+	0x492B,                                                                   \
+	{ 0xA1, 0xA7, 0x74, 0x70, 0x67, 0x47, 0x5B, 0xFD }                        \
 }
 
 

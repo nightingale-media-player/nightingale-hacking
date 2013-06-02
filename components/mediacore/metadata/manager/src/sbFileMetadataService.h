@@ -40,6 +40,8 @@
 #include <nsIStringBundle.h>
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
+#include <mozilla/Mutex.h>
+#include <a11yGeneric.h>
 
 #include <sbIDataRemote.h>
 #include <sbIMediacoreManager.h>
@@ -47,6 +49,7 @@
 #include "sbIFileMetadataService.h"
 #include "sbPIFileMetadataService.h"
 #include "sbMetadataJob.h"
+#include "sbBackgroundThreadMetadataProcessor.h"
 
 
 // DEFINES ====================================================================
@@ -255,7 +258,7 @@ protected:
   nsCOMPtr<nsITimer>                       mNotificationTimer;
   
   // Lock to protect mJobArray and mNextJobIndex
-  PRLock*                                  mJobLock;
+  mozilla::Mutex                           mJobLock;
   
   // List of all active jobs
   nsTArray<nsRefPtr<sbMetadataJob> >       mJobArray;
@@ -270,6 +273,8 @@ protected:
 
   // Mediacore manager;
   nsCOMPtr<sbIMediacoreManager>            mMediacoreManager;
+
+  NS_DECL_RUNNABLEMETHOD(sbBackgroundThreadMetadataProcessor, Start);
 };
 
 #endif // SBFILEMETADATASERVICE_H__

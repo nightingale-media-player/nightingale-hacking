@@ -66,7 +66,7 @@ public:
 
   sbMetadataJobItem(sbMetadataJob::JobType aJobType, 
                     sbIMediaItem* aMediaItem,
-                    nsStringArray* aRequiredProperties,
+                    nsTArray<nsString>* aRequiredProperties,
                     sbMetadataJob* aOwningJob);
   virtual ~sbMetadataJobItem();
   
@@ -90,7 +90,7 @@ protected:
   nsRefPtr<sbMetadataJob>            mOwningJob;
   
   nsCString                          mURL;
-  nsStringArray*                     mPropertyList;
+  nsTArray<nsString>*                mPropertyList;
 
   // Flag to indicate that a handler was started for this item
   PRBool                             mProcessingStarted;

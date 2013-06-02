@@ -53,6 +53,7 @@
 #include <nsIURI.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsIAsyncVerifyRedirectCallback.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
 
@@ -591,29 +592,48 @@ NS_IMETHODIMP sbSeekableChannel::OnStopRequest(
  *
  ******************************************************************************/
 
+
 /*
- * OnChannelRedirect
+ * Mozilla commit SHA1:
+ * 		06924ec766d48092b1dc07ec0df91c8b9ce7db35
+ *
+ * Bug 546606 - Make redirect API async - part 2
+ */
+
+/*
+ * asyncOnChannelRedirect
  *
  *   --> pOrigChannel           Original channel.
  *   --> pRedirectedChannel     Redirected channel.
  *   --> flags                  Redirection flags.
+ *   --> nsIAsyncVerifyRedirectCallback callback
+ *
+ *    void onChannelRedirect(in nsIChannel oldChannel,
+ *                           in nsIChannel newChannel,
+                             in unsigned long flags);
+	void asyncOnChannelRedirect(in nsIChannel oldChannel,
+	                            in nsIChannel newChannel,
+                            	in unsigned long flags,
+                                in nsIAsyncVerifyRedirectCallback callback);
  *
  *   This function handles redirection of the channel specified by pOrigChannel
  * to the channel specified by pRedirectedChannel.  Flags relating to the
  * redirection are specified by flags.
  */
 
-NS_IMETHODIMP sbSeekableChannel::OnChannelRedirect(
-    nsIChannel                  *pOrigChannel,
-    nsIChannel                  *pRedirectedChannel,
-    PRUint32                    flags)
-{
-    nsresult                    result = NS_OK;
 
+NS_IMETHODIMP sbSeekableChannel::AsyncOnChannelRedirect(
+		nsIChannel 						*pOrigChannel,
+		nsIChannel 						*pRedirectedChannel,
+		PRUint32 						flags,
+		nsIAsyncVerifyRedirectCallback 	*callback)
+{
     /* Redirect channel. */
     mpChannel = pRedirectedChannel;
 
-    return (result);
+	callback->OnRedirectVerifyCallback(NS_OK);
+
+	return NS_OK;
 }
 
 

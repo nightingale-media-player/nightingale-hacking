@@ -1,10 +1,10 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale Media Player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2013 Nightingale Media Player
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -29,39 +29,49 @@
  * \brief Songbird Metadata Component Factory and Main Entry Point.
  */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbMetadataManager.h"
 #include "sbMetadataChannel.h"
 #include "sbFileMetadataService.h"
 #include "prlog.h"
 
-NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataManager, sbMetadataManager::GetSingleton)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataChannel)
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileMetadataService, Init)
 
-static nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_METADATAMANAGER_CLASSNAME,
-    SONGBIRD_METADATAMANAGER_CID,
-    SONGBIRD_METADATAMANAGER_CONTRACTID,
-    sbMetadataManagerConstructor
-  },
+// XXX Anything special needed in the category entry array for singleton?
+NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataManager, sbMetadataManager::GetSingleton);
+NS_DEFINE_NAMED_CID(SONGBIRD_METADATAMANAGER_CID);
 
-  {
-    SONGBIRD_METADATACHANNEL_CLASSNAME,
-    SONGBIRD_METADATACHANNEL_CID,
-    SONGBIRD_METADATACHANNEL_CONTRACTID,
-    sbMetadataChannelConstructor
-  },
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataChannel);
+NS_DEFINE_NAMED_CID(SONGBIRD_METADATACHANNEL_CID);
 
-  {
-    SONGBIRD_FILEMETADATASERVICE_CLASSNAME,
-    SONGBIRD_FILEMETADATASERVICE_CID,
-    SONGBIRD_FILEMETADATASERVICE_CONTRACTID,
-    sbFileMetadataServiceConstructor
-  }
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileMetadataService, Init);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILEMETADATASERVICE_CID);
+
+
+static const mozilla::Module::CIDEntry kSongbirdMetadataComponentCIDs[] = {
+  { &kSONGBIRD_METADATAMANAGER_CID, false, NULL, sbMetadataManagerConstructor },
+  { &kSONGBIRD_METADATACHANNEL_CID, false, NULL, sbMetadataChannelConstructor },
+  { &kSONGBIRD_FILEMETADATASERVICE_CID, false, NULL, sbFileMetadataServiceConstructor },
+  { NULL }
 };
+
+static const mozilla::Module::ContractIDEntry kSongbirdMetadataComponentContracts[] = {
+  { SONGBIRD_METADATAMANAGER_CONTRACTID, &kSONGBIRD_METADATAMANAGER_CID },
+  { SONGBIRD_METADATACHANNEL_CONTRACTID, &kSONGBIRD_METADATACHANNEL_CID },
+  { SONGBIRD_FILEMETADATASERVICE_CONTRACTID, &kSONGBIRD_FILEMETADATASERVICE_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kSongbirdMetadataComponentCategoroes[] = {
+  { NULL }
+};
+
+static const mozilla::Module kSongbirdMetadataComponentModule = {
+  mozilla::Module::kVersion,
+  kSongbirdMetadataComponentCIDs,
+  kSongbirdMetadataComponentContracts,
+  kSongbirdMetadataComponentCategoroes
+};
+
 
 // Set up logging
 #if defined( PR_LOGGING )
@@ -76,14 +86,5 @@ InitMetadata(nsIModule *self)
 #define InitMetadata nsnull
 #endif
 
-PR_STATIC_CALLBACK(void)
-DestroyModule(nsIModule* self)
-{
-  sbMetadataManager::DestroySingleton();
-}
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataComponent,
-                                   components,
-                                   InitMetadata,
-                                   DestroyModule)
-
+NSMODULE_DEFN(SongbirdMetadataComponent) = &kSongbirdMetadataComponentModule;

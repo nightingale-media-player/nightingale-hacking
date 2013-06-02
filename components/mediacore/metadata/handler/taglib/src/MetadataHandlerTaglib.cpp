@@ -155,7 +155,7 @@ static PRLogModuleInfo* gLog = nsnull;
 // the minimum number of chracters to feed into the charset detector
 #define GUESS_CHARSET_MIN_CHAR_COUNT 256
 
-mozilla::Mutex sbMetadataHandlerTaglib::sTaglibLock = nsnull;
+//mozilla::Mutex sbMetadataHandlerTaglib::sTaglibLock;
 
 /*
  *
@@ -975,7 +975,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
   // Nothing was found in the cache, so open the target file
   // and read the data out manually.
 
-  nsAutoLock lock(sTaglibLock);
+  mozilla::MutexAutoLock lock(sTaglibLock);
   try {
     rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
   } catch(...) {
@@ -1100,7 +1100,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetImageData(
 {
   nsresult rv;
   LOG(("sbMetadataHandlerTaglib::SetImageData\n"));
-  nsAutoLock lock(sTaglibLock);
+  mozilla::MutexAutoLock lock(sTaglibLock);
 
   try {
     rv = SetImageDataInternal(aType, aURL);
@@ -1305,7 +1305,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageFile(const nsAString &imageSpec,
   nsCString cImageSpec = NS_LossyConvertUTF16toASCII(imageSpec);
 
   { // Scope for unlock
-      nsAutoUnlock unlock(sTaglibLock);
+      mozilla::MutexAutoUnlock unlock(sTaglibLock);
 
       nsCOMPtr<nsIIOService> ioservice =
         do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
@@ -1624,7 +1624,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageITunes(TagLib::MP4::Tag  *aTag,
 
       // Release the lock while we're using proxied services to avoid
       // deadlocking with the main thread trying to grab the taglib lock
-      nsAutoUnlock unlock(sTaglibLock);
+      mozilla::MutexAutoUnlock unlock(sTaglibLock);
 
       nsCOMPtr<nsIContentSniffer> contentSniffer =
         do_ProxiedGetService("@mozilla.org/image/loader;1", &rv);
@@ -1871,7 +1871,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
 
         /* Read the metadata. */
         {
-          nsAutoLock lock(sTaglibLock);
+          mozilla::MutexAutoLock lock(sTaglibLock);
           ReadMetadata();
         }
 
@@ -1915,7 +1915,8 @@ sbMetadataHandlerTaglib::sbMetadataHandlerTaglib()
     mpSeekableChannel(nsnull),
     mpURL(nsnull),
     mMetadataChannelRestart(PR_FALSE),
-    mCompleted(PR_FALSE)
+    mCompleted(PR_FALSE),
+    sTaglibLock(nsnull)
 {
 }
 
@@ -1968,19 +1969,13 @@ nsresult sbMetadataHandlerTaglib::Init()
 /* static */
 nsresult sbMetadataHandlerTaglib::ModuleConstructor(nsIModule* aSelf)
 {
-  sbMetadataHandlerTaglib::sTaglibLock =
-    nsAutoLock::NewLock("sbMetadataHandlerTaglib::sTaglibLock");
-  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::sTaglibLock, NS_ERROR_OUT_OF_MEMORY);
-
   return NS_OK;
 }
 
 /* static */
 void sbMetadataHandlerTaglib::ModuleDestructor(nsIModule* aSelf)
 {
-  if (sbMetadataHandlerTaglib::sTaglibLock) {
-    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::sTaglibLock);
-  }
+
 }
 
 /*******************************************************************************
@@ -3584,7 +3579,7 @@ nsresult sbMetadataHandlerTaglib::WriteXiphComment(
 
 /*
  * base64 encode/decode routines:
- * Copyright (C) 2004-2008 René Nyffenegger
+ * Copyright (C) 2004-2008 Renï¿½ Nyffenegger
  *
  * This source code is provided 'as-is', without any express or implied
  * warranty. In no event will the author be held liable for any damages
@@ -3604,7 +3599,7 @@ nsresult sbMetadataHandlerTaglib::WriteXiphComment(
  *
  * 3. This notice may not be removed or altered from any source distribution.
  *
- * René Nyffenegger rene.nyffenegger@adp-gmbh.ch
+ * Renï¿½ Nyffenegger rene.nyffenegger@adp-gmbh.ch
 */
 
 static const std::string base64_chars = 

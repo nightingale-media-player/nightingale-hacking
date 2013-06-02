@@ -193,9 +193,7 @@ private:
     
     nsTArray<nsAutoPtr<sbAlbumArt> > mCachedAlbumArt;
 
-
-    // Statics to help manage the single threading of taglib
-    static mozilla::Mutex sTaglibLock;
+    mozilla::Mutex sTaglibLock;
 
     /* Inherited interfaces. */
 public:

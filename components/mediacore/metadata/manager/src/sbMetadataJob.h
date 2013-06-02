@@ -36,7 +36,7 @@
 
 #include <nscore.h>
 #include <prlock.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMArray.h>
@@ -54,6 +54,16 @@
 #include <sbMediaListBatchCallback.h>
 
 #include <set>
+
+
+#define SB_METADATAJOB_CID                                                    \
+{ /* b65fe178-f728-4ce0-8d41-157f84225635 */                                  \
+	0xB65FE178,                                                               \
+	0xF728,                                                                   \
+	0x4CE0,                                                                   \
+	{ 0x8D, 0x41, 0x15, 0x7F, 0x84, 0x22, 0x56, 0x35 }                        \
+}
+
 
 // CLASSES ====================================================================
 typedef std::set<nsString> sbStringSet;
@@ -319,7 +329,7 @@ private:
   nsCOMPtr<sbILibrary>                     mLibrary;
   
   // List of properties we require for this job
-  nsStringArray                            mRequiredProperties;
+  nsTArray<nsString>                       mRequiredProperties;
 
   // List of absolute paths that the watch folder service is ignoring.
   sbStringSet                              mIgnoredContentPaths;
@@ -333,14 +343,14 @@ private:
   // TODO consider using nsDeque
   nsTArray<nsRefPtr<sbMetadataJobItem> >   mBackgroundThreadJobItems;
   PRUint32                                 mNextBackgroundThreadIndex;
-  PRLock*                                  mBackgroundItemsLock;
+  mozilla::Mutex                           mBackgroundItemsLock;
   
   // Pointer to a list of items that have been returned from processing, but have 
   // not yet had their properties set.
   // Used to perform sbIMediaItem.setProperties() batching.
   nsAutoPtr<nsTArray<nsRefPtr<sbMetadataJobItem> > >  
                                            mProcessedBackgroundThreadItems;
-  PRLock*                                  mProcessedBackgroundItemsLock;
+  mozilla::Mutex                           mProcessedBackgroundItemsLock;
   
   // Indicates that we've started a library batch, and need
   // to close it before we complete

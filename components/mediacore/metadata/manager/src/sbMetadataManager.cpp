@@ -27,7 +27,7 @@
 #include <nspr.h>
 #include "sbMetadataManager.h"
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsXPCOM.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
@@ -81,7 +81,6 @@ sbMetadataManager::sbMetadataManager()
 : m_pContractListLock(nsnull)
 {
   m_pContractListLock = PR_NewLock();
-  NS_ASSERTION(m_pContractListLock, "Failed to create sbMetadataManager::m_pContractListLock! Object *not* threadsafe!");
 
   // Find the list of handlers for this object.
   nsresult rv;
@@ -129,7 +128,7 @@ sbMetadataManager *sbMetadataManager::GetSingleton()
     return gMetadataManager;
   }
 
-  NS_NEWXPCOM(gMetadataManager, sbMetadataManager);
+  gMetadataManager = new sbMetadataManager;
   if (!gMetadataManager)
     return nsnull;
 

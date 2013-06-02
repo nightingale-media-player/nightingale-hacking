@@ -33,7 +33,7 @@
 // TODO clean up
 #include <nspr.h>
 #include <nscore.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsServiceManagerUtils.h>
 #include <nsCRTGlue.h>
 #include <nsIFile.h>
@@ -86,9 +86,6 @@ sbMetadataCrashTracker::~sbMetadataCrashTracker()
   TRACE(("sbMetadataCrashTracker[0x%.8x] - dtor", this));
   MOZ_COUNT_DTOR(sbMetadataCrashTracker);
   ResetLog();
-  if (mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
 }
 
 
@@ -96,14 +93,7 @@ nsresult sbMetadataCrashTracker::Init()
 {
   NS_ASSERTION(NS_IsMainThread(), 
     "sbMetadataCrashTracker::Init: MUST NOT INIT OFF OF MAIN THREAD!");
-  if (mLock) {
-    return NS_ERROR_ALREADY_INITIALIZED;
-  }
   nsresult rv = NS_OK;
-
-  mLock = nsAutoLock::NewLock(
-      "sbMetadataCrashTracker file lock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   // Set up a map to track file URLs while logging
   PRBool success = mURLToIndexMap.Init(DEFAULT_MAP_SIZE);
@@ -124,7 +114,7 @@ nsresult sbMetadataCrashTracker::Init()
   }
   
   // Get the file we will use for logging
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   
   rv = GetProfileFile(NS_LITERAL_STRING("metadata-io.log"), 
                       getter_AddRefs(mLogFile));
@@ -158,7 +148,7 @@ nsresult sbMetadataCrashTracker::StartLog()
   nsresult rv = NS_OK;
 
   // Open a new log file
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   nsCOMPtr<nsIFileOutputStream> fileStream =
           do_CreateInstance("@mozilla.org/network/file-output-stream;1", &rv);
@@ -179,7 +169,7 @@ nsresult sbMetadataCrashTracker::ResetLog()
 {
   nsresult rv = NS_OK;
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   
   if (mOutputStream) {
     mOutputStream->Close();
@@ -204,7 +194,7 @@ sbMetadataCrashTracker::LogURLBegin(const nsACString& aURL)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   
   // Rather than log the URL for both begin and end we
   // assign each URL a number.  
@@ -247,7 +237,7 @@ sbMetadataCrashTracker::LogURLEnd(const nsACString& aURL)
   NS_ENSURE_STATE(mOutputStream);
   nsresult rv = NS_OK;
   
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   
   // Look up the index of this URL
   PRUint32 index = 0;

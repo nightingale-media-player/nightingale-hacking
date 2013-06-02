@@ -46,6 +46,16 @@
 
 #include <gst/gst.h>
 
+
+#define SB_GSTREAMER_PIPELINE_CID                                             \
+{ /* 99793010-6a7c-447e-9a50-6162a5fa3875 */                                  \
+	0x99793010,                                                               \
+	0x6A7C,                                                                   \
+	0x447E,                                                                   \
+	{ 0x9A, 0x50, 0x61, 0x62, 0xA5, 0xFA, 0x38, 0x75 }                        \
+}
+
+
 class sbGStreamerPipeline :
     public sbGStreamerMessageHandler,
     public sbIGStreamerPipeline,

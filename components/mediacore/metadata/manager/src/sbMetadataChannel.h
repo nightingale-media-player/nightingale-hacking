@@ -39,6 +39,7 @@
 #include <nsIChannelEventSink.h>
 #include <nsIInterfaceRequestor.h>
 #include <nsCOMPtr.h>
+#include <nsIAsyncVerifyRedirectCallback.h>
 #include "sbIMetadataChannel.h"
 #include <map>
 
