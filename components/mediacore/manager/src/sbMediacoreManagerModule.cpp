@@ -34,69 +34,40 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbMediacoreManager.h"
 #include "sbMediacoreTypeSniffer.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreManager);
+NS_DEFINE_NAMED_CID(SB_MEDIACOREMANAGER_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediacoreTypeSniffer, Init);
+NS_DEFINE_NAMED_CID(SB_MEDIACORETYPESNIFFER_CID);
 
-// Registration functions for becoming a startup observer
-static NS_METHOD
-sbMediacoreManagerRegisterSelf(nsIComponentManager* aCompMgr,
-                               nsIFile* aPath,
-                               const char* registryLocation,
-                               const char* componentType,
-                               const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->
-         AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SB_MEDIACOREMANAGER_DESCRIPTION,
-                          "service," SB_MEDIACOREMANAGER_CONTRACTID,
-                          PR_TRUE, PR_TRUE, nsnull);
-  return rv;
-}
-
-static NS_METHOD
-sbMediacoreManagerUnregisterSelf(nsIComponentManager* aCompMgr,
-                                 nsIFile* aPath,
-                                 const char* registryLocation,
-                                 const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SB_MEDIACOREMANAGER_DESCRIPTION,
-                                            PR_TRUE);
-
-  return rv;
-}
-
-static nsModuleComponentInfo sbMediacoreManagerComponents[] =
-{
-  {
-    SB_MEDIACOREMANAGER_CLASSNAME,
-    SB_MEDIACOREMANAGER_CID,
-    SB_MEDIACOREMANAGER_CONTRACTID,
-    sbMediacoreManagerConstructor,
-    sbMediacoreManagerRegisterSelf,
-    sbMediacoreManagerUnregisterSelf
-  },
-  {
-    SB_MEDIACORETYPESNIFFER_CLASSNAME,
-    SB_MEDIACORETYPESNIFFER_CID,
-    SB_MEDIACORETYPESNIFFER_CONTRACTID,
-    sbMediacoreTypeSnifferConstructor
-  }
+static const mozilla::Module::CIDEntry kSongbirdMediacoreManagerCIDs[] = {
+  { &kSB_MEDIACOREMANAGER_CID, false, NULL, sbMediacoreManagerConstructor },
+  { &kSB_MEDIACORETYPESNIFFER_CID, false, NULL, sbMediacoreTypeSnifferConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdMediacoreManager, sbMediacoreManagerComponents)
+static const mozilla::Module::ContractIDEntry kSongbirdMediacoreManagerContracts[] = {
+  { SB_MEDIACOREMANAGER_CONTRACTID, &kSB_MEDIACOREMANAGER_CID },
+  { SB_MEDIACORETYPESNIFFER_CONTRACTID, &kSB_MEDIACORETYPESNIFFER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kSongbirdMediacoreManagerCategoroes[] = {
+  { SB_MEDIACOREMANAGER_CLASSNAME, "startup", SB_MEDIACOREMANAGER_CONTRACTID },
+  { SB_MEDIACORETYPESNIFFER_CLASSNAME, "startup", SB_MEDIACORETYPESNIFFER_CLASSNAME },
+  { NULL }
+};
+
+static const mozilla::Module kSongbirdMediacoreManagerModule = {
+  mozilla::Module::kVersion,
+  kSongbirdMediacoreManagerCIDs,
+  kSongbirdMediacoreManagerContracts,
+  kSongbirdMediacoreManagerCategoroes
+};
+
+
+NSMODULE_DEFN(sbMediacoreManagerComponents) = &kSongbirdMediacoreManagerModule;
