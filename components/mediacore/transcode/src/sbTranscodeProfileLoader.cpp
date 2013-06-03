@@ -175,19 +175,19 @@ sbTranscodeProfileLoader::LoadProfileInternal()
         rv = mProfile->SetType(type);
         NS_ENSURE_SUCCESS(rv, rv);
       } else if (localName.EqualsLiteral("description")) {
-        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
-        if (dom3Node) {
+        nsCOMPtr<nsIDOMNode> domNode = do_QueryInterface(childNode);
+        if (domNode) {
           nsString textContent;
-          rv = dom3Node->GetTextContent(textContent);
+          rv = domNode->GetTextContent(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
           rv = mProfile->SetDescription(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
         }
       } else if (localName.EqualsLiteral("priority")) {
-        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
-        if (dom3Node) {
+        nsCOMPtr<nsIDOMNode> domNode = do_QueryInterface(childNode);
+        if (domNode) {
           nsString textContent;
-          rv = dom3Node->GetTextContent(textContent);
+          rv = domNode->GetTextContent(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
           PRInt32 priority = textContent.ToInteger(&rv);
           NS_ENSURE_SUCCESS(rv, rv);
@@ -211,19 +211,19 @@ sbTranscodeProfileLoader::LoadProfileInternal()
           }
         }
       } else if (localName.EqualsLiteral("id")) {
-        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
-        if (dom3Node) {
+        nsCOMPtr<nsIDOMNode> domNode = do_QueryInterface(childNode);
+        if (domNode) {
           nsString textContent;
-          rv = dom3Node->GetTextContent(textContent);
+          rv = domNode->GetTextContent(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
           rv = mProfile->SetId(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
         }
       } else if (localName.EqualsLiteral("extension")) {
-        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
-        if (dom3Node) {
+        nsCOMPtr<nsIDOMNode> domNode = do_QueryInterface(childNode);
+        if (domNode) {
           nsString textContent;
-          rv = dom3Node->GetTextContent(textContent);
+          rv = domNode->GetTextContent(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
           rv = mProfile->SetFileExtension(NS_ConvertUTF16toUTF8(textContent));
           NS_ENSURE_SUCCESS(rv, rv);
@@ -255,11 +255,11 @@ sbTranscodeProfileLoader::GetType(nsIDOMNode* aTypeNode, PRUint32* _retval)
 
   nsresult rv;
 
-  nsCOMPtr<nsIDOM3Node> dom3node = do_QueryInterface(aTypeNode, &rv);
+  nsCOMPtr<nsIDOMNode> domNode = do_QueryInterface(aTypeNode, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString type;
-  rv = dom3node->GetTextContent(type);
+  rv = domNode->GetTextContent(type);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (type.EqualsLiteral("audio")) {
@@ -454,11 +454,11 @@ sbTranscodeProfileLoader::ProcessContainer(sbTranscodeProfile* aProfile,
       NS_ENSURE_SUCCESS(rv, rv);
 
       if (localName.EqualsLiteral("type")) {
-        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode, &rv);
+        nsCOMPtr<nsIDOMNode> domNode = do_QueryInterface(childNode, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsString textContent;
-        rv = dom3Node->GetTextContent(textContent);
+        rv = domNode->GetTextContent(textContent);
         NS_ENSURE_SUCCESS(rv, rv);
 
         switch (aContainerType) {
