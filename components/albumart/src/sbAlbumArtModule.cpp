@@ -54,7 +54,7 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsServiceManagerUtils.h>
 
 
@@ -64,69 +64,7 @@
 //
 //------------------------------------------------------------------------------
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbAlbumArtService)
-
-
-/**
- * Register the Songbird album art service component.
- */
-
-static NS_METHOD
-sbAlbumArtServiceRegister(nsIComponentManager*         aCompMgr,
-                          nsIFile*                     aPath,
-                          const char*                  aLoaderStr,
-                          const char*                  aType,
-                          const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the app-startup category.
-  rv = categoryManager->AddCategoryEntry
-                          ("app-startup",
-                           SB_ALBUMARTSERVICE_CLASSNAME,
-                           "service," SB_ALBUMARTSERVICE_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Unregister the Songbird album art service component.
- */
-
-static NS_METHOD
-sbAlbumArtServiceUnregister(nsIComponentManager*         aCompMgr,
-                            nsIFile*                     aPath,
-                            const char*                  aLoaderStr,
-                            const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the app-startup category.
-  rv = categoryManager->DeleteCategoryEntry("app-startup",
-                                            SB_ALBUMARTSERVICE_CLASSNAME,
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbAlbumArtService);
 
 //------------------------------------------------------------------------------
 //
@@ -135,7 +73,7 @@ sbAlbumArtServiceUnregister(nsIComponentManager*         aCompMgr,
 //------------------------------------------------------------------------------
 
 // Construct the sbAlbumArtScanner object and call its Initialize method.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtScanner, Initialize)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtScanner, Initialize);
 
 
 //------------------------------------------------------------------------------
@@ -145,7 +83,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtScanner, Initialize)
 //------------------------------------------------------------------------------
 
 // Construct the sbAlbumArtFetcherSet object and call its Initialize method.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtFetcherSet, Initialize)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtFetcherSet, Initialize);
 
 
 //------------------------------------------------------------------------------
@@ -155,68 +93,8 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtFetcherSet, Initialize)
 //------------------------------------------------------------------------------
 
 // Construct the sbFileAlbumArtFetcher object and call its Initialize method.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileAlbumArtFetcher, Initialize)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileAlbumArtFetcher, Initialize);
 
-
-/**
- * Register the Songbird local file album art component.
- */
-
-static NS_METHOD
-sbFileAlbumArtFetcherRegister(nsIComponentManager*         aCompMgr,
-                              nsIFile*                     aPath,
-                              const char*                  aLoaderStr,
-                              const char*                  aType,
-                              const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the album art fetcher category.
-  rv = categoryManager->AddCategoryEntry
-                          (SB_ALBUM_ART_FETCHER_CATEGORY,
-                           SB_FILEALBUMARTFETCHER_CLASSNAME,
-                           SB_FILEALBUMARTFETCHER_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Unregister the Songbird local file album art component.
- */
-
-static NS_METHOD
-sbFileAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
-                                nsIFile*                     aPath,
-                                const char*                  aLoaderStr,
-                                const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the album art fetcher category.
-  rv = categoryManager->DeleteCategoryEntry(SB_ALBUM_ART_FETCHER_CATEGORY,
-                                            SB_FILEALBUMARTFETCHER_CLASSNAME,
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
 
 //------------------------------------------------------------------------------
 //
@@ -226,69 +104,7 @@ sbFileAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
 
 // Construct the sbMetadataAlbumArtFetcher object and call its Initialize
 // method.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataAlbumArtFetcher, Initialize)
-
-
-/**
- * Register the Songbird metadata album art component.
- */
-
-static NS_METHOD
-sbMetadataAlbumArtFetcherRegister(nsIComponentManager*         aCompMgr,
-                                  nsIFile*                     aPath,
-                                  const char*                  aLoaderStr,
-                                  const char*                  aType,
-                                  const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the album art fetcher category.
-  rv = categoryManager->AddCategoryEntry
-                          (SB_ALBUM_ART_FETCHER_CATEGORY,
-                           SB_METADATAALBUMARTFETCHER_CLASSNAME,
-                           SB_METADATAALBUMARTFETCHER_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Unregister the Songbird metadata album art component.
- */
-
-static NS_METHOD
-sbMetadataAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
-                                    nsIFile*                     aPath,
-                                    const char*                  aLoaderStr,
-                                    const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the album art fetcher category.
-  rv = categoryManager->DeleteCategoryEntry
-                          (SB_ALBUM_ART_FETCHER_CATEGORY,
-                           SB_METADATAALBUMARTFETCHER_CLASSNAME,
-                           PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataAlbumArtFetcher, Initialize);
 
 
 //------------------------------------------------------------------------------
@@ -297,55 +113,40 @@ sbMetadataAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
 //
 //------------------------------------------------------------------------------
 
-// Module component information.
-static nsModuleComponentInfo sbAlbumArtComponents[] =
-{
-  // Album art service component info.
-  {
-    SB_ALBUMARTSERVICE_CLASSNAME,
-    SB_ALBUMARTSERVICE_CID,
-    SB_ALBUMARTSERVICE_CONTRACTID,
-    sbAlbumArtServiceConstructor,
-    sbAlbumArtServiceRegister,
-    sbAlbumArtServiceUnregister
-  },
+NS_DEFINE_NAMED_CID(SB_ALBUMARTSERVICE_CID);
+NS_DEFINE_NAMED_CID(SB_ALBUMARTSCANNER_CID);
+NS_DEFINE_NAMED_CID(SB_ALBUMARTFETCHERSET_CID);
+NS_DEFINE_NAMED_CID(SB_FILEALBUMARTFETCHER_CID);
+NS_DEFINE_NAMED_CID(SB_METADATAALBUMARTFETCHER_CID);
 
-  // Album art scanner component info.
-  {
-    SB_ALBUMARTSCANNER_CLASSNAME,
-    SB_ALBUMARTSCANNER_CID,
-    SB_ALBUMARTSCANNER_CONTRACTID,
-    sbAlbumArtScannerConstructor
-  },
 
-  // Album art fetcher set component info.
-  {
-    SB_ALBUMARTFETCHERSET_CLASSNAME,
-    SB_ALBUMARTFETCHERSET_CID,
-    SB_ALBUMARTFETCHERSET_CONTRACTID,
-    sbAlbumArtFetcherSetConstructor
-  },
-
-  // Local file album art fetcher component info.
-  {
-    SB_FILEALBUMARTFETCHER_CLASSNAME,
-    SB_FILEALBUMARTFETCHER_CID,
-    SB_FILEALBUMARTFETCHER_CONTRACTID,
-    sbFileAlbumArtFetcherConstructor,
-    sbFileAlbumArtFetcherRegister,
-    sbFileAlbumArtFetcherUnregister
-  },
-  // Metadata album art fetcher component info.
-  {
-    SB_METADATAALBUMARTFETCHER_CLASSNAME,
-    SB_METADATAALBUMARTFETCHER_CID,
-    SB_METADATAALBUMARTFETCHER_CONTRACTID,
-    sbMetadataAlbumArtFetcherConstructor,
-    sbMetadataAlbumArtFetcherRegister,
-    sbMetadataAlbumArtFetcherUnregister
-  }
+static const mozilla::Module::CIDEntry kAlbumArtCIDs[] = {
+  { &kSB_ALBUMARTSERVICE_CID, false, NULL, sbAlbumArtServiceConstructor },
+  { &kSB_ALBUMARTSCANNER_CID, false, NULL, sbAlbumArtScannerConstructor },
+  { &kSB_ALBUMARTFETCHERSET_CID, false, NULL, sbFileAlbumArtFetcherConstructor },
+  { &kSB_FILEALBUMARTFETCHER_CID, false, NULL, sbFileAlbumArtFetcherConstructor },
+  { &kSB_METADATAALBUMARTFETCHER_CID, false, NULL, sbMetadataAlbumArtFetcherConstructor },
+  { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbAlbumArtModule, sbAlbumArtComponents)
+static const mozilla::Module::ContractIDEntry kAlbumArtContacts[] = {
+  { SB_ALBUMARTSERVICE_CONTRACTID, &kSB_ALBUMARTSERVICE_CID },
+  { SB_ALBUMARTSCANNER_CONTRACTID, &kSB_ALBUMARTSCANNER_CID },
+  { SB_ALBUMARTFETCHERSET_CONTRACTID, &kSB_ALBUMARTFETCHERSET_CID },
+  { SB_FILEALBUMARTFETCHER_CONTRACTID, &kSB_FILEALBUMARTFETCHER_CID },
+  { SB_METADATAALBUMARTFETCHER_CONTRACTID, &kSB_METADATAALBUMARTFETCHER_CID },
+};
 
+static const mozilla::Module::CategoryEntry kAlbumArtCategories[] = {
+  { "app-startup", SB_ALBUMARTSERVICE_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kAlbumArtModule = {
+  mozilla::Module::kVersion,
+  kAlbumArtCIDs,
+  kAlbumArtContacts,
+  kAlbumArtCategories
+};
+
+NSMODULE_DEFN(sbAlbumArtComponents) = &kAlbumArtModule;
