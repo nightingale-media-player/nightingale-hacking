@@ -46,7 +46,8 @@
 #include <prmon.h>
 #include <prlog.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsRefPtrHashtable.h>
@@ -180,8 +181,8 @@ private:
                                   T* aData,
                                   void* aArray);
 
-  PRMonitor* m_pThreadMonitor;
-  PRMonitor* m_CollationBuffersMapMonitor;
+  mozilla::ReentrantMonitor m_pThreadMonitor;
+  mozilla::ReentrantMonitor m_CollationBuffersMapMonitor;
 
   PRBool m_AttemptShutdownOnDestruction;
   PRBool m_IsShutDown;
@@ -237,14 +238,6 @@ public:
   }
 
   ~QueryProcessorQueue() {
-    if(m_pHandleLock) {
-      PR_DestroyLock(m_pHandleLock);
-    }
-
-    if(m_pQueueMonitor) {
-      nsAutoMonitor::DestroyMonitor(m_pQueueMonitor);
-    }
-
     MOZ_COUNT_DTOR(QueryProcessorQueue);
   }
 
@@ -253,12 +246,6 @@ public:
                 sqlite3 *pHandle) {
     NS_ENSURE_ARG_POINTER(pEngine);
     NS_ENSURE_ARG_POINTER(pHandle);
-
-    m_pHandleLock = PR_NewLock();
-    NS_ENSURE_TRUE(m_pHandleLock, NS_ERROR_OUT_OF_MEMORY);
-
-    m_pQueueMonitor = nsAutoMonitor::NewMonitor("QueryProcessorQueue.m_pQueueMonitor");
-    NS_ENSURE_TRUE(m_pQueueMonitor, NS_ERROR_OUT_OF_MEMORY);
 
     m_pEngine = pEngine;
     m_pHandle = pHandle;
@@ -285,7 +272,7 @@ public:
                             PRBool bPushToFront = PR_FALSE) {
     NS_ENSURE_ARG_POINTER(pQuery);
 
-    nsAutoMonitor mon(m_pQueueMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
 
     CDatabaseQuery **p = nsnull;
 
@@ -303,7 +290,7 @@ public:
   nsresult PopQueryFromQueue(CDatabaseQuery ** ppQuery) {
     NS_ENSURE_ARG_POINTER(ppQuery);
 
-    nsAutoMonitor mon(m_pQueueMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
 
     if(m_Queue.Length()) {
       *ppQuery = m_Queue[0];
@@ -318,14 +305,14 @@ public:
   nsresult GetQueueSize(PRUint32 &aSize) {
     aSize = 0;
     
-    nsAutoMonitor mon(m_pQueueMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
     aSize = m_Queue.Length();
 
     return NS_OK;
   }
 
   nsresult ClearQueue() {
-    nsAutoMonitor mon(m_pQueueMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
 
     queryqueue_t::size_type current = 0;
     queryqueue_t::size_type length = m_Queue.Length();
@@ -342,7 +329,7 @@ public:
   }
 
   nsresult RunQueue() {
-    nsAutoMonitor mon(m_pQueueMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
 
     // If the query processor for this queue isn't running right now
     // start running it on the threadpool.
@@ -361,7 +348,7 @@ public:
     NS_ENSURE_TRUE(m_pEngine, NS_ERROR_NOT_INITIALIZED);
     m_Shutdown = PR_TRUE;
     
-    nsAutoMonitor mon(m_pQueueMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
     return mon.NotifyAll();
   }
 
@@ -385,10 +372,10 @@ protected:
   PRPackedBool  m_Shutdown;
   PRPackedBool  m_Running;
 
-  PRLock *      m_pHandleLock;
+  mozilla::Mutex m_pHandleLock;
   sqlite3*      m_pHandle;
 
-  PRMonitor *   m_pQueueMonitor;
+  mozilla::ReentrantMonitor m_pQueueMonitor;
   queryqueue_t  m_Queue;
 
   PRUint32      m_AnalyzeCount;

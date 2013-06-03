@@ -29,46 +29,44 @@
 * \brief Songbird Database Engine Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 
 #include "DatabaseQuery.h"
 #include "DatabaseResult.h"
 #include "DatabaseEngine.h"
 
-NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(CDatabaseEngine, CDatabaseEngine::GetSingleton)
+NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(CDatabaseEngine, CDatabaseEngine::GetSingleton);
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(CDatabaseQuery, Init)
-NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(CDatabaseQuery, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult);
 
-static nsModuleComponentInfo sbDatabaseEngine[] =
-{
-  {
-    SONGBIRD_DATABASEENGINE_CLASSNAME,
-    SONGBIRD_DATABASEENGINE_CID,
-    SONGBIRD_DATABASEENGINE_CONTRACTID,
-    CDatabaseEngineConstructor
-  },
+NS_DEFINE_NAMED_CID(SONGBIRD_DATABASEENGINE_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_DATABASEQUERY_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_DATABASERESULT_CID);
 
-  {
-    SONGBIRD_DATABASEQUERY_CLASSNAME,
-    SONGBIRD_DATABASEQUERY_CID,
-    SONGBIRD_DATABASEQUERY_CONTRACTID,
-    CDatabaseQueryConstructor
-  },
-
-  {
-    SONGBIRD_DATABASERESULT_CLASSNAME,
-    SONGBIRD_DATABASERESULT_CID,
-    SONGBIRD_DATABASERESULT_CONTRACTID,
-    CDatabaseResultConstructor
-  }
+static const mozilla::Module::CIDEntry kDatabaseEngineCIDs[] = {
+  { &kSONGBIRD_DATABASEENGINE_CID, false, NULL, CDatabaseEngineConstructor },
+  { &kSONGBIRD_DATABASEQUERY_CID, false, NULL, CDatabaseQueryConstructor },
+  { &kSONGBIRD_DATABASERESULT_CID, false, NULL, CDatabaseResultConstructor },
+  { NULL }
 };
 
-// When everything else shuts down, delete it.
-static void sbDatabaseEngineDestructor(nsIModule* me)
-{
-  NS_IF_RELEASE(gEngine);
-  gEngine = nsnull;
-}
+static const mozilla::Module::ContractIDEntry kDatabaseEngineContracts[] = {
+  { SONGBIRD_DATABASEENGINE_CONTRACTID, &kSONGBIRD_DATABASEENGINE_CID },
+  { SONGBIRD_DATABASEQUERY_CONTRACTID, &kSONGBIRD_DATABASEQUERY_CID },
+  { SONGBIRD_DATABASERESULT_CONTRACTID, &kSONGBIRD_DATABASERESULT_CID },
+  { NULL }
+};
 
-NS_IMPL_NSGETMODULE_WITH_DTOR(SongbirdDatabaseEngineComponent, sbDatabaseEngine, sbDatabaseEngineDestructor)
+static const mozilla::Module::CategoryEntry kDatabaseEngineCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kDatabaseEngineModule = {
+  mozilla::Module::kVersion,
+  kDatabaseEngineCIDs,
+  kDatabaseEngineContracts,
+  kDatabaseEngineCategories
+};
+
+NSMODULE_DEFN(sbDatabaseEngine) = &kDatabaseEngineModule;

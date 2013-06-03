@@ -400,7 +400,7 @@ void CDatabaseResult::RebuildColumnResolveMap()
 
       PRUint32 nSize =  m_ColumnNames.size();
       for(PRUint32 i = 0; i < nSize; i++) {
-        m_ColumnResolveMap.insert(std::make_pair<nsString, PRUint32>(m_ColumnNames[i], i));
+        m_ColumnResolveMap.insert(std::make_pair(m_ColumnNames[i], i));
       }
     }
     
@@ -412,7 +412,7 @@ void CDatabaseResult::RebuildColumnResolveMap()
 
     PRUint32 nSize =  m_ColumnNames.size();
     for(PRUint32 i = 0; i < nSize; i++) {
-      m_ColumnResolveMap.insert(std::make_pair<nsString, PRUint32>(m_ColumnNames[i], i));
+      m_ColumnResolveMap.insert(std::make_pair(m_ColumnNames[i], i));
     }
   }
 }
