@@ -57,8 +57,6 @@
 #include <sbIFileMetadataService.h>
 #include <sbIAlbumArtService.h>
 
-#include "sbImageTools.h"
-
 #define BUFFER_CHUNK_SIZE 1024 
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodeAlbumArt,
@@ -87,6 +85,10 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
 
   mImageFormats = aImageFormats;
   mItem = aItem;
+
+  nsCOMPtr<imgITools> imgtool = do_CreateInstance("@mozilla.org/image/tools;1",
+                                                  &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
           imageSpec);
@@ -175,10 +177,10 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
 
   rv = bufferedInputStream->Init(mInputStream, BUFFER_CHUNK_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = sbImageTools::DecodeImageData(bufferedInputStream,
-                                     mImageMimeType,
-                                     getter_AddRefs(mImgContainer));
+
+  rv = imgtool->DecodeImageData(bufferedInputStream,
+                                mImageMimeType,
+                                getter_AddRefs(mImgContainer));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mImgContainer->GetHeight(&mImageHeight);
