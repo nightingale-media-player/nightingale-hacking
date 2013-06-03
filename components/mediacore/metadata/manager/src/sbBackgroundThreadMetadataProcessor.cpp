@@ -159,7 +159,7 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
         if (rv == NS_ERROR_NOT_AVAILABLE) {
           TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Thread waiting", 
                 this));
-          mozilla::ReentrantMonitorAutoExit monitor(mMonitor);
+          rv = monitor.Wait();
           NS_ASSERTION(NS_SUCCEEDED(rv), 
             "sbBackgroundThreadMetadataProcessor::Run monitor wait failed");
 
