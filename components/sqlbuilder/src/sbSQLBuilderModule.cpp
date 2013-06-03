@@ -24,7 +24,7 @@
 //
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 #include "sbSQLBuilderBase.h"
 #include "sbSQLSelectBuilder.h"
 #include "sbSQLInsertBuilder.h"
@@ -32,38 +32,41 @@
 #include "sbSQLDeleteBuilder.h"
 #include "sbSQLBuilderCID.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLInsertBuilder)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLUpdateBuilder)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLDeleteBuilder)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLInsertBuilder);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLUpdateBuilder);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLDeleteBuilder);
 
-static const nsModuleComponentInfo components[] =
-{
-  {
-    "SQLBuilder for SELECT statements",
-    SB_SQLBUILDER_SELECT_CID,
-    SB_SQLBUILDER_SELECT_CONTRACTID,
-    sbSQLSelectBuilderConstructor
-  },
-  {
-    "SQLBuilder for INSERT statements",
-    SB_SQLBUILDER_INSERT_CID,
-    SB_SQLBUILDER_INSERT_CONTRACTID,
-    sbSQLInsertBuilderConstructor
-  },
-  {
-    "SQLBuilder for UPDATE statements",
-    SB_SQLBUILDER_UPDATE_CID,
-    SB_SQLBUILDER_UPDATE_CONTRACTID,
-    sbSQLUpdateBuilderConstructor
-  },
-  {
-    "SQLBuilder for DELETE statements",
-    SB_SQLBUILDER_DELETE_CID,
-    SB_SQLBUILDER_DELETE_CONTRACTID,
-    sbSQLDeleteBuilderConstructor
-  }
+NS_DEFINE_NAMED_CID(SB_SQLBUILDER_SELECT_CID);
+NS_DEFINE_NAMED_CID(SB_SQLBUILDER_INSERT_CID);
+NS_DEFINE_NAMED_CID(SB_SQLBUILDER_DELETE_CID);
+NS_DEFINE_NAMED_CID(SB_SQLBUILDER_UPDATE_CID);
+
+static const mozilla::Module::CIDEntry kSQLStatementBuilderCIDs[] = {
+  { &kSB_SQLBUILDER_SELECT_CID, false, NULL, sbSQLSelectBuilderConstructor }, 
+  { &kSB_SQLBUILDER_INSERT_CID, false, NULL, sbSQLInsertBuilderConstructor }, 
+  { &kSB_SQLBUILDER_UPDATE_CID, false, NULL, sbSQLUpdateBuilderConstructor }, 
+  { &kSB_SQLBUILDER_DELETE_CID, false, NULL, sbSQLDeleteBuilderConstructor }, 
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdSQLStatementBuilderModule, components)
+static const mozilla::Module::ContractIDEntry kSQLStatementBuilderContracts[] = {
+  { SB_SQLBUILDER_SELECT_CONTRACTID, &kSB_SQLBUILDER_SELECT_CID },
+  { SB_SQLBUILDER_INSERT_CONTRACTID, &kSB_SQLBUILDER_INSERT_CID },
+  { SB_SQLBUILDER_UPDATE_CONTRACTID, &kSB_SQLBUILDER_UPDATE_CID },
+  { SB_SQLBUILDER_DELETE_CONTRACTID, &kSB_SQLBUILDER_DELETE_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kSQLStatementBuilderCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kSQLStatementBuilderModule = {
+  mozilla::Module::kVersion,
+  kSQLStatementBuilderCIDs,
+  kSQLStatementBuilderContracts,
+  kSQLStatementBuilderCategories
+};
+
+NSMODULE_DEFN(sbSQLStatementBuilder) = &kSQLStatementBuilderModule;

@@ -45,6 +45,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/sqlbuilder/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 endif
