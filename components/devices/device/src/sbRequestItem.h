@@ -137,7 +137,7 @@ public:
   static sbRequestItem * New(PRUint32 aType, bool aIsCountable = false)
   {
     sbRequestItem * requestItem;
-    NS_NEWXPCOM(requestItem, sbRequestItem);
+    requestItem = new sbRequestItem;
     if (requestItem) {
       requestItem->SetType(aType);
       requestItem->SetIsCountable(aIsCountable);

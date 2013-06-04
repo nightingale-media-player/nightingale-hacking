@@ -39,7 +39,7 @@
 
 #include <nsITimer.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIFile.h>
 #include <nsTArray.h>
 #include <nsIMutableArray.h>
@@ -99,12 +99,6 @@ public:
   NS_DECL_SBIJOBPROGRESSLISTENER
 
   nsresult Init();
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
 
 protected:
   typedef std::set<nsString, sbStringIgnoreCaseCompare> sbStringSet;

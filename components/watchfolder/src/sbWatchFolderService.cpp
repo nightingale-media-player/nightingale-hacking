@@ -1364,35 +1364,3 @@ sbWatchFolderService::OnJobProgress(sbIJobProgress *aJobProgress)
 
   return NS_OK;
 }
-
-//------------------------------------------------------------------------------
-// XPCOM Startup Registration
-
-/* static */ NS_METHOD
-sbWatchFolderService::RegisterSelf(nsIComponentManager *aCompMgr,
-                                   nsIFile *aPath,
-                                   const char *aLoaderStr,
-                                   const char *aType,
-                                   const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> catMgr =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_WATCHFOLDERSERVICE_CLASSNAME,
-                                "service,"
-                                SONGBIRD_WATCHFOLDERSERVICE_CONTRACTID,
-                                PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-

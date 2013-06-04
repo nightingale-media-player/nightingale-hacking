@@ -33,7 +33,8 @@
 #include <list>
 
 // Mozilla includes
-//#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 
@@ -303,8 +304,7 @@ public:
    * This returns whether the RequestThreadQueue is running currently.
    */
   bool IsHandlingRequests() const {
-    NS_ENSURE_TRUE(mLock, false);
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
 
     return mIsHandlingRequests;
   }
@@ -315,7 +315,7 @@ public:
    */
   bool IsRequestAbortActive() const
   {
-    nsAutoMonitor monitor(mStopWaitMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(mStopWaitMonitor);
     return mAbortRequests;
   }
 
@@ -326,7 +326,7 @@ public:
    * stop request has been been processed.
    * Care should be taken when using this on the main thread.
    */
-  PRMonitor * GetStopWaitMonitor() const
+  mozilla::ReentrantMonitor GetStopWaitMonitor() const
   {
     return mStopWaitMonitor;
   }
@@ -366,7 +366,7 @@ protected:
    * This protects the state of the sbRequestThreadProc. This lock needs
    * to be acquired before changing any data member
    */
-  PRLock * mLock;
+  mozilla::Mutex mLock;
 
   /**
    * Tracks batch depth for begin and end calls
@@ -376,7 +376,7 @@ protected:
   /**
    * Monitor to use to signal process stopping to external sources.
    */
-  PRMonitor* mStopWaitMonitor;
+  const mozilla::ReentrantMonitor mStopWaitMonitor;
 
 protected:
   /**
@@ -403,11 +403,11 @@ protected:
    */
   virtual void CompleteRequests()
   {
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     NS_ASSERTION(mIsHandlingRequests,
                  "CompleteRequests called while no requests pending");
     mIsHandlingRequests = false;
-    nsAutoMonitor monitor(mStopWaitMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(mStopWaitMonitor);
     mAbortRequests = false;
   }
 
@@ -486,7 +486,7 @@ private:
    */
   bool StartRequests()
   {
-    nsAutoLock lock(mLock);
+    mozilla::MutexAutoLock lock(mLock);
     const bool isHandlingRequests = mIsHandlingRequests;
     mIsHandlingRequests = true;
     return isHandlingRequests;

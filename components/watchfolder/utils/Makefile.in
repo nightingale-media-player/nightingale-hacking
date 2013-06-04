@@ -38,6 +38,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/watchfolder/public \
                      $(topsrcdir)/components/include \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 STATIC_LIB = sbWatchFolderUtils
 
 include $(topsrcdir)/build/rules.mk

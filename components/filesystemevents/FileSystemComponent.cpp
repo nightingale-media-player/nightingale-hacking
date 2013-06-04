@@ -24,47 +24,65 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbFileSystemCID.h"
 #include "sbFileSystemNode.h"
 
 #if defined(XP_WIN) 
 #include "win32/sbWin32FileSystemWatcher.h"
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbWin32FileSystemWatcher)
-#elif defined(XP_MACOSX)
-#include "macosx/sbMacFileSystemWatcher.h"
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemWatcher)
-#else
-#include "linux/sbLinuxFileSystemWatcher.h"
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLinuxFileSystemWatcher)
-#endif
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbWin32FileSystemWatcher);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMWATCHER_CID);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMNODE_CID);
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode)
-
-
-static nsModuleComponentInfo sbFileSystem[] =
-{
-  {
-    SONGBIRD_FILESYSTEMWATCHER_CLASSNAME,
-    SONGBIRD_FILESYSTEMWATCHER_CID,
-    SONGBIRD_FILESYSTEMWATCHER_CONTRACTID,
-#if defined(XP_WIN)
-    sbWin32FileSystemWatcherConstructor
-#elif defined(XP_MACOSX)
-    sbMacFileSystemWatcherConstructor
-#else
-    sbLinuxFileSystemWatcherConstructor
-#endif
-  },
-
-  {
-    SONGBIRD_FILESYSTEMNODE_CLASSNAME,
-    SONGBIRD_FILESYSTEMNODE_CID,
-    nsnull,
-    sbFileSystemNodeConstructor
-  },
+static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
+  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbWin32FileSystemWatcherConstructor },
+  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
+  { NULL }
 };
 
+#elif defined(XP_MACOSX)
+#include "macosx/sbMacFileSystemWatcher.h"
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemWatcher);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMWATCHER_CID);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMNODE_CID);
 
-NS_IMPL_NSGETMODULE(SongbirdFileSystemComponent, sbFileSystem)
+static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
+  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbMacFileSystemWatcherConstructor },
+  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
+  { NULL }
+};
 
+#else
+#include "linux/sbLinuxFileSystemWatcher.h"
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLinuxFileSystemWatcher);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMWATCHER_CID);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMNODE_CID);
+
+static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
+  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbLinuxFileSystemWatcherConstructor },
+  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
+  { NULL }
+};
+#endif
+
+static const mozilla::Module::ContractIDEntry kFileSystemContracts[] = {
+  { SONGBIRD_FILESYSTEMWATCHER_CONTRACTID, &kSONGBIRD_FILESYSTEMWATCHER_CID },
+  { nsnull, &kSONGBIRD_FILESYSTEMNODE_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kFileSystemCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kFileSystemModule = {
+  mozilla::Module::kVersion,
+  kFileSystemCIDs,
+  kFileSystemContracts,
+  kFileSystemCategories
+};
+
+NSMODULE_DEFN(sbFileSystem) = &kFileSystemModule;

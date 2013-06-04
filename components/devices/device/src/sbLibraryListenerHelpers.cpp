@@ -34,7 +34,7 @@
 
 // Mozilla includes
 #include <nsIURI.h>
-
+#include <mozilla/Mutex.h>
 
 // Local includes
 #include "sbBaseDevice.h"
@@ -74,7 +74,7 @@ nsresult sbBaseIgnore::IgnoreMediaItem(sbIMediaItem * aItem) {
   nsresult rv = aItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   PRInt32 itemCount = 0;
   // We don't care if this fails, itemCount is zero in that case which is fine
@@ -96,7 +96,7 @@ PRBool sbBaseIgnore::MediaItemIgnored(sbIMediaItem * aItem) {
   // If ignoring all or ignoring this specific item return PR_TRUE
   if (mIgnoreListenerCounter > 0)
     return PR_TRUE;
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   nsresult rv = aItem->GetGuid(guid);
 
   // If the guid was valid and it's in our ignore list then it's ignored
@@ -109,7 +109,7 @@ nsresult sbBaseIgnore::UnignoreMediaItem(sbIMediaItem * aItem) {
   nsresult rv = aItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   PRInt32 itemCount = 0;
   if (!mIgnored.Get(guid, &itemCount)) {
     // We're out of balance at this point

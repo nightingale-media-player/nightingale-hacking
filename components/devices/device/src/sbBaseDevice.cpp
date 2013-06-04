@@ -44,7 +44,8 @@
 
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
-//#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
@@ -328,7 +329,7 @@ sbBaseDevice::TransferRequest::New(PRUint32 aType,
                                    nsISupports * aData)
 {
   TransferRequest * request;
-  NS_NEWXPCOM(request, TransferRequest);
+  request = new TransferRequest;
   if (request) {
     request->SetType(aType);
     request->item = aItem;
@@ -410,7 +411,9 @@ sbBaseDevice::sbBaseDevice() :
   mSyncType(0),
   mEnsureSpaceChecked(false),
   mConnected(PR_FALSE),
-  mVolumeLock(nsnull)
+  mVolumeLock(nsnull),
+  mStateLock(nsnull),
+  mPreviousStateLock(nsnull)
 {
   mStatus = new sbDeviceStatusHelper(this);
   NS_ENSURE_TRUE(mStatus, /* void */ );
@@ -427,22 +430,9 @@ sbBaseDevice::sbBaseDevice() :
     PRBool success;
   #endif
 
-  mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
-  NS_ASSERTION(mStateLock, "Failed to allocate state lock");
-
-  mPreviousStateLock = nsAutoLock::NewLock(__FILE__ "::mPreviousStateLock");
-  NS_ASSERTION(mPreviousStateLock, "Failed to allocate state lock");
-
-  mPreferenceLock = nsAutoLock::NewLock(__FILE__ "::mPreferenceLock");
-  NS_ASSERTION(mPreferenceLock, "Failed to allocate preference lock");
-
   mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
                               __FILE__"::mConnectLock");
   NS_ASSERTION(mConnectLock, "Failed to allocate connection lock");
-
-  // Create the volume lock.
-  mVolumeLock = nsAutoLock::NewLock("sbBaseDevice::mVolumeLock");
-  NS_ASSERTION(mVolumeLock, "Failed to allocate volume lock");
 
   // Initialize the track source table.
   success = mTrackSourceTable.Init();
@@ -468,23 +458,10 @@ sbBaseDevice::sbBaseDevice() :
 /* virtual */
 sbBaseDevice::~sbBaseDevice()
 {
-  if (mVolumeLock)
-    nsAutoLock::DestroyLock(mVolumeLock);
-  mVolumeLock = nsnull;
-
   mVolumeList.Clear();
   mTrackSourceTable.Clear();
   mVolumeGUIDTable.Clear();
   mVolumeLibraryGUIDTable.Clear();
-
-  if (mPreferenceLock)
-    nsAutoLock::DestroyLock(mPreferenceLock);
-
-  if (mStateLock)
-    nsAutoLock::DestroyLock(mStateLock);
-
-  if (mPreviousStateLock)
-    nsAutoLock::DestroyLock(mPreviousStateLock);
 
   if (mConnectLock)
     PR_DestroyRWLock(mConnectLock);
@@ -832,7 +809,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(downloadJobProgress);
   sbAutoJobCancel autoCancel(cancel);
 
-  PRMonitor * stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
+  mozilla::ReentrantMonitor stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
 
   // Add a device job progress listener.
   nsRefPtr<sbDeviceProgressListener> listener;
@@ -851,7 +828,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(stopWaitMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(stopWaitMonitor);
 
     // Check for abort.
     if (IsRequestAborted()) {
@@ -1226,8 +1203,7 @@ NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
 NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 {
   NS_ENSURE_ARG_POINTER(aIsBusy);
-  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mStateLock);
+  mozilla::MutexAutoLock lock(mStateLock);
   switch (mState) {
     case STATE_IDLE:
     case STATE_CANCEL:
@@ -1247,8 +1223,7 @@ NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
-  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mStateLock);
+  mozilla::MutexAutoLock lock(mStateLock);
   switch(mState) {
     case STATE_IDLE:
     case STATE_CANCEL:
@@ -1270,8 +1245,7 @@ NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 NS_IMETHODIMP sbBaseDevice::GetPreviousState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
-  NS_ENSURE_TRUE(mPreviousStateLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mPreviousStateLock);
+  mozilla::MutexAutoLock lock(mPreviousStateLock);
   *aState = mPreviousState;
   return NS_OK;
 }
@@ -1279,8 +1253,7 @@ NS_IMETHODIMP sbBaseDevice::GetPreviousState(PRUint32 *aState)
 nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
 {
   // set state, checking if it changed
-  NS_ENSURE_TRUE(mPreviousStateLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mPreviousStateLock);
+  mozilla::MutexAutoLock lock(mPreviousStateLock);
   if (mPreviousState != aState) {
     mPreviousState = aState;
   }
@@ -1291,8 +1264,7 @@ nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
-  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mStateLock);
+  mozilla::MutexAutoLock lock(mStateLock);
   *aState = mState;
   return NS_OK;
 }
@@ -1307,8 +1279,7 @@ NS_IMETHODIMP sbBaseDevice::SetState(PRUint32 aState)
 
   // set state, checking if it changed
   {
-    NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
-    nsAutoLock lock(mStateLock);
+    mozilla::MutexAutoLock lock(mStateLock);
 
     // Only allow the cancel state to transition to the idle state.  This
     // prevents the request processing code from changing the state from cancel
@@ -1726,7 +1697,7 @@ sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
   }
   mDefaultLibrary = aDevLib;
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     mDefaultVolume = volume;
   }
 
@@ -2577,7 +2548,7 @@ sbBaseDevice::AddVolume(sbBaseDeviceVolume* aVolume)
   rv = aVolume->GetGUID(volumeGUID);
   NS_ENSURE_SUCCESS(rv, rv);
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     NS_ENSURE_TRUE(mVolumeList.AppendElement(aVolume), NS_ERROR_OUT_OF_MEMORY);
     NS_ENSURE_TRUE(mVolumeGUIDTable.Put(volumeGUID, aVolume),
                    NS_ERROR_OUT_OF_MEMORY);
@@ -2622,7 +2593,7 @@ sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
   rv = aVolume->GetGUID(volumeGUID);
   NS_ENSURE_SUCCESS(rv, rv);
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     mVolumeList.RemoveElement(aVolume);
     mVolumeGUIDTable.Remove(volumeGUID);
     if (!libraryGUID.IsEmpty())
@@ -2668,7 +2639,7 @@ sbBaseDevice::GetVolumeForItem(sbIMediaItem*        aItem,
   // Get the volume from the volume library GUID table.
   nsRefPtr<sbBaseDeviceVolume> volume;
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     PRBool present = mVolumeLibraryGUIDTable.Get(libraryGUID,
                                                  getter_AddRefs(volume));
     NS_ENSURE_TRUE(present, NS_ERROR_NOT_AVAILABLE);
@@ -3080,7 +3051,7 @@ sbBaseDevice::UpdateStatisticsProperties()
   // Get the list of all volumes.
   nsTArray< nsRefPtr<sbBaseDeviceVolume> > volumeList;
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     volumeList = mVolumeList;
   }
 
@@ -3213,7 +3184,7 @@ sbBaseDevice::UpdateVolumeNames()
   // Get the list of all volumes.
   nsTArray< nsRefPtr<sbBaseDeviceVolume> > volumeList;
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     volumeList = mVolumeList;
   }
 
@@ -3276,7 +3247,7 @@ sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
     // Assume first volume is internal and all others are removable.
     PRUint32 volumeIndex;
     {
-      nsAutoLock autoVolumeLock(mVolumeLock);
+      mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
       volumeIndex = mVolumeList.IndexOf(aVolume);
     }
     NS_ASSERTION(volumeIndex != mVolumeList.NoIndex, "Volume not found");
@@ -3634,7 +3605,7 @@ nsresult sbBaseDevice::ApplyLibraryPreference
   nsresult rv;
 
   // Operate under the preference lock.
-  nsAutoLock preferenceLock(mPreferenceLock);
+  mozilla::MutexAutoLock preferenceLock(mPreferenceLock);
 
   // Get the library pref base.
   nsAutoString prefBase;
@@ -5713,10 +5684,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!NS_IsMainThread()) {
-    nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbDeviceSupportsItemHelper,
-                             helper.get(),
-                             RunSupportsMediaItem);
+    nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_RunSupportsMediaItem(helper.get());
     NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
     rv = NS_DispatchToMainThread(runnable);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -5899,7 +5867,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
 
     PRBool isSupported = PR_FALSE;
     if (!mTrackSourceTable.Get(trackType, &isSupported)) {
-      PRMonitor * stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
+      mozilla::ReentrantMonitor *stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
 
       // check transferable only once.
       nsRefPtr<sbDeviceStreamingHandler> listener;
@@ -5915,7 +5883,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
       PRBool isComplete = PR_FALSE;
       while (!isComplete) {
         // Operate within the request wait monitor.
-        nsAutoMonitor monitor(stopWaitMonitor);
+        mozilla::ReentrantMonitorAutoEnter monitor(stopWaitMonitor);
 
         // Check for abort.
         NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);

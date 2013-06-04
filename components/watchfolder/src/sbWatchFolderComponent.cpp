@@ -24,32 +24,41 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbWatchFolder.h"
 #include "sbWatchFolderServiceCID.h"
 #include "sbWatchFolderService.h"
 
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWatchFolder, Init)
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWatchFolderService, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWatchFolder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWatchFolderService, Init);
 
-static nsModuleComponentInfo sbWatchFolder[] =
-{
-  {
-    SB_WATCHFOLDER_CLASSNAME,
-    SB_WATCHFOLDER_CID,
-    SB_WATCHFOLDER_CONTRACTID,
-    sbWatchFolderConstructor,
-  },
-  {
-    SONGBIRD_WATCHFOLDERSERVICE_CLASSNAME,
-    SONGBIRD_WATCHFOLDERSERVICE_CID,
-    SONGBIRD_WATCHFOLDERSERVICE_CONTRACTID,
-    sbWatchFolderServiceConstructor,
-    sbWatchFolderService::RegisterSelf
-  },
+NS_DEFINE_NAMED_CID(SB_WATCHFOLDER_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_WATCHFOLDERSERVICE_CID);
+
+static const mozilla::Module::CIDEntry kWatchFolderCIDs[] = {
+  { &kSB_WATCHFOLDER_CID, false, NULL, sbWatchFolderConstructor },
+  { &kSONGBIRD_WATCHFOLDERSERVICE_CID, false, NULL, sbWatchFolderServiceConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdWatchFolderComponent, sbWatchFolder)
+static const mozilla::Module::ContractIDEntry kWatchFolderContracts[] = {
+  { SB_WATCHFOLDER_CONTRACTID, &kSB_WATCHFOLDER_CID },
+  { SONGBIRD_WATCHFOLDERSERVICE_CONTRACTID, &kSONGBIRD_WATCHFOLDERSERVICE_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kWatchFolderCategories[] = {
+  { "app-startup", SB_WATCHFOLDER_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kWatchFolderModule = {
+  mozilla::Module::kVersion,
+  kWatchFolderCIDs,
+  kWatchFolderContracts,
+  kWatchFolderCategories
+};
+
+NSMODULE_DEFN(sbWatchFolder) = &kWatchFolderModule;
