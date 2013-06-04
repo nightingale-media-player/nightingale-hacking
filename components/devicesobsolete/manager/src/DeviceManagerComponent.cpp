@@ -33,61 +33,34 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "DeviceManager.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceManagerObsolete, Initialize);
 
-// Registration functions for becoming a startup observer
-static NS_METHOD
-sbDeviceManagerObsoleteRegisterSelf(nsIComponentManager* aCompMgr,
-                                    nsIFile* aPath,
-                                    const char* registryLocation,
-                                    const char* componentType,
-                                    const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+NS_DEFINE_NAMED_CID(SONGBIRD_OBSOLETE_DEVICEMANAGER_CID);
 
-  rv = categoryManager->
-         AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
-                          "service," SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID,
-                          PR_TRUE, PR_TRUE, nsnull);
-  return rv;
-}
-
-static NS_METHOD
-sbDeviceManagerObsoleteUnregisterSelf(nsIComponentManager* aCompMgr,
-                                      nsIFile* aPath,
-                                      const char* registryLocation,
-                                      const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
-                                            PR_TRUE);
-
-  return rv;
-}
-
-static nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME, 
-    SONGBIRD_OBSOLETE_DEVICEMANAGER_CID,
-    SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID,
-    sbDeviceManagerObsoleteConstructor,
-    sbDeviceManagerObsoleteRegisterSelf,
-    sbDeviceManagerObsoleteUnregisterSelf
-  }
+static const mozilla::Module::CIDEntry kDeviceManagerObsoleteCIDs[] = {
+  { &kSONGBIRD_OBSOLETE_DEVICEMANAGER_CID, false, NULL, sbDeviceManagerObsoleteConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceManagerObsoleteModule, components)
+static const mozilla::Module::ContractIDEntry kDeviceManagerObsoleteContracts[] = {
+  { SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID, &kSONGBIRD_OBSOLETE_DEVICEMANAGER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kDeviceManagerObsoleteCategories[] = {
+  { "app-startup", SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kDeviceManagerObsoleteModule = {
+  mozilla::Module::kVersion,
+  kDeviceManagerObsoleteCIDs,
+  kDeviceManagerObsoleteContracts,
+  kDeviceManagerObsoleteCategories
+};
+
+NSMODULE_DEFN(sbDeviceManagerObsoleteComponents) = &kDeviceManagerObsoleteModule;

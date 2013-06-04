@@ -33,7 +33,7 @@
 #include "sbIDeviceBase.h"
 
 #include <nsAppDirectoryServiceDefs.h>
-#include <nsAutoLock.h>
+//#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsCRTGlue.h>
@@ -942,7 +942,7 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbDeviceBaseLibraryListener> listener;
-  NS_NEWXPCOM(listener, sbDeviceBaseLibraryListener);
+  listener = new sbDeviceBaseLibraryListener;
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   rv = listener->Init(aDeviceIdentifier, aDevice);
@@ -969,7 +969,7 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   
   if(NS_SUCCEEDED(rv)) {
     nsRefPtr<sbDeviceBaseLibraryCopyListener> copyListener;
-    NS_NEWXPCOM(copyListener, sbDeviceBaseLibraryCopyListener);
+    copyListener = new sbDeviceBaseLibraryCopyListener;
     NS_ENSURE_TRUE(copyListener, NS_ERROR_OUT_OF_MEMORY);
 
     rv = copyListener->Init(aDeviceIdentifier, aDevice);

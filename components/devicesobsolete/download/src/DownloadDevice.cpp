@@ -48,7 +48,8 @@
 
 /* Mozilla imports. */
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
+#include <mozilla/Monitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
 #include <nsIDOMWindow.h>
@@ -600,11 +601,6 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     rv = InitDeviceState(mDeviceIdentifier);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    /* Create the download device lock. */
-    mpDeviceMonitor = nsAutoMonitor::NewMonitor
-                                        ("sbDownloadDevice::mpDeviceMonitor");
-    NS_ENSURE_TRUE(mpDeviceMonitor, NS_ERROR_OUT_OF_MEMORY);
-
     /* Get the IO service. */
     mpIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -767,40 +763,32 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
 NS_IMETHODIMP sbDownloadDevice::Finalize()
 {
-    /* Lock the download device for finalization. */
-    if (mpDeviceMonitor)
+  {
+    /* Lock the download device. */
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+
+    /* Dispose of any outstanding download sessions. */
+    if (mpDownloadSession)
     {
-        /* Lock the download device. */
-        nsAutoMonitor mon(mpDeviceMonitor);
-
-        /* Dispose of any outstanding download sessions. */
-        if (mpDownloadSession)
-        {
-            mpDownloadSession->Shutdown();
-            mpDownloadSession = nsnull;
-        }
-
-        /* Remove the device transfer queue. */
-        RemoveTransferQueue(mDeviceIdentifier);
-
-        /* Remove main library listener. */
-        if (mpMainLibrary)
-            mpMainLibrary->RemoveListener(this);
-
-        /* Finalize the download media list. */
-        FinalizeDownloadMediaList();
+        mpDownloadSession->Shutdown();
+        mpDownloadSession = nsnull;
     }
 
-    /* Dispose of the device lock. */
-    if (mpDeviceMonitor) {
-        nsAutoMonitor::DestroyMonitor(mpDeviceMonitor);
-        mpDeviceMonitor = nsnull;
-    }
+    /* Remove the device transfer queue. */
+    RemoveTransferQueue(mDeviceIdentifier);
 
-    mpMainLibrary = nsnull;
-    mpWebLibrary = nsnull;
+    /* Remove main library listener. */
+    if (mpMainLibrary)
+        mpMainLibrary->RemoveListener(this);
 
-    return (NS_OK);
+    /* Finalize the download media list. */
+    FinalizeDownloadMediaList();
+  }
+
+  mpMainLibrary = nsnull;
+  mpWebLibrary = nsnull;
+
+  return (NS_OK);
 }
 
 
@@ -862,7 +850,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
     PRUint32                    *aState)
 {
     /* Lock the device. */
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* Return results. */
     return (sbDeviceBase::GetDeviceState(mDeviceIdentifier, aState));
@@ -1013,7 +1001,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
     NS_ENSURE_ARG_POINTER(aItemCount);
 
     /* Lock the device. */
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* Remove the items. */
     result = aMediaItems->GetLength(&arrayLength);
@@ -1092,7 +1080,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteAllItems(
     NS_ENSURE_ARG_POINTER(aItemCount);
 
     /* Lock the device. */
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* Remove all the items in the queue. */
     while (GetNextTransferItem(getter_AddRefs(pMediaItem)))
@@ -1171,7 +1159,7 @@ NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
     NS_ENSURE_ARG_POINTER(aNumItems);
 
     /* Lock the device. */
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* If there's a download session, suspend it. */
     if (mpDownloadSession)
@@ -1211,7 +1199,7 @@ NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
     NS_ENSURE_ARG_POINTER(aNumItems);
 
     /* Lock the device. */
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* If there's a download session, resume it. */
     if (mpDownloadSession)
@@ -1838,8 +1826,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
     nsresult                    rv;
 
     /* Lock the download device. */
-    NS_ENSURE_STATE(mpDeviceMonitor);
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* Handle case where download media list has already been initialized. */
     if (mpDownloadMediaList)
@@ -1878,7 +1865,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
     NS_ENSURE_SUCCESS(rv, rv);
 
     /* Create a download media list listener. */
-    NS_NEWXPCOM(mpDeviceLibraryListener, sbDeviceBaseLibraryListener);
+    mpDeviceLibraryListener = new sbDeviceBaseLibraryListener;
     NS_ENSURE_TRUE(mpDeviceLibraryListener, NS_ERROR_OUT_OF_MEMORY);
     rv = mpDeviceLibraryListener->Init(mDeviceIdentifier, this);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2075,7 +2062,7 @@ nsresult sbDownloadDevice::EnqueueItem(
 
     /* Add item to the transfer queue. */
     {
-        nsAutoMonitor mon(mpDeviceMonitor);
+        mozilla::MonitorAutoLock mon(mpDeviceMonitor);
         rv = AddItemToTransferQueue(mDeviceIdentifier, apMediaItem);
         NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -2098,7 +2085,7 @@ nsresult sbDownloadDevice::RunTransferQueue()
     nsresult                    result = NS_OK;
 
     /* Lock the device. */
-    nsAutoMonitor mon(mpDeviceMonitor);
+    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
     /* Initiate transfers until queue is busy or empty. */
     while (   !mpDownloadSession
@@ -2212,7 +2199,7 @@ nsresult sbDownloadDevice::ResumeTransfers()
         if (property.value->GetMode() !=
             sbDownloadButtonPropertyValue::eComplete) {
 
-            nsAutoMonitor mon(mpDeviceMonitor);
+            mozilla::MonitorAutoLock mon(mpDeviceMonitor);
             itemResult = AddItemToTransferQueue(mDeviceIdentifier, pMediaItem);
             if (NS_SUCCEEDED(itemResult))
                 queuedCount++;
@@ -2341,7 +2328,7 @@ void sbDownloadDevice::SessionCompleted(
     /* Complete session. */
     {
         /* Lock the device. */
-        nsAutoMonitor mon(mpDeviceMonitor);
+        mozilla::MonitorAutoLock mon(mpDeviceMonitor);
 
         /* Deliver transfer completion callbacks. */
         DoTransferCompleteCallback(apDownloadSession->mpMediaItem, aStatus);
@@ -2659,10 +2646,6 @@ sbDownloadSession::~sbDownloadSession()
     /* clean up any active downloads, if we still manage to have them */
     Shutdown();
 
-    /* Dispose of the session lock. */
-    if (mpSessionLock)
-        nsAutoLock::DestroyLock(mpSessionLock);
-
     TRACE(("sbDownloadSession[0x%.8x] - dtor", this));
 }
 
@@ -2719,11 +2702,6 @@ nsresult sbDownloadSession::Initiate()
                     (NS_LITERAL_STRING("device.download.error").get(),
                      getter_Copies(mErrorStr));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    /* Create the session lock. */
-    mpSessionLock = nsAutoLock::NewLock("sbDownloadSession::mpSessionLock");
-    if (!mpSessionLock)
-        return NS_ERROR_OUT_OF_MEMORY;
 
     /* Get a unique temporary download file. */
     rv = mpDownloadDevice->GetTmpFile(getter_AddRefs(mpTmpFile));
@@ -2893,7 +2871,7 @@ nsresult sbDownloadSession::Suspend()
     nsresult                    rv;
 
     /* Lock the session. */
-    nsAutoLock lock(mpSessionLock);
+    mozilla::MutexAutoLock lock(mpSessionLock);
 
     /* Do nothing if already suspended. */
     if (mSuspended)
@@ -2949,7 +2927,7 @@ nsresult sbDownloadSession::Resume()
     nsresult                    rv;
 
     /* Lock the session. */
-    nsAutoLock lock(mpSessionLock);
+    mozilla::MutexAutoLock lock(mpSessionLock);
 
     /* Do nothing if not suspended. */
     if (!mSuspended)
@@ -2994,14 +2972,8 @@ void sbDownloadSession::Shutdown()
     // we shouldn't be touching the library any more
     mpMediaItem = nsnull;
 
-    // If there is no lock, this download was never fully initalized so exit
-    // early
-    if (!mpSessionLock) {
-      return;
-    }
-
     /* Lock the session. */
-    nsAutoLock lock(mpSessionLock);
+    mozilla::MutexAutoLock lock(mpSessionLock);
 
     /* Stop the timers */
     StopTimers();
@@ -3036,7 +3008,7 @@ void sbDownloadSession::Shutdown()
 PRBool sbDownloadSession::IsSuspended()
 {
     /* Lock the session. */
-    nsAutoLock lock(mpSessionLock);
+    mozilla::MutexAutoLock lock(mpSessionLock);
 
     return mSuspended;
 }
@@ -3103,7 +3075,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     /* Process state change with the session locked. */
     {
         /* Lock the session. */
-        nsAutoLock lock(mpSessionLock);
+        mozilla::MutexAutoLock lock(mpSessionLock);
 
         if (aStateFlags & STATE_START) {
           /* start the timer */
@@ -3186,7 +3158,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     /* Clean up within a session lock. */
     {
         /* Lock the session. */
-        nsAutoLock lock(mpSessionLock);
+        mozilla::MutexAutoLock lock(mpSessionLock);
 
         /* Clean up. */
         mpRequest = nsnull;

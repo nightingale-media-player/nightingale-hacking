@@ -83,7 +83,8 @@
 #include <nsIRunnable.h>
 #include <nsIStringBundle.h>
 #include <nsIThreadPool.h>
-#include <prmon.h>
+#include <mozilla/Mutex.h>
+#include <mozilla/Monitor.h>
 
 /* Songbird imports. */
 #include <sbDownloadButtonPropertyInfo.h>
@@ -184,7 +185,7 @@ class sbDownloadDevice : public nsIObserver,
     nsString                    mQueuedStr;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
-    PRMonitor                   *mpDeviceMonitor;
+    mozilla::Monitor            mpDeviceMonitor;
     nsString                    mDeviceIdentifier;
 
     nsCOMPtr<nsIThreadPool>     mFileMoveThreadPool;
@@ -367,7 +368,7 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
      *                          seeing progress.
      */
 
-    PRLock                      *mpSessionLock;
+    mozilla::Mutex              mpSessionLock;
     sbDownloadDevice            *mpDownloadDevice;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
     nsString                    mCompleteStr;

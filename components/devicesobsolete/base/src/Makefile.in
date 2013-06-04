@@ -49,4 +49,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 include $(topsrcdir)/build/rules.mk

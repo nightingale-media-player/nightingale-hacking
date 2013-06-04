@@ -31,7 +31,7 @@
 #include "DeviceManager.h"
 #include "DeviceBase.h"
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIComponentRegistrar.h>
 #include <nsIObserverService.h>
@@ -85,8 +85,6 @@ sbDeviceManagerObsolete::~sbDeviceManagerObsolete()
 {
   NS_ASSERTION(sbDeviceManagerObsolete::sServiceFinalized,
                "DeviceManagerObsolete never finalized!");
-  if (mLock)
-    nsAutoLock::DestroyLock(mLock);
 
   LOG(("DeviceManagerObsolete[0x%x] - Destroyed", this));
 }
@@ -102,9 +100,6 @@ sbDeviceManagerObsolete::Initialize()
   // fail on them so that they fix their code.
   NS_ENSURE_FALSE(sbDeviceManagerObsolete::sServiceInitialized,
                   NS_ERROR_ALREADY_INITIALIZED);
-
-  mLock = nsAutoLock::NewLock("sbDeviceManagerObsolete::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   mLastRequestedCategory = EmptyString();
 
@@ -156,7 +151,7 @@ sbDeviceManagerObsolete::Finalize()
   // Loop through the array and call Finalize() on all the devices.
   nsresult rv;
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
   PRInt32 count = mSupportedDevices.Count();
   for (PRInt32 index = 0; index < count; index++) {
@@ -186,7 +181,7 @@ sbDeviceManagerObsolete::LoadSupportedDevices()
                  NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_FALSE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
   // Get the component registrar
   nsresult rv;
@@ -259,7 +254,7 @@ sbDeviceManagerObsolete::GetDeviceCount(PRUint32* aDeviceCount)
   NS_ENSURE_ARG_POINTER(aDeviceCount);
   NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
 	*aDeviceCount = (PRUint32)mSupportedDevices.Count();
   return NS_OK;
@@ -271,7 +266,7 @@ sbDeviceManagerObsolete::GetCategoryByIndex(PRUint32 aIndex,
 {
   NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
   NS_ENSURE_ARG_MAX(aIndex, (PRUint32)mSupportedDevices.Count());
 
@@ -291,7 +286,7 @@ sbDeviceManagerObsolete::GetDeviceByIndex(PRUint32 aIndex,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
   NS_ENSURE_ARG_MAX(aIndex, (PRUint32)mSupportedDevices.Count());
 
@@ -310,7 +305,7 @@ sbDeviceManagerObsolete::HasDeviceForCategory(const nsAString& aCategory,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
   PRUint32 dummy;
   nsresult rv = GetIndexForCategory(aCategory, &dummy);
@@ -326,7 +321,7 @@ sbDeviceManagerObsolete::GetDeviceByCategory(const nsAString& aCategory,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
-  nsAutoLock autoLock(mLock);
+  mozilla::MutexAutoLock autoLock(mLock);
 
   PRUint32 index;
   nsresult rv = GetIndexForCategory(aCategory, &index);

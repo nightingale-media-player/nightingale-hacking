@@ -37,7 +37,7 @@
 #include <nsCOMArray.h>
 #include <nsIObserver.h>
 #include <nsStringGlue.h>
-#include <prlock.h>
+#include <mozilla/Mutex.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION       \
@@ -93,7 +93,7 @@ private:
   static PRBool sServiceFinalized;
 
   // The lock that protects mSupportedDevices
-  PRLock* mLock;
+  mozilla::Mutex mLock;
 
   // An array of the supported devices that have been initialized.
   nsCOMArray<sbIDeviceBase> mSupportedDevices;

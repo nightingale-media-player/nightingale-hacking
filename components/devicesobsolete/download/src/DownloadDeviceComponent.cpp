@@ -29,20 +29,32 @@
 * \brief Songbird DeviceBase Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 #include "DownloadDevice.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDownloadDevice)
 
-static nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_DownloadDevice_CLASSNAME, 
-    SONGBIRD_DownloadDevice_CID,
-    SONGBIRD_DownloadDevice_CONTRACTID,
-    sbDownloadDeviceConstructor,
-  }
+NS_DEFINE_NAMED_CID(SONGBIRD_DownloadDevice_CID);
+
+static const mozilla::Module::CIDEntry kDownloadDeviceCIDs[] = {
+  { &kSONGBIRD_DownloadDevice_CID, false, NULL, sbDownloadDeviceConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDownloadDeviceComponent, components)
+static const mozilla::Module::ContractIDEntry kDownloadDeviceContracts[] = {
+  { SONGBIRD_DownloadDevice_CONTRACTID, &kSONGBIRD_DownloadDevice_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kDownloadDeviceCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kDownloadDeviceModule = {
+  mozilla::Module::kVersion,
+  kDownloadDeviceCIDs,
+  kDownloadDeviceContracts,
+  kDownloadDeviceCategories
+};
+
+NSMODULE_DEFN(sbDownloadDeviceComponents) = &kDownloadDeviceModule;

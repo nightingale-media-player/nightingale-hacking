@@ -61,6 +61,9 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/devicesobsolete/base/src/devicebase \
  components/moz/strings/src/sbMozStringUtils \
