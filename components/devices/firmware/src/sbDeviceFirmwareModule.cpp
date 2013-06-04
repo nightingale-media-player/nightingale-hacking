@@ -31,7 +31,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbDeviceFirmwareSupport.h"
 #include "sbDeviceFirmwareUpdate.h"
@@ -41,68 +41,35 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceFirmwareSupport);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceFirmwareUpdate);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceFirmwareUpdater, Init);
 
-static NS_METHOD
-sbDeviceFirmwareUpdaterRegisterSelf(nsIComponentManager* aCompMgr,
-                                    nsIFile* aPath,
-                                    const char* registryLocation,
-                                    const char* componentType,
-                                    const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+NS_DEFINE_NAMED_CID(SB_DEVICEFIRMWARESUPPORT_CID);
+NS_DEFINE_NAMED_CID(SB_DEVICEFIRMWAREUPDATE_CID);
+NS_DEFINE_NAMED_CID(SB_DEVICEFIRMWAREUPDATER_CID);
 
-  rv = categoryManager->
-         AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SB_DEVICEFIRMWAREUPDATER_DESCRIPTION,
-                          "service," SB_DEVICEFIRMWAREUPDATER_CONTRACTID,
-                          PR_TRUE, PR_TRUE, nsnull);
-  return rv;
-}
 
-static NS_METHOD
-sbDeviceFirmwareUpdaterUnregisterSelf(nsIComponentManager* aCompMgr,
-                                      nsIFile* aPath,
-                                      const char* registryLocation,
-                                      const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SB_DEVICEFIRMWAREUPDATER_DESCRIPTION,
-                                            PR_TRUE);
-
-  return rv;
-}
-
-static nsModuleComponentInfo sbDeviceFirmwareUpdaterComponents[] =
-{
-  {
-    SB_DEVICEFIRMWARESUPPORT_CLASSNAME,
-    SB_DEVICEFIRMWARESUPPORT_CID,
-    SB_DEVICEFIRMWARESUPPORT_CONTRACTID,
-    sbDeviceFirmwareSupportConstructor
-  },
-
-  {
-    SB_DEVICEFIRMWAREUPDATE_CLASSNAME,
-    SB_DEVICEFIRMWAREUPDATE_CID,
-    SB_DEVICEFIRMWAREUPDATE_CONTRACTID,
-    sbDeviceFirmwareUpdateConstructor
-  },
-
-  {
-    SB_DEVICEFIRMWAREUPDATER_CLASSNAME,
-    SB_DEVICEFIRMWAREUPDATER_CID,
-    SB_DEVICEFIRMWAREUPDATER_CONTRACTID,
-    sbDeviceFirmwareUpdaterConstructor,
-    sbDeviceFirmwareUpdaterRegisterSelf,
-    sbDeviceFirmwareUpdaterUnregisterSelf
-  }
+static const mozilla::Module::CIDEntry kDeviceFirmwareSupportCIDs[] = {
+  { &kSB_DEVICEFIRMWARESUPPORT_CID, false, NULL, sbDeviceFirmwareSupportConstructor },
+  { &kSB_DEVICEFIRMWAREUPDATE_CID, false, NULL, sbDeviceFirmwareUpdateConstructor },
+  { &kSB_DEVICEFIRMWAREUPDATER_CID, false, NULL, sbDeviceFirmwareUpdaterConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceFirmwareUpdater, sbDeviceFirmwareUpdaterComponents)
+static const mozilla::Module::ContractIDEntry kDeviceFirmwareSupportContracts[] = {
+  { SB_DEVICEFIRMWARESUPPORT_CONTRACTID, &kSB_DEVICEFIRMWARESUPPORT_CID },
+  { SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &kSB_DEVICEFIRMWAREUPDATE_CID },
+  { SB_DEVICEFIRMWAREUPDATER_CONTRACTID, &kSB_DEVICEFIRMWAREUPDATER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kDeviceFirmwareSupportCategories[] = {
+  { "app-startup", SB_DEVICEFIRMWAREUPDATER_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kDeviceFirmwareSupportModule = {
+  mozilla::Module::kVersion,
+  kDeviceFirmwareSupportCIDs,
+  kDeviceFirmwareSupportContracts,
+  kDeviceFirmwareSupportCategories
+};
+
+NSMODULE_DEFN(sbDeviceManagerComponents) = &kDeviceFirmwareSupportModule;

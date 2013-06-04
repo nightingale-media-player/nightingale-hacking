@@ -331,7 +331,7 @@ SyncEnumListenerBase::Init(DropAction aDropAction,
   mMainLibrary = aMainLibrary;
   mDeviceLibrary = aDeviceLibrary;
 
-  NS_NEWXPCOM(mChangeset, sbLibraryChangeset);
+  mChangeset = new sbLibraryChangeset;
   NS_ENSURE_TRUE(mChangeset, NS_ERROR_OUT_OF_MEMORY);
 
   mLibraryChanges = do_CreateInstance(
@@ -608,7 +608,7 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
         continue;
       }
       nsRefPtr<sbPropertyChange> propertyChange;
-      NS_NEWXPCOM(propertyChange, sbPropertyChange);
+      propertyChange = new sbPropertyChange;
       NS_ENSURE_TRUE(propertyChange, NS_ERROR_OUT_OF_MEMORY);
 
       rv = propertyChange->InitWithValues(sbIChangeOperation::ADDED,
@@ -657,7 +657,7 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
       }
 
       nsRefPtr<sbPropertyChange> propertyChange;
-      NS_NEWXPCOM(propertyChange, sbPropertyChange);
+      propertyChange = new sbPropertyChange;
       NS_ENSURE_TRUE(propertyChange, NS_ERROR_OUT_OF_MEMORY);
 
       rv = propertyChange->InitWithValues(sbIChangeOperation::MODIFIED,
@@ -698,7 +698,7 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
       // We couldn't find the property in the source properties, this means
       // the property must've been removed.
       nsRefPtr<sbPropertyChange> propertyChange;
-      NS_NEWXPCOM(propertyChange, sbPropertyChange);
+      propertyChange = new sbPropertyChange;
       NS_ENSURE_TRUE(propertyChange, NS_ERROR_OUT_OF_MEMORY);
 
       rv = propertyChange->InitWithValues(sbIChangeOperation::DELETED,
@@ -749,7 +749,7 @@ SyncEnumListenerBase::CreatePropertyChangesForItemAdded(
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsRefPtr<sbPropertyChange> propertyChange;
-    NS_NEWXPCOM(propertyChange, sbPropertyChange);
+    propertyChange = new sbPropertyChange;
     NS_ENSURE_TRUE(propertyChange, NS_ERROR_OUT_OF_MEMORY);
 
     rv = propertyChange->InitWithValues(sbIChangeOperation::ADDED,
@@ -817,7 +817,7 @@ SyncEnumListenerBase::AddChange(PRUint32 aChangeType,
   nsresult rv;
 
   nsRefPtr<sbLibraryChange> libraryChange;
-  NS_NEWXPCOM(libraryChange, sbLibraryChange);
+  libraryChange = new sbLibraryChange;
   NS_ENSURE_TRUE(libraryChange, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIArray> propertyChanges;

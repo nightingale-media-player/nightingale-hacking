@@ -34,61 +34,33 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbDeviceManager.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceManager);
+NS_DEFINE_NAMED_CID(SONGBIRD_DEVICEMANAGER2_CID);
 
-// Registration functions for becoming a startup observer
-static NS_METHOD
-sbDeviceManagerRegisterSelf(nsIComponentManager* aCompMgr,
-                            nsIFile* aPath,
-                            const char* registryLocation,
-                            const char* componentType,
-                            const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->
-         AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SONGBIRD_DEVICEMANAGER2_DESCRIPTION,
-                          "service," SONGBIRD_DEVICEMANAGER2_CONTRACTID,
-                          PR_TRUE, PR_TRUE, nsnull);
-  return rv;
-}
-
-static NS_METHOD
-sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
-                              nsIFile* aPath,
-                              const char* registryLocation,
-                              const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SONGBIRD_DEVICEMANAGER2_DESCRIPTION,
-                                            PR_TRUE);
-
-  return rv;
-}
-
-static nsModuleComponentInfo sbDeviceManagerComponents[] =
-{
-  {
-    SONGBIRD_DEVICEMANAGER2_CLASSNAME,
-    SONGBIRD_DEVICEMANAGER2_CID,
-    SONGBIRD_DEVICEMANAGER2_CONTRACTID,
-    sbDeviceManagerConstructor,
-    sbDeviceManagerRegisterSelf,
-    sbDeviceManagerUnregisterSelf
-  }
+static const mozilla::Module::CIDEntry kDeviceManagerCIDs[] = {
+  { &kSONGBIRD_DEVICEMANAGER2_CID, false, NULL, sbDeviceManagerConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceManager2, sbDeviceManagerComponents)
+static const mozilla::Module::ContractIDEntry kDeviceManagerContracts[] = {
+  { SONGBIRD_DEVICEMANAGER2_CONTRACTID, &kSONGBIRD_DEVICEMANAGER2_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kDeviceManagerCategories[] = {
+  { "app-startup", SONGBIRD_DEVICEMANAGER2_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kDeviceManagerModule = {
+  mozilla::Module::kVersion,
+  kDeviceManagerCIDs,
+  kDeviceManagerContracts,
+  kDeviceManagerCategories
+};
+
+NSMODULE_DEFN(sbDeviceManagerComponents) = &kDeviceManagerModule;

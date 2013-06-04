@@ -32,7 +32,7 @@
 #include <nsCOMArray.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 
 //==============================================================================
@@ -906,30 +906,39 @@ sbMockCDService::NotifyEject(sbICDDevice *aCDDevice)
 // XPCOM component registration
 //==============================================================================
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDDevice)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDTOC)
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMockCDService, Init)
 
-static nsModuleComponentInfo sbMockCDDevice[] =
-{
-  {
-    SB_MOCK_CDDEVICE_CLASSNAME,
-    SB_MOCK_CDDEVICE_CID,
-    SB_MOCK_CDDEVICE_CONTRACTID,
-    sbMockCDDeviceConstructor,
-  },
-  {
-    SB_MOCK_CDTOC_CLASSNAME,
-    SB_MOCK_CDTOC_CID,
-    SB_MOCK_CDTOC_CONTRACTID,
-    sbMockCDTOCConstructor,
-  },
-  {
-    SB_MOCK_CDDEVICECONTROLLER_CLASSNAME,
-    SB_MOCK_CDDEVICECONTROLLER_CID,
-    SB_MOCK_CDDEVICECONTROLLER_CONTRACTID,
-    sbMockCDServiceConstructor
-  }
+
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDDevice);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDTOC);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMockCDService, Init);
+
+NS_DEFINE_NAMED_CID(SB_MOCK_CDDEVICE_CID);
+NS_DEFINE_NAMED_CID(SB_MOCK_CDTOC_CID);
+NS_DEFINE_NAMED_CID(SB_MOCK_CDDEVICECONTROLLER_CID);
+
+static const mozilla::Module::CIDEntry kMockCDDeviceCIDs[] = {
+  { &kSB_MOCK_CDDEVICE_CID, false, NULL, },
+  { &kSB_MOCK_CDTOC_CID, false, NULL, },
+  { &kSB_MOCK_CDDEVICECONTROLLER_CID, false, NULL, },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdMockCDDevice, sbMockCDDevice)
+static const mozilla::Module::ContractIDEntry kMockCDDeviceContracts[] = {
+  { SB_MOCK_CDDEVICE_CONTRACTID, &kSB_MOCK_CDDEVICE_CID },
+  { SB_MOCK_CDTOC_CONTRACTID, &kSB_MOCK_CDTOC_CID },
+  { SB_MOCK_CDDEVICECONTROLLER_CONTRACTID, &kSB_MOCK_CDDEVICECONTROLLER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kMockCDDeviceCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kMockCDDeviceModule = {
+  mozilla::Module::kVersion,
+  kMockCDDeviceCIDs,
+  kMockCDDeviceContracts,
+  kMockCDDeviceCategories
+};
+
+NSMODULE_DEFN(sbMockCDDevice) = &kMockCDDeviceModule;

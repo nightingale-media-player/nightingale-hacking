@@ -80,7 +80,7 @@ protected:
   nsresult RemoveAllDevices();
 
 protected:
-  PRMonitor* mMonitor;
+  PRMonitor *mMonitor;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceController> mControllers;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDevice> mDevices;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceMarshall> mMarshalls;

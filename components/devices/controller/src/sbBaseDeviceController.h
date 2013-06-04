@@ -31,6 +31,7 @@
 #include <nsID.h>
 #include <nsHashKeys.h>
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIMutableArray.h>
@@ -135,7 +136,7 @@ private:
   /** 
    *
    */
-  PRMonitor* mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   /** 
    * 

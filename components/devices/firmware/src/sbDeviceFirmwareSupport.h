@@ -32,7 +32,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-#include <prmon.h>
+#include <mozilla/Monitor.h>
 
 class sbDeviceFirmwareSupport : public sbIDeviceFirmwareSupport,
                                 public nsIClassInfo
@@ -48,7 +48,7 @@ private:
   virtual ~sbDeviceFirmwareSupport();
 
 protected:
-  PRMonitor* mMonitor;
+  mozilla::Monitor mMonitor;
 
   nsString                  mDeviceFriendlyName;
   PRUint32                  mDeviceVendorID;

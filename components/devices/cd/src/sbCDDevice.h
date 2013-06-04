@@ -35,10 +35,15 @@
 #include <sbIMetadataLookupProvider.h>
 #include <sbIMetadataLookupData.h>
 #include <sbMemoryUtils.h>
+#include <mozilla/Monitor.h>
+#include <a11yGeneric.h>
 
 #include <nsID.h>
 #include <nsIRunnable.h>
 #include <nsIThread.h>
+
+#define SB_CDDEVICE_CID \
+  {0xf99fe209, 0x9188, 0x43c6, {0xad, 0x9d, 0xdd, 0x47, 0xd0, 0x6f, 0xb9, 0x36}}
 
 class sbIDeviceContent;
 class nsIPropertyBag;
@@ -174,7 +179,7 @@ private:
   /**
    * Protects the mProperites member and updating it's contents
    */
-  PRMonitor* mPropertiesLock;
+  mozilla::Monitor mPropertiesLock;
 
   /**
    * Provides a reader/writer lock around the connection
@@ -412,6 +417,10 @@ private:
    * Gets the bitrate property from the cached transcoding profile
    */
   nsresult GetBitrateFromProfile(PRUint32 * bitrate);
+
+  NS_DECL_RUNNABLEMETHOD(sbCDDevice, ProxyHandleRipEnd);
+  NS_DECL_RUNNABLEMETHOD(sbCDDevice, ProxyQueryUserViewErrors);
+  NS_DECL_RUNNABLEMETHOD(sbCDDevice, ProxyCDLookup);
 };
 
 #define SB_CD_DEVICE_AUTO_INVOKE(aName, aMethod)                              \

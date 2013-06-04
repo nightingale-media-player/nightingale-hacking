@@ -27,43 +27,41 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Monitor.h>
 #include <nsMemory.h>
 
-NS_IMPL_THREADSAFE_ADDREF(sbDeviceFirmwareUpdate)
-NS_IMPL_THREADSAFE_RELEASE(sbDeviceFirmwareUpdate)
 
-NS_IMPL_QUERY_INTERFACE2_CI(sbDeviceFirmwareUpdate,
-                            sbIDeviceFirmwareUpdate,
-                            nsIClassInfo)
+NS_IMPL_CLASSINFO(sbDeviceFirmwareUpdate, NULL,
+                  nsIClassInfo::THREADSAFE, SB_DEVICEFIRMWAREUPDATE_CID);
+
+NS_IMPL_ISUPPORTS2(sbDeviceFirmwareUpdate,
+                   sbIDeviceFirmwareUpdate,
+                   nsIClassInfo);
 
 NS_IMPL_CI_INTERFACE_GETTER1(sbDeviceFirmwareUpdate,
-                             sbIDeviceFirmwareUpdate)
+                             sbIDeviceFirmwareUpdate);
 
-NS_DECL_CLASSINFO(sbDeviceFirmwareUpdate)
-NS_IMPL_THREADSAFE_CI(sbDeviceFirmwareUpdate)
+NS_IMPL_THREADSAFE_CI(sbDeviceFirmwareUpdate);
 
 sbDeviceFirmwareUpdate::sbDeviceFirmwareUpdate()
 : mMonitor(nsnull)
 , mFirmwareReadableVersion(NS_LITERAL_STRING("0"))
 , mFirmwareVersion(0)
 {
+
 }
 
 sbDeviceFirmwareUpdate::~sbDeviceFirmwareUpdate()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+
 }
 
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdate::GetFirmwareImageFile(nsIFile * *aFirmwareImageFile)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mFirmwareImageFile);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = mFirmwareImageFile->Clone(aFirmwareImageFile);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -74,9 +72,7 @@ sbDeviceFirmwareUpdate::GetFirmwareImageFile(nsIFile * *aFirmwareImageFile)
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdate::GetFirmwareReadableVersion(nsAString & aFirmwareReadableVersion)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aFirmwareReadableVersion = mFirmwareReadableVersion;
 
   return NS_OK;
@@ -85,10 +81,9 @@ sbDeviceFirmwareUpdate::GetFirmwareReadableVersion(nsAString & aFirmwareReadable
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdate::GetFirmwareVersion(PRUint32 *aFirmwareVersion)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareVersion);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   *aFirmwareVersion = mFirmwareVersion;
 
   return NS_OK;
@@ -99,9 +94,6 @@ NS_IMETHODIMP sbDeviceFirmwareUpdate::Init(nsIFile *aFirmwareImageFile,
                                            PRUint32 aFirmwareVersion)
 {
   NS_ENSURE_ARG_POINTER(aFirmwareImageFile);
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbDeviceFirmwareUpdate::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   mFirmwareImageFile = aFirmwareImageFile;
   mFirmwareReadableVersion = aFirmwareReadableVersion;

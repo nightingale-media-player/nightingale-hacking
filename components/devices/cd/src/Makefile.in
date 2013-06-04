@@ -106,6 +106,8 @@ CPP_SRCS += sbBaseDeviceEventTarget.cpp \
             sbDeviceLibrarySyncSettings.cpp \
             $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)

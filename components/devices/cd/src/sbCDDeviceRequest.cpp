@@ -720,7 +720,7 @@ sbCDDevice::AttemptCDLookup()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbCDDevice, this, ProxyCDLookup);
+        new nsRunnableMethod_ProxyCDLookup(this);
     NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
     rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
@@ -1213,14 +1213,14 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(stopWaitMonitor);
+    PR_EnterMonitor(stopWaitMonitor);
 
     // Check if the job is complete.
     isComplete = listener->IsComplete();
 
     // If not complete, wait for completion.
     if (!isComplete)
-      monitor.Wait();
+      PR_Wait(stopWaitMonitor, PR_INTERVAL_NO_TIMEOUT);
   }
 
   if (listener->IsAborted()) {

@@ -42,6 +42,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 STATIC_LIB = sbDeviceController
 
 include $(topsrcdir)/build/rules.mk

@@ -27,7 +27,7 @@
 
 #include "sbBaseDeviceController.h"
 
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsComponentManagerUtils.h>
 
 #include <sbDebugUtils.h>
@@ -87,62 +87,68 @@ PLDHashOperator sbBaseDeviceController::EnumerateDisconnectAll(const nsID& aKey,
 }
 
 sbBaseDeviceController::sbBaseDeviceController()
-: mMonitor(nsnull) {
-  mMonitor = 
-    nsAutoMonitor::NewMonitor("sbBaseDeviceController.mMonitor");
-  NS_ASSERTION(mMonitor, "Failed to create monitor");
-
+  : mMonitor(nsnull)
+{
   PRBool SB_UNUSED_IN_RELEASE(succeeded) = mDevices.Init();
   NS_ASSERTION(succeeded, "Failed to initialize hashtable");
 }
 
-sbBaseDeviceController::~sbBaseDeviceController() {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+sbBaseDeviceController::~sbBaseDeviceController()
+{
+
 }
 
 nsresult 
-sbBaseDeviceController::GetControllerIdInternal(nsID &aID) {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::GetControllerIdInternal(nsID &aID)
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aID = mControllerID;
   return NS_OK;
 }
+
 nsresult 
-sbBaseDeviceController::SetControllerIdInternal(const nsID &aID) {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::SetControllerIdInternal(const nsID &aID)
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mControllerID = aID;
   return NS_OK;
 }
 
 nsresult 
-sbBaseDeviceController::GetControllerNameInternal(nsAString &aName) {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::GetControllerNameInternal(nsAString &aName)
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aName = mControllerName;
   return NS_OK;
 }
+
 nsresult 
-sbBaseDeviceController::SetControllerNameInternal(const nsAString &aName) {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::SetControllerNameInternal(const nsAString &aName)
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mControllerName = aName;
   return NS_OK;
 }
 
 nsresult 
-sbBaseDeviceController::GetMarshallIdInternal(nsID &aID) {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::GetMarshallIdInternal(nsID &aID)
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aID = mMarshallID;
   return NS_OK;
 }
+
 nsresult 
-sbBaseDeviceController::SetMarshallIdInternal(const nsID &aID) {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::SetMarshallIdInternal(const nsID &aID)
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mMarshallID = aID;
   return NS_OK;
 }
 
 nsresult 
-sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice) {
+sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice)
+{
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsresult rv;
@@ -151,17 +157,21 @@ sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice) {
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_ARG_POINTER(id);
 
-  nsAutoMonitor mon(mMonitor);
-  
-  PRBool succeeded = mDevices.Put(*id, aDevice);
-  mon.Exit();
+  PRBool succeeded;
+
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    succeeded = mDevices.Put(*id, aDevice);
+  }
 
   NS_Free(id);
 
   return succeeded ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
+
 nsresult 
-sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice) {
+sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice)
+{
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsresult rv;
@@ -170,9 +180,10 @@ sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice) {
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_ARG_POINTER(id);
 
-  nsAutoMonitor mon(mMonitor);
-  mDevices.Remove(*id);
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    mDevices.Remove(*id);
+  }
 
   NS_Free(id);
 
@@ -181,20 +192,24 @@ sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice) {
 
 nsresult
 sbBaseDeviceController::GetDeviceInternal(const nsID * aID,
-                                          sbIDevice* *aDevice) {
+                                          sbIDevice* *aDevice)
+{
   NS_ENSURE_ARG_POINTER(aID);
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  nsAutoMonitor mon(mMonitor);
+  PRBool succeeded;
 
-  PRBool succeeded = mDevices.Get(*aID, aDevice);
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    succeeded = mDevices.Get(*aID, aDevice);
+  }
 
   return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult 
-sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
+sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices)
+{
   NS_ENSURE_ARG_POINTER(aDevices);
 
   nsresult rv;
@@ -202,13 +217,14 @@ sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
-
   PRUint32 count;
-  count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateIntoArray,
-                                 array.get());
 
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+    count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateIntoArray,
+                                   array.get());
+  }
 
   // we can't trust the count returned from EnumerateRead because that won't
   // tell us about erroring on the last element
@@ -223,7 +239,8 @@ sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
 
 nsresult 
 sbBaseDeviceController::ControlsDeviceInternal(sbIDevice *aDevice, 
-                                               PRBool *_retval) {
+                                               PRBool *_retval)
+{
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -242,19 +259,23 @@ sbBaseDeviceController::ControlsDeviceInternal(sbIDevice *aDevice,
 }
 
 nsresult 
-sbBaseDeviceController::ConnectDevicesInternal() {
-  nsAutoMonitor mon(mMonitor);
-
+sbBaseDeviceController::ConnectDevicesInternal()
+{
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint32 count;
-  count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateConnectAll,
-                                 array.get());
+  nsCOMPtr<nsIMutableArray> array;
 
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+    array =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateConnectAll,
+                                   array.get());
+
+  }
 
   // we can't trust the count returned from EnumerateRead because that won't
   // tell us about erroring on the last element
@@ -268,19 +289,22 @@ sbBaseDeviceController::ConnectDevicesInternal() {
 }
 
 nsresult 
-sbBaseDeviceController::DisconnectDevicesInternal() {
-  nsAutoMonitor mon(mMonitor);
-
+sbBaseDeviceController::DisconnectDevicesInternal()
+{
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint32 count;
-  count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateDisconnectAll,
-                                 array.get());
+  nsCOMPtr<nsIMutableArray> array;
 
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+    array =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateDisconnectAll,
+                                   array.get());
+  }
 
   // we can't trust the count returned from EnumerateRead because that won't
   // tell us about erroring on the last element
@@ -294,7 +318,8 @@ sbBaseDeviceController::DisconnectDevicesInternal() {
 }
 
 nsresult 
-sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice) {
+sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice)
+{
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsID *id = nsnull;
@@ -303,9 +328,10 @@ sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice) {
 
   aDevice->Disconnect();
 
-  nsAutoMonitor mon(mMonitor);
-  mDevices.Remove(*id);
-  mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    mDevices.Remove(*id);
+  }
 
   NS_Free(id);
   
@@ -313,8 +339,9 @@ sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice) {
 }
 
 nsresult 
-sbBaseDeviceController::ReleaseDevicesInternal() {
-  nsAutoMonitor mon(mMonitor);
+sbBaseDeviceController::ReleaseDevicesInternal()
+{
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mDevices.Clear();
   return NS_OK;
 }

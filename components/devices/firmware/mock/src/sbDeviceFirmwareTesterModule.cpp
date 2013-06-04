@@ -28,23 +28,42 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbMockDeviceFirmwareHandler.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMockDeviceFirmwareHandler, Init);
-SB_DEVICE_FIRMWARE_HANDLER_REGISTERSELF(sbMockDeviceFirmwareHandler);
+#define SB_MOCKDEVICEFIRMWAREHADLER_CID                                       \
+{ 0x5b100d2b, 0x486a, 0x4f3a,                                                 \
+  { 0x9b, 0x60, 0x14, 0x64, 0xb, 0xcb, 0xa6, 0x8e } }
+#define SB_MOCKDEVICEFIRMWAREHADLER_CLASSNAME                                 \
+  "Songbird Device Firmware Tester - Mock Device Firmware Handler"
+#define SB_MOCKDEVICEFIRMWAREHADLER_CONTRACTID                                \
+  "@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1"
 
-static nsModuleComponentInfo sbDeviceFirmwareTesterComponents[] =
-{
-  {
-    "Songbird Device Firmware Tester - Mock Device Firmware Handler",
-    { 0x5b100d2b, 0x486a, 0x4f3a, { 0x9b, 0x60, 0x14, 0x64, 0xb, 0xcb, 0xa6, 0x8e } },
-    "@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1",
-    sbMockDeviceFirmwareHandlerConstructor,
-    sbMockDeviceFirmwareHandlerRegisterSelf,
-    sbMockDeviceFirmwareHandlerUnregisterSelf
-  }
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMockDeviceFirmwareHandler, Init);
+
+NS_DEFINE_NAMED_CID(SB_MOCKDEVICEFIRMWAREHADLER_CID);
+
+static const mozilla::Module::CIDEntry kMockDeviceFirmwareHandlerCIDs[] = {
+  { &kSB_MOCKDEVICEFIRMWAREHADLER_CID, false, NULL, sbMockDeviceFirmwareHandlerConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceFirmwareTests, sbDeviceFirmwareTesterComponents)
+static const mozilla::Module::ContractIDEntry kMockDeviceFirmwareHandlerContracts[] = {
+  { SB_MOCKDEVICEFIRMWAREHADLER_CONTRACTID, &kSB_MOCKDEVICEFIRMWAREHADLER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kMockDeviceFirmwareHandlerCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kMockDeviceFirmwareHandlerModule = {
+  mozilla::Module::kVersion,
+  kMockDeviceFirmwareHandlerCIDs,
+  kMockDeviceFirmwareHandlerContracts,
+  kMockDeviceFirmwareHandlerCategories
+};
+
+NSMODULE_DEFN(sbDeviceFirmwareTesterComponents) = &kMockDeviceFirmwareHandlerModule;
+

@@ -39,7 +39,7 @@
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Monitor.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -58,15 +58,15 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler,
                              sbBaseDeviceFirmwareHandler,
                              nsIStreamListener)
 
-SB_DEVICE_FIRMWARE_HANLDER_REGISTERSELF_IMPL(sbMockDeviceFirmwareHandler,
-                                             "Songbird Device Firmware Tester - Mock Device Firmware Handler")
 
 sbMockDeviceFirmwareHandler::sbMockDeviceFirmwareHandler() : mComplete(0)
 {
+
 }
 
 sbMockDeviceFirmwareHandler::~sbMockDeviceFirmwareHandler()
 {
+
 }
 
 /*virtual*/ nsresult
@@ -443,7 +443,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     // XXXAus: We only support 'version' and 'location' nodes
     //         and they must have a 'value' attribute.
     if(tagName.EqualsLiteral("version")) {
-      nsAutoMonitor mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       mReadableFirmwareVersion = value;
       mFirmwareVersion = 0x01000001;
     }
@@ -453,7 +453,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
                             getter_AddRefs(uri));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoMonitor mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       mFirmwareLocation = uri;
     }
   }
@@ -467,9 +467,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     nsresult rv = NS_NewURI(getter_AddRefs(uri), supportURL);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoMonitor mon(mMonitor);
-    uri.swap(mSupportLocation);
-    mon.Exit();
+    {
+      mozilla::MonitorAutoLock mon(mMonitor);
+      uri.swap(mSupportLocation);
+    }
 
     nsCString registerURL;
     rv = mHandlerURLService->GetRegisterURL(registerURL);
@@ -478,9 +479,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     rv = NS_NewURI(getter_AddRefs(uri), registerURL);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mon.Enter();
-    uri.swap(mRegisterLocation);
-    mon.Exit();
+    {
+      mozilla::MonitorAutoLock mon(mMonitor);
+      uri.swap(mRegisterLocation);
+    }
 
     nsCString resetURL;
     rv = mHandlerURLService->GetRegisterURL(resetURL);
@@ -489,9 +491,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     rv = NS_NewURI(getter_AddRefs(uri), resetURL);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mon.Enter();
-    uri.swap(mResetInstructionsLocation);
-    mon.Exit();
+    {
+      mozilla::MonitorAutoLock mon(mMonitor);
+      uri.swap(mResetInstructionsLocation);
+    }
 
     if(mDevice) {
       nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
@@ -508,9 +511,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
         rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        mon.Enter();
-        mNeedsRecoveryMode = needsRecoveryMode;
-        mon.Exit();
+        {
+          mozilla::MonitorAutoLock mon(mMonitor);
+          mNeedsRecoveryMode = needsRecoveryMode;
+        }
       }
     }
   }

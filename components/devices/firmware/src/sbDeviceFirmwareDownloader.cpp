@@ -37,7 +37,6 @@
 #include <nsIVariant.h>
 
 #include <nsAppDirectoryServiceDefs.h>
-#include <nsAutoLock.h>
 #include <nsCRT.h>
 #include <nsHashKeys.h>
 #include <nsServiceManagerUtils.h>
@@ -1101,11 +1100,13 @@ sbDeviceFirmwareDownloader::HandleComplete()
                                    contentDisposition);
   }
 
-  // Still Empty? Try with multipartChannel.
+  // TODO: Clean up the following, it can be compacted a lot with the new xul.
+
+  // Still Empty? Try with a channel.
   if(contentDisposition.IsEmpty()) {
-    nsCOMPtr<nsIMultiPartChannel> multipartChannel(do_QueryInterface(request));
-    if(multipartChannel) {
-      multipartChannel->GetContentDisposition(contentDisposition);
+    nsCOMPtr<nsIChannel> aChannel(do_QueryInterface(request));
+    if (aChannel) {
+      aChannel->GetContentDispositionHeader(contentDisposition);
     }
   }
 

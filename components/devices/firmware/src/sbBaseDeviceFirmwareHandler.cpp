@@ -31,7 +31,7 @@
 #include <nsIScriptSecurityManager.h>
 
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
+#include <mozilla/Monitor.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
@@ -88,9 +88,7 @@ sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 
 sbBaseDeviceFirmwareHandler::~sbBaseDeviceFirmwareHandler()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+
 }
 
 // ----------------------------------------------------------------------------
@@ -100,8 +98,6 @@ nsresult
 sbBaseDeviceFirmwareHandler::Init()
 {
   TRACE(("[%s]", __FUNCTION__));
-  mMonitor = nsAutoMonitor::NewMonitor("sbBaseDeviceFirmwareHandler::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   mXMLHttpRequest = do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
@@ -192,7 +188,6 @@ sbBaseDeviceFirmwareHandler::CreateProxiedURI(const nsACString &aURISpec,
                                               nsIURI **aURI)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aURI);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
@@ -239,13 +234,12 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
                                              nsIVariant *aRequestBody /*= nsnull*/)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mXMLHttpRequest);
 
   NS_ENSURE_TRUE(!aMethod.IsEmpty(), NS_ERROR_INVALID_ARG);
   NS_ENSURE_TRUE(!aUrl.IsEmpty(), NS_ERROR_INVALID_ARG);
 
-  PRInt32 state = 0;
+  PRUint16 state = 0;
   nsresult rv = mXMLHttpRequest->GetReadyState(&state);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -259,8 +253,8 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
   TRACE(("[%s] - sending %s request to %s", __FUNCTION__,
          nsCString(aMethod).get(), nsCString(aUrl).get()));
 
-  rv = mXMLHttpRequest->OpenRequest(aMethod, aUrl, PR_TRUE,
-                                    aUsername, aPassword);
+  rv = mXMLHttpRequest->Open(aMethod, aUrl, PR_TRUE,
+                             aUsername, aPassword);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aContentType.IsEmpty()) {
@@ -294,10 +288,9 @@ nsresult
 sbBaseDeviceFirmwareHandler::AbortHttpRequest()
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mXMLHttpRequest);
 
-  PRInt32 state = 0;
+  PRUint16 state = 0;
   nsresult rv = mXMLHttpRequest->GetReadyState(&state);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -321,14 +314,15 @@ sbBaseDeviceFirmwareHandler::CreateDeviceEvent(PRUint32 aType,
                                                sbIDeviceEvent **aEvent)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   NS_ENSURE_ARG_POINTER(aEvent);
+  nsCOMPtr<sbIDevice> device;
 
-  nsAutoMonitor mon(mMonitor);
-  NS_ENSURE_STATE(mDevice);
-  nsCOMPtr<sbIDevice> device = mDevice;
-  mon.Exit();
+  {
+    mozilla::MonitorAutoLock mon(mMonitor);
+    NS_ENSURE_STATE(mDevice);
+    device = mDevice;
+  }
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
@@ -352,43 +346,47 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
                                              PRBool aAsync /*= PR_TRUE*/)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aEvent);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsAutoMonitor mon(mMonitor);
+  nsCOMPtr<nsIThread> mainThread;
+  nsCOMPtr<sbIDeviceEventTarget> target;
+  nsCOMPtr<sbIDeviceEventListener> listener;
+  nsCOMPtr<sbIDeviceEventListener> proxiedListener;
 
-  nsCOMPtr<sbIDeviceEventListener> listener = mListener;
+  {
+    mozilla::MonitorAutoLock mon(mMonitor);
 
-  if(!NS_IsMainThread() && listener) {
-    if(!mProxiedListener) {
-      mon.Exit();
+    listener = mListener;
 
-      nsCOMPtr<nsIThread> mainThread;
-      rv = NS_GetMainThread(getter_AddRefs(mainThread));
-      NS_ENSURE_SUCCESS(rv, rv);
+    if(!NS_IsMainThread() && listener) {
+      if(!mProxiedListener) {
+        {
+          mozilla::MonitorAutoUnlock mon(mMonitor);
 
-      nsCOMPtr<sbIDeviceEventListener> proxiedListener;
-      rv = do_GetProxyForObject(mainThread,
-                                NS_GET_IID(sbIDeviceEventListener),
-                                listener,
-                                NS_PROXY_ALWAYS | NS_PROXY_ASYNC,
-                                getter_AddRefs(proxiedListener));
-      NS_ENSURE_SUCCESS(rv, rv);
+          rv = NS_GetMainThread(getter_AddRefs(mainThread));
+          NS_ENSURE_SUCCESS(rv, rv);
 
-      mon.Enter();
-      mProxiedListener = proxiedListener;
+
+          rv = do_GetProxyForObject(mainThread,
+                                    NS_GET_IID(sbIDeviceEventListener),
+                                    listener,
+                                    NS_PROXY_ALWAYS | NS_PROXY_ASYNC,
+                                    getter_AddRefs(proxiedListener));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+        }
+        mProxiedListener = proxiedListener;
+      }
+      listener = mProxiedListener;
     }
 
-    listener = mProxiedListener;
+    NS_ENSURE_STATE(mDevice);
+    target = do_QueryInterface(mDevice, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
   }
-
-  NS_ENSURE_STATE(mDevice);
-  nsCOMPtr<sbIDeviceEventTarget> target = do_QueryInterface(mDevice, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mon.Exit();
 
   PRBool dispatched = PR_FALSE;
   rv = target->DispatchEvent(aEvent, aAsync, &dispatched);
@@ -410,7 +408,6 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(PRUint32 aType,
                                              PRBool aAsync /*= PR_TRUE*/)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsCOMPtr<sbIDeviceEvent> deviceEvent;
   nsresult rv = CreateDeviceEvent(aType, aData, getter_AddRefs(deviceEvent));
@@ -426,7 +423,7 @@ sbBaseDeviceFirmwareHandler::handlerstate_t
 sbBaseDeviceFirmwareHandler::GetState()
 {
   TRACE(("[%s]", __FUNCTION__));
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   return mHandlerState;
 }
 
@@ -436,7 +433,7 @@ sbBaseDeviceFirmwareHandler::SetState(handlerstate_t aState)
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_ARG_RANGE(aState, HANDLER_IDLE, HANDLER_X);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mHandlerState = aState;
 
   return NS_OK;
@@ -448,7 +445,6 @@ sbBaseDeviceFirmwareHandler::CheckForError(const nsresult &aResult,
                                            nsIVariant *aData /*= nsnull*/)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   if(NS_FAILED(aResult)) {
     nsresult rv = SendDeviceEvent(aEventType, aData);
@@ -812,10 +808,9 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetBoundDevice(sbIDevice **aDevice)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   NS_IF_ADDREF(*aDevice = mDevice);
   return NS_OK;
@@ -825,9 +820,8 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetContractId(nsAString & aContractId)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aContractId = mContractId;
 
   return NS_OK;
@@ -837,12 +831,11 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetLatestFirmwareLocation(nsIURI * *aLatestFirmwareLocation)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aLatestFirmwareLocation);
 
   *aLatestFirmwareLocation = nsnull;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   if(!mFirmwareLocation) {
     return NS_ERROR_NOT_AVAILABLE;
@@ -858,10 +851,9 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetLatestFirmwareVersion(PRUint32 *aLatestFirmwareVersion)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aLatestFirmwareVersion);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   *aLatestFirmwareVersion = mFirmwareVersion;
 
   return NS_OK;
@@ -871,9 +863,8 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetLatestFirmwareReadableVersion(nsAString & aLatestFirmwareReadableVersion)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aLatestFirmwareReadableVersion = mReadableFirmwareVersion;
 
   return NS_OK;
@@ -883,11 +874,10 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCurrentFirmwareVersion);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnGetCurrentFirmwareVersion(aCurrentFirmwareVersion);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -899,10 +889,9 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv =
     OnGetCurrentFirmwareReadableVersion(aCurrentFirmwareReadableVersion);
@@ -915,12 +904,11 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetReleaseNotesLocation(nsIURI * *aReleaseNotesLocation)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aReleaseNotesLocation);
 
   *aReleaseNotesLocation = nsnull;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   if(!mReleaseNotesLocation) {
     return NS_ERROR_NOT_AVAILABLE;
@@ -936,12 +924,11 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetResetInstructionsLocation(nsIURI * *aResetInstructionsLocation)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aResetInstructionsLocation);
 
   *aResetInstructionsLocation = nsnull;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   if(!mResetInstructionsLocation) {
     return NS_ERROR_NOT_AVAILABLE;
@@ -958,11 +945,10 @@ sbBaseDeviceFirmwareHandler::GetRecoveryModeKeyCombination(
                                nsAString &aRecoveryModeKeyCombination)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   aRecoveryModeKeyCombination.Truncate();
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aRecoveryModeKeyCombination.Assign(mRecoveryModeKeyCombination);
 
   return NS_OK;
@@ -972,12 +958,11 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetCustomerSupportLocation(nsIURI * *aSupportLocation)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aSupportLocation);
 
   *aSupportLocation = nsnull;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   if(!mSupportLocation) {
     return NS_OK;
@@ -993,12 +978,11 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetRegisterLocation(nsIURI * *aRegisterLocation)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aRegisterLocation);
 
   *aRegisterLocation = nsnull;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   if(!mRegisterLocation) {
     return NS_OK;
@@ -1014,10 +998,9 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(PRBool *aNeedsRecoveryMode)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aNeedsRecoveryMode);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   *aNeedsRecoveryMode = mNeedsRecoveryMode;
 
   return NS_OK;
@@ -1027,10 +1010,9 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetRecoveryMode(PRBool *aRecoveryMode)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aRecoveryMode);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnGetRecoveryMode(aRecoveryMode);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1042,12 +1024,11 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **aFirmwareUpdate)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
   *aFirmwareUpdate = nsnull;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   
   // No default firmware available. Return nsnull.
   NS_ENSURE_TRUE(mDefaultFirmwareLocation, NS_OK);
@@ -1110,9 +1091,8 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetDeviceModelNumber(nsAString &aModelNumber)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   
   nsresult rv = OnGetDeviceModelNumber(aModelNumber);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1124,9 +1104,8 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetDeviceModelVersion(nsAString &aModelVersion)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnGetDeviceModelVersion(aModelVersion);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1138,9 +1117,8 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetDeviceVendor(nsAString &aDeviceVendor)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnGetDeviceVendor(aDeviceVendor);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1152,7 +1130,7 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetSupportedDevices(
                                nsISimpleEnumerator **aSupportedDevices)
 {
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   *aSupportedDevices = nsnull;
 
@@ -1169,10 +1147,9 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
                                        PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnCanUpdate(aDevice, 
                             aDeviceVendorID, 
@@ -1189,11 +1166,10 @@ sbBaseDeviceFirmwareHandler::InitiateRecoveryModeSwitch(
                              PRUint32 aDeviceProductID)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   rv = OnBeginRecoveryModeSwitch(aDeviceVendorID,
                                  aDeviceProductID);
@@ -1207,10 +1183,9 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
                                   sbIDeviceEventListener *aListener)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   NS_ENSURE_FALSE(mDevice, NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_FALSE(mListener, NS_ERROR_ALREADY_INITIALIZED);
@@ -1230,13 +1205,12 @@ sbBaseDeviceFirmwareHandler::Rebind(sbIDevice *aDevice,
                                     PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
   *_retval = PR_FALSE;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnRebind(aDevice, aListener, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1248,9 +1222,8 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Unbind()
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   mDevice = nsnull;
   mListener = nsnull;
@@ -1262,7 +1235,6 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Cancel()
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnCancel();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1274,7 +1246,6 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::RefreshInfo()
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnRefreshInfo();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1286,7 +1257,6 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
   nsresult rv = OnUpdate(aFirmwareUpdate);
@@ -1299,7 +1269,6 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Recover(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnRecover(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1311,7 +1280,6 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::VerifyDevice()
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnVerifyDevice();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1323,7 +1291,6 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnVerifyUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1345,7 +1312,7 @@ sbBaseDeviceFirmwareHandler::Notify(nsITimer *aTimer)
   if(aTimer == mXMLHttpRequestTimer) {
     NS_ENSURE_STATE(mXMLHttpRequest);
 
-    PRInt32 state = 0;
+    PRUint16 state = 0;
     rv = mXMLHttpRequest->GetReadyState(&state);
     NS_ENSURE_SUCCESS(rv, rv);
 

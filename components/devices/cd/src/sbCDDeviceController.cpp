@@ -32,24 +32,21 @@
 #include <sbDeviceCompatibility.h>
 
 #include <nsIClassInfoImpl.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIPropertyBag2.h>
 
 
-SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbCDDeviceController,
-                                       SB_CDDEVICE_CONTROLLER_CONTRACTID)
+NS_IMPL_CLASSINFO(sbCDDeviceController, NULL, 
+                  nsIClassInfo::THREADSAFE, SB_CDDEVICE_CONTROLLER_CID);
 
-NS_IMPL_THREADSAFE_ADDREF(sbCDDeviceController)
-NS_IMPL_THREADSAFE_RELEASE(sbCDDeviceController)
-NS_IMPL_QUERY_INTERFACE1_CI(sbCDDeviceController, sbIDeviceController)
-NS_IMPL_CI_INTERFACE_GETTER1(sbCDDeviceController, sbIDeviceController)
+NS_IMPL_ISUPPORTS1(sbCDDeviceController, sbIDeviceController);
 
-// nsIClassInfo implementation.
-NS_DECL_CLASSINFO(sbCDDeviceController)
-NS_IMPL_THREADSAFE_CI(sbCDDeviceController)
+NS_IMPL_CI_INTERFACE_GETTER1(sbCDDeviceController, sbIDeviceController);
+
+NS_IMPL_THREADSAFE_CI(sbCDDeviceController);
 
 sbCDDeviceController::sbCDDeviceController()
 {
@@ -67,6 +64,7 @@ sbCDDeviceController::sbCDDeviceController()
 
 sbCDDeviceController::~sbCDDeviceController()
 {
+
 }
 
 //------------------------------------------------------------------------------
@@ -83,7 +81,7 @@ sbCDDeviceController::GetCompatibility(nsIPropertyBag *aParams,
 
   // Create the device compatibility object.
   nsRefPtr<sbDeviceCompatibility> deviceCompatibility;
-  NS_NEWXPCOM(deviceCompatibility, sbDeviceCompatibility);
+  deviceCompatibility = new sbDeviceCompatibility;
   NS_ENSURE_TRUE(deviceCompatibility, NS_ERROR_OUT_OF_MEMORY);
 
   // Get the device type.

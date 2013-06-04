@@ -69,6 +69,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                      $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 DYNAMIC_LIB = sbDeviceFirmwareTester
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \

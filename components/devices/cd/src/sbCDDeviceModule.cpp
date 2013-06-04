@@ -28,74 +28,40 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbCDDeviceMarshall.h"
 #include "sbCDDeviceController.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbCDDeviceMarshall, Init)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbCDDeviceController)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbCDDeviceMarshall, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbCDDeviceController);
 
-SB_DEVICE_CONTROLLER_REGISTERSELF(sbCDDeviceController);
+NS_DEFINE_NAMED_CID(SB_CDDEVICE_MARSHALL_CID);
+NS_DEFINE_NAMED_CID(SB_CDDEVICE_CONTROLLER_CID);
 
-// Registration functions for becoming a startup observer
-static NS_METHOD
-sbCDDeviceMarshallRegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* registryLocation,
-                                const char* componentType,
-                                const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->
-      AddCategoryEntry(SB_DEVICE_MARSHALL_CATEGORY,
-                       SB_CDDEVICE_MARSHALL_DESC,
-                       SB_CDDEVICE_MARSHALL_CONTRACTID,
-                       PR_TRUE, PR_TRUE, nsnull);
-
-  return rv;
-}
-
-static NS_METHOD
-sbCDDeviceMarshallUnregisterSelf(nsIComponentManager* aCompMgr,
-                                  nsIFile* aPath,
-                                  const char* registryLocation,
-                                  const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->DeleteCategoryEntry(SB_DEVICE_MARSHALL_CATEGORY,
-                                            SB_CDDEVICE_MARSHALL_DESC,
-                                            PR_TRUE);
-  return rv;
-}
-
-static nsModuleComponentInfo sbDeviceMarshallComponents[] = 
-{
-  {
-    SB_CDDEVICE_MARSHALL_CLASSNAME,
-    SB_CDDEVICE_MARSHALL_CID,
-    SB_CDDEVICE_MARSHALL_CONTRACTID,
-    sbCDDeviceMarshallConstructor,
-    sbCDDeviceMarshallRegisterSelf,
-    sbCDDeviceMarshallUnregisterSelf
-  },
-  {
-    SB_CDDEVICE_CONTROLLER_CLASSNAME,
-    SB_CDDEVICE_CONTROLLER_CID,
-    SB_CDDEVICE_CONTROLLER_CONTRACTID,
-    sbCDDeviceControllerConstructor,
-    sbCDDeviceControllerRegisterSelf,
-    sbCDDeviceControllerUnregisterSelf
-  }
+static const mozilla::Module::CIDEntry kDeviceMarshallCIDs[] = {
+  { &kSB_CDDEVICE_MARSHALL_CID, false, NULL, sbCDDeviceMarshallConstructor },
+  { &kSB_CDDEVICE_CONTROLLER_CID, false, NULL, sbCDDeviceControllerConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceMarshall, sbDeviceMarshallComponents)
+static const mozilla::Module::ContractIDEntry kDeviceMarshallContracts[] = {
+  { SB_CDDEVICE_MARSHALL_CONTRACTID, &kSB_CDDEVICE_MARSHALL_CID },
+  { SB_CDDEVICE_CONTROLLER_CONTRACTID, &kSB_CDDEVICE_CONTROLLER_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kDeviceMarshallCategories[] = {
+  { "app-startup", SB_CDDEVICE_MARSHALL_CONTRACTID },
+  { "app-startup", SB_CDDEVICE_CONTROLLER_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kDeviceMarshallModule = {
+  mozilla::Module::kVersion,
+  kDeviceMarshallCIDs,
+  kDeviceMarshallContracts,
+  kDeviceMarshallCategories
+};
+
+NSMODULE_DEFN(sbDeviceMarshallComponents) = &kDeviceMarshallModule;

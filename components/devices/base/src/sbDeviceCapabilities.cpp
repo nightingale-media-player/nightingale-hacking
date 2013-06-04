@@ -37,16 +37,13 @@
 #include <sbDeviceUtils.h>
 #include <sbMemoryUtils.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceCapabilities,
-                              sbIDeviceCapabilities,
-                              nsIClassInfo)
+NS_IMPL_CLASSINFO(sbDeviceCapabilities, NULL, nsIClassInfo::THREADSAFE, SONGBIRD_DEVICECAPABILITIES_CID);
 
-NS_IMPL_CI_INTERFACE_GETTER2(sbDeviceCapabilities,
-                             sbIDeviceCapabilities,
-                             nsIClassInfo)
+NS_IMPL_ISUPPORTS2(sbDeviceCapabilities, sbIDeviceCapabilities, nsIClassInfo);
 
-NS_DECL_CLASSINFO(sbDeviceCapabilities)
-NS_IMPL_THREADSAFE_CI(sbDeviceCapabilities)
+NS_IMPL_CI_INTERFACE_GETTER2(sbDeviceCapabilities, sbIDeviceCapabilities, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbDeviceCapabilities);
 
 #include <prlog.h>
 #include <prprf.h>
@@ -667,13 +664,13 @@ sbDeviceCapabilities::GetPreferredFormatTypes(PRUint32 aContentType,
  * sbImageSize
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbImageSize, sbIImageSize, nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbImageSize,
-                             sbIImageSize,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbImageSize, NULL, nsIClassInfo::THREADSAFE, SB_IMAGESIZE_CID);
 
-NS_DECL_CLASSINFO(sbImageSize)
-NS_IMPL_THREADSAFE_CI(sbImageSize)
+NS_IMPL_ISUPPORTS2(sbImageSize, sbIImageSize, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbImageSize, sbIImageSize, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbImageSize);
 
 sbImageSize::~sbImageSize()
 {
@@ -713,13 +710,13 @@ sbImageSize::GetHeight(PRInt32 *aHeight)
  * sbDevCapRange
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapRange, sbIDevCapRange, nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapRange,
-                             sbIDevCapRange,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbDevCapRange, NULL, nsIClassInfo::THREADSAFE, SB_IDEVCAPRANGE_CID);
 
-NS_DECL_CLASSINFO(sbDevCapRange)
-NS_IMPL_THREADSAFE_CI(sbDevCapRange)
+NS_IMPL_ISUPPORTS2(sbDevCapRange, sbIDevCapRange, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapRange, sbIDevCapRange, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbDevCapRange);
 
 sbDevCapRange::~sbDevCapRange()
 {
@@ -820,15 +817,13 @@ sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
  * sbDevCapRange
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapFraction,
-                              sbIDevCapFraction,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapFraction,
-                             sbIDevCapFraction,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbDevCapFraction, NULL, nsIClassInfo::THREADSAFE, SB_IDEVCAPFRACTION_CID);
 
-NS_DECL_CLASSINFO(sbDevCapFraction)
-NS_IMPL_THREADSAFE_CI(sbDevCapFraction)
+NS_IMPL_ISUPPORTS2(sbDevCapFraction, sbIDevCapFraction, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapFraction, sbIDevCapFraction, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbDevCapFraction);
 
 sbDevCapFraction::~sbDevCapFraction()
 {
@@ -862,15 +857,13 @@ sbDevCapFraction::Initialize(PRUint32 aNumerator, PRUint32 aDenominator)
  * sbFormatTypeConstraint
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbFormatTypeConstraint,
-                              sbIFormatTypeConstraint,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbFormatTypeConstraint,
-                             sbIFormatTypeConstraint,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbFormatTypeConstraint, NULL, nsIClassInfo::THREADSAFE, SB_IFORMATTYPECONSTRAINT_CID);
 
-NS_DECL_CLASSINFO(sbFormatTypeConstraint)
-NS_IMPL_THREADSAFE_CI(sbFormatTypeConstraint)
+NS_IMPL_ISUPPORTS2(sbFormatTypeConstraint, sbIFormatTypeConstraint, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbFormatTypeConstraint, sbIFormatTypeConstraint, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbFormatTypeConstraint);
 
 sbFormatTypeConstraint::~sbFormatTypeConstraint()
 {
@@ -924,16 +917,13 @@ sbFormatTypeConstraint::GetConstraintMaxValue(nsIVariant * *aConstraintMaxValue)
  * Image format type implementation
  */
 
-/* Implementation file */
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbImageFormatType,
-                              sbIImageFormatType,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbImageFormatType,
-                             sbIImageFormatType,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbImageFormatType, NULL, nsIClassInfo::THREADSAFE, SB_IIMAGEFORMATTYPE_CID);
 
-NS_DECL_CLASSINFO(sbImageFormatType)
-NS_IMPL_THREADSAFE_CI(sbImageFormatType)
+NS_IMPL_ISUPPORTS2(sbImageFormatType, sbIImageFormatType, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbImageFormatType, sbIImageFormatType, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbImageFormatType);
 
 sbImageFormatType::~sbImageFormatType()
 {
@@ -999,16 +989,13 @@ sbImageFormatType::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
  * Audio format type
  */
 
-/* Implementation file */
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbAudioFormatType,
-                              sbIAudioFormatType,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbAudioFormatType,
-                             sbIAudioFormatType,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbAudioFormatType, NULL, nsIClassInfo::THREADSAFE, SB_IAUDIOFORMATTYPE_CID);
 
-NS_DECL_CLASSINFO(sbAudioFormatType)
-NS_IMPL_THREADSAFE_CI(sbAudioFormatType)
+NS_IMPL_ISUPPORTS2(sbAudioFormatType, sbIAudioFormatType, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbAudioFormatType, sbIAudioFormatType, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbAudioFormatType);
 
 sbAudioFormatType::~sbAudioFormatType()
 {
@@ -1092,15 +1079,13 @@ sbAudioFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConst
  * Video format video stream
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapVideoStream,
-                              sbIDevCapVideoStream,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapVideoStream,
-                             sbIDevCapVideoStream,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbDevCapVideoStream, NULL, nsIClassInfo::THREADSAFE, SB_IDEVCAPVIDEOSTREAM_CID);
 
-NS_DECL_CLASSINFO(sbDevCapVideoStream)
-NS_IMPL_THREADSAFE_CI(sbDevCapVideoStream)
+NS_IMPL_ISUPPORTS2(sbDevCapVideoStream, sbIDevCapVideoStream, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapVideoStream, sbIDevCapVideoStream, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbDevCapVideoStream);
 
 sbDevCapVideoStream::sbDevCapVideoStream()
 {
@@ -1327,15 +1312,13 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedBitRates(sbIDevCapRange * *aSuppo
  * Video format audio stream
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapAudioStream,
-                              sbIDevCapAudioStream,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapAudioStream,
-                             sbIDevCapAudioStream,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbDevCapAudioStream, NULL, nsIClassInfo::THREADSAFE, SB_IDEVCAPAUDIOSTREAM_CID);
 
-NS_DECL_CLASSINFO(sbDevCapAudioStream)
-NS_IMPL_THREADSAFE_CI(sbDevCapAudioStream)
+NS_IMPL_ISUPPORTS2(sbDevCapAudioStream, sbIDevCapAudioStream, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapAudioStream, sbIDevCapAudioStream, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbDevCapAudioStream);
 
 sbDevCapAudioStream::sbDevCapAudioStream()
 {
@@ -1389,15 +1372,13 @@ sbDevCapAudioStream::GetSupportedChannels(sbIDevCapRange * *aChannels)
  * Video format type
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbVideoFormatType,
-                              sbIVideoFormatType,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbVideoFormatType,
-                             sbIVideoFormatType,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbVideoFormatType, NULL, nsIClassInfo::THREADSAFE, SB_IVIDEOFORMATTYPE_CID);
 
-NS_DECL_CLASSINFO(sbVideoFormatType)
-NS_IMPL_THREADSAFE_CI(sbVideoFormatType)
+NS_IMPL_ISUPPORTS2(sbVideoFormatType, sbIVideoFormatType, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbVideoFormatType, sbIVideoFormatType, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbVideoFormatType);
 
 sbVideoFormatType::sbVideoFormatType()
 {
@@ -1444,15 +1425,13 @@ sbVideoFormatType::GetAudioStream(sbIDevCapAudioStream * *aAudioStream)
  * Playlist format type
  */
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbPlaylistFormatType,
-                              sbIPlaylistFormatType,
-                              nsIClassInfo)
-NS_IMPL_CI_INTERFACE_GETTER2(sbPlaylistFormatType,
-                             sbIPlaylistFormatType,
-                             nsIClassInfo)
+NS_IMPL_CLASSINFO(sbPlaylistFormatType, NULL, nsIClassInfo::THREADSAFE, SB_IPLAYLISTFORMATTYPE_CID);
 
-NS_DECL_CLASSINFO(sbPlaylistFormatType)
-NS_IMPL_THREADSAFE_CI(sbPlaylistFormatType)
+NS_IMPL_ISUPPORTS2(sbPlaylistFormatType, sbIPlaylistFormatType, nsIClassInfo);
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbPlaylistFormatType, sbIPlaylistFormatType, nsIClassInfo);
+
+NS_IMPL_THREADSAFE_CI(sbPlaylistFormatType);
 
 sbPlaylistFormatType::sbPlaylistFormatType()
 {

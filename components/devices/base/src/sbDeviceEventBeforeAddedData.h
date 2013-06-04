@@ -24,6 +24,7 @@
 
 #include "sbIDeviceEventBeforeAddedData.h"
 
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <sbIDevice.h>
 
@@ -45,7 +46,7 @@ protected:
   sbDeviceEventBeforeAddedData();
   ~sbDeviceEventBeforeAddedData();
 
-  PRLock*             mLock;
+  mozilla::Mutex      mLock;
 
   PRPackedBool        mContinueAddingDevice;
   nsCOMPtr<sbIDevice> mDevice;

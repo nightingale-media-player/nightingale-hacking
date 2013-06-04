@@ -67,6 +67,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 

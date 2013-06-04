@@ -112,7 +112,7 @@ interface sbICDDeviceEvent : sbIDeviceEvent
   //
   // @brief CD rip has completed.
   //
-  //const unsigned long EVENT_CDRIP_COMPLETED = EVENT_CLIENT_DEFINED + 4;
+  const unsigned long EVENT_CDRIP_COMPLETED = EVENT_CLIENT_DEFINED + 4;
   const unsigned long REQUEST_CDLOOKUP = 0x80000000 + 1;
 
   //

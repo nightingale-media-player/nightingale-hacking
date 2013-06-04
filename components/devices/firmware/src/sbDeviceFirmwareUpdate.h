@@ -32,7 +32,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-#include <prmon.h>
+#include <mozilla/Monitor.h>
 
 class sbDeviceFirmwareUpdate : public sbIDeviceFirmwareUpdate,
                                public nsIClassInfo
@@ -48,7 +48,7 @@ private:
   virtual ~sbDeviceFirmwareUpdate();
 
 protected:
-  PRMonitor* mMonitor;
+  mozilla::Monitor mMonitor;
 
   nsCOMPtr<nsIFile> mFirmwareImageFile;
   nsString          mFirmwareReadableVersion;

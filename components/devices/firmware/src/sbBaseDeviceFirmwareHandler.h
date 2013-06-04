@@ -34,7 +34,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-#include <prmon.h>
+#include <mozilla/Monitor.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
@@ -201,7 +201,7 @@ public:
 protected:
   virtual ~sbBaseDeviceFirmwareHandler();
 
-  PRMonitor* mMonitor;
+  mozilla::Monitor mMonitor;
 
   nsCOMPtr<sbIDevice> mDevice;
   nsCOMPtr<sbIDeviceEventListener> mListener;

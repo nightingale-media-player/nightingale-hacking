@@ -30,43 +30,40 @@
 #include <nsISimpleEnumerator.h>
 #include <nsISupportsPrimitives.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Monitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsXPCOMCID.h>
 
-NS_IMPL_THREADSAFE_ADDREF(sbDeviceFirmwareSupport)
-NS_IMPL_THREADSAFE_RELEASE(sbDeviceFirmwareSupport)
+NS_IMPL_CLASSINFO(sbDeviceFirmwareSupport, NULL,
+                  nsIClassInfo::THREADSAFE, SB_DEVICEFIRMWARESUPPORT_CID);
 
-NS_IMPL_QUERY_INTERFACE2_CI(sbDeviceFirmwareSupport,
-                            sbIDeviceFirmwareSupport,
-                            nsIClassInfo)
+
+NS_IMPL_ISUPPORTS2(sbDeviceFirmwareSupport,
+                   sbIDeviceFirmwareSupport,
+                   nsIClassInfo);
 
 NS_IMPL_CI_INTERFACE_GETTER1(sbDeviceFirmwareSupport,
-                             sbIDeviceFirmwareSupport)
+                             sbIDeviceFirmwareSupport);
 
-NS_DECL_CLASSINFO(sbDeviceFirmwareSupport)
 NS_IMPL_THREADSAFE_CI(sbDeviceFirmwareSupport)
 
 sbDeviceFirmwareSupport::sbDeviceFirmwareSupport()
 : mMonitor(nsnull)
 {
+
 }
 
 sbDeviceFirmwareSupport::~sbDeviceFirmwareSupport()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
+
 }
 
 /* readonly attribute AString deviceFriendlyName; */
 NS_IMETHODIMP 
 sbDeviceFirmwareSupport::GetDeviceFriendlyName(nsAString & aDeviceFriendlyName)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aDeviceFriendlyName = mDeviceFriendlyName;
 
   return NS_OK;
@@ -76,10 +73,9 @@ sbDeviceFirmwareSupport::GetDeviceFriendlyName(nsAString & aDeviceFriendlyName)
 NS_IMETHODIMP 
 sbDeviceFirmwareSupport::GetDeviceVendorID(PRUint32 *aDeviceVendorID)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDeviceVendorID);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   *aDeviceVendorID = mDeviceVendorID;
 
   return NS_OK;
@@ -89,10 +85,9 @@ sbDeviceFirmwareSupport::GetDeviceVendorID(PRUint32 *aDeviceVendorID)
 NS_IMETHODIMP 
 sbDeviceFirmwareSupport::GetDeviceProductIDs(nsISimpleEnumerator * *aDeviceProductIDs)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDeviceProductIDs);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = mDeviceProductIDs->Enumerate(aDeviceProductIDs);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -107,11 +102,7 @@ sbDeviceFirmwareSupport::Init(const nsAString & aDeviceName,
                               nsISimpleEnumerator *aDeviceProductIDs)
 {
   NS_ENSURE_ARG_POINTER(aDeviceProductIDs);
-  NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_FALSE(mDeviceProductIDs, NS_ERROR_ALREADY_INITIALIZED);
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbDeviceFirmwareSupport::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   mDeviceFriendlyName = aDeviceName;
   mDeviceVendorID = aVendorID;
@@ -146,11 +137,7 @@ sbDeviceFirmwareSupport::SimpleInit(const nsAString & aDeviceName,
                                     PRUint32 aVendorID, 
                                     PRUint32 aProductID)
 {
-  NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_FALSE(mDeviceProductIDs, NS_ERROR_ALREADY_INITIALIZED);
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbDeviceFirmwareSupport::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
@@ -177,11 +164,9 @@ sbDeviceFirmwareSupport::SimpleInit(const nsAString & aDeviceName,
 NS_IMETHODIMP
 sbDeviceFirmwareSupport::AppendProductID(PRUint32 aProductID) 
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsCOMPtr<nsISupportsPRUint32> productID = 
     do_CreateInstance(NS_SUPPORTS_PRUINT32_CONTRACTID, &rv);

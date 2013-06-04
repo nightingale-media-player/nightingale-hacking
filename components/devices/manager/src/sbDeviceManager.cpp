@@ -35,7 +35,6 @@
 #include <nsISupportsPrimitives.h>
 
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -61,16 +60,18 @@
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
 #define SB_MAIN_LIBRARY_READY_OBSERVER_ID       "songbird-main-library-ready"
 
-NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
-NS_IMPL_THREADSAFE_RELEASE(sbDeviceManager)
-NS_IMPL_QUERY_INTERFACE7_CI(sbDeviceManager,
-                            sbIDeviceManager2,
-                            sbIDeviceControllerRegistrar,
-                            sbIDeviceRegistrar,
-                            sbIDeviceEventTarget,
-                            nsISupportsWeakReference,
-                            nsIClassInfo,
-                            nsIObserver)
+
+NS_IMPL_CLASSINFO(sbDeviceManager, NULL, nsIClassInfo::THREADSAFE, SONGBIRD_DEVICEMANAGER2_CID);
+
+NS_IMPL_ISUPPORTS7(sbDeviceManager,
+                   sbIDeviceManager2,
+                   sbIDeviceControllerRegistrar,
+                   sbIDeviceRegistrar,
+                   sbIDeviceEventTarget,
+                   nsISupportsWeakReference,
+                   nsIClassInfo,
+                   nsIObserver);
+
 NS_IMPL_CI_INTERFACE_GETTER5(sbDeviceManager,
                              sbIDeviceManager2,
                              sbIDeviceControllerRegistrar,
@@ -78,7 +79,6 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbDeviceManager,
                              sbIDeviceEventTarget,
                              nsISupportsWeakReference)
 
-NS_DECL_CLASSINFO(sbDeviceManager)
 NS_IMPL_THREADSAFE_CI(sbDeviceManager)
 
 sbDeviceManager::sbDeviceManager()
@@ -390,7 +390,7 @@ NS_IMETHODIMP sbDeviceManager::RegisterDevice(sbIDevice *aDevice)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   // prevent anybody from seeing a half-added device
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
   nsID* id;
@@ -575,10 +575,7 @@ nsresult sbDeviceManager::Init()
 
   NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
 
-  mMonitor = nsAutoMonitor::NewMonitor(__FILE__);
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   // initialize the hashtables
   PRBool succeeded;
@@ -665,7 +662,7 @@ nsresult sbDeviceManager::GetCanDisconnect(PRBool* aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
 
@@ -704,7 +701,7 @@ nsresult sbDeviceManager::BeginMarshallMonitoring()
   nsresult rv;
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   // Get the list of marshalls.
   nsCOMPtr<nsIArray> marshalls;
@@ -740,7 +737,7 @@ nsresult sbDeviceManager::BeginMarshallMonitoring()
 nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
 
@@ -796,7 +793,7 @@ nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
 nsresult sbDeviceManager::QuitApplicationGranted()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
 
@@ -842,7 +839,7 @@ nsresult sbDeviceManager::PrepareShutdown()
   nsresult rv;
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   // Indicate that the device manager services are no longer ready.
   nsCOMPtr<sbIServiceManager>
@@ -905,7 +902,7 @@ nsresult sbDeviceManager::FinalShutdown()
   nsresult rv;
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  nsAutoMonitor mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   // get rid of all our controllers
   // ask the controllers to disconnect all devices
