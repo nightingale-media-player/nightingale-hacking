@@ -51,6 +51,7 @@
 
 // Mozilla imports.
 #include <prmon.h>
+#include <mozilla/ReentrantMonitor.h>
 
 
 //------------------------------------------------------------------------------
@@ -122,7 +123,7 @@ public:
    * \param aDeviceStatusHelper     Helper for updating device status.
    */
 
-  sbDeviceProgressListener(PRMonitor*            aCompleteNotifyMonitor,
+  sbDeviceProgressListener(PRMonitor* aCompleteNotifyMonitor,
                            sbDeviceStatusHelper* aDeviceStatusHelper);
 
 

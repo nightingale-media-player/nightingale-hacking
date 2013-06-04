@@ -49,6 +49,7 @@
 
 // Mozilla imports.
 #include <prprf.h>
+#include <mozilla/Mutex.h>
 
 
 //------------------------------------------------------------------------------
@@ -306,19 +307,19 @@ sbDeviceStatistics::RemoveAllItems(sbIDeviceLibrary* aLibrary)
 
 PRUint32 sbDeviceStatistics::AudioCount()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mAudioCount;
 }
 
 void sbDeviceStatistics::SetAudioCount(PRUint32 aAudioCount)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mAudioCount = aAudioCount;
 }
 
 void sbDeviceStatistics::AddAudioCount(PRInt32 aAddAudioCount)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt32 audioCount =
             PR_MAX(static_cast<PRInt32>(mAudioCount) + aAddAudioCount, 0);
   mAudioCount = audioCount;
@@ -331,19 +332,19 @@ void sbDeviceStatistics::AddAudioCount(PRInt32 aAddAudioCount)
 
 PRUint64 sbDeviceStatistics::AudioUsed()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mAudioUsed;
 }
 
 void sbDeviceStatistics::SetAudioUsed(PRUint64 aAudioUsed)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mAudioUsed = aAudioUsed;
 }
 
 void sbDeviceStatistics::AddAudioUsed(PRInt64 aAddAudioUsed)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt64 audioUsed =
             PR_MAX(static_cast<PRInt64>(mAudioUsed) + aAddAudioUsed, 0);
   mAudioUsed = audioUsed;
@@ -356,19 +357,19 @@ void sbDeviceStatistics::AddAudioUsed(PRInt64 aAddAudioUsed)
 
 PRUint64 sbDeviceStatistics::AudioPlayTime()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mAudioPlayTime;
 }
 
 void sbDeviceStatistics::SetAudioPlayTime(PRUint64 aAudioPlayTime)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mAudioPlayTime = aAudioPlayTime;
 }
 
 void sbDeviceStatistics::AddAudioPlayTime(PRInt64 aAddAudioPlayTime)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt64 audioPlayTime =
             PR_MAX(static_cast<PRInt64>(mAudioPlayTime) + aAddAudioPlayTime, 0);
   mAudioPlayTime = audioPlayTime;
@@ -381,19 +382,19 @@ void sbDeviceStatistics::AddAudioPlayTime(PRInt64 aAddAudioPlayTime)
 
 PRUint32 sbDeviceStatistics::VideoCount()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mVideoCount;
 }
 
 void sbDeviceStatistics::SetVideoCount(PRUint32 aVideoCount)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mVideoCount = aVideoCount;
 }
 
 void sbDeviceStatistics::AddVideoCount(PRInt32 aAddVideoCount)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt32 videoCount =
             PR_MAX(static_cast<PRInt32>(mVideoCount) + aAddVideoCount, 0);
   mVideoCount = videoCount;
@@ -406,19 +407,19 @@ void sbDeviceStatistics::AddVideoCount(PRInt32 aAddVideoCount)
 
 PRUint64 sbDeviceStatistics::VideoUsed()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mVideoUsed;
 }
 
 void sbDeviceStatistics::SetVideoUsed(PRUint64 aVideoUsed)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mVideoUsed = aVideoUsed;
 }
 
 void sbDeviceStatistics::AddVideoUsed(PRInt64 aAddVideoUsed)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt64 videoUsed =
             PR_MAX(static_cast<PRInt64>(mVideoUsed) + aAddVideoUsed, 0);
   mVideoUsed = videoUsed;
@@ -431,19 +432,19 @@ void sbDeviceStatistics::AddVideoUsed(PRInt64 aAddVideoUsed)
 
 PRUint64 sbDeviceStatistics::VideoPlayTime()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mVideoPlayTime;
 }
 
 void sbDeviceStatistics::SetVideoPlayTime(PRUint64 aVideoPlayTime)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mVideoPlayTime = aVideoPlayTime;
 }
 
 void sbDeviceStatistics::AddVideoPlayTime(PRInt64 aAddVideoPlayTime)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt64 videoPlayTime =
             PR_MAX(static_cast<PRInt64>(mVideoPlayTime) + aAddVideoPlayTime, 0);
   mVideoPlayTime = videoPlayTime;
@@ -456,19 +457,19 @@ void sbDeviceStatistics::AddVideoPlayTime(PRInt64 aAddVideoPlayTime)
 
 PRUint32 sbDeviceStatistics::ImageCount()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mImageCount;
 }
 
 void sbDeviceStatistics::SetImageCount(PRUint32 aImageCount)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mImageCount = aImageCount;
 }
 
 void sbDeviceStatistics::AddImageCount(PRInt32 aAddImageCount)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt32 ImageCount =
             PR_MAX(static_cast<PRInt32>(mImageCount) + aAddImageCount, 0);
   mImageCount = ImageCount;
@@ -481,19 +482,19 @@ void sbDeviceStatistics::AddImageCount(PRInt32 aAddImageCount)
 
 PRUint64 sbDeviceStatistics::ImageUsed()
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   return mImageUsed;
 }
 
 void sbDeviceStatistics::SetImageUsed(PRUint64 aImageUsed)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   mImageUsed = aImageUsed;
 }
 
 void sbDeviceStatistics::AddImageUsed(PRInt64 aAddImageUsed)
 {
-  nsAutoLock autoStatLock(mStatLock);
+  mozilla::MutexAutoLock autoStatLock(mStatLock);
   PRInt64 ImageUsed =
             PR_MAX(static_cast<PRInt64>(mImageUsed) + aAddImageUsed, 0);
   mImageUsed = ImageUsed;
@@ -531,10 +532,7 @@ sbDeviceStatistics::sbDeviceStatistics() :
 
 sbDeviceStatistics::~sbDeviceStatistics()
 {
-  // Dispose of the statistics lock.
-  if (mStatLock)
-    nsAutoLock::DestroyLock(mStatLock);
-  mStatLock = nsnull;
+
 }
 
 
@@ -553,10 +551,6 @@ sbDeviceStatistics::Initialize(class sbBaseDevice* aDevice)
 
   // Get the device.
   mBaseDevice = aDevice;
-
-  // Create the statistics lock.
-  mStatLock = nsAutoLock::NewLock(__FILE__"::mStatLock");
-  NS_ENSURE_TRUE(mStatLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }

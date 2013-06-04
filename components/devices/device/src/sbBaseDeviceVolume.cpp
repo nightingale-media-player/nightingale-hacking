@@ -35,6 +35,8 @@
 //
 //------------------------------------------------------------------------------
 
+#include <mozilla/Mutex.h>
+
 // Self imports.
 #include "sbBaseDeviceVolume.h"
 
@@ -82,10 +84,7 @@ sbBaseDeviceVolume::New(sbBaseDeviceVolume** aVolume,
 
 sbBaseDeviceVolume::~sbBaseDeviceVolume()
 {
-  // Dispose of the volume lock.
-  if (mVolumeLock)
-    nsAutoLock::DestroyLock(mVolumeLock);
-  mVolumeLock = nsnull;
+
 }
 
 
@@ -96,7 +95,7 @@ sbBaseDeviceVolume::~sbBaseDeviceVolume()
 nsresult
 sbBaseDeviceVolume::GetGUID(nsAString& aGUID)
 {
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   aGUID.Assign(mGUID);
   return NS_OK;
 }
@@ -104,7 +103,7 @@ sbBaseDeviceVolume::GetGUID(nsAString& aGUID)
 nsresult
 sbBaseDeviceVolume::SetGUID(const nsAString& aGUID)
 {
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   mGUID.Assign(aGUID);
   return NS_OK;
 }
@@ -114,7 +113,7 @@ nsresult
 sbBaseDeviceVolume::GetIsMounted(PRBool* aIsMounted)
 {
   NS_ENSURE_ARG_POINTER(aIsMounted);
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   *aIsMounted = mIsMounted;
   return NS_OK;
 }
@@ -122,7 +121,7 @@ sbBaseDeviceVolume::GetIsMounted(PRBool* aIsMounted)
 nsresult
 sbBaseDeviceVolume::SetIsMounted(PRBool aIsMounted)
 {
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   mIsMounted = aIsMounted;
   return NS_OK;
 }
@@ -132,7 +131,7 @@ nsresult
 sbBaseDeviceVolume::GetRemovable(PRInt32* aRemovable)
 {
   NS_ENSURE_ARG_POINTER(aRemovable);
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   *aRemovable = mRemovable;
   return NS_OK;
 }
@@ -140,7 +139,7 @@ sbBaseDeviceVolume::GetRemovable(PRInt32* aRemovable)
 nsresult
 sbBaseDeviceVolume::SetRemovable(PRInt32 aRemovable)
 {
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   mRemovable = aRemovable;
   return NS_OK;
 }
@@ -150,7 +149,7 @@ nsresult
 sbBaseDeviceVolume::GetDeviceLibrary(sbIDeviceLibrary** aDeviceLibrary)
 {
   NS_ENSURE_ARG_POINTER(aDeviceLibrary);
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   NS_IF_ADDREF(*aDeviceLibrary = mDeviceLibrary);
   return NS_OK;
 }
@@ -164,7 +163,7 @@ sbBaseDeviceVolume::SetDeviceLibrary(sbIDeviceLibrary* aDeviceLibrary)
   nsCOMPtr<sbIDeviceLibrary> currentLibrary;
   nsAutoString               currentLibraryGUID;
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     currentLibrary = mDeviceLibrary;
   }
   if (currentLibrary) {
@@ -175,11 +174,11 @@ sbBaseDeviceVolume::SetDeviceLibrary(sbIDeviceLibrary* aDeviceLibrary)
   // Remove current device library.
   if (currentLibrary) {
     {
-      nsAutoLock autoVolumeLock(mDevice->mVolumeLock);
+      mozilla::MutexAutoLock autoVolumeLock(mDevice->mVolumeLock);
       mDevice->mVolumeLibraryGUIDTable.Remove(currentLibraryGUID);
     }
     {
-      nsAutoLock autoVolumeLock(mVolumeLock);
+      mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
       mDeviceLibrary = nsnull;
     }
   }
@@ -190,12 +189,12 @@ sbBaseDeviceVolume::SetDeviceLibrary(sbIDeviceLibrary* aDeviceLibrary)
     rv = aDeviceLibrary->GetGuid(libraryGUID);
     NS_ENSURE_SUCCESS(rv, rv);
     {
-      nsAutoLock autoVolumeLock(mDevice->mVolumeLock);
+      mozilla::MutexAutoLock autoVolumeLock(mDevice->mVolumeLock);
       NS_ENSURE_TRUE(mDevice->mVolumeLibraryGUIDTable.Put(libraryGUID, this),
                      NS_ERROR_OUT_OF_MEMORY);
     }
     {
-      nsAutoLock autoVolumeLock(mVolumeLock);
+      mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
       mDeviceLibrary = aDeviceLibrary;
     }
   }
@@ -208,7 +207,7 @@ nsresult
 sbBaseDeviceVolume::GetStatistics(sbDeviceStatistics** aStatistics)
 {
   NS_ENSURE_ARG_POINTER(aStatistics);
-  nsAutoLock autoVolumeLock(mVolumeLock);
+  mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
   NS_ENSURE_STATE(aStatistics);
   NS_ADDREF(*aStatistics = mStatistics);
   return NS_OK;
@@ -225,10 +224,6 @@ nsresult
 sbBaseDeviceVolume::Initialize(sbBaseDevice* aDevice)
 {
   nsresult rv;
-
-  // Create the volume lock.
-  mVolumeLock = nsAutoLock::NewLock("sbBaseDeviceVolume::mVolumeLock");
-  NS_ENSURE_TRUE(mVolumeLock, NS_ERROR_OUT_OF_MEMORY);
 
   // Set the volume device.
   mDevice = aDevice;

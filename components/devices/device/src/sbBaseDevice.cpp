@@ -85,7 +85,7 @@
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
-//#include <sbIMediaFileManager.h>
+#include <sbIMediaFileManager.h>
 #include <sbIMediaInspector.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaItemController.h>
@@ -412,7 +412,6 @@ sbBaseDevice::sbBaseDevice() :
   mEnsureSpaceChecked(false),
   mConnected(PR_FALSE),
   mVolumeLock(nsnull),
-  mStateLock(nsnull),
   mPreviousStateLock(nsnull)
 {
   mStatus = new sbDeviceStatusHelper(this);
@@ -429,6 +428,8 @@ sbBaseDevice::sbBaseDevice() :
   #else
     PRBool success;
   #endif
+
+  mStateLock = (mozilla::Mutex*) malloc(sizeof(mozilla::Mutex));
 
   mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
                               __FILE__"::mConnectLock");
@@ -809,7 +810,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(downloadJobProgress);
   sbAutoJobCancel autoCancel(cancel);
 
-  mozilla::ReentrantMonitor stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
+  PRMonitor *stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
 
   // Add a device job progress listener.
   nsRefPtr<sbDeviceProgressListener> listener;
@@ -828,7 +829,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    mozilla::ReentrantMonitorAutoEnter monitor(stopWaitMonitor);
+    PR_EnterMonitor(stopWaitMonitor);
 
     // Check for abort.
     if (IsRequestAborted()) {
@@ -841,7 +842,7 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
     // If not complete, wait for completion.  If requests are cancelled, the
     // request wait monitor will be notified.
     if (!isComplete)
-      monitor.Wait();
+      PR_Wait(stopWaitMonitor, PR_INTERVAL_NO_TIMEOUT);
   }
 
   // Forget auto-cancel.
@@ -1203,7 +1204,7 @@ NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
 NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 {
   NS_ENSURE_ARG_POINTER(aIsBusy);
-  mozilla::MutexAutoLock lock(mStateLock);
+  mozilla::MutexAutoLock lock(*mStateLock);
   switch (mState) {
     case STATE_IDLE:
     case STATE_CANCEL:
@@ -1223,7 +1224,7 @@ NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
-  mozilla::MutexAutoLock lock(mStateLock);
+  mozilla::MutexAutoLock lock(*mStateLock);
   switch(mState) {
     case STATE_IDLE:
     case STATE_CANCEL:
@@ -1264,8 +1265,9 @@ nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
-  mozilla::MutexAutoLock lock(mStateLock);
+  mozilla::MutexAutoLock lock(*mStateLock);
   *aState = mState;
+
   return NS_OK;
 }
 
@@ -1279,7 +1281,7 @@ NS_IMETHODIMP sbBaseDevice::SetState(PRUint32 aState)
 
   // set state, checking if it changed
   {
-    mozilla::MutexAutoLock lock(mStateLock);
+    mozilla::MutexAutoLock lock(*mStateLock);
 
     // Only allow the cancel state to transition to the idle state.  This
     // prevents the request processing code from changing the state from cancel
@@ -2710,11 +2712,12 @@ sbBaseDevice::GetDeviceSettingsDocument
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the device settings file document.
-  rv = xmlHttpRequest->OpenRequest(NS_LITERAL_CSTRING("GET"),
-                                   deviceSettingsURISpec,
-                                   PR_FALSE,                  // async
-                                   SBVoidString(),            // user
-                                   SBVoidString());           // password
+  rv = xmlHttpRequest->Open(NS_LITERAL_CSTRING("GET"),
+                            deviceSettingsURISpec,
+                            PR_FALSE,                  // async
+                            SBVoidString(),            // user
+                            SBVoidString());           // password
+
   NS_ENSURE_SUCCESS(rv, rv);
   rv = xmlHttpRequest->Send(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -5684,7 +5687,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!NS_IsMainThread()) {
-    nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_RunSupportsMediaItem(helper.get());
+    nsCOMPtr<nsIRunnable> runnable =
+        new sbDeviceSupportsItemHelper::nsRunnableMethod_RunSupportsMediaItem(helper.get());
     NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
     rv = NS_DispatchToMainThread(runnable);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -5867,7 +5871,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
 
     PRBool isSupported = PR_FALSE;
     if (!mTrackSourceTable.Get(trackType, &isSupported)) {
-      mozilla::ReentrantMonitor *stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
+      PRMonitor *stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
 
       // check transferable only once.
       nsRefPtr<sbDeviceStreamingHandler> listener;
@@ -5883,7 +5887,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
       PRBool isComplete = PR_FALSE;
       while (!isComplete) {
         // Operate within the request wait monitor.
-        mozilla::ReentrantMonitorAutoEnter monitor(stopWaitMonitor);
+        PR_EnterMonitor(stopWaitMonitor);
 
         // Check for abort.
         NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
@@ -5894,7 +5898,7 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
         // If not complete, wait for completion. If requests are cancelled,
         // the request wait monitor will be notified.
         if (!isComplete)
-          monitor.Wait();
+          PR_Wait(stopWaitMonitor, PR_INTERVAL_NO_TIMEOUT);
       }
 
       isSupported = listener->IsStreamingItemSupported();

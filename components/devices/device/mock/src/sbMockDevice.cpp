@@ -31,6 +31,7 @@
 #include <nsIWritablePropertyBag.h>
 #include <nsIWritablePropertyBag2.h>
 
+#include <mozilla/Mutex.h>
 #include <nsArrayUtils.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -160,7 +161,7 @@ nsresult sbMockDevice::DeviceSpecificDisconnect()
   nsresult rv;
   nsRefPtr<sbBaseDeviceVolume> volume;
   {
-    nsAutoLock autoVolumeLock(mVolumeLock);
+    mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
     volume = mDefaultVolume;
     mDefaultVolume = nsnull;
   }
@@ -548,7 +549,7 @@ NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
 
     // Set the primary and default volume.
     {
-      nsAutoLock autoVolumeLock(mVolumeLock);
+      mozilla::MutexAutoLock autoVolumeLock(mVolumeLock);
       mPrimaryVolume = volume;
       mDefaultVolume = volume;
     }

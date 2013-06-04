@@ -753,14 +753,14 @@ sbDeviceTranscoding::TranscodeMediaItem(
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(stopMonitor);
+    PR_EnterMonitor(stopMonitor);
 
     // Check if the job is complete.
     isComplete = listener->IsComplete();
 
     // If not complete, wait for completion.
     if (!isComplete)
-      monitor.Wait();
+      PR_Wait(stopMonitor, PR_INTERVAL_NO_TIMEOUT);
   }
 
   // Get the transcoded video file URI.

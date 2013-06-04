@@ -28,7 +28,7 @@
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceProperties, sbIDeviceProperties)
 
-#include <nsAutoLock.h>
+#include <sbLockUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIProperty.h>
@@ -52,14 +52,13 @@ static PRLogModuleInfo* gDevicePropertiesLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbDeviceProperties::sbDeviceProperties() :
-isInitialized(PR_FALSE)
+isInitialized(PR_FALSE), mLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gDevicePropertiesLog) {
     gDevicePropertiesLog = PR_NewLogModule("sbDeviceProperties");
   }
 #endif
-  mLock = nsAutoLock::NewLock("sbDevicePropertiesLock");
   // Intialize our properties container
   mProperties2 =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1");
@@ -73,7 +72,6 @@ sbDeviceProperties::~sbDeviceProperties()
 {
   TRACE(("sbDeviceProperties[0x%.8x] - Destructed", this));
   if (mLock) {
-    nsAutoLock::DestroyLock(mLock);
     mLock = nsnull;
   }
 }
@@ -255,7 +253,7 @@ sbDeviceProperties::GetFriendlyName(nsAString & aFriendlyName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   return GetProperty(mProperties2,
                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
                      aFriendlyName);
@@ -266,7 +264,7 @@ sbDeviceProperties::SetFriendlyName(const nsAString & aFriendlyName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   nsresult rv =
     mProperties2->SetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
                                       aFriendlyName);
@@ -280,7 +278,7 @@ sbDeviceProperties::GetDefaultName(nsAString & aDefaultName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   return GetProperty(mProperties2,
                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
                      aDefaultName);
@@ -291,7 +289,7 @@ sbDeviceProperties::GetVendorName(nsAString & aVendorName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   return GetProperty(mProperties2,
                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
@@ -304,7 +302,7 @@ sbDeviceProperties::GetModelNumber(nsIVariant * *aModelNumber)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aModelNumber);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   return GetProperty(mProperties,
                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
@@ -317,7 +315,7 @@ sbDeviceProperties::GetSerialNumber(nsIVariant * *aSerialNumber)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aSerialNumber);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   return GetProperty(mProperties,
                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
@@ -329,7 +327,7 @@ sbDeviceProperties::GetFirmwareVersion(nsAString &aFirmwareVersion)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   return GetProperty(mProperties2,
                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FIRMWARE_VERSION),
@@ -342,7 +340,7 @@ sbDeviceProperties::GetUri(nsIURI * *aUri)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   NS_IF_ADDREF( *aUri = mDeviceLocation );
   return NS_OK;
@@ -354,7 +352,7 @@ sbDeviceProperties::GetIconUri(nsIURI * *aIconUri)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aIconUri);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   NS_IF_ADDREF( *aIconUri = mDeviceIcon );
   return NS_OK;
@@ -366,7 +364,7 @@ sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aProperties);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   NS_IF_ADDREF( *aProperties = mProperties2 );
   return NS_OK;
@@ -377,7 +375,7 @@ sbDeviceProperties::SetHidden(PRBool aHidden)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   nsresult rv =
     mProperties2->SetPropertyAsBool(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
                                     aHidden);
@@ -392,7 +390,7 @@ sbDeviceProperties::GetHidden(PRBool *aHidden)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aHidden);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   nsresult rv = mProperties2->GetPropertyAsBool(
       NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
       aHidden);

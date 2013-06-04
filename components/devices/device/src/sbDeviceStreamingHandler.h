@@ -53,7 +53,6 @@
 // Mozilla imports.
 #include <prmon.h>
 
-
 //------------------------------------------------------------------------------
 //
 // Device streaming handler classes.

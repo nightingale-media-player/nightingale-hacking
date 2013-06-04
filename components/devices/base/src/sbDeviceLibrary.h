@@ -31,6 +31,7 @@
 #include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsISimpleEnumerator.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbIDeviceEventListener.h>
 #include <sbIDeviceLibrary.h>
@@ -330,7 +331,7 @@ private:
    * \brief The sync mode has been changed or not.
    */
   nsRefPtr<sbDeviceLibrarySyncSettings> mSyncSettings;
-  PRMonitor* mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 };
 
 #define PREF_SYNC_PREFIX    "library."

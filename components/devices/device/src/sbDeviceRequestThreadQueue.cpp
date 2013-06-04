@@ -43,9 +43,7 @@
 
 sbDeviceRequestThreadQueue * sbDeviceRequestThreadQueue::New()
 {
-  sbDeviceRequestThreadQueue * newObject;
-  NS_NEWXPCOM(newObject, sbDeviceRequestThreadQueue);
-  return newObject;
+  return new sbDeviceRequestThreadQueue;
 }
 
 nsresult sbDeviceRequestThreadQueue::Start(sbBaseDevice * aBaseDevice)
@@ -394,13 +392,14 @@ void sbDeviceRequestThreadQueue::CompleteRequests() {
   sbRequestThreadQueue::CompleteRequests();
 
   {
-    nsAutoLock lock(mLock);
+    PR_Lock(mLock);
     if (mThreadStarted && !mStopProcessing) {
       nsresult rv = mBaseDevice->ChangeState(sbIDevice::STATE_IDLE);
       if (NS_FAILED(rv)) {
         NS_WARNING("Failed to clear cancel state of aborted device");
       }
     }
+    PR_Unlock(mLock);
   }
 }
 

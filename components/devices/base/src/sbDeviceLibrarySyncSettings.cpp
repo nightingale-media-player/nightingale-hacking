@@ -27,7 +27,6 @@
 
 // Mozilla includes
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsILocalFile.h>
 #include <nsThreadUtils.h>
@@ -37,7 +36,6 @@
 #include "sbDeviceLibraryMediaSyncSettings.h"
 
 // Songibrd includes
-
 #include <sbArrayUtils.h>
 #include <sbDeviceUtils.h>
 #include <sbIDevice.h>
@@ -107,14 +105,14 @@ sbDeviceLibrarySyncSettings::sbDeviceLibrarySyncSettings(
                                          nsAString const & aDeviceLibraryGuid) :
   mDeviceID(aDeviceID),
   mDeviceLibraryGuid(aDeviceLibraryGuid),
-  mLock(nsAutoLock::NewLock("sbDeviceLibrarySyncSettings"))
+  mLock(nsnull)
 {
   mMediaSettings.SetLength(sbIDeviceLibrary::MEDIATYPE_COUNT);
 }
 
 sbDeviceLibrarySyncSettings::~sbDeviceLibrarySyncSettings()
 {
-  nsAutoLock::DestroyLock(mLock);
+
 }
 
 nsresult sbDeviceLibrarySyncSettings::Assign(
@@ -177,7 +175,7 @@ sbDeviceLibrarySyncSettings::GetMediaSettings(
 {
   NS_ASSERTION(mLock, "sbDeviceLibrarySyncSettings not initialized");
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
   return GetMediaSettingsNoLock(aMediaType, aMediaSettings);
 }
 
@@ -221,7 +219,7 @@ sbDeviceLibrarySyncSettings::GetSyncPlaylists(nsIArray ** aMediaLists)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  sbSimpleAutoLock lock(mLock);
 
   nsCOMPtr<sbDeviceLibraryMediaSyncSettings> mediaSettings;
   for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;

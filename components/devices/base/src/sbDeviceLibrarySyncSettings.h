@@ -26,7 +26,6 @@
 #define SBDEVICELIBRARYSYNCSETTINGS_H_
 
 // Mozilla includes
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsIArray.h>
 #include <nsInterfaceHashtable.h>

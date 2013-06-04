@@ -27,6 +27,7 @@
 
 #include "sbIJobProgress.h"
 
+#include <a11yGeneric.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 
@@ -59,6 +60,8 @@ public:
 
   nsresult InitJobProgress(sbIMediaInspector* aInspector,
                            PRUint32 aTranscodeType);
+
+  NS_DECL_RUNNABLEMETHOD(sbDeviceSupportsItemHelper, RunSupportsMediaItem);
 
 private:
   virtual ~sbDeviceSupportsItemHelper();

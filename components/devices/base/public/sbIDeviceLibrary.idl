@@ -310,3 +310,13 @@ interface sbIDeviceLibrary : sbILibrary
    */
   void removeDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
 };
+
+%{C++
+#define SONGBIRD_DEVICELIBRARY_CID                      \
+{ /* e28c8a94-4628-4d75-bfb7-278fac1a9d9b */            \
+  0xe28c8a94,                                           \
+  0x4628,                                               \
+  0x4d75,                                               \
+  {0xbf, 0xb7, 0x27, 0x8f, 0xac, 0x1a, 0x9d, 0x9b}      \
+}
+%}

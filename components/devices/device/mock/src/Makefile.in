@@ -72,6 +72,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 DYNAMIC_LIB = sbDeviceDeviceTester
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \

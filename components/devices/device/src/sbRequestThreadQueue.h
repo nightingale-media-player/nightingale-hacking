@@ -37,7 +37,6 @@
 #include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
-
 #include <prlock.h>
 
 // Mozilla interfaces
@@ -45,6 +44,8 @@
 #include <nsIRunnable.h>
 #include <nsIThread.h>
 #include <nsITimer.h>
+
+#include "sbLockUtils.h"
 
 // Local includes
 #include "sbRequestItem.h"
@@ -85,6 +86,7 @@ public:
     typedef RequestItems::size_type size_type;
     typedef RequestItems::reference reference;
     typedef RequestItems::const_reference const_reference;
+    typedef RequestItems::value_type value_type;
 
     Batch();
     ~Batch();
@@ -304,8 +306,7 @@ public:
    * This returns whether the RequestThreadQueue is running currently.
    */
   bool IsHandlingRequests() const {
-    mozilla::MutexAutoLock lock(mLock);
-
+    sbSimpleAutoLock lock(mLock);
     return mIsHandlingRequests;
   }
 
@@ -315,7 +316,8 @@ public:
    */
   bool IsRequestAbortActive() const
   {
-    mozilla::ReentrantMonitorAutoEnter monitor(mStopWaitMonitor);
+    // XXX Definitely need to check this! Will it exit on return?
+    PR_EnterMonitor(mStopWaitMonitor);
     return mAbortRequests;
   }
 
@@ -326,7 +328,7 @@ public:
    * stop request has been been processed.
    * Care should be taken when using this on the main thread.
    */
-  mozilla::ReentrantMonitor GetStopWaitMonitor() const
+  PRMonitor* GetStopWaitMonitor() const
   {
     return mStopWaitMonitor;
   }
@@ -366,7 +368,7 @@ protected:
    * This protects the state of the sbRequestThreadProc. This lock needs
    * to be acquired before changing any data member
    */
-  mozilla::Mutex mLock;
+  PRLock *mLock;
 
   /**
    * Tracks batch depth for begin and end calls
@@ -376,7 +378,7 @@ protected:
   /**
    * Monitor to use to signal process stopping to external sources.
    */
-  const mozilla::ReentrantMonitor mStopWaitMonitor;
+  PRMonitor *mStopWaitMonitor;
 
 protected:
   /**
@@ -403,12 +405,13 @@ protected:
    */
   virtual void CompleteRequests()
   {
-    mozilla::MutexAutoLock lock(mLock);
+    sbSimpleAutoLock lock(mLock);
     NS_ASSERTION(mIsHandlingRequests,
                  "CompleteRequests called while no requests pending");
     mIsHandlingRequests = false;
-    mozilla::ReentrantMonitorAutoEnter monitor(mStopWaitMonitor);
+    PR_EnterMonitor(mStopWaitMonitor);
     mAbortRequests = false;
+    PR_ExitMonitor(mStopWaitMonitor);
   }
 
   /**
@@ -486,7 +489,7 @@ private:
    */
   bool StartRequests()
   {
-    mozilla::MutexAutoLock lock(mLock);
+    sbSimpleAutoLock lock(mLock);
     const bool isHandlingRequests = mIsHandlingRequests;
     mIsHandlingRequests = true;
     return isHandlingRequests;
@@ -553,6 +556,7 @@ private:
    * utility class.
    */
   friend class sbAutoRequestHandling;
+
 };
 
 

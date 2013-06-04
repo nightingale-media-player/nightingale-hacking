@@ -281,7 +281,7 @@ sbLibraryUpdateListener::OnBeforeListCleared(sbIMediaList *aMediaList,
   nsCOMPtr<sbILibrary> library = do_QueryInterface(aMediaList);
   if (library) {
     EnumerateForOriginIsInMainLibrary * enumerator;
-    NS_NEWXPCOM(enumerator, EnumerateForOriginIsInMainLibrary);
+    enumerator = new EnumerateForOriginIsInMainLibrary;
     NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
     enumerator->Initialize(mTargetLibrary,
                            mIgnorePlaylists);

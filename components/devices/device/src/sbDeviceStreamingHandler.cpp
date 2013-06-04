@@ -51,7 +51,7 @@
 #include <nsIProxyObjectManager.h>
 
 // Mozilla imports.
-#include <nsAutoLock.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 
 
@@ -80,12 +80,12 @@ NS_IMETHODIMP
 sbDeviceStreamingHandler::OnValidatePlaybackComplete(sbIMediaItem* aMediaItem,
                                                      PRInt32 aResult)
 {
-  nsAutoMonitor monitor(mCompleteNotifyMonitor);
+  PR_EnterMonitor(mCompleteNotifyMonitor);
   mIsSupported =
     aResult == sbIMediaItemControllerListener::VALIDATEPLAYBACKCOMPLETE_PROCEED
                  ? PR_TRUE : PR_FALSE;
   PR_AtomicSet(&mIsComplete, PR_TRUE);
-  monitor.Notify();
+  PR_Notify(mCompleteNotifyMonitor);
 
   return NS_OK;
 }
@@ -190,7 +190,7 @@ sbDeviceStreamingHandler::IsStreamingItemSupported()
 
 sbDeviceStreamingHandler::sbDeviceStreamingHandler
                             (sbIMediaItem* aMediaItem,
-                             PRMonitor* aCompleteNotifyMonitor)
+                             PRMonitor*    aCompleteNotifyMonitor)
 : mCompleteNotifyMonitor(aCompleteNotifyMonitor),
   mMediaItem(aMediaItem),
   mIsComplete(PR_FALSE),

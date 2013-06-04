@@ -28,6 +28,7 @@
 
 #include <sbIDeviceLibrary.h>
 
+#include <mozilla/ReentrantMonitor.h>
 #include <nsArrayEnumerator.h>
 #include <nsComponentManagerUtils.h>
 #include <nsISimpleEnumerator.h>
@@ -63,9 +64,6 @@ sbDeviceContent::~sbDeviceContent()
 {
   Finalize();
 
-  if(mDeviceLibrariesMonitor) {
-    nsAutoMonitor::DestroyMonitor(mDeviceLibrariesMonitor);
-  }
   TRACE(("DeviceContent[0x%.8x] - Destructed", this));
 }
 
@@ -77,8 +75,6 @@ sbDeviceContent * sbDeviceContent::New()
 NS_IMETHODIMP
 sbDeviceContent::Initialize()
 {
-  mDeviceLibrariesMonitor = nsAutoMonitor::NewMonitor("sbDeviceContent::mDeviceLibrariesMonitor");
-  NS_ENSURE_TRUE(mDeviceLibrariesMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
   mDeviceLibraries = 
@@ -118,7 +114,7 @@ sbDeviceContent::GetLibraries(nsIArray** aLibraries)
 {
   NS_ENSURE_ARG_POINTER(aLibraries);
 
-  nsAutoMonitor mon(mDeviceLibrariesMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
   *aLibraries = mDeviceLibraries;
   NS_ADDREF(*aLibraries);
   return NS_OK;
@@ -136,7 +132,7 @@ sbDeviceContent::AddLibrary(sbIDeviceLibrary* aLibrary)
   NS_ENSURE_ARG_POINTER(aLibrary);
 
   nsresult rv;
-  nsAutoMonitor mon(mDeviceLibrariesMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
   PRUint32 existingIndex;
   rv = FindLibrary(aLibrary, &existingIndex);
   if (NS_FAILED(rv)) {
@@ -159,7 +155,7 @@ sbDeviceContent::RemoveLibrary(sbIDeviceLibrary* aLibrary)
     return rv;
   }
 
-  nsAutoMonitor mon(mDeviceLibrariesMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
   rv = mDeviceLibraries->RemoveElementAt(itemIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -172,7 +168,7 @@ sbDeviceContent::FindLibrary(sbIDeviceLibrary* aLibrary, PRUint32* _retval)
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoMonitor mon(mDeviceLibrariesMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
   nsresult rv;
   PRUint32 index;
   rv = mDeviceLibraries->IndexOf(0, aLibrary, &index);

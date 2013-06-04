@@ -28,7 +28,6 @@
 #define SBIDEFAULTBASEDEVICEINFOREGISTRAR_H_
 
 // Mozilla includes
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 

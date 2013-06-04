@@ -106,9 +106,10 @@ sbTranscodeProgressListener::Completed(sbIJobProgress * aJobProgress) {
   // monitor was provided, operate under the monitor and send completion
   // notification.
   if (mCompleteNotifyMonitor) {
-    nsAutoMonitor monitor(mCompleteNotifyMonitor);
+    PR_EnterMonitor(mCompleteNotifyMonitor);
     PR_AtomicSet(&mIsComplete, 1);
-    monitor.Notify();
+    PR_Notify(mCompleteNotifyMonitor);
+    PR_ExitMonitor(mCompleteNotifyMonitor);
   } else {
     PR_AtomicSet(&mIsComplete, 1);
   }

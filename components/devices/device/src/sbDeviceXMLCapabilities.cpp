@@ -206,11 +206,11 @@ sbDeviceXMLCapabilities::AddCapabilities
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the device capabilities file.
-  rv = xmlHttpRequest->OpenRequest(NS_LITERAL_CSTRING("GET"),
-                                   nsCString(aXMLCapabilitiesSpec),
-                                   PR_FALSE,                  // async
-                                   SBVoidString(),            // user
-                                   SBVoidString());           // password
+  rv = xmlHttpRequest->Open(NS_LITERAL_CSTRING("GET"),
+                           nsCString(aXMLCapabilitiesSpec),
+                           PR_FALSE,                  // async
+                           SBVoidString(),            // user
+                           SBVoidString());           // password
   NS_ENSURE_SUCCESS(rv, rv);
   rv = xmlHttpRequest->Send(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);

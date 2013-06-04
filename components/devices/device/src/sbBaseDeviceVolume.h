@@ -47,6 +47,7 @@
 // Mozilla imports.
 #include <nsAutoPtr.h>
 #include <nsStringGlue.h>
+#include <mozilla/Mutex.h>
 
 
 //------------------------------------------------------------------------------
@@ -161,7 +162,7 @@ protected:
   //                            lock.
   //
 
-  PRLock*                       mVolumeLock;
+  mozilla::Mutex                mVolumeLock;
 
 
   //

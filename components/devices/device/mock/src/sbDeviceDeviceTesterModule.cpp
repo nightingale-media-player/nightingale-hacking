@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale Media Player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2013
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,37 +21,64 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbDeviceDeviceTesterUtils.h"
 #include "sbMockDevice.h"
 
+
+#define SB_DEVICEDEVICETESTERUTILS_CID                                        \
+{ 0x524f2420, 0xf979, 0x44ee,                                                 \
+  { 0xbc, 0x77, 0xba, 0x4e, 0x11, 0xae, 0xfc, 0x62 } }
+#define SB_DEVICEDEVICETESTERUTILS_CLASSNAME                                  \
+  "Songbird Device Device Tester - Utils"
+#define SB_DEVICEDEVICETESTERUTILS_CONTRACTID                                 \
+  "@songbirdnest.com/Songbird/Device/DeviceTester/Utils;1"
+
+
+#define SB_DEVICEDEVICETESTERMOCK_CID                                         \
+{ 0x3f023adc, 0x11ef, 0x4f63,                                                 \
+  { 0xa9, 0x69, 0xed, 0x55, 0x4d, 0xc9, 0x73, 0x6a } }
+#define SB_DEVICEDEVICETESTERMOCK_CLASSNAME                                   \
+  "Songbird Device Device Tester - Mock Device"
+#define SB_DEVICEDEVICETESTERMOCK_CONTRACTID                                  \
+  "@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"
+
+
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceDeviceTesterUtils);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockDevice);
 
-static nsModuleComponentInfo sbDeviceDeviceTesterComponents[] =
-{
-  {
-    "Songbird Device Device Tester - Utils",
-      { 0x524f2420, 0xf979, 0x44ee,
-        { 0xbc, 0x77, 0xba, 0x4e, 0x11, 0xae, 0xfc, 0x62 } },
-    "@songbirdnest.com/Songbird/Device/DeviceTester/Utils;1",
-    sbDeviceDeviceTesterUtilsConstructor
-  },
-  {
-    "Songbird Device Device Tester - Mock Device",
-      { 0x3f023adc, 0x11ef, 0x4f63,
-        { 0xa9, 0x69, 0xed, 0x55, 0x4d, 0xc9, 0x73, 0x6a } },
-    "@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1",
-    sbMockDeviceConstructor
-  }
+NS_DEFINE_NAMED_CID(SB_DEVICEDEVICETESTERUTILS_CID);
+NS_DEFINE_NAMED_CID(SB_DEVICEDEVICETESTERMOCK_CID);
+
+static const mozilla::Module::CIDEntry kDeviceDeviceTestsCIDs[] = {
+  { &kSB_DEVICEDEVICETESTERUTILS_CID, false, NULL, sbDeviceDeviceTesterUtilsConstructor },
+  { &kSB_DEVICEDEVICETESTERMOCK_CID, false, NULL, sbMockDeviceConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceDeviceTests, sbDeviceDeviceTesterComponents)
+static const mozilla::Module::ContractIDEntry kDeviceDeviceTestsContracts[] = {
+  { SB_DEVICEDEVICETESTERUTILS_CONTRACTID, &kSB_DEVICEDEVICETESTERUTILS_CID },
+  { SB_DEVICEDEVICETESTERMOCK_CONTRACTID, &kSB_DEVICEDEVICETESTERMOCK_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kDeviceDeviceTestsCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kDeviceDeviceTestsModule = {
+  mozilla::Module::kVersion,
+  kDeviceDeviceTestsCIDs,
+  kDeviceDeviceTestsContracts,
+  kDeviceDeviceTestsCategories
+};
+
+NSMODULE_DEFN(sbDeviceDeviceTests) = &kDeviceDeviceTestsModule;

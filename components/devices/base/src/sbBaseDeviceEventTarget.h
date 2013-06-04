@@ -32,6 +32,7 @@
 #include <nsCOMArray.h>
 #include <nsDeque.h>
 #include <nsWeakReference.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <prmon.h>
 
 class sbIDeviceEventListener;
@@ -70,7 +71,7 @@ protected:
   nsCOMPtr<nsIWeakReference> mParentEventTarget;
 
 private:
-  PRMonitor* mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 };
 
 #endif

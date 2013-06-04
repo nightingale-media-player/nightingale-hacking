@@ -77,7 +77,6 @@ protected:
    * Destroys the lock and various other cleanup
    */
   ~sbBaseIgnore() {
-    mLock = nsnull;
   }
 private:
   nsDataHashtable<nsStringHashKey,PRInt32> mIgnored;
