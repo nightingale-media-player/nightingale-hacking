@@ -88,30 +88,25 @@ static PRLogModuleInfo* gAlbumArtScannerLog = nsnull;
 // nsISupports implementation.
 //
 //------------------------------------------------------------------------------
-NS_IMPL_THREADSAFE_ADDREF(sbAlbumArtScanner)
-NS_IMPL_THREADSAFE_RELEASE(sbAlbumArtScanner)
 
 NS_IMPL_CLASSINFO(sbAlbumArtScanner, NULL, nsIClassInfo::THREADSAFE, SB_ALBUMARTSCANNER_CID);
 
-// XXX Update the following. It's throwing errors currently if I try updating them.
-// sbAlbumArtScanner.cpp:102: undefined reference to `sbAlbumArtScanner_GetInterfacesHelper(unsigned int*, nsID***)'
+NS_IMPL_ISUPPORTS7(sbAlbumArtScanner,
+                   sbIAlbumArtScanner,
+                   nsIClassInfo,
+                   sbIJobProgress,
+                   sbIJobProgressUI,
+                   sbIJobCancelable,
+                   nsITimerCallback,
+                   sbIAlbumArtListener);
 
-
-NS_IMPL_QUERY_INTERFACE7_CI(sbAlbumArtScanner,
-                            sbIAlbumArtScanner,
-                            nsIClassInfo,
-                            sbIJobProgress,
-                            sbIJobProgressUI,
-                            sbIJobCancelable,
-                            nsITimerCallback,
-                            sbIAlbumArtListener)
 NS_IMPL_CI_INTERFACE_GETTER6(sbAlbumArtScanner,
                              sbIAlbumArtScanner,
                              sbIJobProgress,
                              sbIJobProgressUI,
                              sbIJobCancelable,
                              nsITimerCallback,
-                             sbIAlbumArtListener)
+                             sbIAlbumArtListener);
 
 NS_IMPL_THREADSAFE_CI(sbAlbumArtScanner)
 
