@@ -1575,39 +1575,3 @@ sbPlayQueueService::OnQueueCompletedCallback(nsISupportsHashKey* aKey,
   }
   return PL_DHASH_NEXT;
 }
-
-// -----------------------------------------------------------------------------
-//
-// XPCOM Registration
-//
-// -----------------------------------------------------------------------------
-
-/* static */ NS_METHOD
-sbPlayQueueService::RegisterSelf(nsIComponentManager *aCompMgr,
-                                 nsIFile *aPath,
-                                 const char *aLoaderStr,
-                                 const char *aType,
-                                 const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> catMgr =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = catMgr->AddCategoryEntry(APPSTARTUP_CATEGORY,
-                                SB_PLAYQUEUESERVICE_CLASSNAME,
-                                "service,"
-                                SB_PLAYQUEUESERVICE_CONTRACTID,
-                                PR_TRUE,
-                                PR_TRUE,
-                                nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}

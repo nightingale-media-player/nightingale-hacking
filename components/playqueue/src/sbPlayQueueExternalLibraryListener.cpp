@@ -32,6 +32,7 @@
 #include <nsIArray.h>
 #include <nsISimpleEnumerator.h>
 #include <nsServiceManagerUtils.h>
+#include <mozilla/Mutex.h>
 
 #include <sbILibraryManager.h>
 #include <sbStandardProperties.h>
@@ -119,18 +120,11 @@ sbPlayQueueExternalLibraryListener::sbPlayQueueExternalLibraryListener()
   #endif /* PR_LOGGING */
 
   TRACE(("%s[%p]", __FUNCTION__, this));
-
-  mUpdateLock = nsAutoLock::NewLock("sbPlayQueueExternalLibraryListener::mUpdateLock");
-  NS_ASSERTION(mUpdateLock, "failed to create lock!");
 }
 
 sbPlayQueueExternalLibraryListener::~sbPlayQueueExternalLibraryListener()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-
-  if (mUpdateLock) {
-    nsAutoLock::DestroyLock(mUpdateLock);
-  }
 }
 
 nsresult
@@ -202,7 +196,7 @@ sbPlayQueueExternalLibraryListener::SetPropertiesNoSync(
 
   sbPropertyUpdate update(aMediaItem, props);
   {
-    nsAutoLock lock(mUpdateLock);
+    mozilla::MutexAutoLock lock(mUpdateLock);
     mUpdates.push_back(update);
   }
 
@@ -210,7 +204,7 @@ sbPlayQueueExternalLibraryListener::SetPropertiesNoSync(
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    nsAutoLock lock(mUpdateLock);
+    mozilla::MutexAutoLock lock(mUpdateLock);
     mUpdates.remove(update);
   }
 
@@ -365,7 +359,7 @@ sbPlayQueueExternalLibraryListener::OnItemUpdated(sbIMediaList* aMediaList,
   Updates updates;
   sbPropertyUpdate update(aMediaItem, aProperties);
   {
-    nsAutoLock lock(mUpdateLock);
+    mozilla::MutexAutoLock lock(mUpdateLock);
 
     UpdateIter it;
     it = std::find(mUpdates.begin(), mUpdates.end(), update);
@@ -398,7 +392,7 @@ sbPlayQueueExternalLibraryListener::OnItemUpdated(sbIMediaList* aMediaList,
   }
 
   {
-    nsAutoLock lock(mUpdateLock);
+    mozilla::MutexAutoLock lock(mUpdateLock);
 
     for (UpdateIter it = updates.begin(); it != updates.end(); it++) {
       mUpdates.remove(*it);

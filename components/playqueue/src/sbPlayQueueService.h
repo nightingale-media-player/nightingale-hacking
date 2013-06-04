@@ -34,7 +34,6 @@
 #include <nsCOMPtr.h>
 #include <nsTArray.h>
 #include <nsIObserver.h>
-#include <nsIGenericFactory.h>
 #include <nsIWeakReference.h>
 #include <nsTHashtable.h>
 #include <nsHashKeys.h>
@@ -75,12 +74,6 @@ public:
 
   sbPlayQueueService();
   virtual ~sbPlayQueueService();
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo* aInfo);
 
   nsresult Init();
 

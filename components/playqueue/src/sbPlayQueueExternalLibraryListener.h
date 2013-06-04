@@ -30,7 +30,7 @@
  * \brief Helper class to listen to external libraries and sync properties.
  */
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsVoidArray.h>
@@ -120,7 +120,7 @@ private:
   /** 
    * \brief Lock to make sure two libraries aren't modifying our update list.
    */
-  PRLock* mUpdateLock;
+  mozilla::Mutex mUpdateLock;
 
   /** 
    * \brief The master library.
