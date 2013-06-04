@@ -37,7 +37,8 @@
 #include <prlog.h>
 
 #include <nsMemory.h>
-#include <nsAutoLock.h>     // for nsAutoMonitor
+#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsIIOService.h>
 #include <nsIURI.h>
 #include <nsUnicharUtils.h>
@@ -68,27 +69,19 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileScanQuery, sbIFileScanQuery)
 
 //-----------------------------------------------------------------------------
 sbFileScanQuery::sbFileScanQuery()
-  : m_pDirectoryLock(PR_NewLock())
-  , m_pCurrentPathLock(PR_NewLock())
+  : m_pDirectoryLock(nsnull)
+  , m_pCurrentPathLock(nsnull)
   , m_bSearchHidden(PR_FALSE)
   , m_bRecurse(PR_FALSE)
   , m_bWantLibraryContentURIs(PR_TRUE)
-  , m_pScanningLock(PR_NewLock())
+  , m_pScanningLock(nsnull)
   , m_bIsScanning(PR_FALSE)
-  , m_pCallbackLock(PR_NewLock())
-  , m_pExtensionsLock(PR_NewLock())
-  , m_pFlaggedFileExtensionsLock(PR_NewLock())
-  , m_pCancelLock(PR_NewLock())
+  , m_pCallbackLock(nsnull)
+  , m_pExtensionsLock(nsnull)
+  , m_pFlaggedFileExtensionsLock(nsnull)
+  , m_pCancelLock(nsnull)
   , m_bCancel(PR_FALSE)
 {
-  NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
-  NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
-  NS_ASSERTION(m_pCallbackLock, "FileScanQuery.m_pCallbackLock failed");
-  NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
-  NS_ASSERTION(m_pFlaggedFileExtensionsLock,
-      "FileScanQuery.m_pFlaggedFileExtensionsLock failed!");
-  NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
-  NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
   MOZ_COUNT_CTOR(sbFileScanQuery);
   init();
 } //ctor
@@ -97,29 +90,21 @@ sbFileScanQuery::sbFileScanQuery()
 sbFileScanQuery::sbFileScanQuery(const nsString & strDirectory,
                                  const PRBool & bRecurse,
                                  sbIFileScanCallback *pCallback)
-  : m_pDirectoryLock(PR_NewLock())
+  : m_pDirectoryLock(nsnull)
   , m_strDirectory(strDirectory)
-  , m_pCurrentPathLock(PR_NewLock())
+  , m_pCurrentPathLock(nsnull)
   , m_bSearchHidden(PR_FALSE)
   , m_bRecurse(bRecurse)
   , m_bWantLibraryContentURIs(PR_TRUE)
-  , m_pScanningLock(PR_NewLock())
+  , m_pScanningLock(nsnull)
   , m_bIsScanning(PR_FALSE)
-  , m_pCallbackLock(PR_NewLock())
+  , m_pCallbackLock(nsnull)
   , m_pCallback(pCallback)
-  , m_pExtensionsLock(PR_NewLock())
-  , m_pFlaggedFileExtensionsLock(PR_NewLock())
-  , m_pCancelLock(PR_NewLock())
+  , m_pExtensionsLock(nsnull)
+  , m_pFlaggedFileExtensionsLock(nsnull)
+  , m_pCancelLock(nsnull)
   , m_bCancel(PR_FALSE)
 {
-  NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
-  NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
-  NS_ASSERTION(m_pCallbackLock, "FileScanQuery.m_pCallbackLock failed");
-  NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
-  NS_ASSERTION(m_pFlaggedFileExtensionsLock,
-      "FileScanQuery.m_pFlaggedFileExtensionsLock failed!");
-  NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
-  NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
   MOZ_COUNT_CTOR(sbFileScanQuery);
   init();
 } //ctor
@@ -131,13 +116,13 @@ void sbFileScanQuery::init()
   m_lastSeenExtension = EmptyString();
 
   {
-    nsAutoLock lock(m_pExtensionsLock);
+    mozilla::MutexAutoLock lock(m_pExtensionsLock);
     PRBool SB_UNUSED_IN_RELEASE(success) = m_Extensions.Init();
     NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
   }
 
   {
-    nsAutoLock lock(m_pFlaggedFileExtensionsLock);
+    mozilla::MutexAutoLock lock(m_pFlaggedFileExtensionsLock);
 
     PRBool SB_UNUSED_IN_RELEASE(success) = m_FlaggedExtensions.Init();
     NS_ASSERTION(success,
@@ -151,20 +136,6 @@ void sbFileScanQuery::init()
 /*virtual*/ sbFileScanQuery::~sbFileScanQuery()
 {
   MOZ_COUNT_DTOR(sbFileScanQuery);
-  if (m_pDirectoryLock)
-    PR_DestroyLock(m_pDirectoryLock);
-  if (m_pCurrentPathLock)
-    PR_DestroyLock(m_pCurrentPathLock);
-  if (m_pCallbackLock)
-    PR_DestroyLock(m_pCallbackLock);
-  if (m_pExtensionsLock)
-    PR_DestroyLock(m_pExtensionsLock);
-  if (m_pFlaggedFileExtensionsLock)
-    PR_DestroyLock(m_pFlaggedFileExtensionsLock);
-  if (m_pScanningLock)
-    PR_DestroyLock(m_pScanningLock);
-  if (m_pCancelLock)
-    PR_DestroyLock(m_pCancelLock);
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -187,7 +158,7 @@ NS_IMETHODIMP sbFileScanQuery::SetSearchHidden(PRBool aSearchHidden)
 /* void SetDirectory (in wstring strDirectory); */
 NS_IMETHODIMP sbFileScanQuery::SetDirectory(const nsAString &strDirectory)
 {
-  nsAutoLock lock(m_pDirectoryLock);
+  mozilla::MutexAutoLock lock(m_pDirectoryLock);
 
   nsresult rv;
   if (!m_pFileStack) {
@@ -209,9 +180,10 @@ NS_IMETHODIMP sbFileScanQuery::SetDirectory(const nsAString &strDirectory)
 /* wstring GetDirectory (); */
 NS_IMETHODIMP sbFileScanQuery::GetDirectory(nsAString &_retval)
 {
-  PR_Lock(m_pDirectoryLock);
-  _retval = m_strDirectory;
-  PR_Unlock(m_pDirectoryLock);
+  {
+    mozilla::MutexAutoLock lock(m_pDirectoryLock);
+    _retval = m_strDirectory;
+  }
   return NS_OK;
 } //GetDirectory
 
@@ -235,7 +207,7 @@ NS_IMETHODIMP sbFileScanQuery::GetRecurse(PRBool *_retval)
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP sbFileScanQuery::AddFileExtension(const nsAString &strExtension)
 {
-  nsAutoLock lock(m_pExtensionsLock);
+  mozilla::MutexAutoLock lock(m_pExtensionsLock);
 
   nsAutoString extStr(strExtension);
   ToLowerCase(extStr);
@@ -251,7 +223,7 @@ NS_IMETHODIMP sbFileScanQuery::AddFileExtension(const nsAString &strExtension)
 NS_IMETHODIMP
 sbFileScanQuery::AddFlaggedFileExtension(const nsAString & strExtension)
 {
-  nsAutoLock lock(m_pFlaggedFileExtensionsLock);
+  mozilla::MutexAutoLock lock(m_pFlaggedFileExtensionsLock);
 
   nsAutoString extStr(strExtension);
   ToLowerCase(extStr);
@@ -288,11 +260,11 @@ NS_IMETHODIMP sbFileScanQuery::SetCallback(sbIFileScanCallback *pCallback)
 {
   NS_ENSURE_ARG_POINTER(pCallback);
 
-  PR_Lock(m_pCallbackLock);
+  {
+    mozilla::MutexAutoLock lock(m_pCallbackLock);
 
-  m_pCallback = pCallback;
-
-  PR_Unlock(m_pCallbackLock);
+    m_pCallback = pCallback;
+  }
 
   return NS_OK;
 } //SetCallback
@@ -302,9 +274,12 @@ NS_IMETHODIMP sbFileScanQuery::SetCallback(sbIFileScanCallback *pCallback)
 NS_IMETHODIMP sbFileScanQuery::GetCallback(sbIFileScanCallback **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  PR_Lock(m_pCallbackLock);
-  NS_IF_ADDREF(*_retval = m_pCallback);
-  PR_Unlock(m_pCallbackLock);
+
+  {
+    mozilla::MutexAutoLock lock(m_pCallbackLock);
+    NS_IF_ADDREF(*_retval = m_pCallback);
+  }
+
   return NS_OK;
 } //GetCallback
 
@@ -428,9 +403,12 @@ sbFileScanQuery::GetFlaggedFilePath(PRUint32 nIndex, nsAString &retVal)
 NS_IMETHODIMP sbFileScanQuery::IsScanning(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  PR_Lock(m_pScanningLock);
-  *_retval = m_bIsScanning;
-  PR_Unlock(m_pScanningLock);
+
+  {
+    mozilla::MutexAutoLock lock(m_pScanningLock);
+    *_retval = m_bIsScanning;
+  }
+
   return NS_OK;
 } //IsScanning
 
@@ -438,9 +416,11 @@ NS_IMETHODIMP sbFileScanQuery::IsScanning(PRBool *_retval)
 /* void SetIsScanning (in PRBool bIsScanning); */
 NS_IMETHODIMP sbFileScanQuery::SetIsScanning(PRBool bIsScanning)
 {
-  PR_Lock(m_pScanningLock);
-  m_bIsScanning = bIsScanning;
-  PR_Unlock(m_pScanningLock);
+  {
+    mozilla::MutexAutoLock lock(m_pScanningLock);
+    m_bIsScanning = bIsScanning;
+  }
+
   return NS_OK;
 } //SetIsScanning
 
@@ -467,9 +447,10 @@ NS_IMETHODIMP sbFileScanQuery::GetLastFileFound(nsAString &_retval)
 /* wstring GetCurrentScanPath (); */
 NS_IMETHODIMP sbFileScanQuery::GetCurrentScanPath(nsAString &_retval)
 {
-  PR_Lock(m_pCurrentPathLock);
-  _retval = m_strCurrentPath;
-  PR_Unlock(m_pCurrentPathLock);
+  {
+    mozilla::MutexAutoLock lock(m_pCurrentPathLock);
+    _retval = m_strCurrentPath;
+  }
   return NS_OK;
 } //GetCurrentScanPath
 
@@ -477,9 +458,10 @@ NS_IMETHODIMP sbFileScanQuery::GetCurrentScanPath(nsAString &_retval)
 /* void SetCurrentScanPath (in wstring strScanPath); */
 NS_IMETHODIMP sbFileScanQuery::SetCurrentScanPath(const nsAString &strScanPath)
 {
-  PR_Lock(m_pCurrentPathLock);
-  m_strCurrentPath = strScanPath;
-  PR_Unlock(m_pCurrentPathLock);
+  {
+    mozilla::MutexAutoLock lock(m_pCurrentPathLock);
+    m_strCurrentPath = strScanPath;
+  }
   return NS_OK;
 } //SetCurrentScanPath
 
@@ -487,9 +469,10 @@ NS_IMETHODIMP sbFileScanQuery::SetCurrentScanPath(const nsAString &strScanPath)
 /* void Cancel (); */
 NS_IMETHODIMP sbFileScanQuery::Cancel()
 {
-  PR_Lock(m_pCancelLock);
-  m_bCancel = PR_TRUE;
-  PR_Unlock(m_pCancelLock);
+  {
+    mozilla::MutexAutoLock lock(m_pCancelLock);
+    m_bCancel = PR_TRUE;
+  }
   return NS_OK;
 } //Cancel
 
@@ -536,9 +519,10 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
 NS_IMETHODIMP sbFileScanQuery::IsCancelled(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  PR_Lock(m_pCancelLock);
-  *_retval = m_bCancel;
-  PR_Unlock(m_pCancelLock);
+  {
+    mozilla::MutexAutoLock lock(m_pCancelLock);
+    *_retval = m_bCancel;
+  }
   return NS_OK;
 } //IsCancelled
 
@@ -565,7 +549,7 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
   nsAutoString extString;
 
   { // scoped lock
-    nsAutoLock lock(m_pExtensionsLock);
+    mozilla::MutexAutoLock lock(m_pExtensionsLock);
 
     extString = PromiseFlatString(strExtension);
     ToLowerCase(extString);
@@ -576,7 +560,7 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
   // extension and set the out param.
   if (!isValid) {
     { // scoped lock
-      nsAutoLock lock(m_pFlaggedFileExtensionsLock);
+      mozilla::MutexAutoLock lock(m_pFlaggedFileExtensionsLock);
 
       *aOutIsFlaggedExtension =
         m_FlaggedExtensions.GetEntry(extString) != nsnull;
@@ -612,12 +596,11 @@ NS_IMPL_ISUPPORTS1(sbFileScan, sbIFileScan)
 
 //------------------------------------------------------------------------------
 sbFileScan::sbFileScan()
-: m_ScanQueryQueueLock(nsAutoLock::NewLock("sbFileScan.m_ScanQueriesLock"))
+: m_ScanQueryQueueLock(nsnull)
 , m_ScanQueryProcessorIsRunning(0)
 , m_ThreadShouldShutdown(PR_FALSE)
 , m_Finalized(PR_FALSE)
 {
-  NS_ASSERTION(m_ScanQueryQueueLock, "sbFileScan.m_ScanQueriesLock failed");
   MOZ_COUNT_CTOR(sbFileScan);
 } //ctor
 
@@ -633,9 +616,6 @@ sbFileScan::~sbFileScan()
   NS_ASSERTION(NS_SUCCEEDED(rv),
       "Unable to shut down the query processor thread");
 
-  if (m_ScanQueryQueueLock) {
-    nsAutoLock::DestroyLock(m_ScanQueryQueueLock);
-  }
 } //dtor
 
 nsresult
@@ -669,7 +649,7 @@ NS_IMETHODIMP sbFileScan::SubmitQuery(sbIFileScanQuery *pQuery)
   pQuery->AddRef();
 
   {
-    nsAutoLock autoQueryQueueLock(m_ScanQueryQueueLock);
+    mozilla::MutexAutoLock autoQueryQueueLock(m_ScanQueryQueueLock);
 
     pQuery->SetIsScanning(PR_TRUE);
     m_ScanQueryQueue.push_back(pQuery);
@@ -712,8 +692,7 @@ sbFileScan::StartProcessScanQueriesProcessor()
       do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbFileScan, this, RunProcessScanQueries);
+    nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_RunProcessScanQueries(this);
     NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
     rv = threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
@@ -734,7 +713,7 @@ sbFileScan::RunProcessScanQueries()
   while (PR_TRUE) {
     nsCOMPtr<sbIFileScanQuery> curScanQuery;
     {
-      nsAutoLock queriesLock(m_ScanQueryQueueLock);
+      mozilla::MutexAutoLock queriesLock(m_ScanQueryQueueLock);
 
       // Ensure that there is at least one query to run and that the thread
       // should be running.

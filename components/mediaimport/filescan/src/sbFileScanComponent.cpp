@@ -29,29 +29,37 @@
 * \brief Songbird FileScan Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 
 #include "sbFileScan.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScan)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScanQuery)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScan);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScanQuery);
 
-static nsModuleComponentInfo sbFileScan[] =
-{
-  {
-    SONGBIRD_FILESCAN_CLASSNAME,
-    SONGBIRD_FILESCAN_CID,
-    SONGBIRD_FILESCAN_CONTRACTID,
-    sbFileScanConstructor
-  },
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESCAN_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_FILESCANQUERY_CID);
 
-  {
-    SONGBIRD_FILESCANQUERY_CLASSNAME,
-    SONGBIRD_FILESCANQUERY_CID,
-    SONGBIRD_FILESCANQUERY_CONTRACTID,
-    sbFileScanQueryConstructor
-  },
-  
+static const mozilla::Module::CIDEntry kFileScanCIDs[] = {
+  { &kSONGBIRD_FILESCAN_CID, false, NULL, sbFileScanConstructor },
+  { &kSONGBIRD_FILESCANQUERY_CID, false, NULL, sbFileScanQueryConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdFileScanComponent, sbFileScan)
+static const mozilla::Module::ContractIDEntry kFileScanContracts[] = {
+  { SONGBIRD_FILESCAN_CONTRACTID, &kSONGBIRD_FILESCAN_CID },
+  { SONGBIRD_FILESCANQUERY_CONTRACTID, &kSONGBIRD_FILESCANQUERY_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kFileScanCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kFileScanModule = {
+  mozilla::Module::kVersion,
+  kFileScanCIDs,
+  kFileScanContracts,
+  kFileScanCategories
+};
+
+NSMODULE_DEFN(sbFileScan) = &kFileScanModule;

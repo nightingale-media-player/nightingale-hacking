@@ -38,13 +38,14 @@
 static NS_DEFINE_CID(kDataRemoteCID, SB_DATAREMOTE_CID); 
 
 
+NS_IMPL_CLASSINFO(sbDataRemoteWrapper, NULL, nsIClassInfo::THREADSAFE, SB_DATAREMOTEWRAPPER_CID);
+
 NS_IMPL_ISUPPORTS3(sbDataRemoteWrapper, sbIDataRemote, nsIObserver, nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER2(sbDataRemoteWrapper,
                              sbIDataRemote,
                              nsIClassInfo)
 
-NS_DECL_CLASSINFO(sbDataRemoteWrapper)
 NS_IMPL_THREADSAFE_CI(sbDataRemoteWrapper)
 
 

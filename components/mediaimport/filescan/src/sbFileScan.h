@@ -45,6 +45,8 @@
 #include <nsIMutableArray.h>
 #include <nsINetUtil.h>
 
+#include <a11yGeneric.h>
+#include <mozilla/Mutex.h>
 #include <nsStringGlue.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
@@ -99,36 +101,36 @@ protected:
   PRBool VerifyFileExtension(const nsAString &strExtension,
                              PRBool *aOutIsFlaggedExtension);
 
-  PRLock* m_pDirectoryLock;
+  mozilla::Mutex m_pDirectoryLock;
   nsString m_strDirectory;
 
-  PRLock* m_pCurrentPathLock;
+  mozilla::Mutex m_pCurrentPathLock;
   nsString m_strCurrentPath;
 
   PRBool m_bSearchHidden;
   PRBool m_bRecurse;
   PRBool m_bWantLibraryContentURIs;
 
-  PRLock* m_pScanningLock;
+  mozilla::Mutex m_pScanningLock;
   PRBool m_bIsScanning;
 
-  PRLock* m_pCallbackLock;
+  mozilla::Mutex m_pCallbackLock;
   nsCOMPtr<sbIFileScanCallback> m_pCallback;
 
   // thread-safe nsIMutableArray to store the URI spec strings
   nsCOMPtr<nsIMutableArray> m_pFileStack;
   nsCOMPtr<nsIMutableArray> m_pFlaggedFileStack;
 
-  PRLock* m_pExtensionsLock;
+  mozilla::Mutex m_pExtensionsLock;
   nsTHashtable<nsStringHashKey> m_Extensions;
 
-  PRLock* m_pFlaggedFileExtensionsLock;
+  mozilla::Mutex m_pFlaggedFileExtensionsLock;
   nsTHashtable<nsStringHashKey> m_FlaggedExtensions;
 
   // m_lastSeenExtension records the extension for the last added URI
   nsString m_lastSeenExtension;
 
-  PRLock* m_pCancelLock;
+  mozilla::Mutex m_pCancelLock;
   PRBool m_bCancel;
 };
 
@@ -171,7 +173,7 @@ protected:
 
   nsresult Shutdown();
 
-  PRLock       *m_ScanQueryQueueLock;
+  mozilla::Mutex m_ScanQueryQueueLock;
   queryqueue_t m_ScanQueryQueue;
 
   PRInt32 m_ScanQueryProcessorIsRunning;
@@ -179,6 +181,9 @@ protected:
   nsCOMPtr<nsINetUtil> mNetUtil;
   PRBool               m_ThreadShouldShutdown;
   PRBool               m_Finalized;
+
+
+  NS_DECL_RUNNABLEMETHOD(sbFileScan, RunProcessScanQueries);
 };
 
 #endif // __FILE_SCAN_H__

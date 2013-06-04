@@ -26,21 +26,30 @@
 
 #include "sbDataRemoteWrapper.h"
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDataRemoteWrapper, InitWrapper)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDataRemoteWrapper, InitWrapper);
+NS_DEFINE_NAMED_CID(SB_DATAREMOTEWRAPPER_CID);
 
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SB_DATAREMOTEWRAPPER_CLASSNAME,
-    SB_DATAREMOTEWRAPPER_CID,
-    SB_DATAREMOTEWRAPPER_CONTRACTID,
-    sbDataRemoteWrapperConstructor
-  }
+static const mozilla::Module::CIDEntry kDataRemoteLibCIDs[] = {
+  { &kSB_DATAREMOTEWRAPPER_CID, false, NULL, sbDataRemoteWrapperConstructor },
+  { NULL }
 };
 
-// create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdDataRemoteLib, components)
+static const mozilla::Module::ContractIDEntry kDataRemoteLibContracts[] = {
+  { SB_DATAREMOTEWRAPPER_CONTRACTID, &kSB_DATAREMOTEWRAPPER_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kDataRemoteLibCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kDataRemoteLibModule = {
+  mozilla::Module::kVersion,
+  kDataRemoteLibCIDs,
+  kDataRemoteLibContracts,
+  kDataRemoteLibCategories
+};
+
+NSMODULE_DEFN(sbDataRemoteLib) = &kDataRemoteLibModule;

@@ -32,67 +32,41 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbiTunesXMLParser.h"
 #include "sbiTunesImporter.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesXMLParser)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesXMLParser);
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesImporter)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesImporter);
+
+NS_DEFINE_NAMED_CID(SBITUNESXMLPARSER_CID);
+NS_DEFINE_NAMED_CID(SBITUNESIMPORTER_CID);
 
 #define SB_LIBRARY_IMPORTER_CATEGORY "library-importer"
 
-// Registration functions for becoming a startup observer
-static NS_METHOD sbiTunesImporterRegisterSelf(nsIComponentManager* aCompMgr,
-                                              nsIFile* aPath,
-                                              const char* registryLocation,
-                                              const char* componentType,
-                                              const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = categoryManager->AddCategoryEntry(SB_LIBRARY_IMPORTER_CATEGORY,
-                                         SBITUNESIMPORTER_CLASSNAME,
-                                         SBITUNESIMPORTER_CONTRACTID,
-                                         PR_TRUE, PR_TRUE, nsnull);
-
-  return rv;
-}
-
-static NS_METHOD sbiTunesImporterUnregisterSelf(nsIComponentManager* aCompMgr,
-                                                nsIFile* aPath,
-                                                const char* registryLocation,
-                                                const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = categoryManager->DeleteCategoryEntry(SB_LIBRARY_IMPORTER_CATEGORY,
-                                            SBITUNESIMPORTER_CLASSNAME,
-                                            PR_TRUE);
-  return rv;
-}
-
-static nsModuleComponentInfo sbiTunesImporter[] =
-{
-  {
-    SBITUNESXMLPARSER_CLASSNAME,
-    SBITUNESXMLPARSER_CID,
-    SBITUNESXMLPARSER_CONTRACTID,
-    sbiTunesXMLParserConstructor
-  },
-  {
-    SBITUNESIMPORTER_CLASSNAME,
-    SBITUNESIMPORTER_CID,
-    SBITUNESIMPORTER_CONTRACTID,
-    sbiTunesImporterConstructor,
-    sbiTunesImporterRegisterSelf,
-    sbiTunesImporterUnregisterSelf
-  },
+static const mozilla::Module::CIDEntry kiTunesImporterCIDs[] = {
+  { &kSBITUNESXMLPARSER_CID, false, NULL, sbiTunesXMLParserConstructor },
+  { &kSBITUNESIMPORTER_CID, false, NULL, sbiTunesImporterConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdiTunesImporterComponent, sbiTunesImporter)
+static const mozilla::Module::ContractIDEntry kiTunesImporterContracts[] = {
+  { SBITUNESXMLPARSER_CONTRACTID, &kSBITUNESXMLPARSER_CID },
+  { SBITUNESIMPORTER_CONTRACTID, &kSBITUNESIMPORTER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kiTunesImporterCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kiTunesImporterModule = {
+  mozilla::Module::kVersion,
+  kiTunesImporterCIDs,
+  kiTunesImporterContracts,
+  kiTunesImporterCategories
+};
+
+NSMODULE_DEFN(sbiTunesImporter) = &kiTunesImporterModule;

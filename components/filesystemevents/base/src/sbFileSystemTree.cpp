@@ -26,7 +26,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsCRT.h>
 #include <nsThreadUtils.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 
 #include <nsISimpleEnumerator.h>
 #include <nsIProxyObjectManager.h>
@@ -80,26 +80,19 @@ sbFileSystemTree::sbFileSystemTree()
   : mListener(nsnull)
   , mShouldLoadSession(PR_FALSE)
   , mIsIntialized(PR_FALSE)
-  , mRootNodeLock(nsAutoLock::NewLock("sbFileSystemTree::mRootNodeLock"))
-  , mListenerLock(nsAutoLock::NewLock("sbFileSystemTree::mListenerLock"))
+  , mRootNodeLock(nsnull)
+  , mListenerLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gFSTreeLog) {
     gFSTreeLog = PR_NewLogModule("sbFSTree");
   }
 #endif
-  NS_ASSERTION(mRootNodeLock, "Failed to create mRootNodeLock!");
-  NS_ASSERTION(mListenerLock, "Failed to create mListenerLock!");
 }
 
 sbFileSystemTree::~sbFileSystemTree()
 {
-  if (mRootNodeLock) {
-    nsAutoLock::DestroyLock(mRootNodeLock);
-  }
-  if (mListenerLock) {
-    nsAutoLock::DestroyLock(mListenerLock);
-  }
+
 }
 
 nsresult
@@ -150,8 +143,7 @@ sbFileSystemTree::InitTree()
     do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, RunBuildThread);
+  nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_RunBuildThread(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
   rv = threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
@@ -182,8 +174,7 @@ sbFileSystemTree::RunBuildThread()
       // In the event that a session failed to load from disk, inform all the
       // listeners of the error and return. The tree can not be built w/o a
       // root watch path, which is stored in the stored session data.
-      nsCOMPtr<nsIRunnable> runnable = 
-        NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, NotifySessionLoadError);
+      nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_NotifySessionLoadError(this);
       NS_ASSERTION(runnable, 
           "Could not create a runnable for NotifySessionLoadError()!");
       rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
@@ -206,8 +197,7 @@ sbFileSystemTree::RunBuildThread()
   // Before building the tree, ensure that root file does exist.
   PRBool exists = PR_FALSE;
   if ((NS_FAILED(mRootFile->Exists(&exists))) || !exists) {
-    nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, NotifyRootPathIsMissing);
+    nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_NotifyRootPathIsMissing(this);
     NS_ASSERTION(runnable,
                  "Could not create a runnable for NotifyRootPathIsMissing()!");
 
@@ -221,7 +211,7 @@ sbFileSystemTree::RunBuildThread()
 
   {
     // Don't allow any changes to structure
-    nsAutoLock rootNodeLock(mRootNodeLock);
+    mozilla::MutexAutoLock rootNodeLock(mRootNodeLock);
 
     rv = CreateNode(mRootFile, nsnull, getter_AddRefs(mRootNode));
     NS_ASSERTION(NS_SUCCEEDED(rv), "Could not create a sbFileSystemNode!"); 
@@ -242,8 +232,7 @@ sbFileSystemTree::RunBuildThread()
   }
 
   // Now notify our listeners on the main thread
-  nsCOMPtr<nsIRunnable> runnable = 
-    NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, NotifyBuildComplete);
+  nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_NotifyBuildComplete(this);
   NS_ASSERTION(runnable, 
                "Could not create a runnable for NotifyBuildComplete()!!");
 
@@ -294,7 +283,7 @@ sbFileSystemTree::NotifyBuildComplete()
   }
 
   {
-    nsAutoLock listenerLock(mListenerLock);
+    mozilla::MutexAutoLock listenerLock(mListenerLock);
     if (mListener) {
       mListener->OnTreeReady(mRootPath, mDiscoveredDirs);
     }
@@ -307,7 +296,7 @@ sbFileSystemTree::NotifyBuildComplete()
 void
 sbFileSystemTree::NotifyRootPathIsMissing()
 {
-  nsAutoLock listenerLock(mListenerLock);
+  mozilla::MutexAutoLock listenerLock(mListenerLock);
 
   if (mListener) {
     mListener->OnRootPathMissing();
@@ -317,7 +306,7 @@ sbFileSystemTree::NotifyRootPathIsMissing()
 void 
 sbFileSystemTree::NotifySessionLoadError()
 {
-  nsAutoLock listenerLock(mListenerLock);
+  mozilla::MutexAutoLock listenerLock(mListenerLock);
 
   if (mListener) {
     mListener->OnTreeSessionLoadError();
@@ -330,7 +319,7 @@ sbFileSystemTree::Update(const nsAString & aPath)
   nsRefPtr<sbFileSystemNode> pathNode;
   nsresult rv;
   { /* scope */
-    nsAutoLock rootLock(mRootNodeLock);
+    mozilla::MutexAutoLock rootLock(mRootNodeLock);
     rv = GetNode(aPath, mRootNode, getter_AddRefs(pathNode));
   }
   if (NS_FAILED(rv)) {
@@ -383,7 +372,7 @@ sbFileSystemTree::Update(const nsAString & aPath)
 
           // Replace the node
           { /* scope */
-            nsAutoLock rootLock(mRootNodeLock);
+            mozilla::MutexAutoLock rootLock(mRootNodeLock);
             rv = pathNode->ReplaceNode(curChangeLeafName, curChangeNode);
           }
           NS_ENSURE_SUCCESS(rv, rv);
@@ -398,7 +387,7 @@ sbFileSystemTree::Update(const nsAString & aPath)
         
         // Simply add this child to the path node's children.
         { /* scope */
-          nsAutoLock rootLock(mRootNodeLock);
+          mozilla::MutexAutoLock rootLock(mRootNodeLock);
           rv = pathNode->AddChild(curChangeNode);
         }
         NS_ENSURE_SUCCESS(rv, rv);
@@ -411,7 +400,7 @@ sbFileSystemTree::Update(const nsAString & aPath)
         }
 
         { /* scope */
-          nsAutoLock rootLock(mRootNodeLock);
+          mozilla::MutexAutoLock rootLock(mRootNodeLock);
           rv = pathNode->RemoveChild(curChangeNode);
         }
         NS_ENSURE_SUCCESS(rv, rv);
@@ -431,7 +420,7 @@ sbFileSystemTree::SetListener(sbFileSystemTreeListener *aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   
-  nsAutoLock listenerLock(mListenerLock);
+  mozilla::MutexAutoLock listenerLock(mListenerLock);
 
   mListener = aListener;
   return NS_OK;
@@ -440,7 +429,7 @@ sbFileSystemTree::SetListener(sbFileSystemTreeListener *aListener)
 nsresult
 sbFileSystemTree::ClearListener()
 {
-  nsAutoLock listeners(mListenerLock);
+  mozilla::MutexAutoLock listeners(mListenerLock);
   
   mListener = nsnull;
   return NS_OK;
@@ -454,7 +443,7 @@ sbFileSystemTree::SaveTreeSession(const nsID & aSessionID)
   }
 
   // XXX Move this off of the main thread
-  nsAutoLock rootNodeLock(mRootNodeLock);
+  mozilla::MutexAutoLock rootNodeLock(mRootNodeLock);
 
   nsRefPtr<sbFileSystemTreeState> treeState = new sbFileSystemTreeState();
   NS_ENSURE_TRUE(treeState, NS_ERROR_OUT_OF_MEMORY);
@@ -839,7 +828,7 @@ sbFileSystemTree::GetTreeChanges(sbFileSystemNode *aOldRootNode,
 
   // This method is called from a background thread, prevent changes
   // to the root node until the changes have been found.
-  nsAutoLock rootNodeLock(mRootNodeLock);
+  mozilla::MutexAutoLock rootNodeLock(mRootNodeLock);
 
   // Both |mRootNode| and |aOldRootNode| are guarenteed, compare them and than
   // start the tree search.
@@ -1046,7 +1035,7 @@ sbFileSystemTree::NotifyChanges(const nsAString & aChangePath,
     return rv;
   }
 
-  nsAutoLock listenerLock(mListenerLock);
+  mozilla::MutexAutoLock listenerLock(mListenerLock);
   if (mListener) {
     mListener->OnChangeFound(aChangePath, EChangeType(aChangeType));
   }

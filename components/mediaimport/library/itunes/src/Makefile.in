@@ -67,7 +67,10 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(MOZSDK_INCLUDE_DIR)/xml \
                      $(MOZSDK_INCLUDE_DIR)/xulapp \
                      $(NULL)
-               
+
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 IS_COMPONENT = 1
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
