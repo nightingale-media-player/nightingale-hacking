@@ -36,7 +36,6 @@
 #include <sbISecurityMixin.h>
 
 #include <nsIClassInfo.h>
-#include <nsIGenericFactory.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>

@@ -48,7 +48,6 @@
 #include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsIDOMEventListener.h>
-#include <nsIGenericFactory.h>
 #include <nsIIOService.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsIWeakReference.h>
@@ -102,15 +101,6 @@ public:
   nsresult Init();
   nsresult InitPrivileged(nsIURI* aCodebase, nsIDOMWindow* aWindow);
 
-  static NS_METHOD Register(nsIComponentManager* aCompMgr,
-                            nsIFile* aPath,
-                            const char *aLoaderStr,
-                            const char *aType,
-                            const nsModuleComponentInfo *aInfo);
-  static NS_METHOD Unregister(nsIComponentManager* aCompMgr,
-                              nsIFile* aPath,
-                              const char *aLoaderStr,
-                              const nsModuleComponentInfo *aInfo);
   static nsresult DispatchEvent( nsIDOMDocument *aDocument,
                                  const nsAString &aClass,
                                  const nsAString &aType,

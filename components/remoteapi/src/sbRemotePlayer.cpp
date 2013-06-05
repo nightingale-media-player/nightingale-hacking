@@ -2811,51 +2811,6 @@ sbRemotePlayer::SetOriginScope( sbIMediaItem *aItem,
 //
 // ---------------------------------------------------------------------------
 
-NS_METHOD
-sbRemotePlayer::Register( nsIComponentManager* aCompMgr,
-                          nsIFile* aPath,
-                          const char *aLoaderStr,
-                          const char *aType,
-                          const nsModuleComponentInfo *aInfo )
-{
-  nsresult rv;
-
-  nsCOMPtr<nsICategoryManager> catMan(
-                                do_GetService(NS_CATEGORYMANAGER_CONTRACTID) );
-  if (!catMan)
-    return NS_ERROR_FAILURE;
-
-  // allow ourself to be accessed as a js global in webpage
-  rv = catMan->AddCategoryEntry( JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
-                                 "songbird",      /* use this name to access */
-                                 SONGBIRD_REMOTEPLAYER_CONTRACTID,
-                                 PR_TRUE,         /* persist */
-                                 PR_TRUE,         /* replace existing */
-                                 nsnull );
-
-  return rv;
-}
-
-
-NS_METHOD
-sbRemotePlayer::Unregister( nsIComponentManager* aCompMgr,
-                            nsIFile* aPath,
-                            const char *aLoaderStr,
-                            const nsModuleComponentInfo *aInfo )
-{
-  nsresult rv;
-
-  nsCOMPtr<nsICategoryManager> catMan(
-                                do_GetService(NS_CATEGORYMANAGER_CONTRACTID) );
-  if (!catMan)
-    return NS_ERROR_FAILURE;
-
-  rv = catMan->DeleteCategoryEntry( JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
-                                    "songbird",
-                                    PR_TRUE );   /* delete persisted data */
-  return rv;
-}
-
 nsresult
 sbRemotePlayer::CreateProperty( const nsAString& aPropertyType,
                                 const nsAString& aPropertyID,

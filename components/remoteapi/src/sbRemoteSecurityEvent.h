@@ -37,7 +37,6 @@
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMNSEvent.h>
-#include <nsIPrivateDOMEvent.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
@@ -63,7 +62,6 @@ class sbRemoteSecurityEvent : public nsIClassInfo,
                               public sbIRemoteSecurityEvent,
                               public sbIMutableRemoteSecurityEvent,
                               public nsIDOMEvent,
-                              public nsIPrivateDOMEvent,
                               public nsIDOMNSEvent
 {
 public:
