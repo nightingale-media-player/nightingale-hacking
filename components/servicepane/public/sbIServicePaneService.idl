@@ -134,7 +134,7 @@ interface sbIServicePaneNode : nsISupports
                        in AString aValue);
   void removeAttribute(in AString aName);
 
-  boolean hasAttributeNS(in aString aNamespace,
+  boolean hasAttributeNS(in AString aNamespace,
                          in AString aName);
   AString getAttributeNS(in AString aNamespace,
                          in AString aName);
