@@ -43,6 +43,9 @@ CPP_EXTRA_INCLUDES = \
  $(MOZSDK_IDL_DIR) \
  $(NULL)
 
+CPP_EXTRA_FLAGS += "-std=gnu++0x" \
+                   $(NULL)
+
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
 
