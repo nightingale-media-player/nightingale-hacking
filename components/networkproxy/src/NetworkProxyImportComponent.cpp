@@ -1,25 +1,25 @@
 /*
- *=BEGIN SONGBIRD GPL
+ * BEGIN NIGHTINGALE GPL
+ * 
+ * This file is part of the Nightingale Media Player.
  *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
- *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ * 
  * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
+ * GNU General Public License Version 2 (the "GPL").
+ * 
+ * Software distributed under the License is distributed 
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+ * express or implied. See the GPL for the specific language 
  * governing rights and limitations.
  *
- * You should have received a copy of the GPL along with this
+ * You should have received a copy of the GPL along with this 
  * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
+ * or write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+ * 
+ * END NIGHTINGALE GPL
  */
 
 /** 
@@ -27,7 +27,7 @@
 * \brief Songbird NetworkProxyImport Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 #include "NetworkProxyImport.h"
 
 #define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
@@ -37,9 +37,9 @@
     NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
     return m_Simpleton;                                                         \
   }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
+  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor );
 
-NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CNetworkProxyImport)
+NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CNetworkProxyImport);
 
 static NS_IMETHODIMP CNetworkProxyImportFactoryDestructor()
 {
@@ -47,18 +47,28 @@ static NS_IMETHODIMP CNetworkProxyImportFactoryDestructor()
   return NS_OK;
 }
 
-static nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_NetworkProxyImport_CLASSNAME, 
-    SONGBIRD_NetworkProxyImport_CID,
-    SONGBIRD_NetworkProxyImport_CONTRACTID,
-    CNetworkProxyImportConstructor,
-    nsnull,
-    nsnull,
-    CNetworkProxyImportFactoryDestructor
-  },
+
+NS_DEFINE_NAMED_CID(SONGBIRD_NetworkProxyImport_CID);
+
+static const mozilla::Module::CIDEntry kNetworkProxyImportCIDs[] = {
+  { &kSONGBIRD_NetworkProxyImport_CID, false, NULL, CNetworkProxyImportConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdNetworkProxyImportComponent, components)
+static const mozilla::Module::ContractIDEntry kNetworkProxyImportContracts[] = {
+  { SONGBIRD_NetworkProxyImport_CONTRACTID, &kSONGBIRD_NetworkProxyImport_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kNetworkProxyImportCategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kNetworkProxyImportModule = {
+  mozilla::Module::kVersion,
+  kNetworkProxyImportCIDs,
+  kNetworkProxyImportContracts,
+  kNetworkProxyImportCategories
+};
+
+NSMODULE_DEFN(sbNetworkProxyImportComponent) = &kNetworkProxyImportModule;
