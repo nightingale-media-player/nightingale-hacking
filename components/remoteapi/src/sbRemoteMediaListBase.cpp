@@ -207,23 +207,26 @@ sbRemoteMediaListBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(objp);
 
-  if ( JSVAL_IS_STRING(id) ) {
-    nsDependentString jsid( (PRUnichar *)
-                            ::JS_GetStringChars( JSVAL_TO_STRING(id) ),
-                            ::JS_GetStringLength( JSVAL_TO_STRING(id) ) );
+  /* TODO: Update all of the jsval types to JS::Value, mozilla just
+   * typedefed jsval for compatibility
+   */
+
+  if (JSVAL_TO_STRING(id)) {
+    size_t IDstrlen;
+    char *IDstr;
+    IDstr = JS_GetStringCharsAndLength(cx, JSVAL_TO_STRING(id), &IDstrlen);
+
+    nsDependentString jsid((PRUnichar*) IDstr, IDstrlen);
 
     TRACE_LIB(( "   resolving %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
+
 
     // If we're being asked for add, define the function and point the
     // caller to the AddHelper method.
     if ( jsid.EqualsLiteral("add") ) {
-      JSString *str = JSVAL_TO_STRING(id);
-      JSFunction *fnc = ::JS_DefineFunction( cx,
-                                             obj,
-                                             ::JS_GetStringBytes(str),
-                                             AddHelper,
-                                             1,
-                                             JSPROP_ENUMERATE );
+      JSAutoByteString bytes(cx, JSVAL_TO_STRING(id));
+      JSFunction *fnc = ::JS_DefineFunction( cx, obj, bytes.ptr(),
+                                             AddHelper, 1, JSPROP_ENUMERATE );
 
       *objp = obj;
 
@@ -422,9 +425,11 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     }
 
     // Convert the JS string into an XPCOM string.
-    nsDependentString url( (PRUnichar *)
-                           ::JS_GetStringChars( JSVAL_TO_STRING(argv[0]) ),
-                           ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) );
+    size_t strlen;
+    char *aStr;
+    aStr = JS_GetStringCharsAndLength(cx, JSVAL_TO_STRING(argv[0]), &strlen);
+
+    nsDependentString url((PRUnichar*) aStr, strlen);
 
     LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is a string"));
     LOG_LIST(( "   str %s", NS_LossyConvertUTF16toASCII(url).get() ));

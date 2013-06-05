@@ -35,6 +35,16 @@
 
 #include <nsIClassInfo.h>
 
+#define SB_REMOMEDIALIST_CID                            \
+{ /* 7bd2a7dd-aa83-4f2e-97d4-db7a612e18da */            \
+  0x7bd2a7dd,                                           \
+  0xaa83,                                               \
+  0x4f2e,                                               \
+  {0x97, 0xd4, 0xdb, 0x7a, 0x61, 0x2e, 0x18, 0xda}      \
+}                                                       \
+
+
+
 class sbRemotePlayer;
 
 class sbRemoteMediaList : public sbRemoteMediaListBase

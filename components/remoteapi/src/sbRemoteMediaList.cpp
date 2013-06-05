@@ -107,6 +107,9 @@ const static char* sPublicMethods[] =
   "internal:getView"
 };
 
+NS_IMPL_CLASSINFO(sbRemoteMediaList, NULL,
+                  nsIClassInfo::THREADSAFE, SB_REMOMEDIALIST_CID);
+
 NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteMediaList,
                               sbRemoteMediaListBase,
                               nsIClassInfo )
