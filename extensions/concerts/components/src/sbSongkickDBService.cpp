@@ -26,7 +26,8 @@
 
 #include <sbIDatabaseResult.h>
 
-#include <nsAutoLock.h>
+#include <a11yGeneric.h>
+#include <mozilla/Mutex.h>
 #include <nsICategoryManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
@@ -598,6 +599,9 @@ public:
   void RunEnumCallbackStart();
   void RunEnumCallbackEnd();
 
+  NS_DECL_RUNNABLEMETHOD(sbSongkickQuery, RunEnumCallbackStart);
+  NS_DECL_RUNNABLEMETHOD(sbSongkickQuery, RunEnumCallbackEnd);
+
 private:
   nsCOMPtr<sbISongkickEnumeratorCallback> mCallback;
   nsCOMPtr<nsIThread>                     mCallingThread;
@@ -625,7 +629,7 @@ sbSongkickQuery::Run()
   // First, notify the enum callback of enumeration start.
   nsresult rv;
   nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbSongkickQuery, this, RunEnumCallbackStart);
+    new nsRunnableMethod_RunEnumCallbackStart(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
   rv = mCallingThread->Dispatch(runnable, NS_DISPATCH_SYNC);
 
@@ -638,7 +642,7 @@ sbSongkickQuery::Run()
   NS_ENSURE_SUCCESS(rv, rv);
   {
     // Try and save deadlocking the database...
-    nsAutoLock lock(mDBService->mQueryRunningLock);
+    mozilla::MutexAutoLock lock(mDBService->mQueryRunningLock);
     
     // Phew, finally send of the query.
     PRInt32 queryResult;
@@ -665,7 +669,7 @@ sbSongkickQuery::Run()
 
   // Finally, notify the listener of enumeration end.
   runnable =
-    NS_NEW_RUNNABLE_METHOD(sbSongkickQuery, this, RunEnumCallbackEnd);
+    new nsRunnableMethod_RunEnumCallbackEnd(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
   rv = mCallingThread->Dispatch(runnable, NS_DISPATCH_SYNC);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -735,6 +739,8 @@ public:
                 sbISongkickConcertCountCallback *aCallback);
 
   void RunEnumCountCallback();
+
+  NS_DECL_RUNNABLEMETHOD(sbSongkickCountQuery, RunEnumCountCallback);
 
 private:
   nsCOMPtr<sbISongkickConcertCountCallback> mCallback;
@@ -808,7 +814,7 @@ sbSongkickCountQuery::Run()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbSongkickCountQuery, this, RunEnumCountCallback);
+    new nsRunnableMethod_RunEnumCountCallback(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
   rv = mCallingThread->Dispatch(runnable, NS_DISPATCH_SYNC);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -830,17 +836,14 @@ sbSongkickCountQuery::RunEnumCountCallback()
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbSongkickDBService, sbPISongkickDBService)
 
 sbSongkickDBService::sbSongkickDBService()
-  : mQueryRunningLock(
-      nsAutoLock::NewLock("sbSongkickDBService::mQueryRunningLock"))
+  : mQueryRunningLock(nsnull)
 {
-  NS_ASSERTION(mQueryRunningLock, "Failed to create mQueryRunningLock");
+
 }
 
 sbSongkickDBService::~sbSongkickDBService()
 {
-  if (mQueryRunningLock) {
-    nsAutoLock::DestroyLock(mQueryRunningLock);
-  }
+
 }
 
 nsresult
@@ -932,37 +935,6 @@ sbSongkickDBService::GetDatabaseQuery(sbIDatabaseQuery **aOutDBQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   db.forget(aOutDBQuery);
-  return NS_OK;
-}
-
-//------------------------------------------------------------------------------
-// XPCOM Startup Registration
-
-/* static */ NS_METHOD
-sbSongkickDBService::RegisterSelf(nsIComponentManager *aCompMgr,
-                                  nsIFile *aPath,
-                                  const char *aLoaderStr,
-                                  const char *aType,
-                                  const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> catMgr =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_SONGKICKDBSERVICE_CLASSNAME,
-                                "service,"
-                                SONGBIRD_SONGKICKDBSERVICE_CONTRACTID,
-                                PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 

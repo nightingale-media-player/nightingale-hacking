@@ -29,12 +29,12 @@
 
 #include <sbIDatabaseQuery.h>
 
+#include <mozilla/Mutex.h>
 #include <nsAutoPtr.h>
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
 #include <nsIFile.h>
 #include <nsIObserver.h>
 #include <prlock.h>
@@ -56,19 +56,13 @@ public:
   NS_DECL_SBPISONGKICKDBSERVICE
   NS_DECL_NSIOBSERVER
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
   nsresult Init();
 
   nsresult GetDatabaseQuery(sbIDatabaseQuery **aOutDBQuery);
 
   // Shared resource, any query that starts to run will use this lock to
   // prevent the database from getting locked up.
-  PRLock *mQueryRunningLock;
+  mozilla::Mutex mQueryRunningLock;
 
 protected:
   nsresult LookupDBInfo();
