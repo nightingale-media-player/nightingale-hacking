@@ -54,10 +54,10 @@ interface sbISecurityMixin : nsISupports
    * \brief
    */
   void init(in sbISecurityAggregator aOuter,
-            in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,
-            in string aMethodsArray, in unsigned long aMethodsLength,
-            in string aRPropsArray, in unsigned long aRPropsLength,
-            in string aWPropsArray, in unsigned long aWPropsLength,
+            [array, size_is(aInterfacesLength)] in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,
+            [array, size_is(aMethodsLength)] in string aMethodsArray, in unsigned long aMethodsLength,
+            [array, size_is(aRPropsLength)] in string aRPropsArray, in unsigned long aRPropsLength,
+            [array, size_is(aWPropsLength)] in string aWPropsArray, in unsigned long aWPropsLength,
             in boolean aPrivileged);
 
   /**

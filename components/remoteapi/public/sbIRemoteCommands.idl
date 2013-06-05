@@ -81,10 +81,10 @@ interface sbIRemoteCommands : nsISupports
 
   // Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable
   void setCommandData( in unsigned long aNumCommands,
-                       in wstring aTypeArray,
-                       in wstring aIDArray,
-                       in wstring aNameArray,
-                       in wstring aTooltipArray);
+                       [array, size_is(aNumCommands)] in wstring aTypeArray,
+                       [array, size_is(aNumCommands)] in wstring aIDArray,
+                       [array, size_is(aNumCommands)] in wstring aNameArray,
+                       [array, size_is(aNumCommands)] in wstring aTooltipArray);
 
   // the remotePlayer sets this after it creates it.
   [noscript] attribute sbIRemotePlayer owner;

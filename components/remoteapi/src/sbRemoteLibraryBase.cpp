@@ -30,7 +30,6 @@
 #include <nsICategoryManager.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
-#include <nsIDOMDocumentEvent.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMWindow.h>
