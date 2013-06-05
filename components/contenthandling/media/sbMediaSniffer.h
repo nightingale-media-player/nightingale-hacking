@@ -27,7 +27,7 @@
 #ifndef __SB_MEDIASNIFFER_H__
 #define __SB_MEDIASNIFFER_H__
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIContentSniffer.h>
 #include <nsStringGlue.h>
 
@@ -53,16 +53,6 @@ class sbMediaSniffer : public nsIContentSniffer
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICONTENTSNIFFER
-
-  static NS_METHOD Register(nsIComponentManager* compMgr,
-                            nsIFile* path, 
-                            const char* registryLocation,
-                            const char* componentType, 
-                            const nsModuleComponentInfo *info);
-  static NS_METHOD Unregister(nsIComponentManager* aCompMgr,
-                              nsIFile* aPath, 
-                              const char* aRegistryLocation,
-                              const nsModuleComponentInfo* aInfo);
 };
 
 #endif /* __SB_MEDIASNIFFER_H__ */
