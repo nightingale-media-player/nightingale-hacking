@@ -32,11 +32,11 @@
 #include <sbIShutdownJob.h>
 #include <sbIJobProgress.h>
 #include <sbIPropertyArray.h>
+#include <a11yGeneric.h>
 #include <nsIObserver.h>
 #include <sbIMediaListListener.h>
 #include <sbILocalDatabaseSmartMediaList.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
 #include <nsIFile.h>
 #include <nsIArray.h>
 #include <nsCOMPtr.h>
@@ -69,12 +69,6 @@ public:
   virtual ~sbMediaExportService();
 
   nsresult Init();
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
 
   // sbMediaExportPrefListener
   NS_IMETHOD OnBoolPrefChanged(const nsAString & aPrefName,
@@ -129,6 +123,9 @@ protected:
   // Returns true if there is some observed changes that have not been
   // exported yet.
   PRBool GetHasRecordedChanges();
+
+  NS_DECL_RUNNABLEMETHOD(sbMediaExportService, ProxyNotifyListeners);
+  NS_DECL_RUNNABLEMETHOD(sbMediaExportService, WriteExportData);
 
 private:
   // Core and changed item stuff:

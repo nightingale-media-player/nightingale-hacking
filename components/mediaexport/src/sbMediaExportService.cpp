@@ -109,24 +109,25 @@ EnumerateItemsByGuids(typename T::const_iterator const aGuidStringListBegin,
 
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS7(sbMediaExportService,
-                              sbIMediaExportService,
-                              nsIClassInfo,
-                              nsIObserver,
-                              sbIMediaListListener,
-                              sbILocalDatabaseSmartMediaListListener,
-                              sbIJobProgress,
-                              sbIShutdownJob)
+NS_IMPL_CLASSINFO(sbMediaExportService, NULL, nsIClassInfo::THREADSAFE, SONGBIRD_MEDIAEXPORTSERVICE_CID);
+
+NS_IMPL_ISUPPORTS7(sbMediaExportService,
+                   sbIMediaExportService,
+                   nsIClassInfo,
+                   nsIObserver,
+                   sbIMediaListListener,
+                   sbILocalDatabaseSmartMediaListListener,
+                   sbIJobProgress,
+                   sbIShutdownJob);
 
 NS_IMPL_CI_INTERFACE_GETTER5(sbMediaExportService,
                              sbIMediaExportService,
                              nsIClassInfo,
                              nsIObserver,
                              sbIJobProgress,
-                             sbIShutdownJob)
+                             sbIShutdownJob);
 
-NS_DECL_CLASSINFO(sbMediaExportService)
-NS_IMPL_THREADSAFE_CI(sbMediaExportService)
+NS_IMPL_THREADSAFE_CI(sbMediaExportService);
 
 //------------------------------------------------------------------------------
 
@@ -1008,7 +1009,7 @@ sbMediaExportService::NotifyListeners()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, ProxyNotifyListeners);
+      new nsRunnableMethod_ProxyNotifyListeners(this);
     NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
 
     return mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
@@ -1065,7 +1066,7 @@ sbMediaExportService::ExportSongbirdData()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, WriteExportData);
+    new nsRunnableMethod_WriteExportData(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
 
   return threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
@@ -1577,35 +1578,3 @@ sbMediaExportService::StartTask()
   // begin processing. Simply start the export data process here.
   return ExportSongbirdData();
 }
-
-//------------------------------------------------------------------------------
-// XPCOM Startup Registration
-
-/* static */ NS_METHOD
-sbMediaExportService::RegisterSelf(nsIComponentManager *aCompMgr,
-                                   nsIFile *aPath,
-                                   const char *aLoaderStr,
-                                   const char *aType,
-                                   const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> catMgr =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = catMgr->AddCategoryEntry("app-startup",
-                                SB_MEDIAEXPORTSERVICE_CLASSNAME,
-                                "service,"
-                                SB_MEDIAEXPORTSERVICE_CONTRACTID,
-                                PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
