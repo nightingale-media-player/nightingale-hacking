@@ -584,8 +584,8 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
   */
-  void registerPlaylistCommandsForLibrary(in PRBool          aTargetServicePane,
-                                          in sbiLibrary      aLibrary,
+  void registerPlaylistCommandsForLibrary(in PRBool aTargetServicePane,
+                                          in sbILibrary      aLibrary,
                                           in sbIPlaylistCommands aCommandObj);
 
  /**
@@ -606,8 +606,8 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
   */
-  void unregisterPlaylistCommandsForLibrary(in PRBool        aTargetServicePane,
-                                            in sbiLibrary      aLibrary,
+  void unregisterPlaylistCommandsForLibrary(in PRBool aTargetServicePane,
+                                            in sbILibrary      aLibrary,
                                             in sbIPlaylistCommands aCommandObj);
  /**
   * \brief Register sbIPlaylistCommands objects to be shown for specific playlists in

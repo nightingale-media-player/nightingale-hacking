@@ -34,7 +34,6 @@
 #include "sbIPlaylistCommandsHelper.h"
 
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLAYLISTCOMMANDSHELPER_CONTRACTID                 \
@@ -54,12 +53,6 @@ NS_DECL_SBIPLAYLISTCOMMANDSHELPER
 public:
 
   sbPlaylistCommandsHelper();
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
 
 private:
   virtual ~sbPlaylistCommandsHelper();
