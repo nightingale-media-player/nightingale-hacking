@@ -610,9 +610,21 @@ sbSecurityMixin::SetPermission(nsIURI *aURI, const nsACString &aScopedName)
     do_GetService( NS_PERMISSIONMANAGER_CONTRACTID, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
   
+  // XXX: What should the expire values be? (4th and 5th args in Add())
+  // From commit d090e3f8 in mozilla tree
+  /*
+   * @param expiretype  a constant defining whether this permission should
+   *                    never expire (EXPIRE_NEVER), expire at the end of the
+   *                    session (EXPIRE_SESSION), or expire at a specified time
+   *                    (EXPIRE_TIME).
+   * @param expiretime  an integer representation of when this permission
+   *                    should be forgotten (milliseconds since Jan 1 1970 0:00:00).
+   */
   rv = permMgr->Add( aURI,
                      permission_name.BeginReading(),
-                     nsIPermissionManager::ALLOW_ACTION );
+                     nsIPermissionManager::ALLOW_ACTION,
+                     nsIPermissionManager::EXPIRE_NEVER,
+                     0);
   NS_ENSURE_SUCCESS( rv, rv );
   
   return NS_OK;

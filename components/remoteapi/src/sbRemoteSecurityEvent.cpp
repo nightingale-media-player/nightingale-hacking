@@ -32,8 +32,8 @@
 
 #include <sbIRemoteSecurityEvent.h>
 
+#include <nsIPrivateDOMEvent.h>
 #include <nsComponentManagerUtils.h>
-#include <nsIDOMDocumentEvent.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
 #include <prlog.h>
@@ -203,14 +203,9 @@ sbRemoteSecurityEvent::InitSecurityEvent(nsIDOMDocument *aDoc,
 
   nsresult rv;
 
-  //change interfaces to create the event
-  nsCOMPtr<nsIDOMDocumentEvent>
-    docEvent( do_QueryInterface( aDoc, &rv ) );
-  NS_ENSURE_SUCCESS( rv , rv );
-
   //create the event
   nsCOMPtr<nsIDOMEvent> event;
-  docEvent->CreateEvent( RAPI_EVENT_CLASS, getter_AddRefs(event) );
+  aDoc->CreateEvent( RAPI_EVENT_CLASS, getter_AddRefs(event) );
   NS_ENSURE_STATE(event);
 
   // XXXredfive - this looks suspect, if access we say permission changed?

@@ -27,12 +27,20 @@
 #ifndef __SB_SCRIPTABLE_FUNCTION_H__
 #define __SB_SCRIPTABLE_FUNCTION_H__
 
-//#include "sbXPCScriptableStub.h"
 #include "ngXPCScriptable.h"
 
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
+
+#define SB_SCRIPTABLEFUNCTIONBASE_CID                   \
+{ /* b37a89be-fe6d-4c84-b966-75833a589db4 */            \
+  0xb37a89be,                                           \
+  0xfe6d,                                               \
+  0x4c84,                                               \
+  {0xb9, 0x66, 0x75, 0x83, 0x3a, 0x58, 0x9d, 0xb4}      \
+}                                                       \
+
 
 /**
  * This is a stub class that takes an object and some interface, and

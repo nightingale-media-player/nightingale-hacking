@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
  */
 
 #include "sbScriptableFilterResult.h"
@@ -55,6 +53,10 @@ static PRLogModuleInfo* gScriptableFilterResultLog = nsnull;
 #undef LOG
 #define LOG(args) PR_LOG(gScriptableFilterResultLog, PR_LOG_WARN, args)
 #define TRACE(args) PR_LOG(gScriptableFilterResultLog, PR_LOG_DEBUG, args)
+
+
+NS_IMPL_CLASSINFO(sbScriptableFilterResult, NULL,
+                  nsIClassInfo::THREADSAFE, SB_SCRIPTABLEFILTERRESULT_CID)
 
 NS_IMPL_ISUPPORTS3_CI( sbScriptableFilterResult,
                        sbIScriptableFilterResult,
@@ -304,6 +306,5 @@ NS_IMETHODIMP sbScriptableFilterResult::CanSetProperty( const nsIID * iid,
 //                          nsIClassInfo
 //
 // ---------------------------------------------------------------------------
-NS_DECL_CLASSINFO(sbScriptableFilterResult)
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbScriptableFilterResult)

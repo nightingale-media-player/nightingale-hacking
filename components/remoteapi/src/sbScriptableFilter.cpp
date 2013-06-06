@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
  */
 
 #include "sbScriptableFilter.h"
@@ -58,10 +56,13 @@ static PRLogModuleInfo* gScriptableFilterLog = nsnull;
 #define LOG(args) PR_LOG(gScriptableFilterLog, PR_LOG_WARN, args)
 #define TRACE(args) PR_LOG(gScriptableFilterLog, PR_LOG_DEBUG, args)
 
-NS_IMPL_ISUPPORTS3_CI( sbScriptableFilter,
-                       nsISecurityCheckedComponent,
-                       nsIXPCScriptable,
-                       nsIStringEnumerator )
+NS_IMPL_CLASSINFO(sbScriptableFilter, NULL,
+                  nsIClassInfo::THREADSAFE, SB_SCRIPTABLEFILTER_CID);
+
+NS_IMPL_ISUPPORTS3( sbScriptableFilter,
+                    nsISecurityCheckedComponent,
+                    nsIXPCScriptable,
+                    nsIStringEnumerator )
 
 sbScriptableFilter::sbScriptableFilter( sbIFilterableMediaListView *aMediaListView,
                                         const nsAString &aPropertyName,
@@ -118,7 +119,7 @@ sbScriptableFilter::ReadEnumerator()
     rv = enumerator->GetNext(value);
     NS_ENSURE_SUCCESS( rv, rv );
     
-    mStrings.AppendString(value);
+    mStrings.AppendElement(value);
   }
   
   // mark that we have finished reading the enumerator, and that the next item
@@ -143,7 +144,7 @@ NS_IMETHODIMP sbScriptableFilter::HasMore(PRBool *_retval)
   nsresult rv = ReadEnumerator();
   NS_ENSURE_SUCCESS( rv, rv );
   
-  *_retval = ( mEnumeratorIndex < mStrings.Count() );
+  *_retval = ( mEnumeratorIndex < mStrings.Length() );
 
   TRACE(("sbScriptableFilter::HasMore() - got %s",
          *_retval ? "YES" : "no"));
@@ -158,11 +159,11 @@ NS_IMETHODIMP sbScriptableFilter::GetNext(nsAString & _retval)
   nsresult rv = ReadEnumerator();
   NS_ENSURE_SUCCESS( rv, rv );
   
-  if ( !( mEnumeratorIndex < mStrings.Count() ) ) {
+  if ( !( mEnumeratorIndex < mStrings.Length() ) ) {
     return NS_ERROR_FAILURE;
   }
   
-  mStrings.StringAt( mEnumeratorIndex, _retval );
+  _retval = mStrings.ElementAt( mEnumeratorIndex );
   ++mEnumeratorIndex;
   
   TRACE(("sbScriptableFilter::GetNext() - got %s",
@@ -224,14 +225,17 @@ NS_IMETHODIMP sbScriptableFilter::GetProperty( nsIXPConnectWrappedNative *wrappe
   NS_ENSURE_SUCCESS( rv, rv );
 
   *_retval = PR_TRUE;
-  
-  nsDependentString jsid( (PRUnichar *)::JS_GetStringChars(jsstr),
-                          ::JS_GetStringLength(jsstr));
+
+  size_t jsstrLen;
+  const jschar *jsstrChars =
+      JS_GetStringCharsAndLength(cx, jsstr, &jsstrLen);
+  nsDependentString jsid( (PRUnichar *) jsstrChars, jsstrLen);
+
   TRACE(( "  getting property %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
 
-  PRInt32 length = mStrings.Count();
+  PRInt32 length = mStrings.Length();
   for (PRInt32 i = 0; i < length; ++i) {
-    if ( mStrings[i]->Equals(jsid) ) {
+    if ( mStrings[i].Equals(jsid) ) {
 
       // make a clone of the filter view...
       nsCOMPtr<sbIMediaListView> view = do_QueryInterface( mListView, &rv );
@@ -299,7 +303,7 @@ NS_IMETHODIMP sbScriptableFilter::GetProperty( nsIXPConnectWrappedNative *wrappe
 
   // check for "length"
   if ( jsid.EqualsLiteral("length") ) {
-    *vp = INT_TO_JSVAL( mStrings.Count() );
+    *vp = INT_TO_JSVAL( mStrings.Length() );
     return NS_SUCCESS_I_DID_SOMETHING;
   }
 
@@ -323,14 +327,15 @@ NS_IMETHODIMP sbScriptableFilter::NewEnumerate( nsIXPConnectWrappedNative *wrapp
   NS_ENSURE_SUCCESS( rv, rv );
 
   *_retval = PR_TRUE;
-  
+
   switch(enum_op) {
     case JSENUMERATE_INIT: {
       *statep = INT_TO_JSVAL(0);
       if (idp) {
-        *idp = INT_TO_JSVAL(mStrings.Count());
+        rv = JS_ValueToId(cx, UINT_TO_JSVAL(mStrings.Length()), idp);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
-      TRACE(("  init: count %i", mStrings.Count()));
+      TRACE(("  init: count %i", mStrings.Length()));
       break;
     }
     case JSENUMERATE_NEXT: {
@@ -338,19 +343,19 @@ NS_IMETHODIMP sbScriptableFilter::NewEnumerate( nsIXPConnectWrappedNative *wrapp
       JSAutoRequest ar(cx);
 
       PRInt32 i = JSVAL_TO_INT(*statep);
-      if ( i < 0 || i > mStrings.Count() ) {
-        TRACE(( "  invalid state %i of %i", i, mStrings.Count() ));
+      if ( i < 0 || i > mStrings.Length() ) {
+        TRACE(( "  invalid state %i of %i", i, mStrings.Length() ));
         *_retval = PR_FALSE;
         *statep = JSVAL_NULL;
         return NS_ERROR_INVALID_ARG;
-      } else if ( i == mStrings.Count() ) {
+      } else if ( i == mStrings.Length() ) {
         TRACE(("  finished iteration"));
         *_retval = PR_TRUE;
         *statep = JSVAL_NULL;
         return NS_OK;
       }
       
-      nsString *str = mStrings[i];
+      nsString *str = new nsString(mStrings[i]);
       
       JSString *jsstr = JS_NewUCStringCopyN( cx,
                                              str->BeginReading(),
@@ -360,12 +365,15 @@ NS_IMETHODIMP sbScriptableFilter::NewEnumerate( nsIXPConnectWrappedNative *wrapp
         *_retval = PR_FALSE;
         return NS_ERROR_OUT_OF_MEMORY;
       }
-      
+
+      size_t jsstrLen;
+      const jschar *jsstrChars =
+          JS_GetStringCharsAndLength(cx, jsstr, &jsstrLen);
       // define the property while we're here
       *_retval = JS_DefineUCProperty( cx,
                                       obj,
-                                      JS_GetStringChars(jsstr),
-                                      JS_GetStringLength(jsstr),
+                                      jsstrChars,
+                                      jsstrLen,
                                       JSVAL_VOID,
                                       nsnull,
                                       nsnull,
@@ -412,8 +420,11 @@ NS_IMETHODIMP sbScriptableFilter::NewResolve( nsIXPConnectWrappedNative *wrapper
   nsresult rv = ReadEnumerator();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  jsval v;
-  *_retval = JS_IdToValue( cx, id, &v );
+  // XXX: Is this even necessary? JS_IdToValue wasn't valid
+  // in the first place since id is a jsval not a jsid
+  // and the results aren't ever used?
+  jsid jID;
+  *_retval = JS_ValueToId( cx, id, &jID );
   NS_ENSURE_TRUE( *_retval, NS_ERROR_INVALID_ARG );
   
   // we only consider string properties
@@ -424,18 +435,22 @@ NS_IMETHODIMP sbScriptableFilter::NewResolve( nsIXPConnectWrappedNative *wrapper
     }
     return NS_OK;
   }
-  
-  nsDependentString prop( JS_GetStringChars(jsstr) );
+
+  size_t jsstrLen;
+  const jschar *jsstrChars =
+      JS_GetStringCharsAndLength(cx, jsstr, &jsstrLen);
+
+  nsDependentString prop( jsstrChars );
   TRACE(("  Resolving property %s",
          NS_LossyConvertUTF16toASCII(prop).BeginReading() ));
   
-  PRInt32 length = mStrings.Count();
+  PRInt32 length = mStrings.Length();
   for (PRInt32 i = 0; i < length; ++i) {
-    if ( mStrings[i]->Equals(prop) ) {
+    if ( mStrings[i].Equals(prop) ) {
       *_retval = JS_DefineUCProperty( cx,
                                       obj,
-                                      JS_GetStringChars(jsstr),
-                                      JS_GetStringLength(jsstr),
+                                      jsstrChars,
+                                      jsstrLen,
                                       JSVAL_VOID,
                                       nsnull,
                                       nsnull,
@@ -512,6 +527,5 @@ NS_IMETHODIMP sbScriptableFilter::CanSetProperty( const nsIID * iid,
 //                          nsIClassInfo
 //
 // ---------------------------------------------------------------------------
-NS_DECL_CLASSINFO(sbScriptableFilter)
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbScriptableFilter)

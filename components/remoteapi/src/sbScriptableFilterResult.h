@@ -1,33 +1,31 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
  */
 
 #ifndef __SB_SCRIPTABLE_FILTER_RESULTS_H__
 #define __SB_SCRIPTABLE_FILTER_RESULTS_H__
 
-#include "sbXPCScriptableStub.h"
+#include "ngXPCScriptable.h"
 
 #include <sbIScriptableFilterResult.h>
 
@@ -35,6 +33,14 @@
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
+
+#define SB_SCRIPTABLEFILTERRESULT_CID                   \
+{ /* 30944f15-3d6f-40b8-a133-52673bca2c7b */            \
+  0x30944f15,                                           \
+  0x3d6f,                                               \
+  0x40b8,                                               \
+  {0xa1, 0x33, 0x52, 0x67, 0x3b, 0xca, 0x2c, 0x7b}      \
+}
 
 class sbIFilterableMediaListView;
 class sbRemotePlayer;
@@ -46,7 +52,7 @@ class sbRemotePlayer;
 class sbScriptableFilterResult : public sbIScriptableFilterResult,
                                  public nsISecurityCheckedComponent,
                                  public nsIClassInfo,
-                                 public sbXPCScriptableStub
+                                 public ngXPCScriptable
 {
 public:
   NS_DECL_ISUPPORTS
