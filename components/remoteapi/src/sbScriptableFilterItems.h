@@ -27,7 +27,8 @@
 #ifndef __SB_SCRIPTABLE_FILTER_ITEMS_H__
 #define __SB_SCRIPTABLE_FILTER_ITEMS_H__
 
-#include "sbXPCScriptableStub.h"
+//#include "sbXPCScriptableStub.h"
+#include "ngXPCScriptable.h"
 
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
@@ -49,7 +50,7 @@ class sbRemotePlayer;
  */
 class sbScriptableFilterItems : public nsISecurityCheckedComponent,
                                 public nsISimpleEnumerator,
-                                public sbXPCScriptableStub
+                                public ngXPCScriptable
 {
 // this is used for QI, to ensure that we indeed have an instance of this class
 // {E26A6BC3-7FFE-44f5-8348-D499F2A6CD12}

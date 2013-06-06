@@ -32,7 +32,8 @@
 #include "sbRemoteMediaList.h"
 #include "sbRemoteSiteMediaList.h"
 #include "sbRemoteSiteMediaItem.h"
-#include "sbXPCScriptableStub.h"
+//#include "sbXPCScriptableStub.h"
+#include "ngXPCScriptable.h"
 
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
@@ -78,7 +79,7 @@ class sbRemoteLibraryBase : public nsIClassInfo,
                             public sbIWrappedMediaList,
                             public sbIMediaList,
                             public sbIMediaListEnumerationListener,
-                            public sbXPCScriptableStub
+                            public ngXPCScriptable
 {
 public:
   NS_DECL_ISUPPORTS
@@ -93,7 +94,8 @@ public:
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(mRemMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
-  using sbXPCScriptableStub::SetProperty;
+//  using sbXPCScriptableStub::SetProperty;
+  using ngXPCScriptable::SetProperty;
 
   sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
 

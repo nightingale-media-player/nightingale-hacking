@@ -56,6 +56,9 @@ static PRLogModuleInfo* gScriptableFilterItemsLog = nsnull;
 #define LOG(args) PR_LOG(gScriptableFilterItemsLog, PR_LOG_WARN, args)
 #define TRACE(args) PR_LOG(gScriptableFilterItemsLog, PR_LOG_DEBUG, args)
 
+NS_IMPL_CLASSINFO(sbScriptableFilterItems, NULL,
+									nsIClassInfo::THREADSAFE, SB_SCRIPTABLE_FILETER_ITEMS_CID);
+
 NS_IMPL_ISUPPORTS4( sbScriptableFilterItems,
                     nsISecurityCheckedComponent,
                     nsIXPCScriptable,
@@ -584,7 +587,7 @@ NS_IMETHODIMP sbScriptableFilterItems::CanSetProperty( const nsIID * iid,
 //                          nsIClassInfo
 //
 // ---------------------------------------------------------------------------
-NS_DECL_CLASSINFO(sbScriptableFilterItems)
+//NS_DECL_CLASSINFO(sbScriptableFilterItems)
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbScriptableFilterItems)
 

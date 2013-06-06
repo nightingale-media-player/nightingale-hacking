@@ -27,7 +27,8 @@
 #ifndef __SB_SCRIPTABLE_FILTER_H__
 #define __SB_SCRIPTABLE_FILTER_H__
 
-#include "sbXPCScriptableStub.h"
+//#include "sbXPCScriptableStub.h"
+#include "ngXPCScriptable.h"
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -48,7 +49,7 @@ class sbRemotePlayer;
 class sbScriptableFilter : public nsISecurityCheckedComponent,
                            public nsIStringEnumerator,
                            public nsIClassInfo,
-                           public sbXPCScriptableStub
+                           public ngXPCScriptable
 {
 public:
   NS_DECL_ISUPPORTS
@@ -88,7 +89,7 @@ protected:
 protected:
   nsCOMPtr<sbIFilterableMediaListView> mListView;
   nsString mPropertyName;
-  nsStringArray mStrings;
+  nsTArray<nsString> mStrings;
   PRInt32 mEnumeratorIndex;
   PRBool mHasProps;
   nsRefPtr<sbRemotePlayer> mPlayer;

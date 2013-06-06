@@ -30,7 +30,8 @@
 #include "sbRemoteAPI.h"
 #include "sbRemoteForwardingMacros.h"
 #include <sbILibraryResource.h>
-#include "sbXPCScriptableStub.h"
+//#include "sbXPCScriptableStub.h"
+#include "ngXPCScriptable.h"
 
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -63,7 +64,7 @@ class sbRemoteMediaListBase : public sbIMediaList,
                               public sbISecurityAggregator,
                               public sbIRemoteMediaList,
                               public sbIWrappedMediaList,
-                              public sbXPCScriptableStub
+                              public ngXPCScriptable
 {
 public:
   NS_DECL_ISUPPORTS
@@ -75,8 +76,11 @@ public:
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
-  using sbXPCScriptableStub::GetProperty;
-  using sbXPCScriptableStub::SetProperty;
+//  using sbXPCScriptableStub::GetProperty;
+//  using sbXPCScriptableStub::SetProperty;
+
+  using ngXPCScriptable::GetProperty;
+  using ngXPCScriptable::SetProperty;
 
   // nsIXPCScriptable
   NS_IMETHOD GetClassName(char **aClassName);

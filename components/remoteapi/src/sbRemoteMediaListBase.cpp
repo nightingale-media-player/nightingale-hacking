@@ -213,10 +213,10 @@ sbRemoteMediaListBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
 
   if (JSVAL_TO_STRING(id)) {
     size_t IDstrlen;
-    char *IDstr;
-    IDstr = JS_GetStringCharsAndLength(cx, JSVAL_TO_STRING(id), &IDstrlen);
+    const jschar *jsIDstr =
+    		JS_GetStringCharsAndLength(cx, JSVAL_TO_STRING(id), &IDstrlen);
 
-    nsDependentString jsid((PRUnichar*) IDstr, IDstrlen);
+    nsDependentString jsid((PRUnichar*) jsIDstr, IDstrlen);
 
     TRACE_LIB(( "   resolving %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
 

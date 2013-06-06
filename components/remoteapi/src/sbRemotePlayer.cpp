@@ -73,7 +73,6 @@
 #include <nsIDocShellTreeOwner.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
-#include <nsIDOMDocumentEvent.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
@@ -82,7 +81,6 @@
 #include <nsIDOMNSEvent.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
-#include <nsIDOMWindowInternal.h>
 #include <nsIDOMXULDocument.h>
 #include <nsIDOMXULElement.h>
 #include <nsIInterfaceRequestorUtils.h>
@@ -1636,14 +1634,9 @@ sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
   mixin->GetNotificationDocument(getter_AddRefs(doc));
   NS_ENSURE_STATE(doc);
 
-  //change interfaces to create the event
-  nsCOMPtr<nsIDOMDocumentEvent>
-                              docEvent( do_QueryInterface( doc, &rv ) );
-  NS_ENSURE_SUCCESS( rv , rv );
-
   //create the event
   nsCOMPtr<nsIDOMEvent> event;
-  docEvent->CreateEvent( aClass, getter_AddRefs(event) );
+  doc->CreateEvent(aClass, getter_AddRefs(event));
   NS_ENSURE_STATE(event);
   rv = event->InitEvent( aType, PR_TRUE, PR_TRUE );
   NS_ENSURE_SUCCESS( rv , rv );
@@ -1956,11 +1949,8 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ENSURE_SUCCESS(rv, rv);
 
     // make a mouse event
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent( do_QueryInterface(mContentDoc, &rv) );
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsCOMPtr<nsIDOMEvent> newEvent;
-    rv = docEvent->CreateEvent( NS_LITERAL_STRING("mouseevent"), getter_AddRefs(newEvent) );
+    rv = mContentDoc->CreateEvent( NS_LITERAL_STRING("mouseevent"), getter_AddRefs(newEvent) );
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool ctrlKey = PR_FALSE, altKey = PR_FALSE,
@@ -2514,14 +2504,11 @@ sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
         NS_LossyConvertUTF16toASCII(aClass).get(),
         NS_LossyConvertUTF16toASCII(aType).get() ));
 
-  //change interfaces to create the event
   nsresult rv;
-  nsCOMPtr<nsIDOMDocumentEvent> docEvent( do_QueryInterface( aDoc, &rv ) );
-  NS_ENSURE_SUCCESS( rv , rv );
 
   //create the event
   nsCOMPtr<nsIDOMEvent> event;
-  docEvent->CreateEvent( aClass, getter_AddRefs(event) );
+  aDoc->CreateEvent( aClass, getter_AddRefs(event) );
   NS_ENSURE_STATE(event);
   rv = event->InitEvent( aType, PR_TRUE, PR_TRUE );
   NS_ENSURE_SUCCESS( rv , rv );
@@ -2558,14 +2545,9 @@ sbRemotePlayer::DispatchSecurityEvent( nsIDOMDocument *aDoc,
 
   nsresult rv;
 
-  //change interfaces to create the event
-  nsCOMPtr<nsIDOMDocumentEvent>
-    docEvent( do_QueryInterface( aDoc, &rv ) );
-  NS_ENSURE_SUCCESS( rv , rv );
-
   //create the event
   nsCOMPtr<nsIDOMEvent> event;
-  docEvent->CreateEvent( aClass, getter_AddRefs(event) );
+  aDoc->CreateEvent( aClass, getter_AddRefs(event) );
   NS_ENSURE_STATE(event);
   rv = event->InitEvent( aType, PR_TRUE, PR_TRUE );
   NS_ENSURE_SUCCESS( rv , rv );

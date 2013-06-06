@@ -1025,8 +1025,10 @@ sbRemoteLibraryBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
   LOG_LIB(("sbRemoteLibraryBase::NewResolve()"));
 #ifdef DEBUG
   if ( JSVAL_IS_STRING(id) ) {
-    nsDependentString jsid( (PRUnichar *)::JS_GetStringChars(JSVAL_TO_STRING(id)),
-                            ::JS_GetStringLength(JSVAL_TO_STRING(id)));
+		size_t IDstrlen;
+		const jschar *jsIDstr =
+				JS_GetStringCharsAndLength(cx, JSVAL_TO_STRING(id), &IDstrlen);
+		nsDependentString jsid((PRUnichar*) jsIDstr, IDstrlen);
     TRACE_LIB(( "   resolving %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
   }
 #endif
@@ -1055,8 +1057,12 @@ sbRemoteLibraryBase::GetProperty( nsIXPConnectWrappedNative *wrapper,
     return NS_OK;
   }
   
-  nsDependentString jsid( (PRUnichar *)::JS_GetStringChars(JSVAL_TO_STRING(id)),
-                          ::JS_GetStringLength(JSVAL_TO_STRING(id)));
+
+	size_t IDstrlen;
+	const jschar *jsIDstr =
+			JS_GetStringCharsAndLength(cx, JSVAL_TO_STRING(id), &IDstrlen);
+
+	nsDependentString jsid((PRUnichar*) jsIDstr, IDstrlen);
 
   TRACE_LIB(( "   Getting property %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
   

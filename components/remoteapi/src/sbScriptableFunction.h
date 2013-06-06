@@ -27,7 +27,8 @@
 #ifndef __SB_SCRIPTABLE_FUNCTION_H__
 #define __SB_SCRIPTABLE_FUNCTION_H__
 
-#include "sbXPCScriptableStub.h"
+//#include "sbXPCScriptableStub.h"
+#include "ngXPCScriptable.h"
 
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
@@ -40,7 +41,7 @@
  */
 
 class sbScriptableFunctionBase : public nsISecurityCheckedComponent,
-                                 public sbXPCScriptableStub
+                                 public ngXPCScriptable
 {
 public:
   NS_DECL_ISUPPORTS
