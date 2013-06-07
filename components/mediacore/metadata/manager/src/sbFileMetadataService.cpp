@@ -38,6 +38,7 @@
 #include <nsIPromptService.h>
 #include <nsIWindowMediator.h>
 #include <nsIDOMWindow.h>
+#include <nsIDOMWindowInternal.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
 
@@ -705,8 +706,7 @@ nsresult sbFileMetadataService::EnsureWritePermitted()
       nsCOMPtr<nsIWindowMediator> windowMediator =
         do_GetService("@mozilla.org/appshell/window-mediator;1", &rv);
       NS_ENSURE_SUCCESS( rv, rv);
-//      nsCOMPtr<nsIDOMWindowInternal> mainWindow;
-      nsCOMPtr<nsIDOMWindow> mainWindow;
+      nsCOMPtr<nsIDOMWindowInternal> mainWindow;
       windowMediator->GetMostRecentWindow(nsnull,
                                           getter_AddRefs(mainWindow));
       if (mainWindow) {

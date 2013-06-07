@@ -2004,7 +2004,7 @@ NS_IMETHODIMP sbVariant::GetAsISupports(nsISupports **_retval)
 }
 
 /* [noscript] jsval getAsJSVal (); */
-NS_IMETHODIMP sbVariant::GetAsJSVal(JS::Value *_retval)
+NS_IMETHODIMP sbVariant::GetAsJSVal(jsval *_retval)
 {
   mozilla::MutexAutoLock autoLock(mDataLock);
   return NULL;

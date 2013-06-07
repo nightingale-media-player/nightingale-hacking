@@ -1104,9 +1104,9 @@ sbDeviceFirmwareDownloader::HandleComplete()
 
   // Still Empty? Try with a channel.
   if(contentDisposition.IsEmpty()) {
-    nsCOMPtr<nsIChannel> aChannel(do_QueryInterface(request));
-    if (aChannel) {
-      aChannel->GetContentDispositionHeader(contentDisposition);
+    nsCOMPtr<nsIMultiPartChannel> multipartChannel(do_QueryInterface(request));
+    if (multipartChannel) {
+      multipartChannel->GetContentDisposition(contentDisposition);
     }
   }
 

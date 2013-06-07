@@ -196,7 +196,7 @@ public:
   NS_IMETHOD HasInstance(nsIXPConnectWrappedNative *wrapper,
                             JSContext *cx,
                             JSObject *obj,
-                            const JS::Value & val,
+                            const jsval & val,
                             PRBool *bp NS_OUTPARAM,
                             PRBool *_retval NS_OUTPARAM)
   {
@@ -213,7 +213,7 @@ public:
   NS_IMETHOD Equality(nsIXPConnectWrappedNative *wrapper,
                          JSContext *cx,
                          JSObject *obj,
-                         const JS::Value & val,
+                         const jsval & val,
                          PRBool *_retval NS_OUTPARAM)
   {
     return NS_ERROR_NOT_IMPLEMENTED;
