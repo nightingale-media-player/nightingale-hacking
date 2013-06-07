@@ -38,6 +38,9 @@ CPP_EXTRA_INCLUDES = \
    $(MOZSDK_INCLUDE_DIR)/necko \
    $(NULL)
 
+   CPP_EXTRA_FLAGS = -std=gnu++0x \
+                     $(NULL)
+
 IS_COMPONENT = 1
 
 DYNAMIC_LIB = sbUpdate
