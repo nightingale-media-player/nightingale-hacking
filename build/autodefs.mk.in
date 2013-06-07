@@ -253,7 +253,7 @@ TOUCH = @TOUCH@
 UNZIP = @UNZIP@
 ZIP = @ZIP@
 
-XPIDL = $(PYTHON) $(MOZSDK_DIR)/frozen/bin/xpidl.py
+XPIDL = $(PYTHON) $(MOZSDK_DIR)/xpidl
 XPIDL_HEADERS_CMD = $(PYTHON) $(MOZSDK_DIR)/frozen/bin/header.py
 XPIDL_TYPELIBS_CMD = $(PYTHON) $(MOZSDK_DIR)/frozen/bin/typelib.py
 XPTLINK = $(PYTHON) $(MOZSDK_DIR)/frozen/bin/xpt.py link

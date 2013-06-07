@@ -30,7 +30,6 @@
 #include "sbRemoteAPI.h"
 #include "sbRemoteForwardingMacros.h"
 #include <sbILibraryResource.h>
-//#include "sbXPCScriptableStub.h"
 #include "ngXPCScriptable.h"
 
 #include <sbIMediaItem.h>
@@ -75,9 +74,6 @@ public:
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem)
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
-
-//  using sbXPCScriptableStub::GetProperty;
-//  using sbXPCScriptableStub::SetProperty;
 
   using ngXPCScriptable::GetProperty;
   using ngXPCScriptable::SetProperty;

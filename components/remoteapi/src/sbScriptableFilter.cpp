@@ -64,6 +64,11 @@ NS_IMPL_ISUPPORTS3( sbScriptableFilter,
                     nsIXPCScriptable,
                     nsIStringEnumerator )
 
+NS_IMPL_CI_INTERFACE_GETTER3(sbScriptableFilter,
+                             nsISecurityCheckedComponent,
+                             nsIXPCScriptable,
+                             nsIStringEnumerator)
+
 sbScriptableFilter::sbScriptableFilter( sbIFilterableMediaListView *aMediaListView,
                                         const nsAString &aPropertyName,
                                         sbRemotePlayer *aPlayer)

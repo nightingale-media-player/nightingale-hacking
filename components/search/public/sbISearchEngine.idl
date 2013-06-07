@@ -23,7 +23,7 @@
  */
 
 #include "nsISupports.idl"
-#include "nsIDOMWindowInternal.idl"
+#include "nsIDOMWindow.idl"
 
 [scriptable, uuid(25365c70-a623-11df-981c-0800200c9a66)]
 interface sbISearchEngine : nsISupports
