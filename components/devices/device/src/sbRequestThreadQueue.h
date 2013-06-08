@@ -37,6 +37,7 @@
 #include <mozilla/Monitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <prmon.h>
 #include <prlock.h>
 
 // Mozilla interfaces
