@@ -744,7 +744,7 @@ public:
   PRBool Wait(PRIntervalTime aTimeout);
 
 private:
-  mozilla::ReentrantMonitor  mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   PRBool            mDone;
 };
 
