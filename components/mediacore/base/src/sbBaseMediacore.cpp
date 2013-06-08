@@ -34,7 +34,7 @@
 #include <nsIProgrammingLanguage.h>
 
 #include <nsMemory.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -83,7 +83,7 @@ sbBaseMediacore::InitBaseMediacore()
 {
   TRACE(("sbBaseMediacore[0x%x] - InitBaseMediacore", this));
 
-  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
+  mozilla::MonitorAutoLock monitor(mMonitor);
 
   return OnInitBaseMediacore();
 }
@@ -93,7 +93,7 @@ sbBaseMediacore::SetInstanceName(const nsAString &aInstanceName)
 {
   TRACE(("sbBaseMediacore[0x%x] - SetInstanceName", this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mInstanceName = aInstanceName;
 
   return NS_OK;
@@ -105,7 +105,7 @@ sbBaseMediacore::SetCapabilities(sbIMediacoreCapabilities *aCapabilities)
   TRACE(("sbBaseMediacore[0x%x] - SetCapabilities", this));
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mCapabilities = aCapabilities;
 
   return NS_OK;
@@ -117,7 +117,7 @@ sbBaseMediacore::SetStatus(sbIMediacoreStatus *aStatus)
   TRACE(("sbBaseMediacore[0x%x] - SetStatus", this));
   NS_ENSURE_ARG_POINTER(aStatus);
   
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mStatus = aStatus;
   
   return NS_OK;
@@ -128,7 +128,7 @@ sbBaseMediacore::GetInstanceName(nsAString & aInstanceName)
 {
   TRACE(("sbBaseMediacore[0x%x] - GetInstanceName", this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aInstanceName = mInstanceName;
   
   return NS_OK;
@@ -143,7 +143,7 @@ sbBaseMediacore::GetCapabilities(sbIMediacoreCapabilities * *aCapabilities)
   nsresult rv = OnGetCapabilities();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   NS_IF_ADDREF(*aCapabilities = mCapabilities);
 
   return NS_OK;
@@ -155,7 +155,7 @@ sbBaseMediacore::GetStatus(sbIMediacoreStatus* *aStatus)
   TRACE(("sbBaseMediacore[0x%x] - GetLastStatusEvent", this));
   NS_ENSURE_ARG_POINTER(aStatus);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   NS_IF_ADDREF(*aStatus = mStatus);
 
   return NS_OK;
@@ -167,7 +167,7 @@ sbBaseMediacore::GetSequencer(sbIMediacoreSequencer* *aSequencer)
   TRACE(("sbBaseMediacore[0x%x] - GetSequencer", this));
   NS_ENSURE_ARG_POINTER(aSequencer);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   NS_IF_ADDREF(*aSequencer = mSequencer);
 
   return NS_OK;
@@ -182,7 +182,7 @@ sbBaseMediacore::SetSequencer(sbIMediacoreSequencer *aSequencer)
   nsresult rv = OnSetSequencer(aSequencer);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mSequencer = aSequencer;
 
   return NS_OK;

@@ -34,7 +34,7 @@
 
 #include <sbIMediacoreVolumeControl.h>
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -62,7 +62,7 @@ public:
 protected:
   virtual ~sbBaseMediacoreVolumeControl();
 
-  mozilla::ReentrantMonitor mMonitor;
+  mozilla::Monitor mMonitor;
 
   PRBool  mMute;
   double  mVolume;

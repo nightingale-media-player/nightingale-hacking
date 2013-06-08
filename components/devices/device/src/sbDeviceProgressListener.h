@@ -51,7 +51,7 @@
 
 // Mozilla imports.
 #include <prmon.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 
 //------------------------------------------------------------------------------

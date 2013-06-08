@@ -33,7 +33,7 @@
 #include <nsISimpleEnumerator.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 // Songbird includes
 #include <sbIMediaListDuplicateFilter.h>
@@ -76,7 +76,7 @@ private:
   nsresult Advance();
 
   // Monitor for thread-safety
-  mozilla::ReentrantMonitor mMonitor;
+  mozilla::Monitor mMonitor;
 
   // Have we run enumerate items yet?
   PRBool mInitialized;

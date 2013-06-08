@@ -49,8 +49,7 @@
 #include <nsIPrefBranch.h>
 #include <nsToolkitCompsCID.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/ReentrantMonitor.h>
-#include <VideoUtils.h>
+#include <mozilla/Monitor.h>
 #include <prsystem.h>
 
 #include <vector>
@@ -1169,9 +1168,9 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
     rv = observerService->RemoveObserver(this, NS_FINAL_UI_STARTUP_CATEGORY);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Remove Observer Failed!");
 
-    mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+    mozilla::MonitorAutoLock mon(m_pThreadMonitor);
     if(m_PromptForDelete) {
-      mozilla::ReentrantMonitorAutoExit mon(m_pThreadMonitor);
+      mozilla::MonitorAutoUnlock mon(m_pThreadMonitor);
 
       rv = PromptToDeleteDatabases();
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Prompting to Delete Databases Failed!");
@@ -1181,10 +1180,10 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else if(!strcmp(aTopic, NS_TIMER_CALLBACK_TOPIC)) {
-    mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+    mozilla::MonitorAutoLock mon(m_pThreadMonitor);
     if(m_PromptForDelete) {
       {
-        mozilla::ReentrantMonitorAutoExit mon(m_pThreadMonitor);
+        mozilla::MonitorAutoUnlock mon(m_pThreadMonitor);
 
         rv = PromptToDeleteDatabases();
         NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Prompting to Delete Databases Failed!");
@@ -1386,7 +1385,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   collationBuffers *collationBuffersEntry = new collationBuffers();
 
   {
-    mozilla::ReentrantMonitorAutoEnter mon(m_CollationBuffersMapMonitor);
+    mozilla::MonitorAutoLock mon(m_CollationBuffersMapMonitor);
     m_CollationBuffersMap[pHandle] = collationBuffersEntry;
   }
 
@@ -1504,7 +1503,7 @@ nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
         retries++ < MAX_BUSY_RETRY_CLOSE_DB);
 
   {
-    mozilla::ReentrantMonitorAutoEnter mon(m_CollationBuffersMapMonitor);
+    mozilla::MonitorAutoLock mon(m_CollationBuffersMapMonitor);
     collationMap_t::const_iterator found = m_CollationBuffersMap.find(pHandle);
     if (found != m_CollationBuffersMap.end()) {
       delete found->second;
@@ -1521,7 +1520,7 @@ nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::CloseDatabase(const nsAString &aDatabaseGUID) 
 {
-  mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+  mozilla::MonitorAutoLock mon(m_pThreadMonitor);
 
   nsRefPtr<QueryProcessorQueue> pQueue;
   if(m_QueuePool.Get(aDatabaseGUID, getter_AddRefs(pQueue))) {
@@ -1690,7 +1689,7 @@ already_AddRefed<QueryProcessorQueue> CDatabaseEngine::GetQueueByQuery(CDatabase
   NS_ENSURE_TRUE(pQuery, nsnull);
 
   nsAutoString strGUID;
-  mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+  mozilla::MonitorAutoLock mon(m_pThreadMonitor);
 
   nsRefPtr<QueryProcessorQueue> pQueue;
 
@@ -1713,7 +1712,7 @@ already_AddRefed<QueryProcessorQueue> CDatabaseEngine::GetQueueByQuery(CDatabase
 already_AddRefed<QueryProcessorQueue> CDatabaseEngine::CreateQueueFromQuery(CDatabaseQuery *pQuery)
 {
   nsAutoString strGUID;
-  mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+  mozilla::MonitorAutoLock mon(m_pThreadMonitor);
 
   nsresult rv = pQuery->GetDatabaseGUID(strGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
@@ -1741,7 +1740,7 @@ nsresult
 CDatabaseEngine::MarkDatabaseForPotentialDeletion(const nsAString &aDatabaseGUID,
                                                   CDatabaseQuery *pQuery)
 {
-  mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+  mozilla::MonitorAutoLock mon(m_pThreadMonitor);
 
   m_PromptForDelete = PR_TRUE;
   m_DatabasesToDelete.insert(std::make_pair(
@@ -1761,7 +1760,7 @@ CDatabaseEngine::PromptToDeleteDatabases()
   nsresult rv;
 
   {
-    mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+    mozilla::MonitorAutoLock mon(m_pThreadMonitor);
     if(!m_PromptForDelete || m_DatabasesToDelete.empty()) {
       return NS_OK;
     }
@@ -1798,7 +1797,7 @@ CDatabaseEngine::PromptToDeleteDatabases()
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+    mozilla::MonitorAutoLock mon(m_pThreadMonitor);
     m_PromptForDelete = PR_FALSE;
   }
 
@@ -1817,7 +1816,7 @@ CDatabaseEngine::PromptToDeleteDatabases()
     }
 
     {
-      mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+      mozilla::MonitorAutoLock mon(m_pThreadMonitor);
       m_DeleteDatabases = PR_TRUE;
     }
 
@@ -1841,7 +1840,7 @@ CDatabaseEngine::DeleteMarkedDatabases()
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+  mozilla::MonitorAutoLock mon(m_pThreadMonitor);
 
   if(!m_DeleteDatabases)
     return NS_OK;
@@ -2029,7 +2028,7 @@ CDatabaseEngine::RunAnalyze()
 {
   nsTArray<nsString> dbGUIDs;
   {
-    mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
+    mozilla::MonitorAutoLock mon(m_pThreadMonitor);
     m_QueuePool.EnumerateRead(EnumerateIntoArrayStringKey, &dbGUIDs);
   }
 
@@ -2080,7 +2079,7 @@ CDatabaseEngine::RunAnalyze()
       // Wrap any calls that access the pQueue.m_Queue because they cause a
       // context switch between threads and can mess up the link between the
       // RunQueue() call and the GetQueueSize() here. See bug 6514 for more details.
-      mozilla::ReentrantMonitorAutoEnter mon(pQueue->m_pQueueMonitor);
+      mozilla::MonitorAutoLock mon(pQueue->m_pQueueMonitor);
       pQueue->m_Running = PR_FALSE;
 
       PRUint32 queueSize = 0;
@@ -2106,7 +2105,7 @@ CDatabaseEngine::RunAnalyze()
 
     {
       //The query is now in a running state.
-      mozilla::ReentrantMonitorAutoEnter mon(pQuery->m_pQueryRunningMonitor);
+      mozilla::MonitorAutoLock mon(pQuery->m_pQueryRunningMonitor);
 
       sqlite3 *pDB = pQueue->m_pHandle;
 
@@ -2126,7 +2125,7 @@ CDatabaseEngine::RunAnalyze()
       
       // Out of memory, attempt to restart the thread
       if(NS_UNLIKELY(!databaseResult)) {
-        mozilla::ReentrantMonitorAutoEnter mon(pQueue->m_pQueueMonitor);
+        mozilla::MonitorAutoLock mon(pQueue->m_pQueueMonitor);
         pQueue->m_Running = PR_FALSE;
         return;
       }

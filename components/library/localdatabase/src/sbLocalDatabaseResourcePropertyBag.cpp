@@ -28,7 +28,7 @@
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabasePropertyCache.h"
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIObserverService.h>
 #include <nsIProxyObjectManager.h>
@@ -162,7 +162,7 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
                                                     nsAString& _retval)
 {
   if(aPropertyDBID > 0) {
-	mozilla::ReentrantMonitorAutoEnter mon(mCache->mMonitor);
+	mozilla::MonitorAutoLock mon(mCache->mMonitor);
 
     sbPropertyData* data;
 
@@ -182,7 +182,7 @@ sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDB
                                                             nsAString& _retval)
 {
   if(aPropertyDBID > 0) {
-	mozilla::ReentrantMonitorAutoEnter mon(mCache->mMonitor);
+	mozilla::MonitorAutoLock mon(mCache->mMonitor);
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
@@ -217,7 +217,7 @@ sbLocalDatabaseResourcePropertyBag::
                             nsAString& _retval)
 {
   if(aPropertyDBID > 0) {
-	mozilla::ReentrantMonitorAutoEnter mon(mCache->mMonitor);
+	mozilla::MonitorAutoLock mon(mCache->mMonitor);
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
@@ -289,7 +289,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
   PRUint32 previousDirtyCount = 0;
   {
-	mozilla::ReentrantMonitorAutoEnter mon(mCache->mMonitor);
+	mozilla::MonitorAutoLock mon(mCache->mMonitor);
 
     rv = PutValue(propertyDBID, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -396,7 +396,7 @@ sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
   nsAutoPtr<sbPropertyData> data(new sbPropertyData(aValue,
                                                     EmptyString(),
                                                     EmptyString()));
-  mozilla::ReentrantMonitorAutoEnter mon(mCache->mMonitor);
+  mozilla::MonitorAutoLock mon(mCache->mMonitor);
   PRBool success = mValueMap.Put(aPropertyID, data);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   data.forget();
@@ -429,7 +429,7 @@ sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>
 nsresult
 sbLocalDatabaseResourcePropertyBag::ClearDirty()
 {
-  mozilla::ReentrantMonitorAutoEnter mon(mCache->mMonitor);
+  mozilla::MonitorAutoLock mon(mCache->mMonitor);
   mDirty.Clear();
   return NS_OK;
 }

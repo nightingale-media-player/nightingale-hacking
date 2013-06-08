@@ -31,7 +31,7 @@
 #include "sbBaseMediacoreFactory.h"
 
 #include <sbIMediacore.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -81,7 +81,7 @@ sbBaseMediacoreFactory::SetContractID(const nsAString &aContractID)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mContractID = aContractID;
 
   return NS_OK;
@@ -92,7 +92,7 @@ sbBaseMediacoreFactory::SetName(const nsAString &aName)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mName = aName;
 
   return NS_OK;
@@ -103,7 +103,7 @@ sbBaseMediacoreFactory::GetContractID(nsAString & aContractID)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
   
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aContractID = mContractID;
 
   return NS_OK;
@@ -114,7 +114,7 @@ sbBaseMediacoreFactory::GetName(nsAString & aName)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   aName = mName;
 
   return NS_OK;
@@ -127,7 +127,7 @@ sbBaseMediacoreFactory::GetCapabilities(
   TRACE(("sbBaseMediacoreFactory[0x%x] - GetCapabilities", this));
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   return OnGetCapabilities(aCapabilities);
 }
 
@@ -138,7 +138,7 @@ sbBaseMediacoreFactory::Create(const nsAString & aInstanceName,
   TRACE(("sbBaseMediacoreFactory[0x%x] - Create", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv = OnCreate(aInstanceName, _retval);
   NS_ENSURE_SUCCESS(rv, rv);

@@ -29,7 +29,7 @@
 
 #include <sbIDeviceContent.h>
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIMutableArray.h>
@@ -46,7 +46,7 @@ private:
   virtual ~sbDeviceContent();
   nsresult FindLibrary(sbIDeviceLibrary *aLibrary, PRUint32* _retval);
 
-  mozilla::ReentrantMonitor mDeviceLibrariesMonitor;
+  mozilla::Monitor mDeviceLibrariesMonitor;
   nsCOMPtr<nsIMutableArray> mDeviceLibraries;
 };
 

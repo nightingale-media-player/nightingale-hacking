@@ -37,7 +37,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <a11yGeneric.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 #include <sbIMediacore.h>
 #include <sbIMediacorePlaybackControl.h>
@@ -62,6 +62,15 @@
 #include "sbGStreamerMediacoreUtils.h"
 
 #include <vector>
+
+#define SB_GSTREAMERMEDIACORE_CID                       \
+{ /* 3957ddda-7af7-44a7-8a75-96124bcc705b */            \
+  0x3957ddda,                                           \
+  0x7af7,                                               \
+  0x44a7,                                               \
+  {0x8a, 0x75, 0x96, 0x12, 0x4b, 0xcc, 0x70, 0x5b}      \
+}                                                       \
+
 
 class nsIURI;
 
@@ -182,7 +191,7 @@ private:
 
 protected:
   // Protects all access to mPipeline
-  mozilla::ReentrantMonitor mMonitor;
+  mozilla::Monitor mMonitor;
 
   PRBool mIsVideoSupported; // true if we have support for video on the current
                             // platform

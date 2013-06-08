@@ -35,8 +35,7 @@
 #include <nscore.h>
 #include <nsThreadUtils.h>
 #include <nsComponentManagerUtils.h>
-#include <mozilla/ReentrantMonitor.h>
-#include <VideoUtils.h>
+#include <mozilla/Monitor.h>
 
 #include "sbBackgroundThreadMetadataProcessor.h"
 #include "sbFileMetadataService.h"
@@ -90,7 +89,7 @@ nsresult sbBackgroundThreadMetadataProcessor::Start()
   TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Start", this));
   nsresult rv;
   
-  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
+  mozilla::MonitorAutoLock monitor(mMonitor);
 
   if (!mThread) {
     mShouldShutdown = PR_FALSE;
@@ -113,7 +112,7 @@ nsresult sbBackgroundThreadMetadataProcessor::Stop()
   nsresult rv;
   
   {
-	mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
+	mozilla::MonitorAutoLock monitor(mMonitor);
     // Tell the thread to stop working
     mShouldShutdown = PR_TRUE;
 
@@ -149,7 +148,7 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
     // Lock to make sure we dont go to sleep right after
     // a Start() call
     {
-      mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
+      mozilla::MonitorAutoLock monitor(mMonitor);
 
       rv = mJobManager->GetQueuedJobItem(PR_FALSE, getter_AddRefs(item));
 

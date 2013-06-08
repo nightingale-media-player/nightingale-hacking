@@ -34,7 +34,7 @@
 
 // Mozilla includes
 #include <mozilla/Mutex.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <prlock.h>

@@ -67,7 +67,7 @@
 #include <DatabaseQuery.h>
 #include <sbIDatabaseEngine.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -718,7 +718,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
+  mozilla::MonitorAutoLock monitor(mMonitor);
 
   // Library initialized, ensure others can get notifications
   nsCOMPtr<sbILocalDatabaseMediaItem> item =
@@ -3071,7 +3071,7 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> strongMediaItem;

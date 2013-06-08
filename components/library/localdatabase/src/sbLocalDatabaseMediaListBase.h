@@ -37,7 +37,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <prmon.h>
 #include <prlock.h>
 
@@ -57,7 +57,7 @@
 // mFullArray.
 #define SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE()                       \
   PR_BEGIN_MACRO                                                               \
-    mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);                 \
+    mozilla::MonitorAutoLock mon(mFullArrayMonitor);                           \
     if (mLockedEnumerationActive) {                                            \
       NS_ERROR("Operation not permitted during a locked enumeration");         \
       return NS_ERROR_FAILURE;                                                 \
@@ -177,7 +177,7 @@ private:
 protected:
   void SetArray(sbILocalDatabaseGUIDArray * aArray);
   // A monitor for changes to the media list.
-  mozilla::ReentrantMonitor mFullArrayMonitor;
+  mozilla::Monitor mFullArrayMonitor;
 
   // Cached list content type
   PRUint16 mListContentType;

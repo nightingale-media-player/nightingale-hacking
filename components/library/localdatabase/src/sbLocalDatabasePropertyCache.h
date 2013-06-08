@@ -43,7 +43,7 @@
 #include <nsTArray.h>
 #include <nsTHashtable.h>
 #include <nsIRunnable.h> 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 #include <sbIJobProgress.h>
 #include <sbIMediaListListener.h>
@@ -183,13 +183,13 @@ private:
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
   // Depedent GUID Array map and protecting monitor
-  mozilla::ReentrantMonitor mDependentGUIDArrayMonitor;
+  mozilla::Monitor mDependentGUIDArrayMonitor;
   typedef std::map<nsISupports *,
                    nsCOMPtr<nsIWeakReference> > DependentGUIDArrays_t;
   DependentGUIDArrays_t mDependentGUIDArrays;
   
   // Used to protect the cache and all of the resource property bags
-  mozilla::ReentrantMonitor mMonitor;
+  mozilla::Monitor mMonitor;
 
   // Cache for GUID -> property bag
   InterfaceCache mCache;

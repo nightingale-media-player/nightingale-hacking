@@ -52,7 +52,7 @@
 #include "sbBaseMediacoreVolumeControl.h"
 #include "sbMediacoreEvent.h"
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -129,7 +129,7 @@ protected:
 //  nsCOMPtr<nsIDOMDocumentEvent> mDocumentEvent;
   nsCOMPtr<nsIDOMEventTarget>   mDOMEventTarget;
   
-  mozilla::ReentrantMonitor     mProxiedObjectsMonitor;
+  mozilla::Monitor              mProxiedObjectsMonitor;
   nsCOMPtr<nsIDOMEventTarget>   mProxiedDOMEventTarget;
 //  nsCOMPtr<nsIDOMDocumentEvent> mProxiedDocumentEvent;
 

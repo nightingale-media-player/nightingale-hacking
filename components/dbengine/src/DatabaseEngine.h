@@ -47,7 +47,7 @@
 #include <prlog.h>
 
 #include <mozilla/Mutex.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsRefPtrHashtable.h>
@@ -181,8 +181,8 @@ private:
                                   T* aData,
                                   void* aArray);
 
-  mozilla::ReentrantMonitor m_pThreadMonitor;
-  mozilla::ReentrantMonitor m_CollationBuffersMapMonitor;
+  mozilla::Monitor m_pThreadMonitor;
+  mozilla::Monitor m_CollationBuffersMapMonitor;
 
   PRBool m_AttemptShutdownOnDestruction;
   PRBool m_IsShutDown;
@@ -272,7 +272,7 @@ public:
                             PRBool bPushToFront = PR_FALSE) {
     NS_ENSURE_ARG_POINTER(pQuery);
 
-    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
+    mozilla::MonitorAutoLock mon(m_pQueueMonitor);
 
     CDatabaseQuery **p = nsnull;
 
@@ -290,7 +290,7 @@ public:
   nsresult PopQueryFromQueue(CDatabaseQuery ** ppQuery) {
     NS_ENSURE_ARG_POINTER(ppQuery);
 
-    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
+    mozilla::MonitorAutoLock mon(m_pQueueMonitor);
 
     if(m_Queue.Length()) {
       *ppQuery = m_Queue[0];
@@ -305,14 +305,14 @@ public:
   nsresult GetQueueSize(PRUint32 &aSize) {
     aSize = 0;
     
-    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
+    mozilla::MonitorAutoLock mon(m_pQueueMonitor);
     aSize = m_Queue.Length();
 
     return NS_OK;
   }
 
   nsresult ClearQueue() {
-    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
+    mozilla::MonitorAutoLock mon(m_pQueueMonitor);
 
     queryqueue_t::size_type current = 0;
     queryqueue_t::size_type length = m_Queue.Length();
@@ -329,7 +329,7 @@ public:
   }
 
   nsresult RunQueue() {
-    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
+    mozilla::MonitorAutoLock mon(m_pQueueMonitor);
 
     // If the query processor for this queue isn't running right now
     // start running it on the threadpool.
@@ -348,7 +348,7 @@ public:
     NS_ENSURE_TRUE(m_pEngine, NS_ERROR_NOT_INITIALIZED);
     m_Shutdown = PR_TRUE;
     
-    mozilla::ReentrantMonitorAutoEnter mon(m_pQueueMonitor);
+    mozilla::MonitorAutoLock mon(m_pQueueMonitor);
     return mon.NotifyAll();
   }
 
@@ -375,7 +375,7 @@ protected:
   mozilla::Mutex m_pHandleLock;
   sqlite3*      m_pHandle;
 
-  mozilla::ReentrantMonitor m_pQueueMonitor;
+  mozilla::Monitor m_pQueueMonitor;
   queryqueue_t  m_Queue;
 
   PRUint32      m_AnalyzeCount;

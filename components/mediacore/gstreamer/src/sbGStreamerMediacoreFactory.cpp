@@ -32,7 +32,7 @@
 #include <nsIObserverService.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 #include <sbMediacoreCapabilities.h>
 #include <sbTArrayStringEnumerator.h>
@@ -165,7 +165,7 @@ sbGStreamerMediacoreFactory::OnInitBaseMediacoreFactory()
 sbGStreamerMediacoreFactory::OnGetCapabilities(
                              sbIMediacoreCapabilities **aCapabilities)
 {
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   // TODO: This function is now a _huge_ mess. We should talk to product about
   // what files we want to import / etc, some time soon - e.g. the current
@@ -400,7 +400,7 @@ sbGStreamerMediacoreFactory::Observe(nsISupports *subject,
     return Shutdown();
   }
   else if (!strcmp(topic, NS_PREFBRANCH_PREFCHANGE_TOPIC_ID)) {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    mozilla::MonitorAutoLock mon(mMonitor);
 
     mCapabilities = nsnull;
     return NS_OK;

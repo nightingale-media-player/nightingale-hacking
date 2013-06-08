@@ -28,7 +28,7 @@
 
 #include <sbIDeviceLibrary.h>
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsArrayEnumerator.h>
 #include <nsComponentManagerUtils.h>
 #include <nsISimpleEnumerator.h>
@@ -114,7 +114,7 @@ sbDeviceContent::GetLibraries(nsIArray** aLibraries)
 {
   NS_ENSURE_ARG_POINTER(aLibraries);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
+  mozilla::MonitorAutoLock mon(mDeviceLibrariesMonitor);
   *aLibraries = mDeviceLibraries;
   NS_ADDREF(*aLibraries);
   return NS_OK;
@@ -132,7 +132,7 @@ sbDeviceContent::AddLibrary(sbIDeviceLibrary* aLibrary)
   NS_ENSURE_ARG_POINTER(aLibrary);
 
   nsresult rv;
-  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
+  mozilla::MonitorAutoLock mon(mDeviceLibrariesMonitor);
   PRUint32 existingIndex;
   rv = FindLibrary(aLibrary, &existingIndex);
   if (NS_FAILED(rv)) {
@@ -155,7 +155,7 @@ sbDeviceContent::RemoveLibrary(sbIDeviceLibrary* aLibrary)
     return rv;
   }
 
-  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
+  mozilla::MonitorAutoLock mon(mDeviceLibrariesMonitor);
   rv = mDeviceLibraries->RemoveElementAt(itemIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -168,7 +168,7 @@ sbDeviceContent::FindLibrary(sbIDeviceLibrary* aLibrary, PRUint32* _retval)
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mDeviceLibrariesMonitor);
+  mozilla::MonitorAutoLock mon(mDeviceLibrariesMonitor);
   nsresult rv;
   PRUint32 index;
   rv = mDeviceLibraries->IndexOf(0, aLibrary, &index);

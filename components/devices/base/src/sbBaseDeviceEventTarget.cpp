@@ -28,7 +28,7 @@
 #include "sbBaseDeviceEventTarget.h"
 
 #include <nsIThread.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDeque.h>
@@ -187,7 +187,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::AddEventListener(sbIDeviceEventListener *
     // middle of a listener, then got proxied onto a second thread)
     nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
     { /* scope the monitor */
-      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,
@@ -220,7 +220,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::RemoveEventListener(sbIDeviceEventListene
     // we need to proxy to the main thread
     nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
     { /* scope the monitor */
-      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,

@@ -26,7 +26,7 @@
 
 #include "sbBaseMediacoreEventTarget.h"
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsComponentManagerUtils.h>
 
 #include <sbIMediacore.h>
@@ -72,7 +72,7 @@ sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
     // we need to proxy to the main thread
     nsCOMPtr<sbIMediacoreEventTarget> proxiedSelf;
     { /* scope the monitor */
-      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIMediacoreEventTarget),
                                 mTarget,
@@ -147,7 +147,7 @@ sbBaseMediacoreEventTarget::AddListener(sbIMediacoreEventListener *aListener)
     // middle of a listener, then got proxied onto a second thread)
     nsCOMPtr<sbIMediacoreEventTarget> proxiedSelf;
     { /* scope the monitor */
-      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIMediacoreEventTarget),
                                 mTarget,
@@ -181,7 +181,7 @@ sbBaseMediacoreEventTarget::RemoveListener(sbIMediacoreEventListener *aListener)
     // we need to proxy to the main thread
     nsCOMPtr<sbIMediacoreEventTarget> proxiedSelf;
     { /* scope the monitor */
-      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+      mozilla::MonitorAutoLock mon(mMonitor);
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIMediacoreEventTarget),
                                 mTarget,

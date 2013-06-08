@@ -51,7 +51,7 @@
 #include <nsIProxyObjectManager.h>
 
 // Mozilla imports.
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsAutoPtr.h>
 
 

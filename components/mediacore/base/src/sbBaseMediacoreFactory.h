@@ -34,7 +34,7 @@
 
 #include <sbIMediacoreFactory.h>
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsStringGlue.h>
 
 class sbBaseMediacoreFactory : public sbIMediacoreFactory
@@ -63,7 +63,7 @@ public:
 protected:
   virtual ~sbBaseMediacoreFactory();
 
-  mozilla::ReentrantMonitor mMonitor;
+  mozilla::Monitor mMonitor;
   
   nsString mContractID;
   nsString mName;

@@ -37,7 +37,7 @@
 
 #include <nsIURI.h>
 
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsCOMPtr.h>
 
 class sbBaseMediacorePlaybackControl : public sbIMediacorePlaybackControl,
@@ -80,7 +80,7 @@ protected:
 
   nsresult DispatchPlaybackControlEvent(PRUint32 aType);
 
-  mozilla::ReentrantMonitor  mMonitor;
+  mozilla::Monitor mMonitor;
 
   nsCOMPtr<nsIURI> mUri;
 

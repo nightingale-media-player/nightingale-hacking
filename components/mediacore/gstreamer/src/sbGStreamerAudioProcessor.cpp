@@ -37,8 +37,7 @@
 #include <nsThreadUtils.h>
 #include <nsStringAPI.h>
 #include <prlog.h>
-#include <VideoUtils.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 #include <nsIClassInfo.h>
 #include <nsIClassInfoImpl.h>
 
@@ -247,7 +246,7 @@ sbGStreamerAudioProcessor::Suspend()
   NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_STATE (mPipeline);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mSuspended = PR_TRUE;
   return NS_OK;
 }
@@ -261,7 +260,7 @@ sbGStreamerAudioProcessor::Resume()
   NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_STATE (mPipeline);
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   mSuspended = PR_FALSE;
 
   nsresult rv = ScheduleSendDataIfAvailable();
@@ -660,7 +659,7 @@ sbGStreamerAudioProcessor::HasEnoughData()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   guint available = gst_adapter_available (mAdapter);
 
@@ -708,7 +707,7 @@ sbGStreamerAudioProcessor::GetMoreData()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   NS_ENSURE_TRUE (mBuffersAvailable > 0, /* void */);
 
@@ -759,7 +758,7 @@ nsresult
 sbGStreamerAudioProcessor::AppsinkNewBuffer(GstElement *appsink)
 {
   nsresult rv;
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   // Once we get the first chunk of data, we can determine what format we will
   // send to consumers.
@@ -789,7 +788,7 @@ sbGStreamerAudioProcessor::ScheduleSendDataIfAvailable()
 
   nsresult rv;
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   if (HasEnoughData()) {
     rv = ScheduleSendData();
@@ -901,7 +900,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
   const guint8 *data;
   guint bytesRead = 0;
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   // It's possible that the pipeline was stopped (on the main thread) before
   // this queued event was run; in that case we just return.
@@ -917,7 +916,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
     mHasStarted = PR_TRUE;
     {
       // Drop monitor to send event to the listener.
-      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+      mozilla::MonitorAutoUnlock mon(mMonitor);
 
       rv = DoStreamStart();
       NS_ENSURE_SUCCESS(rv, /*void*/);
@@ -950,7 +949,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
 
   // Call listener with the monitor released.
   {
-    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+    mozilla::MonitorAutoUnlock mon(mMonitor);
 
     if (sendGap) {
       rv = SendEventSync(sbIMediacoreAudioProcessorListener::EVENT_GAP, nsnull);
@@ -1000,7 +999,7 @@ sbGStreamerAudioProcessor::AppsinkEOS(GstElement *appsink)
 
   nsresult rv;
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   // If we have enough data already, then processing is in-progress; we don't
   // need to do anything specific.

@@ -33,7 +33,7 @@
 #include <nsMemory.h>
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
-#include <mozilla/ReentrantMonitor.h>
+#include <mozilla/Monitor.h>
 
 // Songbird includes
 #include <sbProxiedComponentManager.h>
@@ -73,7 +73,7 @@ sbMediaListEnumeratorWrapper::Initialize(
 {
   NS_ENSURE_ARG_POINTER(aEnumerator);
   
-  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
+  mozilla::MonitorAutoLock autoMonitor(mMonitor);
 
   mEnumerator = aEnumerator;
 
@@ -99,7 +99,7 @@ sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
 {
   NS_ENSURE_TRUE(mEnumerator, NS_ERROR_NOT_INITIALIZED);
   
-  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
+  mozilla::MonitorAutoLock autoMonitor(mMonitor);
   nsresult rv = mEnumerator->HasMoreElements(aMore);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -119,7 +119,7 @@ sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
+  mozilla::MonitorAutoLock autoMonitor(mMonitor);
 
   nsCOMPtr<nsISupports> supports;
   nsresult rv = mEnumerator->GetNext(getter_AddRefs(supports));
