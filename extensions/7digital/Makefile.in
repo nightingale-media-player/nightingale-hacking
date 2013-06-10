@@ -36,7 +36,7 @@ SUBDIRS = chrome \
           defaults \
           $(NULL)
 
-INSTALL_EXTENSION = 1
+INSTALL_EXTENSION = 0
 
 CREATEDIRS = $(SONGBIRD_PREFERENCESDIR) \
              $(SONGBIRD_COMPONENTSDIR) \
