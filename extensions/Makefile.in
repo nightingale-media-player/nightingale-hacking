@@ -60,6 +60,7 @@ NOARCH_EXTENSIONS = 7digital \
                     newreleases \
                     qatesttools \
                     shoutcast \
+                    amazonmusic \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because

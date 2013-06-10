@@ -40,13 +40,6 @@ else
                     $(NULL)
    export ICON_FILE = songbird_nightly.ico
 endif
-
-ifeq ($(SB_PLATFORM),windows)
-SONGBIRD_DIST += \
-    $(DEPS_DIR)/private/ask/PIP267_SGD4_.exe \
-    $(NULL)
-endif
-
                       
 SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
                         $(NULL)
