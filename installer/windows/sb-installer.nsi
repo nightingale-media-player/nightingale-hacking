@@ -393,7 +393,7 @@ Function CallUninstaller
    Push $1
    Push $2
    
-   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("SB_INSTALLER_NOMUTEX", "1").r1'
+   System::Call 'Kernel32::SetEnvironmentVariableW(t, t) i("SB_INSTALLER_NOMUTEX", "1").r1'
    ExecWait '"$0\${FileUninstallEXE}" /S _?=$0' $1
    DetailPrint '"$0\${FileUninstallEXE}" /S _?=$0 returned $1'
 
@@ -415,7 +415,7 @@ UninstallerSuccess:
    ; We use this key existing as a reasonable hueristic about whether the
    ; installer really did anything (and didn't bail out because it needed
    ; input while in silent mode).
-   EnumRegKey $1 HKLM "$RootAppRegistryKey" 0
+   EnumRegValue $1 HKLM "$RootAppRegistryKey" 0
 
    ${If} $1 == ""
       Delete $0\${FileUninstallEXE}

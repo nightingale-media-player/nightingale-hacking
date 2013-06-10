@@ -41,7 +41,7 @@ Section "Uninstall"
    Call un.CloseApp
 
    ${If} ${TRUE} == $DistributionMode
-      System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI", "$INSTDIR\distribution\distribution.ini").r0'
+      System::Call 'Kernel32::SetEnvironmentVariableW(t, t) i("DISTHELPER_DISTINI", "$INSTDIR\distribution\distribution.ini").r0'
    ${EndIf}
 
    ; Before doing any uninstallation activities, execute disthelper.exe to 
