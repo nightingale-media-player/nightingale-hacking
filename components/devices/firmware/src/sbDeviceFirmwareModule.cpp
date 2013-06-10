@@ -61,7 +61,7 @@ static const mozilla::Module::ContractIDEntry kDeviceFirmwareSupportContracts[] 
 };
 
 static const mozilla::Module::CategoryEntry kDeviceFirmwareSupportCategories[] = {
-  { "app-startup", SB_DEVICEFIRMWAREUPDATER_CONTRACTID },
+  { "app-startup", SB_DEVICEFIRMWAREUPDATER_CLASSNAME, SB_DEVICEFIRMWAREUPDATER_CONTRACTID },
   { NULL }
 };
 

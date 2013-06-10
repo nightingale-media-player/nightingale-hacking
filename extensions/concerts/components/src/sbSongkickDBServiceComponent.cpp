@@ -41,7 +41,7 @@ static const mozilla::Module::ContractIDEntry kSongkickDBServiceContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kSongkickDBServiceCategories[] = {
-  { "app-startup", SONGBIRD_SONGKICKDBSERVICE_CONTRACTID },
+  { "app-startup", SONGBIRD_SONGKICKDBSERVICE_CLASSNAME, SONGBIRD_SONGKICKDBSERVICE_CONTRACTID },
   { NULL }
 };
 

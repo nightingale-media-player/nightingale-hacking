@@ -80,7 +80,7 @@ static const mozilla::Module::ContractIDEntry kTemporaryFileServiceContracts[] =
 };
 
 static const mozilla::Module::CategoryEntry kTemporaryFileServiceCategories[] = {
-  { "app-startup", "service", SB_TEMPORARYFILESERVICE_CONTRACTID },
+  { "app-startup", SB_TEMPORARYFILESERVICE_CLASSNAME, SB_TEMPORARYFILESERVICE_CONTRACTID },
   { NULL }
 };
 

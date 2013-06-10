@@ -43,7 +43,7 @@ static const mozilla::Module::ContractIDEntry kMediaExportServiceContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kMediaExportServiceCategories[] = {
-  { "app-startup", SB_MEDIAEXPORTSERVICE_CONTRACTID },
+  { "app-startup", SB_MEDIAEXPORTSERVICE_CLASSNAME, SB_MEDIAEXPORTSERVICE_CONTRACTID },
   { NULL }
 };
 

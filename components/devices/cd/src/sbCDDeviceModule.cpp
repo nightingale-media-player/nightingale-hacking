@@ -50,8 +50,8 @@ static const mozilla::Module::ContractIDEntry kDeviceMarshallContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kDeviceMarshallCategories[] = {
-  { "app-startup", SB_CDDEVICE_MARSHALL_CONTRACTID },
-  { "app-startup", SB_CDDEVICE_CONTROLLER_CONTRACTID },
+  { "app-startup", SB_CDDEVICE_MARSHALL_CLASSNAME, SB_CDDEVICE_MARSHALL_CONTRACTID },
+  { "app-startup", SB_CDDEVICE_CONTROLLER_CLASSNAME, SB_CDDEVICE_CONTROLLER_CONTRACTID },
   { NULL }
 };
 

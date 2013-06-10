@@ -50,7 +50,7 @@ static const mozilla::Module::ContractIDEntry kWatchFolderContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kWatchFolderCategories[] = {
-  { "app-startup", SB_WATCHFOLDER_CONTRACTID },
+  { "app-startup", SB_WATCHFOLDER_CLASSNAME, SB_WATCHFOLDER_CONTRACTID },
   { NULL }
 };
 

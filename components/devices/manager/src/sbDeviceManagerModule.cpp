@@ -50,7 +50,7 @@ static const mozilla::Module::ContractIDEntry kDeviceManagerContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kDeviceManagerCategories[] = {
-  { "app-startup", SONGBIRD_DEVICEMANAGER2_CONTRACTID },
+  { "app-startup", SONGBIRD_DEVICEMANAGER2_CLASSNAME, SONGBIRD_DEVICEMANAGER2_CONTRACTID },
   { NULL }
 };
 
