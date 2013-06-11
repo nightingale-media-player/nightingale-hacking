@@ -138,7 +138,7 @@ static const mozilla::Module::ContractIDEntry kAlbumArtContacts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kAlbumArtCategories[] = {
-  { "app-startup", SB_ALBUMARTSERVICE_CLASSNAME, SB_ALBUMARTSERVICE_CONTRACTID },
+  { "profile-after-change", SB_ALBUMARTSERVICE_CLASSNAME, SB_ALBUMARTSERVICE_CONTRACTID },
   { NULL }
 };
 
@@ -149,4 +149,4 @@ static const mozilla::Module kAlbumArtModule = {
   kAlbumArtCategories
 };
 
-NSMODULE_DEFN(sbAlbumArtComponents) = &kAlbumArtModule;
+NSMODULE_DEFN(sbAlbumArt) = &kAlbumArtModule;

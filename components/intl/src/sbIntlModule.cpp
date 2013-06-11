@@ -45,7 +45,7 @@ static const mozilla::Module::ContractIDEntry kStringTransformContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kStringTransformCategories[] = {
-  { NS_XPCOM_STARTUP_CATEGORY, SB_STRINGTRANSFORM_CLASSNAME, SB_STRINGTRANSFORM_CONTRACTID },
+  { "profile-after-change", SB_STRINGTRANSFORM_CLASSNAME, SB_STRINGTRANSFORM_CONTRACTID },
   { NULL }
 };
 
