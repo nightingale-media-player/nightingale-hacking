@@ -34,7 +34,7 @@
 #include <nsIThread.h>
 #include <nsThreadUtils.h>
 #include <prmon.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include "sbMediacoreEvent.h"
 
 #include <nsIVariant.h>
@@ -84,7 +84,7 @@ protected:
 private:
   sbIMediacoreEventTarget * mTarget;
   nsCOMArray<sbIMediacoreEventListener> mListeners;
-  mozilla::Monitor mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   /**
    * Tracks the state of the dispatch. This prevents dispatches to removed
    * events as well as ensuring that newly added events see the event

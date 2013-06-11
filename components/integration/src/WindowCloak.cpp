@@ -144,7 +144,6 @@ sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
 
     // Otherwise make a new sbCloakInfo structure to hold state info.
     cloakInfo = new sbCloakInfo;
-    NS_ENSURE_TRUE(cloakInfo, NS_ERROR_OUT_OF_MEMORY);
 
     // Add it to our hashtable here so that the memory will be freed on
     // shutdown.

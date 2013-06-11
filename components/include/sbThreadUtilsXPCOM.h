@@ -718,7 +718,7 @@ public:
   bool Wait(PRIntervalTime aTimeout);
 
 private:
-  mozilla::ReentrantMonitor mMonitor;
+  mozilla::ReentrantMonitor  mMonitor;
   bool            mDone;
 };
 

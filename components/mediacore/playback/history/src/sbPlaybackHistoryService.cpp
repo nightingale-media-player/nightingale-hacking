@@ -39,7 +39,7 @@
 #include <nsIWeakReferenceUtils.h>
 
 #include <nsArrayUtils.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -1569,7 +1569,7 @@ sbPlaybackHistoryService::UpdateCurrentViewFromEvent(sbIMediacoreEvent *aEvent)
 nsresult
 sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   NS_ENSURE_STATE(mCurrentlyTracking);
   NS_ENSURE_STATE(mCurrentItem);
@@ -1681,7 +1681,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
 nsresult 
 sbPlaybackHistoryService::ResetTrackingData()
 {
-	mozilla::MonitorAutoLock mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mCurrentlyTracking = PR_FALSE;
   mCurrentStartTime = 0;
@@ -1695,7 +1695,7 @@ sbPlaybackHistoryService::ResetTrackingData()
 nsresult 
 sbPlaybackHistoryService::UpdateMetrics()
 {
-	mozilla::MonitorAutoLock mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   NS_ENSURE_STATE(mCurrentView);
   NS_ENSURE_STATE(mCurrentItem);
@@ -1894,7 +1894,7 @@ sbPlaybackHistoryService::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   nsresult rv = aEvent->GetType(&eventType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   switch(eventType) {
     case sbIMediacoreEvent::STREAM_START: {

@@ -31,7 +31,7 @@
 #include <a11yGeneric.h>
 #include <nsIClassInfo.h>
 #include <nsIClassInfoImpl.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
@@ -155,7 +155,7 @@ private:
 
   // Monitor used to protect all the following data items, which are modified
   // from both the main thread and from GStreamer streaming threads.
-  mozilla::Monitor mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
 
   // Adapter used to ensure that data is sent in chunks sized according to
   // mConstraintBlockSize.

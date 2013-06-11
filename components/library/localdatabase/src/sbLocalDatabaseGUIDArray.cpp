@@ -60,7 +60,7 @@
 #include <sbMemoryUtils.h>
 #include <sbThreadUtils.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -667,7 +667,7 @@ sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
   NS_ENSURE_ARG_POINTER(_retval);
 
   {
-    mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+    mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
     if (aIndex < mCache.Length()) {
       ArrayItem* item = mCache[aIndex];
       if (item) {
@@ -826,7 +826,7 @@ sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
 
   // Scope for monitor.
   {
-    mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+    mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
     mCache.Clear();
     mGuidToFirstIndexMap.Clear();
@@ -939,7 +939,7 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsresult rv;
 
-  mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1066,7 +1066,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 
   nsresult rv;
 
-  mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1162,7 +1162,7 @@ sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
 
   nsresult rv;
 
-  mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1211,7 +1211,7 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
 
-  mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1399,7 +1399,7 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 {
   nsresult rv;
 
-  mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   // If we have a fetch size of 0 or PR_UINT32_MAX it means
   // we're supposed to fetch everything.  If this is
@@ -2343,7 +2343,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 
   TRACE(("GetByIndexInternal %d %d", aIndex, mLength));
 
-  mozilla::MonitorAutoLock autoMonitor(mCacheMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();

@@ -626,7 +626,7 @@ sbDeviceLibrary::GetSyncSettings(sbIDeviceLibrarySyncSettings ** aSyncSettings)
 
   nsresult rv;
 
-  mozilla::MonitorAutoLock lock(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter lock(mMonitor);
   if (!mSyncSettings) {
     mSyncSettings = CreateSyncSettings();
     NS_ENSURE_TRUE(mSyncSettings, NS_ERROR_OUT_OF_MEMORY);
@@ -668,7 +668,7 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
 #define SB_NOTIFY_LISTENERS(call)                                             \
   nsCOMArray<sbIDeviceLibraryListener> listeners;                             \
   {                                                                           \
-    mozilla::MonitorAutoLock monitor(mMonitor);                     \
+    mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);                     \
     mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);     \
   }                                                                           \
                                                                               \
@@ -693,7 +693,7 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
                                                                               \
   nsCOMArray<sbIDeviceLibraryListener> listeners;                             \
   {                                                                           \
-    mozilla::MonitorAutoLock monitor(mMonitor);                     \
+    mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);                     \
     mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);     \
   }                                                                           \
                                                                               \
@@ -745,7 +745,7 @@ sbDeviceLibrary::SetSyncSettingsNoLock(
   nsRefPtr<sbDeviceLibrarySyncSettings> copiedSyncSettings;
   {
     // Lock for both assignment and the reading the aSyncSettings object
-    mozilla::MonitorAutoLock monitor(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
 
     sbSimpleAutoLock lock(syncSettings->GetLock());
 
@@ -983,7 +983,7 @@ sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
   NS_ENSURE_ARG_POINTER(aListener);
 
   {
-    mozilla::MonitorAutoLock monitor(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
 
     if (mListeners.Get(aListener, nsnull)) {
       NS_WARNING("Trying to add a listener twice!");
@@ -1001,7 +1001,7 @@ sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
                                      getter_AddRefs(proxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock monitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
 
   // Add the proxy to the hash table, using the listener as the key.
   PRBool success = mListeners.Put(aListener, proxy);
@@ -1016,7 +1016,7 @@ sbDeviceLibrary::RemoveDeviceLibraryListener(sbIDeviceLibraryListener* aListener
   TRACE(("sbLibraryManager[0x%x] - RemoveListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
 
-  mozilla::MonitorAutoLock monitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
 
   #ifdef DEBUG
     if (!mListeners.Get(aListener, nsnull)) {

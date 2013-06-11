@@ -35,7 +35,7 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIThread.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbIMediacoreEventListener.h>
@@ -70,7 +70,7 @@ private:
 protected:
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
   PRInt32                               mCounter;
-  mozilla::Monitor                      mMonitor;
+  mozilla::ReentrantMonitor             mMonitor;
   nsCOMArray<nsIThread>                 mThreads;
 };
 

@@ -31,7 +31,7 @@
 #include "sbBaseMediacoreVolumeControl.h"
 
 #include <prprf.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -102,7 +102,7 @@ sbBaseMediacoreVolumeControl::GetMute(PRBool *aMute)
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - GetMute", this));
   NS_ENSURE_ARG_POINTER(aMute);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aMute = mMute;
 
   return NS_OK;
@@ -116,7 +116,7 @@ sbBaseMediacoreVolumeControl::SetMute(PRBool aMute)
   nsresult rv = OnSetMute(aMute);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mMute = aMute;
 
   return NS_OK;
@@ -128,7 +128,7 @@ sbBaseMediacoreVolumeControl::GetVolume(double *aVolume)
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - GetVolume", this));
   NS_ENSURE_ARG_POINTER(aVolume);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aVolume = mVolume;
 
   return NS_OK;
@@ -142,7 +142,7 @@ sbBaseMediacoreVolumeControl::SetVolume(double aVolume)
   nsresult rv = OnSetVolume(aVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mVolume = aVolume;
 
   return NS_OK;

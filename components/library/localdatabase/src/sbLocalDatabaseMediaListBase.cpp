@@ -49,7 +49,7 @@
 #include <sbISortableMediaListView.h>
 
 #include <DatabaseQuery.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsHashKeys.h>
@@ -92,7 +92,7 @@ sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
                                    const nsAString& aGuid,
                                    PRBool aOwnsLibrary)
 {
-  mozilla::MonitorAutoLock monitor(mFullArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter monitor(mFullArrayMonitor);
 
   // Initialize our base classes
   nsresult rv = sbLocalDatabaseMediaListListener::Init();
@@ -667,7 +667,7 @@ sbLocalDatabaseMediaListBase::GetLength(PRUint32* aLength)
 {
   NS_ENSURE_ARG_POINTER(aLength);
 
-  mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
   nsresult rv = mFullArray->GetLength(aLength);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -699,7 +699,7 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
 
   nsAutoString guid;
   {
-    mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
     rv = mFullArray->GetGuidByIndex(aIndex, guid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -791,7 +791,7 @@ sbLocalDatabaseMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener*
   switch (aEnumerationType) {
 
     case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
-      mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+      mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
       // Don't reenter!
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
@@ -881,7 +881,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
   switch (aEnumerationType) {
 
     case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
-      mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+      mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
       // Don't reenter!
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
@@ -1021,7 +1021,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
   switch (aEnumerationType) {
 
     case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
-      mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+      mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
       // Don't reenter!
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
@@ -1153,7 +1153,7 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
 
   PRUint32 count;
 
-  mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
   nsresult rv = mFullArray->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1188,7 +1188,7 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
   PRUint32 count;
   nsresult rv = mFullArray->GetLength(&count);
@@ -1227,7 +1227,7 @@ sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 {
   NS_ENSURE_ARG_POINTER(aIsEmpty);
 
-  mozilla::MonitorAutoLock mon(mFullArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mFullArrayMonitor);
 
   PRUint32 length;
   nsresult rv = mFullArray->GetLength(&length);

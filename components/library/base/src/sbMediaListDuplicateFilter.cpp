@@ -29,7 +29,7 @@
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsStringAPI.h>
 
 // Mozilla interfaces
@@ -82,7 +82,7 @@ sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   
-  mozilla::MonitorAutoLock autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   nsCOMPtr<sbIMutablePropertyArray> propArray = 
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
@@ -114,7 +114,7 @@ NS_IMETHODIMP
 sbMediaListDuplicateFilter::GetDuplicateItems(PRUint32 * aDuplicateItems)
 {
   NS_ENSURE_ARG_POINTER(aDuplicateItems);
-  mozilla::MonitorAutoLock autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
   *aDuplicateItems = mDuplicateItems;
   return NS_OK;
 }
@@ -123,7 +123,7 @@ NS_IMETHODIMP
 sbMediaListDuplicateFilter::GetTotalItems(PRUint32 * aTotalItems)
 {
   NS_ENSURE_ARG_POINTER(aTotalItems);
-  mozilla::MonitorAutoLock autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
   *aTotalItems = mTotalItems;
   return NS_OK;
 }
@@ -205,7 +205,7 @@ sbMediaListDuplicateFilter::SaveItemKeys(sbIMediaItem * aItem)
   nsresult rv;
   nsString key;
   
-  mozilla::MonitorAutoLock autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   rv = aItem->GetProperties(mSBPropertyArray, getter_AddRefs(mItemProperties));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -260,7 +260,7 @@ sbMediaListDuplicateFilter::Advance()
 {
   nsresult rv;
 
-  mozilla::MonitorAutoLock autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   if (!mInitialized) {
     // Only enumerate if we need to check for duplicates.

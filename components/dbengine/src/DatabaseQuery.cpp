@@ -41,7 +41,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsNetUtil.h>
 
 #include <nsIServiceManager.h>
@@ -350,7 +350,7 @@ nsresult CDatabaseQuery::PopQuery(sbIDatabasePreparedStatement **_retval)
 NS_IMETHODIMP CDatabaseQuery::ResetQuery()
 {
   // Make sure we're not running
-  mozilla::MonitorAutoLock monQueryRunning(m_pQueryRunningMonitor);
+  mozilla::ReentrantMonitorAutoEnter monQueryRunning(m_pQueryRunningMonitor);
 
   // These should be in sync, but just in case
   NS_ASSERTION( !m_IsExecuting, "Resetting a query that is executing!!!!!");
@@ -412,7 +412,7 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
   *_retval = 1;
 
   {
-    mozilla::MonitorAutoLock mon(m_pQueryRunningMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueryRunningMonitor);
     m_QueryHasCompleted = PR_FALSE;
   }
 
@@ -425,7 +425,7 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
 
   if(*_retval != SQLITE_OK)
   {
-    mozilla::MonitorAutoLock mon(m_pQueryRunningMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueryRunningMonitor);
     m_QueryHasCompleted = PR_TRUE;
     mon.NotifyAll();
     return NS_ERROR_FAILURE;
@@ -441,7 +441,7 @@ NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   {
-    mozilla::MonitorAutoLock mon(m_pQueryRunningMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(m_pQueryRunningMonitor);
     while (!m_QueryHasCompleted) {
       mon.Wait();
     }

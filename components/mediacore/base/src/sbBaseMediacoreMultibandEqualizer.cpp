@@ -35,7 +35,7 @@
 
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <prlog.h>
 #include <prprf.h>
@@ -238,7 +238,7 @@ sbBaseMediacoreMultibandEqualizer::GetEqEnabled(PRBool *aEqEnabled)
 
   NS_ENSURE_ARG_POINTER(aEqEnabled);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aEqEnabled = mEqEnabled;
   
   return NS_OK;
@@ -249,7 +249,7 @@ sbBaseMediacoreMultibandEqualizer::SetEqEnabled(PRBool aEqEnabled)
 {
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - SetEqEnabled", this));
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   
   nsresult rv = OnSetEqEnabled(aEqEnabled);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -299,7 +299,7 @@ sbBaseMediacoreMultibandEqualizer::GetBands(nsISimpleEnumerator * *aBands)
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     mBands.EnumerateRead(
 	  sbBaseMediacoreMultibandEqualizer::EnumerateIntoArrayUint32Key,
@@ -344,7 +344,7 @@ sbBaseMediacoreMultibandEqualizer::GetBandCount(PRUint32 *aBandCount)
 
   NS_ENSURE_ARG_POINTER(aBandCount);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = OnGetBandCount(aBandCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -364,7 +364,7 @@ sbBaseMediacoreMultibandEqualizer::GetBand(PRUint32 aBandIndex, sbIMediacoreEqua
 
   nsCOMPtr<sbIMediacoreEqualizerBand> band;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!mBands.Get(aBandIndex, getter_AddRefs(band))) {
     nsRefPtr<sbMediacoreEqualizerBand> newBand;
@@ -395,7 +395,7 @@ sbBaseMediacoreMultibandEqualizer::SetBand(sbIMediacoreEqualizerBand *aBand)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(mEqEnabled) {
     rv = OnSetBand(aBand);

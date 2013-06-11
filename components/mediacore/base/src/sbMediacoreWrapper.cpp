@@ -36,7 +36,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsXPCOMCID.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <prlog.h>
 
 #include <sbIPropertyArray.h>
@@ -697,7 +697,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
   else {
     // Scope monitor.
     {
-      mozilla::MonitorAutoLock mon(mProxiedObjectsMonitor);
+      mozilla::ReentrantMonitorAutoEnter mon(mProxiedObjectsMonitor);
       if (!mProxiedDoc) {
     	nsCOMPtr<nsIThread> target;
         rv = NS_GetMainThread(getter_AddRefs(target));
@@ -775,7 +775,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
   else {
     // Scope monitor.
     {
-	  mozilla::MonitorAutoLock mon(mProxiedObjectsMonitor);
+	  mozilla::ReentrantMonitorAutoEnter mon(mProxiedObjectsMonitor);
       if(!mProxiedDOMEventTarget) {
         nsCOMPtr<nsIThread> target;
         rv = NS_GetMainThread(getter_AddRefs(target));

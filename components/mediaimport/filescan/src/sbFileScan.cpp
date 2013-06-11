@@ -38,7 +38,7 @@
 
 #include <nsMemory.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsIIOService.h>
 #include <nsIURI.h>
 #include <nsUnicharUtils.h>

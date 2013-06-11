@@ -27,7 +27,7 @@
 
 #include "sbTestMediacoreStressThreads.h"
 
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
@@ -70,7 +70,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
   // spin up a *ton* of threads...
   mCounter = 0;
   for (int i = 0; i < 100; ++i) {
-    mozilla::MonitorAutoLock monitor(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
     nsCOMPtr<nsIRunnable> event =
         new nsRunnableMethod_OnEvent(this);
     NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
@@ -120,7 +120,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
 /* void onMediacoreEvent (in sbMediacoreEvent aEvent); */
 NS_IMETHODIMP sbTestMediacoreStressThreads::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 {
-  mozilla::MonitorAutoLock monitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter monitor(mMonitor);
   --mCounter;
   if (!NS_IsMainThread()) {
     NS_WARNING("Not on main thread!");

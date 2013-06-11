@@ -27,7 +27,7 @@
 
 #include "sbBaseDeviceController.h"
 
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsComponentManagerUtils.h>
 
 #include <sbDebugUtils.h>
@@ -101,7 +101,7 @@ sbBaseDeviceController::~sbBaseDeviceController()
 nsresult 
 sbBaseDeviceController::GetControllerIdInternal(nsID &aID)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aID = mControllerID;
   return NS_OK;
 }
@@ -109,7 +109,7 @@ sbBaseDeviceController::GetControllerIdInternal(nsID &aID)
 nsresult 
 sbBaseDeviceController::SetControllerIdInternal(const nsID &aID)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mControllerID = aID;
   return NS_OK;
 }
@@ -117,7 +117,7 @@ sbBaseDeviceController::SetControllerIdInternal(const nsID &aID)
 nsresult 
 sbBaseDeviceController::GetControllerNameInternal(nsAString &aName)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aName = mControllerName;
   return NS_OK;
 }
@@ -125,7 +125,7 @@ sbBaseDeviceController::GetControllerNameInternal(nsAString &aName)
 nsresult 
 sbBaseDeviceController::SetControllerNameInternal(const nsAString &aName)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mControllerName = aName;
   return NS_OK;
 }
@@ -133,7 +133,7 @@ sbBaseDeviceController::SetControllerNameInternal(const nsAString &aName)
 nsresult 
 sbBaseDeviceController::GetMarshallIdInternal(nsID &aID)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   aID = mMarshallID;
   return NS_OK;
 }
@@ -141,7 +141,7 @@ sbBaseDeviceController::GetMarshallIdInternal(nsID &aID)
 nsresult 
 sbBaseDeviceController::SetMarshallIdInternal(const nsID &aID)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mMarshallID = aID;
   return NS_OK;
 }
@@ -160,7 +160,7 @@ sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice)
   PRBool succeeded;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     succeeded = mDevices.Put(*id, aDevice);
   }
 
@@ -181,7 +181,7 @@ sbBaseDeviceController::RemoveDeviceInternal(sbIDevice *aDevice)
   NS_ENSURE_ARG_POINTER(id);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     mDevices.Remove(*id);
   }
 
@@ -200,7 +200,7 @@ sbBaseDeviceController::GetDeviceInternal(const nsID * aID,
   PRBool succeeded;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     succeeded = mDevices.Get(*aID, aDevice);
   }
 
@@ -220,7 +220,7 @@ sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices)
   PRUint32 count;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     count = mDevices.EnumerateRead(sbBaseDeviceController::EnumerateIntoArray,
                                    array.get());
@@ -266,7 +266,7 @@ sbBaseDeviceController::ConnectDevicesInternal()
   nsCOMPtr<nsIMutableArray> array;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     array =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -296,7 +296,7 @@ sbBaseDeviceController::DisconnectDevicesInternal()
   nsCOMPtr<nsIMutableArray> array;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     array =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -329,7 +329,7 @@ sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice)
   aDevice->Disconnect();
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     mDevices.Remove(*id);
   }
 
@@ -341,7 +341,7 @@ sbBaseDeviceController::ReleaseDeviceInternal(sbIDevice *aDevice)
 nsresult 
 sbBaseDeviceController::ReleaseDevicesInternal()
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mDevices.Clear();
   return NS_OK;
 }

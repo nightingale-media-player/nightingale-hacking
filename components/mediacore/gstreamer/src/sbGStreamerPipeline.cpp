@@ -33,7 +33,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbIMediacoreError.h>
 #include <sbMediacoreError.h>
@@ -110,7 +110,7 @@ sbGStreamerPipeline::SetupPipeline()
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - SetupPipeline", this));
   nsresult rv;
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   rv = BuildPipeline();
   NS_ENSURE_SUCCESS (rv, rv);
@@ -146,7 +146,7 @@ sbGStreamerPipeline::DestroyPipeline()
   GstElement *pipeline = NULL;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     if (mPipeline)
       pipeline = (GstElement *)gst_object_ref (mPipeline);
   }
@@ -157,7 +157,7 @@ sbGStreamerPipeline::DestroyPipeline()
     TRACE(("sbGStreamerPipeline[0x%.8x] - DestroyPipeline NULL state.", this));
   }
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   if (mPipeline) {
     // Give subclass a chance to do something after the pipeline has been 
     // stopped, but before we unref it
@@ -189,7 +189,7 @@ sbGStreamerPipeline::PlayPipeline()
   nsresult rv;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     if (!mPipeline) {
       rv = SetupPipeline();
       NS_ENSURE_SUCCESS (rv, rv);
@@ -211,7 +211,7 @@ sbGStreamerPipeline::PausePipeline()
   nsresult rv;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     if (!mPipeline) {
       rv = SetupPipeline();
       NS_ENSURE_SUCCESS (rv, rv);
@@ -233,7 +233,7 @@ sbGStreamerPipeline::StopPipeline()
   nsresult rv;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     if (mPipeline)
       pipeline = (GstElement *)gst_object_ref (mPipeline);
   }
@@ -251,14 +251,14 @@ sbGStreamerPipeline::StopPipeline()
 
 void sbGStreamerPipeline::SetPipelineOp(GStreamer::pipelineOp_t aPipelineOp)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mPipelineOp = aPipelineOp;
   return;
 }
 
 GStreamer::pipelineOp_t sbGStreamerPipeline::GetPipelineOp()
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   return mPipelineOp;
 }
 

@@ -38,7 +38,7 @@
 #include <nsHashKeys.h>
 #include <nsTHashtable.h>
 #include <prmon.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbIDataRemote.h>
 #include <sbIMediacoreEventListener.h>
@@ -187,7 +187,7 @@ protected:
    * Helper function to cleanly stop the playback. The monitor must be locked
    * when this function is called.
    */
-//  nsresult StopPlaybackHelper(mozilla::Monitor& aMonitor);
+//  nsresult StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor);
   nsresult StopPlaybackHelper();
 
   /**
@@ -200,7 +200,7 @@ protected:
                                                PRBool *_proceed);
 
 protected:
-  mozilla::Monitor               mMonitor;
+  mozilla::ReentrantMonitor      mMonitor;
 
   PRUint32                       mStatus;
   PRPackedBool                   mIsWaitingForPlayback;

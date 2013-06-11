@@ -33,7 +33,7 @@
 #include <nsIClassInfo.h>
 #include <nsIComponentManager.h>
 #include <nsIFile.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <mozilla/ModuleUtils.h>
 #include <nsIObserver.h>
 #include <nsIWeakReference.h>
@@ -169,7 +169,7 @@ private:
 
   nsCOMPtr<nsIWeakReference> mMediacoreManager;
 
-  mozilla::Monitor   mMonitor;
+  mozilla::ReentrantMonitor   mMonitor;
 
   PRPackedBool mCurrentlyTracking;
 

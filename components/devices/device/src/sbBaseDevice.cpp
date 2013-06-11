@@ -45,7 +45,7 @@
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>

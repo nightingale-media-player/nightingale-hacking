@@ -30,7 +30,8 @@
 #include <sbPropertiesCID.h>
 
 #include <DatabaseQuery.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
+#include <VideoUtils.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIObserverService.h>
@@ -683,7 +684,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
   // thread coming in behind us and thinking there's misses when they're
   // going to be loaded.
   {
-	  mozilla::MonitorAutoLock mon(mMonitor);
+	  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
 
@@ -781,7 +782,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
       // also potentially have to call back into the property 
       // cache on the main thread to invalidate the GUID arrays.
 
-      mozilla::MonitorAutoUnlock mon(mMonitor);
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
       rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -880,7 +881,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   // Scoped locking. Must always avoid calling Write with monitor acquired.
   {
-	mozilla::MonitorAutoLock mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
       nsDependentString const guid(aGUIDArray[i]);
       nsRefPtr<sbLocalDatabaseResourcePropertyBag> bag;
@@ -1115,7 +1116,7 @@ sbLocalDatabasePropertyCache::Write()
     DirtyItems dirtyItems;
 
     //Lock it.
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if (!mDirty.Count()) {
       return NS_OK;
@@ -1403,7 +1404,7 @@ sbLocalDatabasePropertyCache::AddDependentGUIDArray(
 {
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
 
-  mozilla::MonitorAutoLock mon(mDependentGUIDArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
   nsCOMPtr<nsISupports> supports =
     do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
   nsCOMPtr<nsIWeakReference> weakRef =
@@ -1418,7 +1419,7 @@ sbLocalDatabasePropertyCache::RemoveDependentGUIDArray(
                                 sbLocalDatabaseGUIDArray *aGUIDArray)
 {
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
-  mozilla::MonitorAutoLock mon(mDependentGUIDArrayMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
 
   nsCOMPtr<nsISupports> supports =
     do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
@@ -1577,7 +1578,7 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
     // Never call Write with monitor acquired. Write may have to proxy
     // invalidation of the GUID arrays to the main thread which requires
     // acquiring the monitor.
-    mozilla::MonitorAutoUnlock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
     rv = Write();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1612,7 +1613,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   nsCOMArray<sbILocalDatabaseGUIDArray> arrays;
 
   {
-	mozilla::MonitorAutoLock mon(mDependentGUIDArrayMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
     DependentGUIDArrays_t::iterator cit = mDependentGUIDArrays.begin();
     DependentGUIDArrays_t::iterator end = mDependentGUIDArrays.end();
     while (cit != end) {
@@ -1637,7 +1638,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   // Copy the data into a temporary set to avoid invalidating the guid arrays
   // with the property cache lock held.
   {
-	mozilla::MonitorAutoLock mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     std::insert_iterator<std::vector<PRUint32> > insertIter(dirtyPropIDs,
                                                             dirtyPropIDs.end());
     std::copy(mDirtyForInvalidation.begin(),

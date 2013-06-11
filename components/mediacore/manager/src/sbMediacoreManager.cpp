@@ -39,12 +39,13 @@
 #include <nsIThread.h>
 
 #include <nsArrayUtils.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <VideoUtils.h>
 
 #include <prprf.h>
 
@@ -304,7 +305,7 @@ sbMediacoreManager::PreShutdown()
 {
   TRACE(("sbMediacoreManager[0x%x] - PreShutdown", this));
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(mPrimaryCore) {
     nsCOMPtr<sbIMediacoreStatus> status;
@@ -334,7 +335,7 @@ sbMediacoreManager::Shutdown()
 {
   TRACE(("sbMediacoreManager[0x%x] - Shutdown", this));
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv;
   if (mSequencer) {
@@ -415,7 +416,7 @@ sbMediacoreManager::GenerateInstanceName(nsAString &aInstanceName)
 {
   TRACE(("sbMediacoreManager[0x%x] - GenerateInstanceName", this));
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   aInstanceName.AssignLiteral(SB_CORE_BASE_NAME);
 
@@ -605,7 +606,7 @@ sbMediacoreManager::OnSetEqEnabled(PRBool aEqEnabled)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   {
-	  mozilla::MonitorAutoLock mon(mMonitor);
+	  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
 	  if(mPrimaryCore) {
 		  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
@@ -613,7 +614,7 @@ sbMediacoreManager::OnSetEqEnabled(PRBool aEqEnabled)
 		  NS_ENSURE_SUCCESS(rv, rv);
 
 		  {
-			  mozilla::MonitorAutoUnlock mon(mMonitor);
+			  mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
 			  rv = equalizer->SetEqEnabled(aEqEnabled);
 			  NS_ENSURE_SUCCESS(rv, rv);
@@ -643,7 +644,7 @@ sbMediacoreManager::OnGetBandCount(PRUint32 *aBandCount)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   {
-		mozilla::MonitorAutoLock mon(mMonitor);
+		mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
 		if(mPrimaryCore) {
 			nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
@@ -673,7 +674,7 @@ sbMediacoreManager::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aB
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   {
-		mozilla::MonitorAutoLock mon(mMonitor);
+		mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
 		if(mPrimaryCore) {
 			nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
@@ -728,7 +729,7 @@ sbMediacoreManager::OnSetBand(sbIMediacoreEqualizerBand *aBand)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   {
-		mozilla::MonitorAutoLock mon(mMonitor);
+		mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
 		if(mPrimaryCore) {
 			nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
@@ -857,7 +858,7 @@ sbMediacoreManager::InitVideoDataRemotes()
 nsresult
 sbMediacoreManager::VideoWindowUnloaded()
 {
-  mozilla::MonitorAutoLock mon(mVideoWindowMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mVideoWindowMonitor);
   mVideoWindow = nsnull;
   return NS_OK;
 }
@@ -938,7 +939,7 @@ sbMediacoreManager::OnSetMute(PRBool aMute)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   {
-  	mozilla::MonitorAutoLock mon(mMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
 		if(mPrimaryCore) {
 			nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
@@ -964,7 +965,7 @@ sbMediacoreManager::OnSetVolume(double aVolume)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   {
-		mozilla::MonitorAutoLock mon(mMonitor);
+		mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
 		if(mPrimaryCore) {
 
@@ -1010,7 +1011,7 @@ sbMediacoreManager::GetPrimaryCore(sbIMediacore * *aPrimaryCore)
   TRACE(("sbMediacoreManager[0x%x] - GetPrimaryCore", this));
   NS_ENSURE_ARG_POINTER(aPrimaryCore);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   NS_IF_ADDREF(*aPrimaryCore = mPrimaryCore);
 
   return NS_OK;
@@ -1024,7 +1025,7 @@ sbMediacoreManager::GetBalanceControl(
 
   *aBalanceControl = nsnull;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!mPrimaryCore) {
     return nsnull;
@@ -1047,7 +1048,7 @@ sbMediacoreManager::GetVolumeControl(
   TRACE(("sbMediacoreManager[0x%x] - GetVolumeControl", this));
   NS_ENSURE_ARG_POINTER(aVolumeControl);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
@@ -1068,7 +1069,7 @@ sbMediacoreManager::GetEqualizer(
 
   *aEqualizer = nsnull;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
@@ -1089,7 +1090,7 @@ sbMediacoreManager::GetPlaybackControl(
 
   *aPlaybackControl = nsnull;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!mPrimaryCore) {
     return NS_OK;
@@ -1114,7 +1115,7 @@ sbMediacoreManager::GetCapabilities(
 
   *aCapabilities = nsnull;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!mPrimaryCore) {
     return NS_OK;
@@ -1137,7 +1138,7 @@ sbMediacoreManager::GetStatus(sbIMediacoreStatus * *aStatus)
   NS_ENSURE_ARG_POINTER(aStatus);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   nsCOMPtr<sbIMediacoreStatus> status =
     do_QueryInterface(mSequencer, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1155,7 +1156,7 @@ sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow * *aVideo)
 
   *aVideo = nsnull;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!mPrimaryCore) {
     return NS_OK;
@@ -1179,7 +1180,7 @@ sbMediacoreManager::GetSequencer(
   NS_ENSURE_ARG_POINTER(aSequencer);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   nsCOMPtr<sbIMediacoreSequencer> sequencer =
     do_QueryInterface(mSequencer, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1215,7 +1216,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   }
 
   {
-  	mozilla::MonitorAutoLock mon(mVideoWindowMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mVideoWindowMonitor);
 
     if(mVideoWindow) {
       nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
@@ -1380,7 +1381,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-  	mozilla::MonitorAutoLock mon(mVideoWindowMonitor);
+  	mozilla::ReentrantMonitorAutoEnter mon(mVideoWindowMonitor);
     domXulElement.swap(mVideoWindow);
   }
 
@@ -1408,7 +1409,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
   nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer;
 
   {
-   mozilla::MonitorAutoLock mon(mMonitor);
+   mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 		mPrimaryCore = aPrimaryCore;
 
 		rv = NS_ERROR_UNEXPECTED;
@@ -1424,7 +1425,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
 	}
 
   {
-		mozilla::MonitorAutoLock volMon(sbBaseMediacoreVolumeControl::mMonitor);
+		mozilla::ReentrantMonitorAutoEnter volMon(sbBaseMediacoreVolumeControl::mMonitor);
 
 		rv = volumeControl->SetVolume(mVolume);
 		NS_ENSURE_SUCCESS(rv, rv);
@@ -1437,7 +1438,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
   	PRBool eqEnabled;
 
   	{
-  		mozilla::MonitorAutoLock eqMon(sbBaseMediacoreMultibandEqualizer::mMonitor);
+  		mozilla::ReentrantMonitorAutoEnter eqMon(sbBaseMediacoreMultibandEqualizer::mMonitor);
 
 			eqEnabled = mEqEnabled;
 			rv = equalizer->SetEqEnabled(mEqEnabled);
@@ -1474,7 +1475,7 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mFactories.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayISupportsKey,
                            mutableArray.get());
 
@@ -1506,7 +1507,7 @@ sbMediacoreManager::GetInstances(nsIArray * *aInstances)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mCores.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayStringKey,
                        mutableArray.get());
@@ -1548,7 +1549,7 @@ sbMediacoreManager::CreateMediacore(const nsAString & aContractID,
     return NS_OK;
   }
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   rv = coreFactory->Create(aInstanceName, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1595,7 +1596,7 @@ sbMediacoreManager::GetMediacore(const nsAString & aInstanceName,
 
   nsCOMPtr<sbIMediacore> core;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRBool success = mCores.Get(aInstanceName, getter_AddRefs(core));
   NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
@@ -1612,7 +1613,7 @@ sbMediacoreManager::DestroyMediacore(const nsAString & aInstanceName)
 
   nsCOMPtr<sbIMediacore> core;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRBool success = mCores.Get(aInstanceName, getter_AddRefs(core));
   NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
@@ -1632,7 +1633,7 @@ sbMediacoreManager::RegisterFactory(sbIMediacoreFactory *aFactory)
   TRACE(("sbMediacoreManager[0x%x] - RegisterFactory", this));
   NS_ENSURE_ARG_POINTER(aFactory);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRBool success = mFactories.Put(aFactory, aFactory);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -1646,7 +1647,7 @@ sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
   TRACE(("sbMediacoreManager[0x%x] - UnregisterFactory", this));
   NS_ENSURE_ARG_POINTER(aFactory);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mFactories.Remove(aFactory);
 
@@ -1664,7 +1665,7 @@ sbMediacoreManager::GetFullscreen(PRBool *aFullscreen)
   TRACE(("sbMediacoreManager[0x%x] - GetFullscreen", this));
   NS_ENSURE_ARG_POINTER(aFullscreen);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(mPrimaryCore) {
     nsresult rv = NS_ERROR_UNEXPECTED;;
@@ -1700,7 +1701,7 @@ sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   if(mPrimaryCore) {
     nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
       do_QueryInterface(mPrimaryCore, &rv);
@@ -1725,7 +1726,7 @@ sbMediacoreManager::GetVideoWindow(nsIDOMXULElement * *aVideoWindow)
   TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
   NS_ENSURE_ARG_POINTER(aVideoWindow);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   NS_IF_ADDREF(*aVideoWindow = mVideoWindow);
 
   return NS_OK;
@@ -1737,7 +1738,7 @@ sbMediacoreManager::SetVideoWindow(nsIDOMXULElement * aVideoWindow)
   TRACE(("sbMediacoreManager[0x%x] - SetVideoWindow", this));
   NS_ENSURE_ARG_POINTER(aVideoWindow);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mVideoWindow = aVideoWindow;
 
   return NS_OK;

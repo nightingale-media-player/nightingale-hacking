@@ -38,7 +38,7 @@
 #include <nsIWeakReferenceUtils.h>
 #include <nsIWindowWatcher.h>
 
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
@@ -47,6 +47,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <VideoUtils.h>
 
 #include <prtime.h>
 
@@ -804,7 +805,7 @@ nsresult
 sbMediacoreSequencer::UpdatePlayStateDataRemotes()
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRBool paused = PR_FALSE;
   PRBool playing = PR_FALSE;
@@ -834,7 +835,7 @@ sbMediacoreSequencer::UpdatePositionDataRemotes(PRUint64 aPosition)
   nsresult rv = EmitMillisecondsToTimeString(aPosition, str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   rv = mDataRemoteMetadataPosition->SetIntValue(aPosition);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -877,7 +878,7 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
   rv = EmitMillisecondsToTimeString(duration, str, showRemainingTime);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   rv = mDataRemoteMetadataDurationStr->SetStringValue(str);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -894,7 +895,7 @@ sbMediacoreSequencer::UpdateURLDataRemotes(nsIURI *aURI)
   nsresult rv = aURI->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   NS_ConvertUTF8toUTF16 wideSpec(spec);
   rv = mDataRemoteFaceplateURL->SetStringValue(wideSpec);
@@ -915,7 +916,7 @@ sbMediacoreSequencer::UpdateShuffleDataRemote(PRUint32 aMode)
     shuffle = PR_TRUE;
   }
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = mDataRemotePlaylistShuffle->SetBoolValue(shuffle);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -927,7 +928,7 @@ nsresult
 sbMediacoreSequencer::UpdateRepeatDataRemote(PRUint32 aRepeatMode)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = mDataRemotePlaylistRepeat->SetIntValue(aRepeatMode);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -977,7 +978,7 @@ nsresult
 sbMediacoreSequencer::UpdateVolumeDataRemote(PRFloat64 aVolume)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsCString volume;
   SB_ConvertFloatVolToJSStringValue(aVolume, volume);
@@ -1012,7 +1013,7 @@ nsresult
 sbMediacoreSequencer::UpdateMuteDataRemote(PRBool aMuted)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = mDataRemoteFaceplateMute->SetBoolValue(aMuted);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1283,7 +1284,7 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
 
 /*
 nsresult
-sbMediacoreSequencer::StopPlaybackHelper(mozilla::Monitor& aMonitor)
+sbMediacoreSequencer::StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor)
 {
   nsresult rv;
 
@@ -1294,7 +1295,7 @@ sbMediacoreSequencer::StopPlaybackHelper(mozilla::Monitor& aMonitor)
     nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
 //    aMonitor.Exit();
     {
-    	mozilla::MonitorAutoUnlock mon(aMonitor);
+    	mozilla::ReentrantMonitorAutoExit mon(aMonitor);
       rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
     }
@@ -1324,17 +1325,19 @@ nsresult sbMediacoreSequencer::StopPlaybackHelper()
 {
 	nsresult rv;
 
-	mozilla::MonitorAutoLock mon(mMonitor);
+	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 	if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
 		 mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
 		 mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
 		// Grip.
 		nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+//    aMonitor.Exit();
 		{
-			mozilla::MonitorAutoUnlock mon(mMonitor);
+			mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 			rv = playbackControl->Stop();
 			NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
 		}
+//    aMonitor.Enter();
 	}
 
 	mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -1362,7 +1365,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
   nsresult rv;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     mErrorCount++;
 
     if(mIsWaitingForPlayback) {
@@ -1435,7 +1438,7 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
 {
   LOG(("[%s] Recalculating Sequence", __FUNCTION__));
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(!mView) {
     return NS_OK;
@@ -1587,7 +1590,7 @@ sbMediacoreSequencer::GetItem(const sequence_t &aSequence,
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRUint32 length = mSequence.size();
   NS_ENSURE_TRUE(aPosition < length, NS_ERROR_INVALID_ARG);
@@ -1608,7 +1611,7 @@ sbMediacoreSequencer::ProcessNewPosition()
   nsresult rv;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     rv = ResetMetadataDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1616,7 +1619,7 @@ sbMediacoreSequencer::ProcessNewPosition()
     // if the current core requested handling of the next item, we have nothing
     // to do here but reset the flag.
     if(mCoreWillHandleNext) {
-      mozilla::MonitorAutoUnlock mon(mMonitor);
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
       rv = CoreHandleNextSetup();
       if(rv == NS_ERROR_ABORT) {
@@ -1637,7 +1640,7 @@ sbMediacoreSequencer::ProcessNewPosition()
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
@@ -1661,7 +1664,7 @@ sbMediacoreSequencer::ProcessNewPosition()
   if(NS_FAILED(rv)) {
     // mon.Enter();
     {
-      mozilla::MonitorAutoLock mon(mMonitor);
+      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
       mStatus = sbIMediacoreStatus::STATUS_STOPPED;
       mIsWaitingForPlayback = PR_FALSE;
 
@@ -1685,7 +1688,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   nsresult rv;
   
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     lastItem = mCurrentItem;
 
@@ -1743,7 +1746,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   // Reacquire the monitor now that we're done with voting.
   // mon.Enter();
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     mChain = chain;
     mChainIndex = 0;
@@ -1779,7 +1782,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
         
         // mon.Exit();
         {
-          mozilla::MonitorAutoUnlock mon(mMonitor);
+          mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
         // If we played an Item, update it. If we played an url (no Item in Library), we skip this part.
         if (lastItem){
@@ -1824,7 +1827,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 
       // mon.Exit();
       {
-        mozilla::MonitorAutoUnlock mon(mMonitor);
+        mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
         // Process any pending abort requests
         if(HandleAbort()) {
@@ -1897,7 +1900,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 nsresult
 sbMediacoreSequencer::CoreHandleNextSetup()
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mCoreWillHandleNext = PR_FALSE;
 
@@ -1944,7 +1947,7 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 
     // mon.Exit();
     {
-      mozilla::MonitorAutoUnlock mon(mMonitor);
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
       // Process any pending abort requests
       if(HandleAbort()) {
@@ -1979,7 +1982,7 @@ PRBool
 sbMediacoreSequencer::HandleAbort()
 {
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     if(mShouldAbort) {
       mShouldAbort = PR_FALSE;
@@ -2022,7 +2025,7 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
 {
   NS_ENSURE_ARG_POINTER(aView);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // Regardless of what happens here, we'll have a valid position and view
   // position after the method returns, so reset the invalidated position flag.
@@ -2093,7 +2096,7 @@ nsresult
 sbMediacoreSequencer::StartWatchingView()
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // No view, we're probably playing single items
   if(!mView) {
@@ -2155,7 +2158,7 @@ nsresult
 sbMediacoreSequencer::StopWatchingView()
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // No view, we're probably playing single items
   if(!mView) {
@@ -2218,7 +2221,7 @@ nsresult
 sbMediacoreSequencer::DelayedCheck()
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   if(mDelayedCheckTimer) {
@@ -2243,7 +2246,7 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   NS_ENSURE_STATE(mView);
   NS_ENSURE_STATE(mCurrentItem);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(mNoRecalculate) {
     mNeedsRecalculate = PR_FALSE;
@@ -2490,7 +2493,7 @@ sbMediacoreSequencer::GetMode(PRUint32 *aMode)
 {
   NS_ENSURE_ARG_POINTER(aMode);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aMode = mMode;
 
   return NS_OK;
@@ -2518,7 +2521,7 @@ sbMediacoreSequencer::SetMode(PRUint32 aMode)
   }
   NS_ENSURE_TRUE(validMode, NS_ERROR_INVALID_ARG);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(mMode != aMode) {
     mMode = aMode;
@@ -2539,7 +2542,7 @@ sbMediacoreSequencer::GetRepeatMode(PRUint32 *aRepeatMode)
 {
   NS_ENSURE_ARG_POINTER(aRepeatMode);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aRepeatMode = mRepeatMode;
 
   return NS_OK;
@@ -2566,7 +2569,7 @@ sbMediacoreSequencer::SetRepeatMode(PRUint32 aRepeatMode)
   }
   NS_ENSURE_TRUE(validMode, NS_ERROR_INVALID_ARG);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mRepeatMode = aRepeatMode;
 
   rv = UpdateRepeatDataRemote(aRepeatMode);
@@ -2580,7 +2583,7 @@ sbMediacoreSequencer::GetView(sbIMediaListView * *aView)
 {
   NS_ENSURE_ARG_POINTER(aView);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   NS_IF_ADDREF(*aView = mView);
 
   return NS_OK;
@@ -2599,7 +2602,7 @@ sbMediacoreSequencer::GetViewPosition(PRUint32 *aViewPosition)
 {
   NS_ENSURE_ARG_POINTER(aViewPosition);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // Position currently not valid, return with error.
   if(mPositionInvalidated) {
@@ -2655,7 +2658,7 @@ sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
     NS_IF_ADDREF(*aItem = mCurrentItem);
@@ -2712,7 +2715,7 @@ sbMediacoreSequencer::GetSequencePosition(PRUint32 *aSequencePosition)
 {
   NS_ENSURE_ARG_POINTER(aSequencePosition);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // Position currently not valid, return with error.
   if(mPositionInvalidated) {
@@ -2777,7 +2780,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
 
   nsresult rv;
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
     mErrorCount = 0;
@@ -2809,7 +2812,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   rv = StartPlayback();
 
   if(NS_FAILED(rv)) {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     // mon.Enter();
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -2830,7 +2833,7 @@ sbMediacoreSequencer::Play()
   nsresult rv;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     // No sequence, no error, but return right away.
     if(!mSequence.size()) {
@@ -2862,7 +2865,7 @@ sbMediacoreSequencer::Play()
 
   // mon.Enter();
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     rv = UpdatePlayStateDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2874,7 +2877,7 @@ sbMediacoreSequencer::Play()
 
   if(NS_FAILED(rv)) {
     // mon.Enter();
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
     mIsWaitingForPlayback = PR_FALSE;
@@ -2891,7 +2894,7 @@ sbMediacoreSequencer::Play()
 NS_IMETHODIMP
 sbMediacoreSequencer::Stop(PRBool aNotFromUserAction) {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
@@ -2906,7 +2909,7 @@ sbMediacoreSequencer::Stop(PRBool aNotFromUserAction) {
     nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
     // mon.Exit();
     {
-      mozilla::MonitorAutoUnlock mon(mMonitor);
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
       rv = playbackControl->Stop();
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't stop core.");
     }
@@ -2952,7 +2955,7 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mValidationComplete = PR_TRUE;
 
@@ -2984,7 +2987,7 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
 
         // mon.Exit();
         {
-          mozilla::MonitorAutoUnlock mon(mMonitor);
+          mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
           if (mOnHoldStatus != ONHOLD_PLAYVIEW) {
             rv = ProcessNewPosition();
@@ -3021,7 +3024,7 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
   NS_ENSURE_TRUE(NS_IsMainThread(), NS_ERROR_UNEXPECTED);
   NS_ENSURE_ARG_POINTER(_proceed);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // No sequence, no error, but return right away.
   if(!mSequence.size()) {
@@ -3073,7 +3076,7 @@ sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
   }
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     // No sequence, no error, return early.
     if(!mSequence.size()) {
@@ -3140,7 +3143,7 @@ sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
         nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
         // mon.Exit();
         {
-          mozilla::MonitorAutoUnlock mon(mMonitor);
+          mozilla::ReentrantMonitorAutoExit mon(mMonitor);
           if (playbackControl) {
             rv = playbackControl->Stop();
             NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
@@ -3226,7 +3229,7 @@ sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
   }
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     // No sequence, no error, return early.
     if(!mSequence.size()) {
@@ -3278,7 +3281,7 @@ sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
         nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
         // mon.Exit();
         {
-          mozilla::MonitorAutoUnlock mon(mMonitor);
+          mozilla::ReentrantMonitorAutoExit mon(mMonitor);
           rv = playbackControl->Stop();
           NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
         }
@@ -3370,7 +3373,7 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     if(mIsWaitingForPlayback) {
       return NS_ERROR_NOT_AVAILABLE;
     }
@@ -3388,7 +3391,7 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
   nsCOMPtr<sbIMediacoreVoting> voting;
   // mon.Enter();
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     NS_ENSURE_TRUE(mCore == aMediacore, NS_ERROR_INVALID_ARG);
 
     voting = do_QueryReferent(mMediacoreManager, &rv);
@@ -3417,7 +3420,7 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // mon.Enter();
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   NS_ENSURE_TRUE(core == mCore, NS_ERROR_INVALID_ARG);
   mCoreWillHandleNext = PR_TRUE;
@@ -3428,7 +3431,7 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
 NS_IMETHODIMP
 sbMediacoreSequencer::Abort()
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // If we can't abort right now, just return NS_OK.
   NS_ENSURE_TRUE(mCanAbort, NS_OK);
@@ -3444,7 +3447,7 @@ sbMediacoreSequencer::GetCustomGenerator(
 {
   NS_ENSURE_ARG_POINTER(aCustomGenerator);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   NS_IF_ADDREF(*aCustomGenerator = mCustomGenerator);
 
   return NS_OK;
@@ -3456,7 +3459,7 @@ sbMediacoreSequencer::SetCustomGenerator(
 {
   NS_ENSURE_ARG_POINTER(aCustomGenerator);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   if(mCustomGenerator != aCustomGenerator) {
     mCustomGenerator = aCustomGenerator;
 
@@ -3499,7 +3502,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 #endif
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     if(mCore != core) {
       return NS_OK;
     }
@@ -3523,7 +3526,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     case sbIMediacoreEvent::STREAM_START: {
       // mon.Enter();
       {
-        mozilla::MonitorAutoLock mon(mMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
         if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING &&
            mIsWaitingForPlayback) {
@@ -3595,7 +3598,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
       // mon.Enter();
       {
-        mozilla::MonitorAutoLock mon(mMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
         mStatus = sbIMediacoreStatus::STATUS_PAUSED;
         mStopTriggeredBySequencer = PR_FALSE;
       }
@@ -3615,7 +3618,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
       // mon.Enter();
       {
-        mozilla::MonitorAutoLock mon(mMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
         /* Track done, continue on to the next, if possible. */
         if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
            !mIsWaitingForPlayback) {
@@ -3629,7 +3632,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
              mSequence.empty()) {
               // mon.Exit();
               {
-                mozilla::MonitorAutoUnlock mon(mMonitor);
+                mozilla::ReentrantMonitorAutoExit mon(mMonitor);
                 Stop(PR_TRUE);
               }
               // mon.Enter();
@@ -3655,7 +3658,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     case sbIMediacoreEvent::STREAM_STOP: {
       // mon.Enter();
       {
-        mozilla::MonitorAutoLock mon(mMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
         if(!mStopTriggeredBySequencer) {
           LOG(("[sbMediacoreSequencer] - Hard stop requested."));
@@ -3664,7 +3667,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
           mStatus = sbIMediacoreStatus::STATUS_STOPPED;
           // mon.Exit();
           {
-            mozilla::MonitorAutoUnlock mon(mMonitor);
+            mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
             rv = StopSequenceProcessor();
             NS_ENSURE_SUCCESS(rv, rv);
@@ -3684,7 +3687,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
             mSeenPlaying = PR_FALSE;
             // mon.Exit();
             {
-              mozilla::MonitorAutoUnlock mon(mMonitor);
+              mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
               rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
               NS_ENSURE_SUCCESS(rv, rv);
@@ -3730,7 +3733,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     case sbIMediacoreEvent::ERROR_EVENT: {
       // mon.Enter();
       {
-        mozilla::MonitorAutoLock mon(mMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
         mStopTriggeredBySequencer = PR_FALSE;
       }
       // mon.Exit();
@@ -3796,7 +3799,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::GetState(PRUint32 *aState)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aState = mStatus;
 
   return NS_OK;
@@ -3813,7 +3816,7 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // 2nd part of smart playlist rebuild detection: are we adding
   // items in the same batch as we cleared the list in ?
@@ -3861,7 +3864,7 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRBool listEvent = (aMediaList == mViewList);
 
@@ -3890,7 +3893,7 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
         nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
         // mon.Exit();
         {
-          mozilla::MonitorAutoUnlock mon(mMonitor);
+          mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
           // if the item is our list, stop playback now and shutdown watcher
           rv = playbackControl->Stop();
@@ -3947,7 +3950,7 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   nsCOMPtr<sbIMediaItem> item;
   nsresult rv = GetCurrentItem(getter_AddRefs(item));
@@ -3995,7 +3998,7 @@ sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if (aMediaList == mViewList && mListBatchCount) {
     if (mSmartRebuildDetectBatchCount == mListBatchCount) {
@@ -4035,7 +4038,7 @@ sbMediacoreSequencer::OnListCleared(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   // list or library cleared, playing item must have gone away, however
   // the item might be coming back immediately, in which case we want to
@@ -4062,7 +4065,7 @@ sbMediacoreSequencer::OnBatchBegin(sbIMediaList *aMediaList)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(aMediaList == mViewList) {
     mListBatchCount++;
@@ -4080,7 +4083,7 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
   NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   PRInt32 listBatchCount = mListBatchCount;
 
@@ -4263,7 +4266,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   sbScopedBoolToggle reset(&mResetPosition);
   mNeedsRecalculate = PR_TRUE;
@@ -4278,7 +4281,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   sbScopedBoolToggle reset(&mResetPosition);
   mNeedsRecalculate = PR_TRUE;
@@ -4293,7 +4296,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::OnSortChanged(sbIMediaListView *aChangedView)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mNeedsRecalculate = PR_TRUE;
 
@@ -4314,7 +4317,7 @@ sbMediacoreSequencer::Notify(nsITimer *timer)
   NS_ENSURE_ARG_POINTER(timer);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   if(timer == mSequenceProcessorTimer) {
     rv = HandleSequencerTimer(timer);
@@ -4377,7 +4380,7 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
 {
   NS_ENSURE_STATE(mDelayedCheckTimer);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mDelayedCheckTimer = nsnull;
 
   PRUint32 viewLength = 0;

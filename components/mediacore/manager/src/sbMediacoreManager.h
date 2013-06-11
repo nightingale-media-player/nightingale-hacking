@@ -34,7 +34,7 @@
 #include <nsIDOMXULElement.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <nsHashKeys.h>
 #include <prmon.h>
@@ -135,7 +135,7 @@ protected:
                                 nsIChannel *aChannel,
                                 sbIMediacoreVotingChain **_retval);
 
-  mozilla::Monitor mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   PRUint32   mLastCore;
 
   nsInterfaceHashtableMT<nsStringHashKey, sbIMediacore> mCores;
@@ -154,7 +154,7 @@ protected:
 
   PRPackedBool mFullscreen;
   
-  mozilla::Monitor mVideoWindowMonitor;
+  mozilla::ReentrantMonitor mVideoWindowMonitor;
   nsCOMPtr<nsIDOMXULElement> mVideoWindow;
   PRUint32 mLastVideoWindow;
 };
