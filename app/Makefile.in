@@ -43,16 +43,6 @@ SONGBIRD_DIST += $(CURDIR)/application.ini \
                  $(CURDIR)/nightingale.ini \
                  $(NULL)
 
-
-# global chrome.manifest (for now, it should be pretty easy to 
-# just append to a file in the dist dir during compilation for
-# each component built)
-SONGBIRD_PP_RESOURCES += $(srcdir)/chrome.manifest.in \
-                         $(NULL)
-SONGBIRD_DIST += $(CURDIR)/chrome.manifest \
-                 $(NULL)
-
-
 PPDEFINES += $(SB_BRANDING_DEFINES)
 
 ifeq (macosx,$(SB_PLATFORM))
@@ -66,6 +56,7 @@ SUBDIRS = branding \
           skin \
           preferences \
           profile \
+          manifests \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
