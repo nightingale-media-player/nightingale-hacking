@@ -647,8 +647,8 @@ case "$SB_PLATFORM" in
     _SAVE_LIBS=$LIBS
     LIBS="$LIBS wmvcore.lib"
     AC_MSG_CHECKING([wmvcore.lib])
-    AC_LINK_IFELSE([#include <wmsdk.h>
-                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }],
+    AC_LINK_IFELSE([AC_LANG_SOURCE([#include <wmsdk.h>
+                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }])],
                     AC_MSG_RESULT([yes]),
                     AC_MSG_ERROR([Missing wmvcore.lib; install the Windows SDK]))
     LIBS=$_SAVE_LIBS
