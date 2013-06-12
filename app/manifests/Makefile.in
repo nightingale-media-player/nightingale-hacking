@@ -33,6 +33,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_PP_RESOURCES += $(srcdir)/chrome.manifest.in \
                          $(srcdir)/components.manifest.in \
                          $(srcdir)/interfaces.manifest.in \
+                         $(srcdir)/vendor.manifest.in \
                          $(NULL)
 
 SONGBIRD_DIST = $(CURDIR)/chrome.manifest \
@@ -40,6 +41,7 @@ SONGBIRD_DIST = $(CURDIR)/chrome.manifest \
 
 SONGBIRD_COMPONENTS = $(CURDIR)/components.manifest \
                       $(CURDIR)/interfaces.manifest \
+                      $(CURDIR)/vendor.manifest \
                       $(NULL)
 
 

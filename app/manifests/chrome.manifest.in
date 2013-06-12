@@ -10,6 +10,8 @@ manifest chrome/songbird.manifest
 manifest components/components.manifest
 manifest components/interfaces.manifest
 
+manifest components/vendor.manifest
+
 # manifest xulrunner/chrome.manifest
 
 
