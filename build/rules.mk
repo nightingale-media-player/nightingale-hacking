@@ -1085,7 +1085,7 @@ $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
       target=$(OUR_SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
       echo Preprocessing $$item into $$target...; \
       $(RM) -f $$target; \
-      $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+      $(PYTHON) $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py \
        $(ACDEFINES) $(RESOURCES_PPFLAGS) \
        $(PPDEFINES) -- $$item > $$target; \
       $(if $(SONGBIRD_PP_MODE),$(CHMOD) $(SONGBIRD_PP_MODE) $$target; ) \
@@ -1104,9 +1104,9 @@ export:: $(GENERATED_PP_DEPS)
 #
 # FLAT_JARS - Force use of flat JARs.
 #
-# MAKE_JAR_FLAGS - An override tot he flags passed to the make-jars.pl command
+# MAKE_JAR_FLAGS - An override to the flags passed to the JarMaker.py command
 #
-# MAKE_JAR_EXTRA_FLAGS - Extra flags to pass to the make-jars.pl command
+# MAKE_JAR_EXTRA_FLAGS - Extra flags to pass to the JarMaker.py command
 #
 # JAR_TARGET_DIR - An overide to the directory to create the jar in.
 #
@@ -1143,21 +1143,15 @@ else
 endif
 
 ifdef MAKE_JARS_FLAGS
-   OUR_MAKE_JARS_FLAGS = $(MAKE_JARS_FLAGS)
+   OUR_MAKE_JARS_FLAGS = -t $(topsrcdir) \
+   						 $(MAKE_JARS_FLAGS)
 else
-   OUR_MAKE_JARS_FLAGS = -s $(srcdir) \
-                         -t $(topsrcdir) \
-                         -j $(OUR_JAR_TARGET_DIR) \
-                         -z $(ZIP) \
-                         -p $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+   OUR_MAKE_JARS_FLAGS = -t $(topsrcdir) \
                          -v \
                          $(EXTRA_MAKE_JARS_FLAGS) \
                          $(NULL)
    ifdef USING_FLAT_JARS
-      OUR_MAKE_JARS_FLAGS += -f flat -d $(OUR_JAR_TARGET_DIR)
-   else
-      OUR_MAKE_JARS_FLAGS += -d $(OUR_JAR_TARGET_DIR)/stage
-      ALL_TRASH += $(if $(EXTENSION_STAGE_DIR), $(OUR_JAR_TARGET_DIR)/stage)
+      OUR_MAKE_JARS_FLAGS += -f flat
    endif
 
    ifdef JAR_IS_EXTENSION
@@ -1176,6 +1170,7 @@ endif
 ifeq (.in,$(suffix $(strip $(JAR_MANIFEST))))
    OUR_JAR_MN = $(patsubst %.in,%,$(strip $(JAR_MANIFEST)))
    OUR_JAR_MN_IN = $(strip $(JAR_MANIFEST))
+   OUR_MAKE_JARS_FLAGS += -s $(srcdir)
    ALL_TRASH += $(OUR_JAR_MN)
 else
    OUR_JAR_MN = $(srcdir)/$(strip $(JAR_MANIFEST))
@@ -1188,14 +1183,17 @@ ifdef JAR_MANIFEST
    endif
 endif
 
+# XXX I think this, and the expand-jar-mn.pl script can be removed now
+# with the new python scripts allowing the source dir specification?
+###
 # We want the preprocessor to run every time regrdless of whether or not
 # $(OUR_JAR_MN_IN) has changed because defines may change as well.
 $(OUR_JAR_MN): FORCE
 ifneq (,$(OUR_JAR_MN_IN))
 	$(RM) $(OUR_JAR_MN)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
-    $(srcdir)/$(OUR_JAR_MN_IN) | \
-    $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(OUR_JAR_MN)
+	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py $(ACDEFINES) $(PPDEFINES) \
+		-- $(srcdir)/$(OUR_JAR_MN_IN) | \
+		$(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(OUR_JAR_MN)
 endif
 
 # preedTODO: when we have a JAR_MANIFEST, actually look at it to figure out
@@ -1203,9 +1201,10 @@ endif
 libs:: $(if $(JAR_MANIFEST),$(OUR_JAR_MN)) $(CHROME_DEPS)
 ifdef JAR_MANIFEST
 	$(MKDIR_APP) $(OUR_JAR_TARGET_DIR)
-	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
-    $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN)
-	$(RM) -r $(OUR_JAR_TARGET_DIR)/stage
+	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/JarMaker.py \
+		$(QUIET) -j $(OUR_JAR_TARGET_DIR) $(OUR_MAKE_JARS_FLAGS) \
+		$(PPDEFINES) $(DEFINES) $(ACDEFINES) \
+		$(OUR_JAR_MN)
 endif
 
 #------------------------------------------------------------------------------
@@ -1309,7 +1308,7 @@ ifdef DEBUG
 endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/Preprocessor.py \
     $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) \
     -DEXTENSION_ARCH="$(EXTENSION_ARCH)" \
     -DEXTENSION_UUID="$(EXTENSION_UUID)" \
