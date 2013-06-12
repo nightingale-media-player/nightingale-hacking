@@ -1,0 +1,19 @@
+
+DEPTH = ../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+SUBDIRS = components/preferences \
+          fuel \
+          locales \
+          themes \
+          components/search \
+          components/sidebar/src \
+          components \
+          base \
+          $(NULL)
+
+include $(topsrcdir)/build/rules.mk
