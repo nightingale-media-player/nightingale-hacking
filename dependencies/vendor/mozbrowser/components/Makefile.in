@@ -35,29 +35,34 @@
 #
 # ***** END LICENSE BLOCK *****
 
-DEPTH		= ../../../..
-topsrcdir	= @top_srcdir@
-srcdir		= @srcdir@
-VPATH		= @srcdir@
+DEPTH     = ../../../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS =  \
-	nsIBrowserGlue.idl \
-	$(NULL)
+XPIDL_SRCS = \
+  nsIBrowserGlue.idl \
+  nsIBrowserHandler.idl \
+  $(NULL)
 
 XPIDL_MODULE = browsercompsbase.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 SONGBIRD_COMPONENTS = \
 	$(XPIDL_MODULE) \
+	$(srcdir)/BrowserComponents.manifest \
 	$(NULL)
 
 SONGBIRD_PP_RESOURCES = \
-	$(srcdir)/nsBrowserGlue.js \
-	$(NULL)
+  $(srcdir)/nsBrowserContentHandler.js \
+  $(srcdir)/nsBrowserGlue.js \
+  $(NULL)
 
 SONGBIRD_PP_DIR = $(SONGBIRD_COMPONENTSDIR)
+
+EXTRA_JS_MODULES = distribution.js
 
 GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 

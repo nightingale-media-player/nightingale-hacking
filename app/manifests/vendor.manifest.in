@@ -1,3 +1,7 @@
 ## vendor deps
 interfaces fuelApplication.xpt
 manifest fuelApplication.manifest
+
+manifest BrowserComponents.manifest
+manifest nsSidebar.manifest
+interfaces browsercompsbase.xpt
