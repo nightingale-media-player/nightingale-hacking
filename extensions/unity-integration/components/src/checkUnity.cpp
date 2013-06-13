@@ -1,5 +1,4 @@
 #include <string>
-#include <set>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -13,19 +12,17 @@ bool UnityProxy::isUnityRunning()
 
 		std::string PROCESS_INDICATOR_SOUND = "indicator-sound-service";
 		std::string PROCESS_UNITY = "unity-panel-service";
-
 		std::string clPath, clStr, dName, procName;
-    std::set<std::string> procSet;
-    char tmp[400];
+    char tmp[1024];
     struct dirent* de;
     DIR* pdir;
     FILE* clFile;
 
-    // read processes in /proc
+    // read /proc
     pdir = opendir("/proc");
     if (pdir == NULL) exit(EXIT_FAILURE);
 
-    for (de = readdir(pdir); de != NULL; de = readdir(pdir)) {
+    for (de = readdir(pdir); de != NULL && (!haveUnity || !haveSound); de = readdir(pdir)) {
         // only read process directories
         if (de->d_type == DT_DIR) {
         		dName = de->d_name;
@@ -40,9 +37,13 @@ bool UnityProxy::isUnityRunning()
 										fscanf(clFile, "%s", tmp);
 										fclose(clFile);
 										clStr = tmp;
-										// insert base of process name into set
-										procName = clStr.find_last_of("/") + 1;
-										procSet.insert(procName);
+										// get base of process name
+										procName = clStr.substr(clStr.find_last_of("/") + 1);
+										if (!haveSound)
+										    haveSound = (procName == PROCESS_INDICATOR_SOUND) ? true : false;
+										if (!haveUnity) {
+										    haveUnity = (procName == PROCESS_UNITY) ? true : false;
+										}
 								}
             }
         }
@@ -50,10 +51,5 @@ bool UnityProxy::isUnityRunning()
     closedir(pdir);
 
     // make sure we have both of them
-    if (procSet.find(PROCESS_INDICATOR_SOUND) != procSet.end())
-    		haveSound = true;
-    if (procSet.find(PROCESS_UNITY) != procSet.end())
-    		haveUnity = true;
-
     return (haveUnity && haveSound);
 }
