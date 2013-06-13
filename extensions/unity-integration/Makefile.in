@@ -30,7 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
-INSTALL_EXTENSION = 1
+INSTALL_EXTENSION = 0
 
 SUBDIRS = chrome \
           components \
