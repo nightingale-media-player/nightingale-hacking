@@ -34,6 +34,7 @@ IS_EXTENSION = 1
 
 CPP_SRCS = UnityProxy.cpp \
            UnityProxyModule.cpp \
+           checkUnity.cpp \
            $(NULL)
 
 CPP_DEFS = -DXPCOM_GLUE \

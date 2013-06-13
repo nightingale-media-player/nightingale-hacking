@@ -22,6 +22,8 @@ public:
 
   NS_DECL_IUNITYPROXY
 
+  bool isUnityRunning();
+
   UnityProxy();
   virtual ~UnityProxy();
 };

@@ -61,10 +61,8 @@ NS_IMPL_ISUPPORTS1 (UnityProxy, IUnityProxy)
 UnityProxy::UnityProxy ()
 {
 	g_message("Unity Integration: loading");
-	
+
 	observerService = do_GetService ("@mozilla.org/observer-service;1");
-	
-	trackMetadata = unity_track_metadata_new ();
 }
 
 UnityProxy::~UnityProxy ()
@@ -76,6 +74,12 @@ UnityProxy::~UnityProxy ()
 
 NS_IMETHODIMP UnityProxy::InitializeFor (const char* desktopFileName, const char* windowTitle)
 {
+	g_message("Unity Integration: checking for unity components");
+	if (!isUnityRunning()) return NS_ERROR_NOT_INITIALIZED;
+
+	g_message("Unity Integration: found them!");
+	trackMetadata = unity_track_metadata_new ();
+
 	if (!desktopFileName || !windowTitle) return NS_ERROR_INVALID_ARG;
 	
 	GList* wlist = gtk_window_list_toplevels ();
