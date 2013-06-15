@@ -43,7 +43,7 @@ static const mozilla::Module::ContractIDEntry kDirectoryProviderContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kDirectoryProviderCategories[] = {
-  { "profile-after-change", SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME, SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID },
+  { "app-startup", SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME, SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID },
   { NULL }
 };
 

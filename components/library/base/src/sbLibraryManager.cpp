@@ -78,7 +78,7 @@ static nsString sString;
 
 sbLibraryManager::sbLibraryManager()
 : mLoaderCache(SB_LIBRARY_LOADER_CATEGORY),
-  mMutex(nsnull)
+  mMutex("mMutex")
 {
   MOZ_COUNT_CTOR(sbLibraryManager);
   NS_ASSERTION(SB_IsMainThread(), "Wrong thread!");

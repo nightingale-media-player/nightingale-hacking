@@ -67,7 +67,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreVolumeControl,
                               sbIMediacoreVolumeControl)
 
 sbBaseMediacoreVolumeControl::sbBaseMediacoreVolumeControl()
-: mMonitor(nsnull)
+: mMonitor("mMonitor")
 , mMute(PR_FALSE)
 , mVolume(0)
 {

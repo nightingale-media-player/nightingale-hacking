@@ -54,7 +54,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreEvent,
                               sbIMediacoreEvent)
 
 sbMediacoreEvent::sbMediacoreEvent()
-: mLock(nsnull)
+: mLock("mLock")
 , mType(sbIMediacoreEvent::UNINTIALIZED)
 , mDispatched(PR_FALSE)
 {

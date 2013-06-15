@@ -87,7 +87,7 @@ PLDHashOperator sbBaseDeviceController::EnumerateDisconnectAll(const nsID& aKey,
 }
 
 sbBaseDeviceController::sbBaseDeviceController()
-  : mMonitor(nsnull)
+  : mMonitor("mMonitor")
 {
   PRBool SB_UNUSED_IN_RELEASE(succeeded) = mDevices.Init();
   NS_ASSERTION(succeeded, "Failed to initialize hashtable");

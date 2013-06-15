@@ -1,69 +1,69 @@
-# binary-component sbAlbumArt_d.so
-# category profile-after-change sbAlbumArt @songbirdnest.com/Songbird/album-art-service;1
+binary-component sbAlbumArt_d.so
+category app-startup sbAlbumArt @songbirdnest.com/Songbird/album-art-service;1
 binary-component sbMediaSniffer_d.so
 binary-component sbdataremote_d.so
 binary-component sbDBEngine_d.so
-# binary-component sbDeviceBase_d.so
-# binary-component sbMockCDDevice_d.so
-# binary-component sbCDDevice_d.so
-# category profile-after-change sbCDDevice ???
+binary-component sbDeviceBase_d.so
+binary-component sbMockCDDevice_d.so
+binary-component sbCDDevice_d.so
+category profile-after-change SongbirdCDDeviceController @songbirdnest.com/Songbird/CDDeviceController;1
 # binary-component sbDeviceController_d.so
-# binary-component sbDeviceDeviceTester_d.so
+binary-component sbDeviceDeviceTester_d.so
 # binary-component sbDeviceCore
-# binary-component sbDeviceFirmwareTester_d.so
-# binary-component sbDeviceFirmwareUpdater_d.so
-# category profile-after-change sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
-# binary-component sbDeviceManager2_d.so
-# category profile-after-change sbDeviceManager2 @songbirdnest.com/Songbird/DeviceManager;2
+binary-component sbDeviceFirmwareTester_d.so
+binary-component sbDeviceFirmwareUpdater_d.so
+category app-startup sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
+binary-component sbDeviceManager2_d.so
+category app-startup sbDeviceManager2 @songbirdnest.com/Songbird/DeviceManager;2
 # binary-component sbDeviceMarshall_d.so
-# binary-component sbDownloadDevice_d.so
-# binary-component sbDeviceManager_d.so
-# category profile-after-change sbDeviceManager @songbirdnest.com/Songbird/DeviceManager;1
-# binary-component sbFileSystemEventsBase_d.so
-# binary-component sbLinuxFileSystemEvents_d.so
+binary-component sbDownloadDevice_d.so
+binary-component sbDeviceManager_d.so
+category app-startup sbDeviceManager @songbirdnest.com/Songbird/DeviceManager;1
+binary-component sbFileSystemEventsBase_d.so
+binary-component sbLinuxFileSystemEvents_d.so
 binary-component sbIntegration_d.so
 binary-component sbIntl_d.so
-###category profile-after-change sbIntl @songbirdnest.com/Songbird/Intl/StringTransform;1
+category app-startup sbIntl @songbirdnest.com/Songbird/Intl/StringTransform;1
 binary-component sbLibraryManager_d.so
 binary-component sbMediaItemDownloadService_d.so
 binary-component sbIdentityServiceComponent_d.so
 binary-component sbLocalDatabaseLibrary_d.so
 binary-component sbMediacoreBase_d.so
 binary-component sbTestMediacoreBase_d.so
-#binary-component sbGStreamerMediacore_d.so
-#binary-component sbGStreamerStub_d.so
+# binary-component sbGStreamerMediacore_d.so
+binary-component sbGStreamerStub_d.so
 binary-component sbMediacoreManager_d.so
 binary-component sbMetadataHandlerTaglib_d.so
 binary-component sbMetadataModule_d.so
 binary-component sbPlaybackHistoryService_d.so
 binary-component sbTranscodeModule_d.so
-##binary-component sbMediaExportAgentService_d.so
+# binary-component sbMediaExportAgentService_d.so
 binary-component sbMediaExport_d.so
-category profile-after-change sbMediaExport @songbirdnest.com/media-export-service;1
+category app-startup sbMediaExport @songbirdnest.com/media-export-service;1
 binary-component sbFileScan_d.so
 binary-component sbiTunesMediaImport_d.so
 binary-component sbMediaManager_d.so
 binary-component sbClipboardHelper_d.so
-##binary-component sbDirectoryProvider_d.so
-##category profile-after-change sbDirectoryProvider @songbirdnest.com/moz/directory/provider;1
+binary-component sbDirectoryProvider_d.so
+category app-startup sbDirectoryProvider @songbirdnest.com/moz/directory/provider;1
 binary-component sbFileUtils_d.so
 binary-component sbImageParser_d.so
 binary-component sbPrompter_d.so
 binary-component sbStrings_d.so
 binary-component sbTemporaryFileService_d.so
-category profile-after-change sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
+category xpcom-startup sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
 binary-component sbThreadPoolService_d.so
 binary-component sbMozVariant_d.so
 binary-component sbWindowWatcher_d.so
-category profile-after-change sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+category xpcom-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
 binary-component sbxpcom_d.so
 binary-component sbNetworkProxy_d.so
 binary-component sbPlaylistCommands_d.so
-# binary-component sbPlayQueueService_d.so
-# category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
+binary-component sbPlayQueueService_d.so
+category app-startup sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
 binary-component sbProperties_d.so
 binary-component sbBrowserAPI_d.so
 binary-component sbSQLBuilder_d.so
 binary-component sbUpdate_d.so
 binary-component sbWatchFolderService_d.so
-###category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
+category app-startup sbWatchFolderService @songbirdnest.com/watch-folder-service;1

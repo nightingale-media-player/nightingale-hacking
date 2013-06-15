@@ -156,10 +156,10 @@ NS_IMPL_THREADSAFE_CI(sbMediacoreManager)
  * after construction is complete so this is safe.
  */
 sbMediacoreManager::sbMediacoreManager()
-: mMonitor(nsnull)
+: mMonitor("mMonitor")
 , mLastCore(0)
 , mFullscreen(PR_FALSE)
-, mVideoWindowMonitor(nsnull)
+, mVideoWindowMonitor("mMonitor")
 , mLastVideoWindow(0)
 {
   mBaseEventTarget = new sbBaseMediacoreEventTarget(this);

@@ -69,7 +69,7 @@ NS_IMPL_THREADSAFE_CI(sbCDDeviceMarshall)
 
 sbCDDeviceMarshall::sbCDDeviceMarshall()
   : sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY))
-  , mKnownDevicesLock(nsnull)
+  , mKnownDevicesLock("mKnownDevicesLock")
 {
   mKnownDevices.Init(8);
 }

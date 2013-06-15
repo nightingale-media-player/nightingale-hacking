@@ -80,7 +80,7 @@ static const mozilla::Module::ContractIDEntry kTemporaryFileServiceContracts[] =
 };
 
 static const mozilla::Module::CategoryEntry kTemporaryFileServiceCategories[] = {
-  { "profile-after-change", SB_TEMPORARYFILESERVICE_CLASSNAME, SB_TEMPORARYFILESERVICE_CONTRACTID },
+  { "xpcom-startup", SB_TEMPORARYFILESERVICE_CLASSNAME, SB_TEMPORARYFILESERVICE_CONTRACTID },
   { NULL }
 };
 

@@ -39,7 +39,7 @@
 /* ctor / dtor */
 sbBaseMediacoreEventTarget::sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget)
   : mTarget(aTarget),
-    mMonitor(nsnull)
+    mMonitor("mMonitor")
 {
 
 }

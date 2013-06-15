@@ -50,7 +50,7 @@ public:
   NS_DECL_NSICLASSINFO
 
 private:
-  PRMonitor *mMonitor;
+  mozilla::ReentrantMonitor mMonitor;
   nsInterfaceHashtable<nsIDHashKey, sbIDevice> mDevices;
 };
 

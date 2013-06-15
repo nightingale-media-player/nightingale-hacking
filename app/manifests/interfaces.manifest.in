@@ -11,7 +11,7 @@ interfaces sbDeviceController.xpt
 interfaces DeviceDeviceTester.xpt
 interfaces sbDevice.xpt
 interfaces sbPIMockFirmware.xpt
-# interfaces sbDeviceMarshall.xpt
+interfaces sbDeviceMarshall.xpt
 interfaces sbDeviceBase.xpt
 interfaces sbDownloadDevice.xpt
 interfaces sbDeviceManager.xpt

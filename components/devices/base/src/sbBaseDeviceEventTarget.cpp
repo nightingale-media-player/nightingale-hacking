@@ -61,7 +61,7 @@ class sbDeviceEventTargetRemovalHelper : public nsDequeFunctor {
     PRInt32 mIndexToRemove;
 };
 
-sbBaseDeviceEventTarget::sbBaseDeviceEventTarget() : mMonitor(nsnull)
+sbBaseDeviceEventTarget::sbBaseDeviceEventTarget() : mMonitor("mMonitor")
 {
   /* member initializers and constructor code */
 }

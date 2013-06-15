@@ -103,7 +103,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreMultibandEqualizer,
                               sbIMediacoreMultibandEqualizer)
 
 sbBaseMediacoreMultibandEqualizer::sbBaseMediacoreMultibandEqualizer()
-: mMonitor(nsnull)
+: mMonitor("mMonitor")
 , mEqEnabled(PR_FALSE)
 {
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - Created", this));

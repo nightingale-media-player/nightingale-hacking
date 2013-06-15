@@ -26,7 +26,7 @@
 
 #include "sbStringTransform.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbStringTransform, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbStringTransform,
                               sbIStringTransform)
 
 sbStringTransform::sbStringTransform()

@@ -69,7 +69,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceFirmwareUpdater,
                               sbIDeviceEventListener)
 
 sbDeviceFirmwareUpdater::sbDeviceFirmwareUpdater()
-: mMonitor(nsnull)
+: mMonitor("mMonitor")
 , mIsShutdown(PR_FALSE)
 {
 #ifdef PR_LOGGING

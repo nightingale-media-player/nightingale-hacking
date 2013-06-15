@@ -60,7 +60,7 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbBaseMediacore,
 NS_IMPL_THREADSAFE_CI(sbBaseMediacore)
 
 sbBaseMediacore::sbBaseMediacore()
-: mMonitor(nsnull)
+: mMonitor("mMonitor")
 {
   MOZ_COUNT_CTOR(sbBaseMediacore);
 

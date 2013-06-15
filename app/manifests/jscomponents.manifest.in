@@ -1,41 +1,41 @@
 ## components/addonmetadata ##
-component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} components/sbAddonMetadata.js
+component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} sbAddonMetadata.js
 contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
 # category profile-after-change sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
 
 
 ## components/appstartup ##
-component {bf8300d3-95a7-4f52-b8e1-7012d8c639b8} components/sbAppStartupService.js
+component {bf8300d3-95a7-4f52-b8e1-7012d8c639b8} sbAppStartupService.js
 contract @songbirdnest.com/app-startup-service;1 {bf8300d3-95a7-4f52-b8e1-7012d8c639b8}
 # category profile-after-change sbAppStartupService @songbirdnest.com/app-startup-service;1
 
 
 ## components/bundle ##
-component {128badd1-aa05-4508-87cc-f3cb3e9b5499} components/sbBundle.js
+component {128badd1-aa05-4508-87cc-f3cb3e9b5499} sbBundle.js
 contract @songbirdnest.com/Songbird/Bundle;1 {128badd1-aa05-4508-87cc-f3cb3e9b5499}
 # category profile-after-change sbBundle @songbirdnest.com/Songbird/Bundle;1
 
 
 ## components/commandline ##
-component {ff29ec35-1294-42ae-a341-63d0303df969} components/sbCommandLine.js
+component {ff29ec35-1294-42ae-a341-63d0303df969} sbCommandLine.js
 contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {ff29ec35-1294-42ae-a341-63d0303df969}
 # category profile-after-change sbCommandLine @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
 
 
 ## components/contenthandling ##
-component {2803c9e8-b0b6-4dfe-8333-53430128f7e7} components/sbMediaContentListener.js
+component {2803c9e8-b0b6-4dfe-8333-53430128f7e7} sbMediaContentListener.js
 contract @songbirdnest.com/contentlistener/media;1 {2803c9e8-b0b6-4dfe-8333-53430128f7e7}
 # category profile-after-change sbMediaContentListener @songbirdnest.com/contentlistener/media;1
 
 
 ## components/controller ##
-component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} components/sbApplicationController.js
+component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} sbApplicationController.js
 contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
 # category profile-after-change sbApplicationController @songbirdnest.com/Songbird/ApplicationController;1
 
 
 ## components/dataremote ##
-component {e0990420-e9c0-11dd-ba2f-0800200c9a66} components/sbDataRemote.js
+component {e0990420-e9c0-11dd-ba2f-0800200c9a66} sbDataRemote.js
 contract @songbirdnest.com/Songbird/DataRemote;1 {e0990420-e9c0-11dd-ba2f-0800200c9a66}
 # category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1
 
@@ -230,66 +230,66 @@ contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-
 # sbMetrics.js
 
 ## components/moz/filedownloader ##
-component {f93a67e4-d97d-4607-971e-00ae2bf8ef8f} components/sbFileDownloader.js
+component {f93a67e4-d97d-4607-971e-00ae2bf8ef8f} sbFileDownloader.js
 contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
 # category profile-after-change sbFileDownloader @songbirdnest.com/Songbird/FileDownloader;1
 
 
 ## components/moz/shutdownservice ##
-component {594137ED-DB4A-4530-8635-2573C018B4FB} components/sbShutdownService.js
+component {594137ED-DB4A-4530-8635-2573C018B4FB} sbShutdownService.js
 contract @songbirdnest.com/shutdown-service;1 {594137ED-DB4A-4530-8635-2573C018B4FB}
 # category profile-after-change sbShutdownService @songbirdnest.com/shutdown-service;1
 
 
 
 ## components/moz/urlformatter ##
-component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} components/sbURLFormatter.js
+component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
 contract @songbirdnest.com/moz/sburlformatter;1 {4dc7da1b-89d1-48b5-8582-64c98bfb3410}
 # category profile-after-change sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
 
 
 ## components/parsererror ##
-component {213a0ebb-12b3-492f-bc4c-f472f8f24d2c} components/sbParserError.js
+component {213a0ebb-12b3-492f-bc4c-f472f8f24d2c} sbParserError.js
 contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
 # category profile-after-change sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1
 
 
 ## components/playlistcommands ##
-component {18c4b63c-d5b4-4aa2-918f-a31304d254ec} components/sbPlaylistCommandsBuilder.js
+component {18c4b63c-d5b4-4aa2-918f-a31304d254ec} sbPlaylistCommandsBuilder.js
 contract @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1 {18c4b63c-d5b4-4aa2-918f-a31304d254ec}
 # category profile-after-change sbPlaylistCommandsBuilder @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1
 
-component {1126ee77-2d85-4f79-a07a-b014da404e53} components/sbPublicPlaylistCommands.js
+component {1126ee77-2d85-4f79-a07a-b014da404e53} sbPublicPlaylistCommands.js
 contract @songbirdnest.com/Songbird/PublicPlaylistCommands;1 {1126ee77-2d85-4f79-a07a-b014da404e53}
 # category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
 
 
 ## components/playqueue ##
-component {e0d6e860-1dd1-11b2-8663-a4d535a29859} components/sbPlayQueueContentInfo.js
+component {e0d6e860-1dd1-11b2-8663-a4d535a29859} sbPlayQueueContentInfo.js
 contract @songbirdnest.com/Songbird/playqueue/contentInfo;1 {e0d6e860-1dd1-11b2-8663-a4d535a29859}
 # category profile-after-change sbPlayQueueContentInfo @songbirdnest.com/Songbird/playqueue/contentInfo;1
 
 
 ## components/property ##
-component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} components/sbSmartPlaylistPropertyRegistrar.js
+component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} sbSmartPlaylistPropertyRegistrar.js
 contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
 # category profile-after-change sbSmartPlaylistPropertyRegistrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
 
 
 ## components/protocol ##
-component {B6C04B7A-C640-4314-8093-C52370D05ECF} components/sbAboutCredits.js
+component {B6C04B7A-C640-4314-8093-C52370D05ECF} sbAboutCredits.js
 contract @mozilla.org/network/protocol/about;1?what=credits {B6C04B7A-C640-4314-8093-C52370D05ECF}
 # category profile-after-change sbAboutCredits @mozilla.org/network/protocol/about;1?what=credits
 
-component {416a028e-1dd2-11b2-a247-cc08533670be} components/sbAboutDRM.js
+component {416a028e-1dd2-11b2-a247-cc08533670be} sbAboutDRM.js
 contract @mozilla.org/network/protocol/about;1?what=drm {416a028e-1dd2-11b2-a247-cc08533670be}
 # category profile-after-change sbAboutDRM @mozilla.org/network/protocol/about;1?what=drm
 
-component {2c15f30e-815f-4414-8d18-277d943a2f68} components/sbSongbirdProtocol.js
+component {2c15f30e-815f-4414-8d18-277d943a2f68} sbSongbirdProtocol.js
 contract @mozilla.org/network/protocol;1?name=songbird {2c15f30e-815f-4414-8d18-277d943a2f68}
 # category profile-after-change sbSongbirdProtocol @mozilla.org/network/protocol;1?name=songbird
 
-component {42631c40-1cbe-4f3a-b859-7936e542130f} components/sbAboutRedirector.js
+component {42631c40-1cbe-4f3a-b859-7936e542130f} sbAboutRedirector.js
 contract @songbirdnest.com/aboutRedirector {42631c40-1cbe-4f3a-b859-7936e542130f}
 # category profile-after-change sbAboutRedirector @songbirdnest.com/aboutRedirector
 

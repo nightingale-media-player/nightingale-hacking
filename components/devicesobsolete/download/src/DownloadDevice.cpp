@@ -514,7 +514,7 @@ NS_IMPL_ISUPPORTS4(sbDownloadDevice,
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpDeviceMonitor(nsnull)
+    mpDeviceMonitor("mpDeviceMonitor")
 {
 }
 

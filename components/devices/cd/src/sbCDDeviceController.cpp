@@ -49,6 +49,7 @@ NS_IMPL_CI_INTERFACE_GETTER1(sbCDDeviceController, sbIDeviceController);
 NS_IMPL_THREADSAFE_CI(sbCDDeviceController);
 
 sbCDDeviceController::sbCDDeviceController()
+  : mMonitor("mMonitor")
 {
   static nsID const id = SB_CDDEVICE_CONTROLLER_CID;
   nsresult rv = SetControllerIdInternal(id);
