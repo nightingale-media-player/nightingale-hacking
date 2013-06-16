@@ -6,11 +6,7 @@ manifest chrome/locales.manifest
 manifest chrome/pinkmartini.manifest
 manifest chrome/purplerain.manifest
 manifest chrome/songbird.manifest
-
 manifest components/components.manifest
 manifest components/interfaces.manifest
 manifest components/jscomponents.manifest
-
-# manifest components/vendor.manifest
-
 manifest lib/libs.manifest
