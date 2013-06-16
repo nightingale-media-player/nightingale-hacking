@@ -51,7 +51,7 @@
 
 // Mozilla imports.
 #include <mozilla/Mutex.h>
-#include <nsIDOMWindow2.h>
+#include <nsIDOMWindow.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
@@ -631,7 +631,7 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   windowInfo->window = aWindow;
 
   // Get the window event target.
-  nsCOMPtr<nsIDOMWindow2> window = do_QueryInterface(aWindow);
+  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(aWindow);
   nsCOMPtr<nsIDOMEventTarget> windowEventTarget;
   rv = window->GetWindowRoot(getter_AddRefs(windowEventTarget));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1021,7 +1021,7 @@ sbWindowWatcherEventListener::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the window event target.
-  nsCOMPtr<nsIDOMWindow2> window = do_QueryInterface(mWindow, &rv);
+  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(mWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = window->GetWindowRoot(getter_AddRefs(mEventTarget));
   NS_ENSURE_SUCCESS(rv, rv);

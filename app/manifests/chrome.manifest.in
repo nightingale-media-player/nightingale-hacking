@@ -11,4 +11,6 @@ manifest components/components.manifest
 manifest components/interfaces.manifest
 manifest components/jscomponents.manifest
 
-manifest components/vendor.manifest
+# manifest components/vendor.manifest
+
+manifest lib/libs.manifest

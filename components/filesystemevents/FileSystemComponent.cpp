@@ -70,7 +70,6 @@ static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
 
 static const mozilla::Module::ContractIDEntry kFileSystemContracts[] = {
   { SONGBIRD_FILESYSTEMWATCHER_CONTRACTID, &kSONGBIRD_FILESYSTEMWATCHER_CID },
-  { nsnull, &kSONGBIRD_FILESYSTEMNODE_CID },
   { NULL }
 };
 

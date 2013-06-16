@@ -91,7 +91,7 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbMediacoreWrapper,
 NS_IMPL_THREADSAFE_CI(sbMediacoreWrapper)
 
 sbMediacoreWrapper::sbMediacoreWrapper()
-: mProxiedObjectsMonitor("mProxiedObjectsMonitor")
+: mProxiedObjectsMonitor("sbMediacoreWrapper.mProxiedObjectsMonitor")
 , mWindowIsReady(PR_FALSE)
 {
 #ifdef PR_LOGGING

@@ -70,7 +70,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceManagerObsolete,
                               nsIObserver)
 
 sbDeviceManagerObsolete::sbDeviceManagerObsolete()
-: mLock("mLock"),
+: mLock("sbDeviceManagerObsolete.mLock"),
   mLastRequestedIndex(nsnull)
 {
 #ifdef PR_LOGGING

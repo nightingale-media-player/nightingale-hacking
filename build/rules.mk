@@ -446,14 +446,14 @@ endif
 XPIDL_HEADERS ?= $(XPIDL_SRCS:.idl=.h)
 
 $(XPIDL_HEADERS): %.h: %.idl
-	$(XPIDL_HEADERS_CMD) $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -o $(basename $@) $<
+	$(XPIDL_HEADERS_CMD) $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -o $@ $<
 
 export:: $(XPIDL_HEADERS)
 
 XPIDL_TYPELIBS ?= $(XPIDL_SRCS:.idl=.xpt)
 
 $(XPIDL_TYPELIBS): %.xpt: %.idl
-	$(XPIDL_TYPELIBS_CMD) $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -o $(basename $@) $<
+	$(XPIDL_TYPELIBS_CMD) $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -o $@ $<
 
 # The ifneq() check is in here because if the collected typelibs are the same 
 # (single file) as XPIDL_MODULE, there's no reason to run xpt_link on them.

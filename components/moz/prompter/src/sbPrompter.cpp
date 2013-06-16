@@ -50,7 +50,6 @@
 #include <mozilla/Mutex.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIDOMWindow.h>
-#include <nsIDOMWindowInternal.h>
 #include <nsPIPromptService.h>
 #include <nsServiceManagerUtils.h>
 #include <sbThreadUtils.h>

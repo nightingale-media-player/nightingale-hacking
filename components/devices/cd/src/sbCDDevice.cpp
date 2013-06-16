@@ -86,7 +86,7 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
   , mCreationProperties(aProperties)
   , mPrefAutoEject(PR_FALSE)
   , mPrefNotifySound(PR_FALSE)
-  , mPropertiesLock(nsnull)
+  , mPropertiesLock("sbCDDevice.mPropertiesLock")
 {
   SB_PRLOG_SETUP(sbCDDevice);
 
