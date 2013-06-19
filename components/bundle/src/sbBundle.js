@@ -388,7 +388,4 @@ Bundle.prototype = {
                            Components.interfaces.nsIObserver])
 }; // Bundle.prototype
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([Bundle]);
-}
-
+var NSGetModule = XPCOMUtils.generateNSGetFactory([Bundle]);

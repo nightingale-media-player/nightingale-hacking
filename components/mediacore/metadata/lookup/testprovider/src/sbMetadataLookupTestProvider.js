@@ -106,6 +106,9 @@ sbTestProvider.prototype = {
   classDescription : 'Songbird Test Metadata Lookup Service',
   classID : Components.ID('9e599632-1dd1-11b2-ab82-e0952e7285ce'),
   contractID : '@songbirdnest.com/Songbird/MetadataLookup/testProvider;1',
+  _xpcom_categories: [{
+	 category: "metadata-lookup" 
+  }],
   QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupProvider,
                                           Ci.nsITimerCallback]),
 
@@ -270,17 +273,17 @@ sbTestProvider.prototype = {
   },
 }
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbTestProvider],
-      // our post-register function to register ourselves with
-      // the category manager
-      function(aCompMgr, aFileSpec, aLocation) {
-        XPCOMUtils.categoryManager.addCategoryEntry(
-          "metadata-lookup",
-          sbTestProvider.name,
-          sbTestProvider.prototype.contractID,
-          true,
-          true);
-      }
-    );
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbTestProvider]);
+
+//	  // our post-register function to register ourselves with
+//      // the category manager
+//      function(aCompMgr, aFileSpec, aLocation) {
+//        XPCOMUtils.categoryManager.addCategoryEntry(
+//          "metadata-lookup",
+//          sbTestProvider.name,
+//          sbTestProvider.prototype.contractID,
+//          true,
+//          true);
+//      }
+//    );
+//}

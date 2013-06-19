@@ -586,7 +586,4 @@ sbAddOnBundleUpdateService.prototype = {
 //
 //------------------------------------------------------------------------------
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbAddOnBundleUpdateService]);
-}
-
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAddOnBundleUpdateService]);

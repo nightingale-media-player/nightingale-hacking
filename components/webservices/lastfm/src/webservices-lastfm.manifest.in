@@ -1,0 +1,4 @@
+## components/webservices/lastfm ##
+component {6582d596-95dd-4449-be8b-7793a15bdfa2} sbLastFmWebServices.js
+contract @songbirdnest.com/Songbird/webservices/last-fm;1 {6582d596-95dd-4449-be8b-7793a15bdfa2}
+category app-startup sbLastFmWebServices @songbirdnest.com/Songbird/webservices/last-fm;1

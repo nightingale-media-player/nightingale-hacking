@@ -65,7 +65,8 @@ var deviceErrorMonitorConfig = {
     {
       category: 'app-startup',
       entry: 'service-device-error-monitor',
-      value: 'service,@songbirdnest.com/device/error-monitor-service;1'
+      value: 'service,@songbirdnest.com/device/error-monitor-service;1',
+      service: true
     }
   ],
 
@@ -797,6 +798,4 @@ deviceErrorMonitor.prototype = {
 /**
  * /brief XPCOM initialization code
  */
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([deviceErrorMonitor]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([deviceErrorMonitor]);

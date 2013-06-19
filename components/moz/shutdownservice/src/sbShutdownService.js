@@ -302,6 +302,10 @@ sbShutdownJobService.prototype =
   classDescription: SB_SHUTDOWNSERVICE_DESC,
   classID: Components.ID(SB_SHUTDOWNSERVICE_CID),
   contractID: SB_SHUTDOWNSERVICE_CONTRACTID,
+  _xpcom_categories: [{
+	 category: "app-startup",
+	 service: true
+  }],
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, 
                                          Ci.sbIJobProgressListener,
                                          Ci.sbIJobProgress,
@@ -311,17 +315,15 @@ sbShutdownJobService.prototype =
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
-function NSGetModule(compMgr, fileSpec)
-{
-  return XPCOMUtils.generateModule([sbShutdownJobService],
-    function(aCompMgr, aFileSpec, aLocation) {
-      XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
-                                                  SB_SHUTDOWNSERVICE_DESC,
-                                                  "service," +
-                                                  SB_SHUTDOWNSERVICE_CONTRACTID,
-                                                  true,
-                                                  true);
-    }
-  );
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbShutdownJobService]);
 
+//    function(aCompMgr, aFileSpec, aLocation) {
+//      XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
+//                                                  SB_SHUTDOWNSERVICE_DESC,
+//                                                  "service," +
+//                                                  SB_SHUTDOWNSERVICE_CONTRACTID,
+//                                                  true,
+//                                                  true);
+//    }
+//  );
+//}

@@ -1,0 +1,4 @@
+## components/mediacore/metadata/lookup/testprovider ##
+component {9e599632-1dd1-11b2-ab82-e0952e7285ce} sbMetadataLookupTestProvider.js
+contract @songbirdnest.com/Songbird/MetadataLookup/testProvider;1 {9e599632-1dd1-11b2-ab82-e0952e7285ce}
+category metadata-lookup sbMetadataLookupTestProvider @songbirdnest.com/Songbird/MetadataLookup/testProvider;1

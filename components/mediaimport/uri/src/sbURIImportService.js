@@ -407,7 +407,5 @@ sbURIImportService.prototype.classID =
 sbURIImportService.prototype.contractID =
   "@songbirdnest.com/uri-import-service;1";
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbURIImportService]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbURIImportService]);
 

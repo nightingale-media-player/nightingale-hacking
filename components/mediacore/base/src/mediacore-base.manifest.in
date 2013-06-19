@@ -1,0 +1,4 @@
+## components/mediacore/base ##
+component {03F78779-FCB7-4442-9A0C-E8547B4F1368} sbOSDControlService.js
+contract @songbirdnest.com/mediacore/osd-control-service;1 {03F78779-FCB7-4442-9A0C-E8547B4F1368}
+# category profile-after-change sbOSDControlService @songbirdnest.com/mediacore/osd-control-service;1

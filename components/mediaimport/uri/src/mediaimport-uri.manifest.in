@@ -1,0 +1,5 @@
+## components/mediaimport/uri ##
+component {CC435D34-F76A-458F-B786-FAF897CA69BD} sbURIImportService.js
+contract @songbirdnest.com/uri-import-service;1 {CC435D34-F76A-458F-B786-FAF897CA69BD}
+# category profile-after-change sbURIImportService @songbirdnest.com/uri-import-service;1
+

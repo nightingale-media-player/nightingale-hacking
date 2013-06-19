@@ -1,0 +1,5 @@
+## components/devices/cd ##
+component {9925b565-5c19-4feb-87a8-413d86570cd9} sbCDRipServicePaneService.js
+contract @songbirdnest.com/servicepane/cdDevice;1 {9925b565-5c19-4feb-87a8-413d86570cd9}
+category service-pane sbCDRipServicePaneService @songbirdnest.com/servicepane/cdDevice;1
+# category profile-after-change sbCDRipServicePaneService @songbirdnest.com/servicepane/cdDevice;1

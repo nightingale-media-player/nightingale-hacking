@@ -1,0 +1,4 @@
+## components/metrics ##
+component {1066527d-b135-4e0c-9ea4-f6109ae97d02} sbMetrics.js
+contract @songbirdnest.com/Songbird/Metrics;1 {1066527d-b135-4e0c-9ea4-f6109ae97d02}
+# category profile-after-change sbMetrics @songbirdnest.com/Songbird/Metrics;1

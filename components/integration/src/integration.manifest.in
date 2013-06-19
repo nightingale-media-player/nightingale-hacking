@@ -1,0 +1,8 @@
+## components/integration ##
+component {76512c09-7f02-48f5-86c0-c3a8670ead3f} sbGlobalHotkeys.js
+contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {76512c09-7f02-48f5-86c0-c3a8670ead3f}
+# category profile-after-change sbGlobalHotkeys @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1
+
+component {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb} sbHotkeyActions.js
+contract @songbirdnest.com/Songbird/HotkeyService;1 {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}
+category app-startup sbHotkeyActions @songbirdnest.com/Songbird/HotkeyService;1

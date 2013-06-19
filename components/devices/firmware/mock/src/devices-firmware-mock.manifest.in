@@ -1,0 +1,4 @@
+## components/devices/firmware/mock ##
+component {c0a0ebce-1dd1-11b2-afed-a5eeb1302690} sbMockFirmwareHandlerURLService.js
+contract @songbirdnest.com/mock-firmware-url-handler;1 {c0a0ebce-1dd1-11b2-afed-a5eeb1302690}
+# category profile-after-change sbMockFirmwareHandlerURLService @songbirdnest.com/mock-firmware-url-handler;1

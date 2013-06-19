@@ -1,0 +1,4 @@
+## components/moz/filedownloader ##
+component {f93a67e4-d97d-4607-971e-00ae2bf8ef8f} sbFileDownloader.js
+contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
+# category profile-after-change sbFileDownloader @songbirdnest.com/Songbird/FileDownloader;1

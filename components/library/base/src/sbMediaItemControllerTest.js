@@ -42,4 +42,4 @@ TestMediaItemController.prototype = {
   contractID: SB_MEDIAITEMCONTROLLER_PARTIALCONTRACTID + K_TRACKTYPE_ADDED
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([TestMediaItemController]);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([TestMediaItemController]);

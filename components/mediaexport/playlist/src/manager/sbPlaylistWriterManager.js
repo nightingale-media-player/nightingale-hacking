@@ -166,6 +166,4 @@ sbPlaylistWriterManager.prototype = {
   },
 };
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbPlaylistWriterManager]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbPlaylistWriterManager]);

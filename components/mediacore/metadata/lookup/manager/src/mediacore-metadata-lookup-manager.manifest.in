@@ -1,0 +1,16 @@
+## components/mediacore/metadata/lookup/manager ##
+# sbMetadataAlbumDetail.js
+# sbMetadataLookupJob.js
+# sbMetadataLookupManager.js
+
+component {84dd6e90-1dd2-11b2-bad9-c6f63b798098} sbMetadataAlbumDetails.js
+contract @songbirdnest.com/Songbird/MetadataLookup/albumdetail;1 {84dd6e90-1dd2-11b2-bad9-c6f63b798098}
+# category profile-after-change sbMetadataAlbumDetails @songbirdnest.com/Songbird/MetadataLookup/albumdetail;1
+
+component {e4fd9496-1dd1-11b2-93ca-d33e8cc507ba} sbMetadataLookupJob.js
+contract @songbirdnest.com/Songbird/MetadataLookup/job;1 {e4fd9496-1dd1-11b2-93ca-d33e8cc507ba}
+# category profile-after-change sbMetadataLookupJob @songbirdnest.com/Songbird/MetadataLookup/job;1
+
+component {46733000-1dd2-11b2-8022-ba2da8a6a950} sbMetadataLookupManager.js
+contract @songbirdnest.com/Songbird/MetadataLookup/manager;1 {46733000-1dd2-11b2-8022-ba2da8a6a950}
+# category profile-after-change sbMetadataLookupManager @songbirdnest.com/Songbird/MetadataLookup/manager;1

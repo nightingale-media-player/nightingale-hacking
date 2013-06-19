@@ -1,0 +1,8 @@
+## components/playlistcommands ##
+component {18c4b63c-d5b4-4aa2-918f-a31304d254ec} sbPlaylistCommandsBuilder.js
+contract @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1 {18c4b63c-d5b4-4aa2-918f-a31304d254ec}
+# category profile-after-change sbPlaylistCommandsBuilder @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1
+
+component {1126ee77-2d85-4f79-a07a-b014da404e53} sbPublicPlaylistCommands.js
+contract @songbirdnest.com/Songbird/PublicPlaylistCommands;1 {1126ee77-2d85-4f79-a07a-b014da404e53}
+category app-startup sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1

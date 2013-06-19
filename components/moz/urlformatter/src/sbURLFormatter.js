@@ -296,7 +296,4 @@ sbURLFormatterService.prototype = {
   }
 };
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbURLFormatterService]);
-} // NSGetModule
-
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbURLFormatterService]);

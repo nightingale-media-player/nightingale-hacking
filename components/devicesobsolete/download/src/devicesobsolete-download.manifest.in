@@ -1,0 +1,12 @@
+## components/devicesobsolete/download ##
+component {a3d7426b-0b22-4f07-b72c-e44bab0759f7} sbAutoDownloader.js
+contract @songbirdnest.com/autodownloader;1 {a3d7426b-0b22-4f07-b72c-e44bab0759f7}
+category app-startup sbAutoDownloader @songbirdnest.com/autodownloader;1
+
+component {576b6833-15d8-483a-84d6-2fbd329c82e1} sbDownloadDeviceHelper.js
+contract @songbirdnest.com/Songbird/DownloadDeviceHelper;1 {576b6833-15d8-483a-84d6-2fbd329c82e1}
+# category profile-after-change sbDownloadDeviceHelper @songbirdnest.com/Songbird/DownloadDeviceHelper;1
+
+component {ee93796b-090e-4703-982a-1d27bea552c3} sbDownloadDeviceServicePaneModule.js
+contract @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 {ee93796b-090e-4703-982a-1d27bea552c3}
+category service-pane sbDownloadDeviceServicePaneModule @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1

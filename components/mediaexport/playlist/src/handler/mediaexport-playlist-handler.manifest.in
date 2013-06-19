@@ -1,0 +1,4 @@
+## components/mediaexport/playlist/handler ##
+component {a11690c2-1dd1-11b2-82ba-8a4e72869f7a} sbM3UPlaylistWriter.js
+contract @songbirdnest.com/Songbird/PlaylistWriter/M3U;1 {a11690c2-1dd1-11b2-82ba-8a4e72869f7a}
+category playlist-writer sbM3UPlaylistWriter @songbirdnest.com/Songbird/PlaylistWriter/M3U;1

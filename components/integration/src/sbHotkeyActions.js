@@ -88,4 +88,4 @@ HotkeyActions.prototype = {
   contractID: SONGBIRD_HOTKEYACTIONS_CONTRACTID
 }; // HotkeyActions.prototype
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([HotkeyActions]);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([HotkeyActions]);

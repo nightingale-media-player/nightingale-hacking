@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediaexport-playlist-handler.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbM3UPlaylistWriter.js \
+                      $(CURDIR)/mediaexport-playlist-handler.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

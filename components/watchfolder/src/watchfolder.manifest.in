@@ -1,0 +1,8 @@
+## components/watchfolder ##
+component {02ba1ba0-fee5-11dd-87af-0800200c9a66} sbMoveRenameHelper.js
+contract @songbirdnest.com/Songbird/MoveRenameHelper;1 {02ba1ba0-fee5-11dd-87af-0800200c9a66}
+# category profile-after-change sbMoveRenameHelper @songbirdnest.com/Songbird/MoveRenameHelper;1
+
+component {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4} sbRemoveHelper.js
+contract @songbirdnest.com/Songbird/RemoveHelper;1 {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4}
+# category profile-after-change sbRemoveHelper @songbirdnest.com/Songbird/RemoveHelper;1

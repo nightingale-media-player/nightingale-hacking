@@ -161,8 +161,12 @@ else
 	 $(NULL)
 endif
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/library-localdatabase.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbSmartMediaListsUpdater.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \
+                      $(CURDIR)/library-localdatabase.manifest \
                       $(NULL)
 
 IS_COMPONENT = 1

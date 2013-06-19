@@ -81,8 +81,12 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
 
 IS_COMPONENT = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/watchfolder.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbMoveRenameHelper.js \
                       $(srcdir)/sbRemoveHelper.js \
+                      $(CURDIR)/watchfolder.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

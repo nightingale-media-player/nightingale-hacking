@@ -42,17 +42,19 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const PROTOCOL_PREFIX = "@mozilla.org/network/protocol/about;1?what=";
 
-function doPostRegister(aCompMgr, aFile, aComponents) {
-  // get our own factory, since XPCOMUtils doesn't expose it
-  var factory = aCompMgr.getClassObject(sbAboutRedirector.prototype.classID,
-                                        Ci.nsIFactory);
-  for (let key in PAGES) {
-    aCompMgr.registerFactory(sbAboutRedirector.prototype.classID,
-                             sbAboutRedirector.prototype.classDescription,
-                             PROTOCOL_PREFIX + key,
-                             factory);
-  }
-}
+// XXX How to register factory w/ protocol_prefix?
+// 
+// function doPostRegister(aCompMgr, aFile, aComponents) {
+//   // get our own factory, since XPCOMUtils doesn't expose it
+//   var factory = aCompMgr.getClassObject(sbAboutRedirector.prototype.classID,
+//                                         Ci.nsIFactory);
+//   for (let key in PAGES) {
+//     aCompMgr.registerFactory(sbAboutRedirector.prototype.classID,
+//                              sbAboutRedirector.prototype.classDescription,
+//                              PROTOCOL_PREFIX + key,
+//                              factory);
+//   }
+// }
 
 function sbAboutRedirector() {}
 sbAboutRedirector.prototype = {
@@ -80,7 +82,4 @@ sbAboutRedirector.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule])
 };
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbAboutRedirector],
-                                   doPostRegister);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAboutRedirector]);

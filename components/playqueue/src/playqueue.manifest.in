@@ -1,0 +1,4 @@
+## components/playqueue ##
+component {e0d6e860-1dd1-11b2-8663-a4d535a29859} sbPlayQueueContentInfo.js
+contract @songbirdnest.com/Songbird/playqueue/contentInfo;1 {e0d6e860-1dd1-11b2-8663-a4d535a29859}
+category display-pane-provider sbPlayQueueContentInfo @songbirdnest.com/Songbird/playqueue/contentInfo;1

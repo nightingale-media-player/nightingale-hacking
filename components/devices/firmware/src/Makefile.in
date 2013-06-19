@@ -89,7 +89,11 @@ endif
 
 IS_COMPONENT = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/devices-firmware.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbDeviceFirmwareAutoCheckForUpdate.js \
+                      $(CURDIR)/devices-firmware.manifest \
                       $(NULL)
                       
 include $(topsrcdir)/build/rules.mk

@@ -1,0 +1,12 @@
+## components/protocol ##
+component {B6C04B7A-C640-4314-8093-C52370D05ECF} sbAboutCredits.js
+contract @mozilla.org/network/protocol/about;1?what=credits {B6C04B7A-C640-4314-8093-C52370D05ECF}
+
+component {416a028e-1dd2-11b2-a247-cc08533670be} sbAboutDRM.js
+contract @mozilla.org/network/protocol/about;1?what=drm {416a028e-1dd2-11b2-a247-cc08533670be}
+
+component {2c15f30e-815f-4414-8d18-277d943a2f68} sbSongbirdProtocol.js
+contract @mozilla.org/network/protocol;1?name=songbird {2c15f30e-815f-4414-8d18-277d943a2f68}
+
+component {42631c40-1cbe-4f3a-b859-7936e542130f} sbAboutRedirector.js
+contract @songbirdnest.com/aboutRedirector {42631c40-1cbe-4f3a-b859-7936e542130f}

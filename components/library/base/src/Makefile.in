@@ -84,11 +84,15 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
                               $(NULL)
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/library-base.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbDynamicPlaylist.js \
                       $(srcdir)/sbLibraryUtils.jsm \
                       $(srcdir)/sbTimeFormatter.jsm \
                       $(srcdir)/sbColumnSpecParser.jsm \
                       $(srcdir)/sbLibrarySearchSuggester.js \
+                      $(CURDIR)/library-base.manifest \
                       $(NULL)
 
 ifeq (1,$(SB_ENABLE_TESTS))

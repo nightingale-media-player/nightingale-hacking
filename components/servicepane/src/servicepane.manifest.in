@@ -1,0 +1,12 @@
+## components/servicepane ##
+component {845c31ee-c30e-4fb6-9667-0b10e58c7069} sbDeviceServicePaneService.js
+contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58c7069}
+category service-pane sbDeviceServicePaneService @songbirdnest.com/servicepane/device;1
+
+component {64ec2154-3733-4862-af3f-9f2335b14821} sbLibraryServicePaneService.js
+contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
+category service-pane sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
+
+component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
+contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
+category service-pane sbServicePaneService @songbirdnest.com/servicepane/service;1

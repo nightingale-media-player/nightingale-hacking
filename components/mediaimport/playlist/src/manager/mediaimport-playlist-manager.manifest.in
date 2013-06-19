@@ -1,0 +1,8 @@
+## components/mediaimport/playlist/manager ##
+component {ced5902c-bd90-4099-acee-77487a5b1d13} sbPlaylistReaderManager.js
+contract @songbirdnest.com/Songbird/PlaylistReaderManager;1 {ced5902c-bd90-4099-acee-77487a5b1d13}
+# category profile-after-change sbPlaylistReaderManager @songbirdnest.com/Songbird/PlaylistReaderManager;1
+
+component {b4fac7ab-7d23-47c5-98e0-7e59266e2a28} sbPlaylistReaderListener.js
+contract @songbirdnest.com/Songbird/PlaylistReaderListener;1 {b4fac7ab-7d23-47c5-98e0-7e59266e2a28}
+# category profile-after-change sbPlaylistReaderListener @songbirdnest.com/Songbird/PlaylistReaderListener;1

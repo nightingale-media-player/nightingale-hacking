@@ -1,0 +1,4 @@
+## components/mediaexport/playlist/manager ##
+component {9d66cb86-951e-49f4-bef8-26a578891275} sbPlaylistWriterManager.js
+contract @songbirdnest.com/Songbird/PlaylistWriterManager;1 {9d66cb86-951e-49f4-bef8-26a578891275}
+# category profile-after-change sbPlaylistWriterManager @songbirdnest.com/Songbird/PlaylistWriterManager;1

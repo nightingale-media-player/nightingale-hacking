@@ -59,4 +59,4 @@ sbAboutGStreamer.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule])
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([sbAboutGStreamer]);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAboutGStreamer]);

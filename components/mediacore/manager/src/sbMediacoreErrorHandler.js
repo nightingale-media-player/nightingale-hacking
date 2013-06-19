@@ -86,6 +86,4 @@ ErrorHandler.prototype = {
   }
 }
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([ErrorHandler]);
-}
+var NSGetModule = XPCOMUtils.generateModule([ErrorHandler])

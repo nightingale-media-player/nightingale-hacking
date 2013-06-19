@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbParserError.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/parsererror.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbParserError.js \
+                      $(CURDIR)/parsererror.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

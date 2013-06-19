@@ -92,7 +92,11 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 IS_COMPONENT = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/devices-firmware-mock.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbMockFirmwareHandlerURLService.js \
+                      $(CURDIR)/devices-firmware-mock.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

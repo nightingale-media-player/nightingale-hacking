@@ -1,0 +1,4 @@
+## components/moz/urlformatter ##
+component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
+contract @songbirdnest.com/moz/sburlformatter;1 {4dc7da1b-89d1-48b5-8582-64c98bfb3410}
+category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1

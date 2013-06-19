@@ -29,9 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediacore-metadata-lookup-manager.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbMetadataLookupManager.js \
                       $(srcdir)/sbMetadataLookupJob.js \
                       $(srcdir)/sbMetadataAlbumDetail.js \
+                      $(CURDIR)/mediacore-metadata-lookup-manager.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

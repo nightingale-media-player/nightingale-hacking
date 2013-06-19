@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbFeathersManager.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/feathers.manifest.in \
+						$(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbFeathersManager.js \
+					  $(CURDIR)/feathers.manifest \
+					  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

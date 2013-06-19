@@ -136,7 +136,11 @@ else
     $(NULL)
 endif
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/devices-cd.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbCDRipServicePaneService.js \
+                      $(CURDIR)/devices-cd.manifest \
                       $(NULL)
 
 SONGBIRD_JSMODULES = $(srcdir)/sbCDDeviceUtils.jsm

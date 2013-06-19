@@ -1,0 +1,4 @@
+## components/parsererror ##
+component {213a0ebb-12b3-492f-bc4c-f472f8f24d2c} sbParserError.js
+contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
+# category profile-after-change sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1

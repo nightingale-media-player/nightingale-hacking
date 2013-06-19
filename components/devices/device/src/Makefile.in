@@ -116,7 +116,11 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 CPP_EXTRA_FLAGS += "-std=gnu++0x" \
                    $(NULL)
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/devices-device.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js \
+                      $(CURDIR)/devices-device.manifest \
                       $(srcdir)/sbDeviceErrorMonitor.js \
                       $(srcdir)/sbDeviceEventMonitor.js \
                       $(NULL)

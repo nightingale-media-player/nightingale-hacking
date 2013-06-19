@@ -1,0 +1,4 @@
+## components/mediaimport/directory ##
+component {6e542f90-44a0-11dd-ae16-0800200c9a66} sbDirectoryImportService.js
+contract @songbirdnest.com/Songbird/DirectoryImportService;1 {6e542f90-44a0-11dd-ae16-0800200c9a66}
+# category profile-after-change sbDirectoryImportService @songbirdnest.com/Songbird/DirectoryImportService;1

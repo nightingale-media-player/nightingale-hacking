@@ -41,6 +41,9 @@ sbDownloadDeviceServicePaneModule.prototype =
   classDescription: "Songbird Download Device Service Pane Module",
   classID:          Components.ID("{ee93796b-090e-4703-982a-1d27bea552c3}"),
   contractID:       "@songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1",
+  _xpcom_categories: [{
+    category: "service-pane"
+  }],
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
                                            Ci.sbIDeviceBaseCallback])
 }
@@ -190,18 +193,20 @@ function sbDownloadDeviceServicePaneModule_onStateChanged()
   }
 }
 
-function NSGetModule(compMgr, fileSpec) {
-  var module = XPCOMUtils.generateModule(
-    [sbDownloadDeviceServicePaneModule],
-      function(aCompMgr, aFileSpec, aLocation) {
-      XPCOMUtils.categoryManager.addCategoryEntry(
-        "service-pane",
-        "z-download-device-service-pane-module",
-        sbDownloadDeviceServicePaneModule.prototype.contractID,
-        true,
-        true);
-      }
-    );
-  return module;
-}
+// function NSGetModule(compMgr, fileSpec) {
+//   var module = XPCOMUtils.generateModule(
+//     [sbDownloadDeviceServicePaneModule],
+//       function(aCompMgr, aFileSpec, aLocation) {
+//       XPCOMUtils.categoryManager.addCategoryEntry(
+//         "service-pane",
+//         "z-download-device-service-pane-module",
+//         sbDownloadDeviceServicePaneModule.prototype.contractID,
+//         true,
+//         true);
+//       }
+//     );
+//   return module;
+// }
 
+var NSGetModule = 
+  XPCOMUtils.generateNSGetFactory([sbDownloadDeviceServicePaneModule]);

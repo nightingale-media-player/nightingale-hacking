@@ -29,8 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediaimport-playlist-manager.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbPlaylistReaderManager.js \
                       $(srcdir)/sbPlaylistReaderListener.js \
+                      $(CURDIR)/mediaimport-playlist-manager.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

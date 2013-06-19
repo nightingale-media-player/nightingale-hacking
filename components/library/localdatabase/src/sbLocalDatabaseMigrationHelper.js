@@ -257,8 +257,4 @@ sbLocalDatabaseMigrationHelper.prototype = {
 // Module
 //
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLocalDatabaseMigrationHelper
-  ]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLocalDatabaseMigrationHelper]);

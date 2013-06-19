@@ -234,7 +234,11 @@ ifeq (windows,$(SB_PLATFORM))
    CPP_EXTRA_FLAGS += "-wd4244"
 endif
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediacore-gstreamer.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
+                      $(CURDIR)/mediacore-gstreamer.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -32,7 +32,7 @@ const Cr = Components.results;
 const NS_BINDING_ABORTED = 0x804b0002;
 
 const DESCRIPTION = "sbMediaContentListener";
-const CID         = "2803c9e8-b0b6-4dfe-8333-53430128f7e7";
+const CID         = "{2803c9e8-b0b6-4dfe-8333-53430128f7e7}";
 const CONTRACTID  = "@songbirdnest.com/contentlistener/media;1";
 
 const CONTRACTID_ARRAY              = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
@@ -80,6 +80,10 @@ sbMediaContentListener.prototype = {
   contractID:       CONTRACTID,
   _typeSniffer:     null,
   _mm:              null,
+
+  _xpcom_categories: [{
+    category: CATEGORY_CONTENT_LISTENER
+  }],
 
   /**
    * Takes care of adding a url to the library and playing it.
@@ -268,21 +272,23 @@ sbMediaContentListener.prototype = {
 /**
  * XPCOM component registration.
  */
-function postRegister(aCompMgr, aFileSpec, aLocation) {
-  XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
-                                              TYPE_MAYBE_MEDIA, CONTRACTID,
-                                              true, true);
-  XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
-                                              TYPE_MAYBE_PLAYLIST, CONTRACTID,
-                                              true, true);
-}
+// function postRegister(aCompMgr, aFileSpec, aLocation) {
+//   XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
+//                                               TYPE_MAYBE_MEDIA, CONTRACTID,
+//                                               true, true);
+//   XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
+//                                               TYPE_MAYBE_PLAYLIST, CONTRACTID,
+//                                               true, true);
+// }
 
-function preUnregister(aCompMgr, aFileSpec, aLocation) {
-  XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
-                                                 TYPE_MAYBE_MEDIA, true);
-  XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
-                                                 TYPE_MAYBE_PLAYLIST, true);
-}
+// function preUnregister(aCompMgr, aFileSpec, aLocation) {
+//   XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
+//                                                  TYPE_MAYBE_MEDIA, true);
+//   XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
+//                                                  TYPE_MAYBE_PLAYLIST, true);
+// }
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([sbMediaContentListener],
-                                                 postRegister, preUnregister);
+// var NSGetModule = XPCOMUtils.generateNSGetModule([sbMediaContentListener],
+//                                                  postRegister, preUnregister);
+
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbMediaContentListener]);

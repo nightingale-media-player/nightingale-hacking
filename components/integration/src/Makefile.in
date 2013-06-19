@@ -31,8 +31,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/integration.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js \
                       $(srcdir)/sbGlobalHotkeys.js \
+                      $(CURDIR)/integration.manifest \
                       $(NULL)
 
 CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/xpcom \

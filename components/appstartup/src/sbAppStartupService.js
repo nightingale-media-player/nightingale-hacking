@@ -87,6 +87,11 @@ sbAppStartupService.prototype =
   // DataRemote For App Restart
   _dataRemoteAppRestart: null,
 
+  _xpcom_categories: [{
+    category: "app-startup",
+    service: true
+  }],
+
   // nsIObserver
   observe: function(aSubject, aTopic, aData) {
     switch(aTopic) {
@@ -954,19 +959,21 @@ sbAppStartupService.prototype =
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
-function NSGetModule(compMgr, fileSpec)
-{
-  return XPCOMUtils.generateModule([sbAppStartupService],
-    function(aCompMgr, aFileSpec, aLocation) {
-      XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
-                                                  SB_APPSTARTUPSERVICE_DESC,
-                                                  "service," +
-                                                  SB_APPSTARTUPSERVICE_CONTRACTID,
-                                                  true,
-                                                  true);
-    }
-  );
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAppStartupService]);
+
+// function NSGetModule(compMgr, fileSpec)
+// {
+//   return XPCOMUtils.generateModule([sbAppStartupService],
+//     function(aCompMgr, aFileSpec, aLocation) {
+//       XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
+//                                                   SB_APPSTARTUPSERVICE_DESC,
+//                                                   "service," +
+//                                                   SB_APPSTARTUPSERVICE_CONTRACTID,
+//                                                   true,
+//                                                   true);
+//     }
+//   );
+// }
 
 //------------------------------------------------------------------------------
 // Startup command line handler

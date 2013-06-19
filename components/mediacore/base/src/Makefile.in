@@ -75,7 +75,11 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 IS_COMPONENT = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediacore-base.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbOSDControlService.js \
+                      $(CURDIR)/mediacore-base.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

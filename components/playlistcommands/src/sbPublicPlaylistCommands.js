@@ -89,6 +89,10 @@ PublicPlaylistCommands.prototype = {
   classDescription: "Songbird Public Playlist Commands",
   classID:          Components.ID("{1126ee77-2d85-4f79-a07a-b014da404e53}"),
   contractID:       "@songbirdnest.com/Songbird/PublicPlaylistCommands;1",
+  _xpcom_categories: [{
+	  category: "app-startup",
+	  service: true
+  }],
 
   m_mgr                           : null,
 
@@ -2741,14 +2745,13 @@ function LOG(str) {
   dump(str+"\n");
 };
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([PublicPlaylistCommands],
-  function(aCompMgr, aFileSpec, aLocation) {
-    XPCOMUtils.categoryManager.addCategoryEntry(
-      "app-startup",
-      PublicPlaylistCommands.prototype.classDescription,
-      "service," + PublicPlaylistCommands.prototype.contractID,
-      true,
-      true);
-  });
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([PublicPlaylistCommands]);
+//  function(aCompMgr, aFileSpec, aLocation) {
+//    XPCOMUtils.categoryManager.addCategoryEntry(
+//      "app-startup",
+//      PublicPlaylistCommands.prototype.classDescription,
+//      "service," + PublicPlaylistCommands.prototype.contractID,
+//      true,
+//      true);
+//  });
+//}

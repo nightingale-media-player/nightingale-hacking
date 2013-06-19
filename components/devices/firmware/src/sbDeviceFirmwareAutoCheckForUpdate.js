@@ -124,6 +124,12 @@ sbDeviceFirmwareAutoCheckForUpdate.prototype.classID =
     Components.ID("{2137a87f-2ade-448b-a093-bad4f6649fa3}");
 sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID =
     '@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1';
+sbDeviceFirmwareAutoCheckForUpdate.prototype._xpcom_categories = 
+[{
+  category: "app-startup",
+  service: true
+}];
+
 sbDeviceFirmwareAutoCheckForUpdate.prototype.flags = Ci.nsIClassInfo.SINGLETON;
 sbDeviceFirmwareAutoCheckForUpdate.prototype.interfaces =
     [Ci.nsISupports, Ci.nsIClassInfo, Ci.nsIObserver, Ci.sbIDeviceEventListener];
@@ -457,16 +463,14 @@ function sbDeviceFirmwareAutoCheckForUpdate__promptForRepair(aDevice) {
   }
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetModule(
-  [
-    sbDeviceFirmwareAutoCheckForUpdate,
-  ],
-  function(aCompMgr, aFileSpec, aLocation) {
-    XPCOMUtils.categoryManager.addCategoryEntry(
-      "app-startup",
-      sbDeviceFirmwareAutoCheckForUpdate.prototype.classDescription,
-      "service," + sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID,
-      true,
-      true);
-  }
-);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbDeviceFirmwareAutoCheckForUpdate]);
+
+//   function(aCompMgr, aFileSpec, aLocation) {
+//     XPCOMUtils.categoryManager.addCategoryEntry(
+//       "app-startup",
+//       sbDeviceFirmwareAutoCheckForUpdate.prototype.classDescription,
+//       "service," + sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID,
+//       true,
+//       true);
+//   }
+// );

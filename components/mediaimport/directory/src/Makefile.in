@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbDirectoryImportService.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediaimport-directory.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbDirectoryImportService.js \
+                      $(CURDIR)/mediaimport-directory.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -1,0 +1,4 @@
+## components/mediapages ##
+component {e63463d0-357c-4035-af33-db670ee1b7f2} sbMediaPageManager.js
+contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-db670ee1b7f2}
+# category profile-after-change sbMediaPageManager @songbirdnest.com/Songbird/MediaPageManager;1

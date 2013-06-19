@@ -535,6 +535,7 @@ sbHotkeyService.prototype =
       category: "app-startup",
       entry:    SB_HOTKEY_SERVICE_DESC,
       value:    "service," + SB_HOTKEY_SERVICE_CONTRACTID
+      service:  true
     }
   ],
   QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports,
@@ -739,10 +740,11 @@ sbHotkeyConfiguration.prototype =
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
-function NSGetModule(compMgr, fileSpec)
-{
-  return XPCOMUtils.generateModule([sbHotkeyService,
-                                    sbDefaultGlobalHotkeyActions,
-                                    sbHotkeyConfiguration]);
-}
+// function NSGetModule(compMgr, fileSpec)
+// {
+//   return XPCOMUtils.generateModule([sbHotkeyService,
+//                                     sbDefaultGlobalHotkeyActions,
+//                                     sbHotkeyConfiguration]);
+// }
 
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbHotkeyService]);

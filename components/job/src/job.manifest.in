@@ -1,0 +1,4 @@
+## components/job ##
+component {afef6b00-90d5-11dd-ad8b-0800200c9a66} sbJobProgressService.js
+contract @songbirdnest.com/Songbird/JobProgressService;1 {afef6b00-90d5-11dd-ad8b-0800200c9a66}
+# category profile-after-change sbJobProgressService @songbirdnest.com/Songbird/JobProgressService;1

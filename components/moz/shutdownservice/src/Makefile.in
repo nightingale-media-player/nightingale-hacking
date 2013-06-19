@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/moz-shutdownservice.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbShutdownService.js \
+                      $(CURDIR)/moz-shutdownservice.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

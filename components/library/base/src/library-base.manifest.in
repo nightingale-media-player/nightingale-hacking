@@ -1,0 +1,12 @@
+## components/library/base ##
+component {10a07ef5-8ab6-4728-9172-4e609f65b4a2} sbDynamicPlaylist.js
+contract @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1 {10a07ef5-8ab6-4728-9172-4e609f65b4a2}
+category app-startup sbDynamicPlaylist @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
+
+component {1ed101bc-a11c-4e03-83af-514672bd3a70} sbLibrarySearchSuggester.js
+contract @mozilla.org/autocomplete/search;1?name=library-distinct-properties {1ed101bc-a11c-4e03-83af-514672bd3a70}
+# category profile-after-change sbLibrarySearchSuggester @mozilla.org/autocomplete/search;1?name=library-distinct-properties
+
+component {6c236836-1dd2-11b2-bd72-d1a4ceb6bef3} sbMediaItemControllerTest.js
+contract @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=TEST_MEDIA_ITEM_CONTROLLER_ADDED {6c236836-1dd2-11b2-bd72-d1a4ceb6bef3}
+# category profile-after-change sbMediaItemControllerTest @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=TEST_MEDIA_ITEM_CONTROLLER_ADDED

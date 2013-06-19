@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediaimport-library-base.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryImporterManager.js \
+                      $(CURDIR)/mediaimport-library-base.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

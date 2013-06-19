@@ -50,6 +50,11 @@ SmartMediaListsUpdater.prototype = {
   classDescription: "Songbird Smart Medialists Updater Module",
   classID         : Components.ID("{35af253e-c7b0-40d6-a1a2-c747de924639}"),
   contractID      : "@songbirdnest.com/Songbird/SmartMediaListsUpdater;1",
+
+  _xpcom_categories: [{
+    category: "app-startup",
+    service: true
+  }],
   
   // medialistlistener batch count
   _batchCount            : 0,
@@ -790,17 +795,17 @@ SmartMediaListsUpdater.prototype = {
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-function postRegister(aCompMgr, aFileSpec, aLocation) {
-  // Get instantiated on startup
-  XPCOMUtils.categoryManager
-            .addCategoryEntry('app-startup',
-                              'smartplaylists-updater', 
-                              'service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1',
-                              true, 
-                              true);
-}
+// function postRegister(aCompMgr, aFileSpec, aLocation) {
+//   // Get instantiated on startup
+//   XPCOMUtils.categoryManager
+//             .addCategoryEntry('app-startup',
+//                               'smartplaylists-updater', 
+//                               'service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1',
+//                               true, 
+//                               true);
+// }
 
 // module
 var NSGetModule = 
-  XPCOMUtils.generateNSGetModule([SmartMediaListsUpdater], 
-                                 postRegister);
+  XPCOMUtils.generateNSGetFactory([SmartMediaListsUpdater], 
+                                  postRegister);

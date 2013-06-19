@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/moz-filedownloader.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbFileDownloader.js \
+                      $(CURDIR)/moz-filedownloader.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

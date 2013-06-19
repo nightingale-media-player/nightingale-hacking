@@ -47,8 +47,12 @@ DYNAMIC_LIB = sbMediaSniffer
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/contenthandling.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = \
  $(topsrcdir)/components/contenthandling/media/sbMediaContentListener.js \
+ $(CURDIR)/contenthandling.manifest \
  $(NULL)
 
 IS_COMPONENT = 1

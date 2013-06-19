@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbMetrics.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/metrics.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbMetrics.js \
+                      $(CURDIR)/metrics.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

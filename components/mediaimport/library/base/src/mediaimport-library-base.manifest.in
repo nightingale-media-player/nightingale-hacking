@@ -1,0 +1,4 @@
+## components/mediaimport/library/base ##
+component {0ed2a7e0-78ac-4574-8554-b1e422b02642} sbLibraryImporterManager.js
+contract @songbirdnest.com/Songbird/LibraryImporterManager;1 {0ed2a7e0-78ac-4574-8554-b1e422b02642}
+category app-startup sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1

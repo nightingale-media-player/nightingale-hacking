@@ -170,4 +170,4 @@ BaseDeviceHelper.prototype = {
     ])
 };
 
-NSGetModule = XPCOMUtils.generateNSGetModule([BaseDeviceHelper], null, null);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([BaseDeviceHelper]);

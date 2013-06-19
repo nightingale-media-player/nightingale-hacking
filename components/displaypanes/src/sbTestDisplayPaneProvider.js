@@ -58,4 +58,4 @@ TestDisplayPaneProvider.prototype = {
       XPCOMUtils.generateQI([Ci.sbIDisplayPaneContentInfo])
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([TestDisplayPaneProvider]);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([TestDisplayPaneProvider]);

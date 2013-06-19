@@ -1,0 +1,4 @@
+## components/property ##
+component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} sbSmartPlaylistPropertyRegistrar.js
+contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
+category app-startup sbSmartPlaylistPropertyRegistrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1

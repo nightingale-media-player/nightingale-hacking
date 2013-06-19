@@ -29,8 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/search.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbSearchSuggester.js \
-                      $(srcdir)/sbLibrarySearch.js   \
+                      $(srcdir)/sbLibrarySearch.js \
+                      $(CURDIR)/search.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -29,10 +29,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/protocol.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbAboutRedirector.js \
                       $(srcdir)/sbSongbirdProtocol.js \
                       $(srcdir)/sbAboutCredits.js \
                       $(srcdir)/sbAboutDRM.js \
+                      $(CURDIR)/protocol.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

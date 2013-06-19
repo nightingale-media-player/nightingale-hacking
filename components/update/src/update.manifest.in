@@ -1,0 +1,4 @@
+## components/update ##
+component {927d9849-8565-4bc4-805a-f3a6ad1b25ec} sbAddOnBundleUpdateService.js
+contract @songbirdnest.com/AddOnBundleUpdateService;1 {927d9849-8565-4bc4-805a-f3a6ad1b25ec}
+# category profile-after-change sbAddOnBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1

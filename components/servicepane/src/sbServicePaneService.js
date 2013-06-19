@@ -1080,4 +1080,4 @@ ServicePaneService.prototype = {
   }
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([ServicePaneService]);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([ServicePaneService]);

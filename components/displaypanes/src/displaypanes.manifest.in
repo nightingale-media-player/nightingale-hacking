@@ -1,0 +1,4 @@
+## components/displaypanes ##
+component {6aef120f-d7ad-414d-a93d-3ac945e64301} sbDisplayPanes.js
+contract @songbirdnest.com/Songbird/DisplayPane/Manager;1 {6aef120f-d7ad-414d-a93d-3ac945e64301}
+category display-pane-provider sbDisplayPanes @songbirdnest.com/Songbird/DisplayPane/Manager;1

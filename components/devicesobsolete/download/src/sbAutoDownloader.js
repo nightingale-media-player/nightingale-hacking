@@ -104,6 +104,12 @@ sbAutoDownloader.prototype.classDescription =
 sbAutoDownloader.prototype.classID =
     Components.ID("{a3d7426b-0b22-4f07-b72c-e44bab0759f7}");
 sbAutoDownloader.prototype.contractID = '@songbirdnest.com/autodownloader;1';
+sbAutoDownloader.prototype._xpcom_categories = 
+[{
+  category: "app-startup",
+  service: true
+}];
+
 sbAutoDownloader.prototype.flags = Ci.nsIClassInfo.SINGLETON;
 sbAutoDownloader.prototype.interfaces =
     [Ci.nsISupports, Ci.nsIClassInfo, Ci.nsIObserver, Ci.sbIMediaListListener];
@@ -261,17 +267,14 @@ function sbAutoDownloader__clearTimer() {
 }
 
 
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAutoDownloader]);
 
-var NSGetModule = XPCOMUtils.generateNSGetModule(
-  [
-    sbAutoDownloader,
-  ],
-  function(aCompMgr, aFileSpec, aLocation) {
-    XPCOMUtils.categoryManager.addCategoryEntry(
-      "app-startup",
-      sbAutoDownloader.prototype.classDescription,
-      "service," + sbAutoDownloader.prototype.contractID,
-      true,
-      true);
-  }
-);
+//   function(aCompMgr, aFileSpec, aLocation) {
+//     XPCOMUtils.categoryManager.addCategoryEntry(
+//       "app-startup",
+//       sbAutoDownloader.prototype.classDescription,
+//       "service," + sbAutoDownloader.prototype.contractID,
+//       true,
+//       true);
+//   }
+// );

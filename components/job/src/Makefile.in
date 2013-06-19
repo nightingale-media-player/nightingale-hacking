@@ -31,8 +31,13 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_JSMODULES = $(srcdir)/SBJobUtils.jsm \
                      $(NULL)
-                     
-SONGBIRD_COMPONENTS = $(srcdir)/sbJobProgressService.js
+
+SONGBIRD_PP_RESOURCES = $(srcdir)/job.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbJobProgressService.js \
+                      $(CURDIR)/job.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

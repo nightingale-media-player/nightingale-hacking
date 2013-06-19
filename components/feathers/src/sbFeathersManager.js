@@ -487,7 +487,8 @@ FeathersManager.prototype = {
   [{
     category: "app-startup",
     entry: "feathers-manager",
-    value: "service," + CONTRACTID
+    value: "service," + CONTRACTID,
+    service: true
   }],
   constructor: FeathersManager,
   
@@ -1454,9 +1455,5 @@ FeathersManager_switchFeathers_callback.prototype = {
  * ----------------------------------------------------------------------------
  */
 
-function NSGetModule(comMgr, fileSpec) {
-  return XPCOMUtils.generateModule([FeathersManager]);
-} // NSGetModule
-
-
+var NSGetModule = XPCOMUtils.generateNSGetFactory([FeathersManager]);
 

@@ -1,0 +1,8 @@
+## components/search ##
+component {13d82f60-a625-11df-981c-0800200c9a66} sbLibrarySearch.js
+contract @songbirdnest.com/Songbird/songbird-internal-search;1 {13d82f60-a625-11df-981c-0800200c9a66}
+# category profile-after-change sbLibrarySearch @songbirdnest.com/Songbird/songbird-internal-search;1
+
+component {0be64502-ee00-11db-8314-0800200c9a66} sbSearchSuggester.js
+contract @mozilla.org/autocomplete/search;1?name=songbird-autocomplete {0be64502-ee00-11db-8314-0800200c9a66}
+# category profile-after-change sbSearchSuggester @mozilla.org/autocomplete/search;1?name=songbird-autocomplete

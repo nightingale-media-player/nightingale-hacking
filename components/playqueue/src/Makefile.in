@@ -67,7 +67,11 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 IS_COMPONENT = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/playqueue.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbPlayQueueContentInfo.js \
+                      $(CURDIR)/playqueue.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

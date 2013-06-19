@@ -1,0 +1,4 @@
+## components/moz/shutdownservice ##
+component {594137ED-DB4A-4530-8635-2573C018B4FB} sbShutdownService.js
+contract @songbirdnest.com/shutdown-service;1 {594137ED-DB4A-4530-8635-2573C018B4FB}
+# category profile-after-change sbShutdownService @songbirdnest.com/shutdown-service;1

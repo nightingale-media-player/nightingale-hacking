@@ -29,9 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/servicepane.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbServicePaneService.js \
                       $(srcdir)/sbDeviceServicePaneService.js \
                       $(srcdir)/sbLibraryServicePaneService.js \
+                      $(CURDIR)/servicepane.manifest \
                       $(NULL)
 
 SONGBIRD_JSMODULES = $(srcdir)/ServicePaneHelper.jsm \

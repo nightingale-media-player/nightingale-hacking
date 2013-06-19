@@ -1,0 +1,4 @@
+## components/mediacore/manager ##
+component {8bb6de60-a11b-11de-8a39-0800200c9a66} sbMediacoreErrorHandler.js
+contract @songbirdnest.com/Songbird/MediacoreErrorHandler;1 {8bb6de60-a11b-11de-8a39-0800200c9a66}
+# category profile-after-change sbMediacoreErrorHandler @songbirdnest.com/Songbird/MediacoreErrorHandler;1

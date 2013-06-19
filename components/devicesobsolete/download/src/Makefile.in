@@ -92,7 +92,12 @@ JS_COMPONENTS = $(srcdir)/sbAutoDownloader.js \
                 $(srcdir)/sbDownloadDeviceServicePaneModule.js \
                 $(NULL)
 
-SONGBIRD_COMPONENTS = $(JS_COMPONENTS)
+SONGBIRD_PP_RESOURCES = $(srcdir)/devicesobsolete-download.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(JS_COMPONENTS) \
+                      $(CURDIR)/devicesobsolete-download.manifest \
+                      $(NULL)
 
 IS_COMPONENT = 1
 

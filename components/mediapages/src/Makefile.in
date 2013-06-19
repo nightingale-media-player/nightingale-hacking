@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbMediaPageManager.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/mediapages.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbMediaPageManager.js \
+                      $(CURDIR)/mediapages.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

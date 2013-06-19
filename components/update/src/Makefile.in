@@ -45,7 +45,11 @@ IS_COMPONENT = 1
 
 DYNAMIC_LIB = sbUpdate
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/update.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbAddOnBundleUpdateService.js \
+                      $(CURDIR)/update.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk
