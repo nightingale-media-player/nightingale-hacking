@@ -13,7 +13,7 @@
  *
  * The Original Code is FUEL.
  *
- * The Initial Developer of the Original Code is Mozilla Foundation.
+ * The Initial Developer of the Original Code is Mozilla Corporation.
  * Portions created by the Initial Developer are Copyright (C) 2006
  * the Initial Developer. All Rights Reserved.
  *
@@ -34,9 +34,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://gre/modules/AddonManager.jsm");
 
 //=================================================
 // Shutdown - used to store cleanup functions which will
@@ -106,19 +103,14 @@ EventItem.prototype = {
 
 //=================================================
 // Events constructor
-function Events(notifier) {
+function Events() {
   this._listeners = [];
-  this._notifier = notifier;
 }
 
 //=================================================
 // Events implementation
 Events.prototype = {
   addListener : function evts_al(aEvent, aListener) {
-    function hasFilter(element) {
-      return element.event == aEvent && element.listener == aListener;
-    }
-
     if (this._listeners.some(hasFilter))
       return;
 
@@ -127,21 +119,21 @@ Events.prototype = {
       listener: aListener
     });
 
-    if (this._notifier) {
-      this._notifier(aEvent, aListener);
+    function hasFilter(element) {
+      return element.event == aEvent && element.listener == aListener;
     }
   },
 
   removeListener : function evts_rl(aEvent, aListener) {
+    this._listeners = this._listeners.filter(hasFilter);
+
     function hasFilter(element) {
       return (element.event != aEvent) || (element.listener != aListener);
     }
-
-    this._listeners = this._listeners.filter(hasFilter);
   },
 
   dispatch : function evts_dispatch(aEvent, aEventItem) {
-    var eventItem = new EventItem(aEvent, aEventItem);
+    eventItem = new EventItem(aEvent, aEventItem);
 
     this._listeners.forEach(function(key){
       if (key.event == aEvent) {
@@ -219,7 +211,7 @@ PreferenceBranch.prototype = {
   // modified: true, false (prefHasUserValue)
   find : function prefs_find(aOptions) {
     var retVal = [];
-    var items = this._prefs.getChildList("");
+    var items = this._prefs.getChildList("", []);
 
     for (var i = 0; i < items.length; i++) {
       retVal.push(new Preference(items[i], this));
@@ -396,7 +388,7 @@ SessionStorage.prototype = {
 function Extension(aItem) {
   this._item = aItem;
   this._firstRun = false;
-  this._prefs = new PreferenceBranch("extensions." + this.id + ".");
+  this._prefs = new PreferenceBranch("extensions." + this._item.id + ".");
   this._storage = new SessionStorage();
   this._events = new Events();
 
@@ -406,8 +398,22 @@ function Extension(aItem) {
     this._firstRun = true;
   }
 
-  AddonManager.addAddonListener(this);
-  AddonManager.addInstallListener(this);
+  this._enabled = false;
+  const PREFIX_ITEM_URI = "urn:mozilla:item:";
+  const PREFIX_NS_EM = "http://www.mozilla.org/2004/em-rdf#";
+  var rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
+  var itemResource = rdf.GetResource(PREFIX_ITEM_URI + this._item.id);
+  if (itemResource) {
+    var extmgr = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager);
+    var ds = extmgr.datasource;
+    var target = ds.GetTarget(itemResource, rdf.GetResource(PREFIX_NS_EM + "isDisabled"), true);
+    if (target && target instanceof Ci.nsIRDFLiteral)
+      this._enabled = (target.Value != "true");
+  }
+
+  var os = Components.classes["@mozilla.org/observer-service;1"]
+                     .getService(Ci.nsIObserverService);
+  os.addObserver(this, "em-action-requested", false);
 
   var self = this;
   gShutdown.push(function(){ self._shutdown(); });
@@ -418,38 +424,31 @@ function Extension(aItem) {
 Extension.prototype = {
   // cleanup observer so we don't leak
   _shutdown: function ext_shutdown() {
-    AddonManager.removeAddonListener(this);
-    AddonManager.removeInstallListener(this);
+    var os = Components.classes["@mozilla.org/observer-service;1"]
+                       .getService(Ci.nsIObserverService);
+    os.removeObserver(this, "em-action-requested");
 
     this._prefs = null;
     this._storage = null;
     this._events = null;
   },
 
-  // for AddonListener
-  onDisabling: function(addon, needsRestart) {
-    if (addon.id == this.id)
-      this._events.dispatch("disable", this.id);
-  },
-
-  onEnabling: function(addon, needsRestart) {
-    if (addon.id == this.id)
-      this._events.dispatch("enable", this.id);
-  },
-
-  onUninstalling: function(addon, needsRestart) {
-    if (addon.id == this.id)
-      this._events.dispatch("uninstall", this.id);
-  },
-
-  onOperationCancelled: function(addon) {
-    if (addon.id == this.id)
-      this._events.dispatch("cancel", this.id);
-  },
-
-  onInstallEnded: function(install, addon) {
-    if (addon.id == this.id)
-      this._events.dispatch("upgrade", this.id);
+  // for nsIObserver
+  observe: function ext_observe(aSubject, aTopic, aData)
+  {
+    if ((aSubject instanceof Ci.nsIUpdateItem) && (aSubject.id == this._item.id))
+    {
+      if (aData == "item-uninstalled")
+        this._events.dispatch("uninstall", this._item.id);
+      else if (aData == "item-disabled")
+        this._events.dispatch("disable", this._item.id);
+      else if (aData == "item-enabled")
+        this._events.dispatch("enable", this._item.id);
+      else if (aData == "item-cancel-action")
+        this._events.dispatch("cancel", this._item.id);
+      else if (aData == "item-upgraded")
+        this._events.dispatch("upgrade", this._item.id);
+    }
   },
 
   get id() {
@@ -461,7 +460,7 @@ Extension.prototype = {
   },
 
   get enabled() {
-    return this._item.isActive;
+    return this._enabled;
   },
 
   get version() {
@@ -490,12 +489,11 @@ Extension.prototype = {
 
 //=================================================
 // Extensions constructor
-function Extensions(addons) {
-  this._cache = {};
+function Extensions() {
+  this._extmgr = Components.classes["@mozilla.org/extensions/manager;1"]
+                           .getService(Ci.nsIExtensionManager);
 
-  addons.forEach(function(addon) {
-    this._cache[addon.id] = new Extension(addon);
-  }, this);
+  this._cache = {};
 
   var self = this;
   gShutdown.push(function() { self._shutdown(); });
@@ -505,7 +503,20 @@ function Extensions(addons) {
 // Extensions implementation
 Extensions.prototype = {
   _shutdown : function exts_shutdown() {
+    this._extmgr = null;
     this._cache = null;
+  },
+
+  /*
+   * Helper method to check cache before creating a new extension
+   */
+  _get : function exts_get(aId) {
+    if (this._cache.hasOwnProperty(aId))
+      return this._cache[aId];
+
+    var newExt = new Extension(this._extmgr.getItemForID(aId));
+    this._cache[aId] = newExt;
+    return newExt;
   },
 
   get all() {
@@ -519,15 +530,22 @@ Extensions.prototype = {
   // minVersion: "1.0"
   // maxVersion: "2.0"
   find : function exts_find(aOptions) {
-    return [e for each (e in this._cache)];
+    var retVal = [];
+    var items = this._extmgr.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+
+    for (var i = 0; i < items.length; i++) {
+      retVal.push(this._get(items[i].id));
+    }
+
+    return retVal;
   },
 
   has : function exts_has(aId) {
-    return aId in this._cache;
+    return this._extmgr.getItemForID(aId) != null;
   },
 
   get : function exts_get(aId) {
-    return this.has(aId) ? this._cache[aId] : null;
+    return this.has(aId) ? this._get(aId) : null;
   },
 
   QueryInterface : XPCOMUtils.generateQI([Ci.extIExtensions])
@@ -542,23 +560,45 @@ function extApplication() {
 // extApplication implementation
 extApplication.prototype = {
   initToolkitHelpers: function extApp_initToolkitHelpers() {
-    XPCOMUtils.defineLazyServiceGetter(this, "_info",
-                                       "@mozilla.org/xre/app-info;1",
-                                       "nsIXULAppInfo");
+    this._console = null;
+    this._storage = null;
+    this._prefs = null;
+    this._extensions = null;
+    this._events = null;
 
-    // While the other event listeners are loaded only if needed,
-    // FUEL *must* listen for shutdown in order to clean up it's
-    // references to various services, and to remove itself as
-    // observer of any other notifications.
-    this._obs = Cc["@mozilla.org/observer-service;1"].
-                getService(Ci.nsIObserverService);
-    this._obs.addObserver(this, "xpcom-shutdown", false);
-    this._registered = {"unload": true};
+    this._info = Components.classes["@mozilla.org/xre/app-info;1"]
+                           .getService(Ci.nsIXULAppInfo);
+
+    var os = Components.classes["@mozilla.org/observer-service;1"]
+                       .getService(Ci.nsIObserverService);
+
+    os.addObserver(this, "final-ui-startup", false);
+    os.addObserver(this, "quit-application-requested", false);
+    os.addObserver(this, "xpcom-shutdown", false);
   },
 
-  classInfo: XPCOMUtils.generateCI({interfaces: [Ci.extIApplication,
-                                                 Ci.nsIObserver],
-                                    flags: Ci.nsIClassInfo.SINGLETON}),
+  // get this contractID registered for certain categories via XPCOMUtils
+  _xpcom_categories: [
+    // make Application a startup observer
+    { category: "app-startup", service: true },
+
+    // add Application as a global property for easy access
+    { category: "JavaScript global privileged property" }
+  ],
+
+  // for nsIClassInfo
+  flags : Ci.nsIClassInfo.SINGLETON,
+  implementationLanguage : Ci.nsIProgrammingLanguage.JAVASCRIPT,
+
+  getInterfaces : function app_gi(aCount) {
+    var interfaces = [Ci.extIApplication, Ci.nsIObserver, Ci.nsIClassInfo];
+    aCount.value = interfaces.length;
+    return interfaces;
+  },
+
+  getHelperForLanguage : function app_ghfl(aCount) {
+    return null;
+  },
 
   // extIApplication
   get id() {
@@ -596,65 +636,64 @@ extApplication.prototype = {
       }
 
       // release our observers
-      this._obs.removeObserver(this, "app-startup");
-      this._obs.removeObserver(this, "final-ui-startup");
-      this._obs.removeObserver(this, "quit-application-requested");
-      this._obs.removeObserver(this, "xpcom-shutdown");
+      var os = Components.classes["@mozilla.org/observer-service;1"]
+                         .getService(Ci.nsIObserverService);
+
+      os.removeObserver(this, "final-ui-startup");
+      os.removeObserver(this, "quit-application-requested");
+      os.removeObserver(this, "xpcom-shutdown");
+
+      this._info = null;
+      this._console = null;
+      this._prefs = null;
+      this._storage = null;
+      this._events = null;
+      this._extensions = null;
     }
   },
 
   get console() {
-    let console = new Console();
-    this.__defineGetter__("console", function() console);
-    return this.console;
+    if (this._console == null)
+        this._console = new Console();
+
+    return this._console;
   },
 
   get storage() {
-    let storage = new SessionStorage();
-    this.__defineGetter__("storage", function() storage);
-    return this.storage;
+    if (this._storage == null)
+        this._storage = new SessionStorage();
+
+    return this._storage;
   },
 
   get prefs() {
-    let prefs = new PreferenceBranch("");
-    this.__defineGetter__("prefs", function() prefs);
-    return this.prefs;
+    if (this._prefs == null)
+        this._prefs = new PreferenceBranch("");
+
+    return this._prefs;
   },
 
-  getExtensions: function(callback) {
-    AddonManager.getAddonsByTypes(["extension"], function(addons) {
-      callback.callback(new Extensions(addons));
-    });
+  get extensions() {
+    if (this._extensions == null)
+      this._extensions = new Extensions();
+
+    return this._extensions;
   },
 
   get events() {
+    if (this._events == null)
+        this._events = new Events();
 
-    // This ensures that FUEL only registers for notifications as needed
-    // by callers. Note that the unload (xpcom-shutdown) event is listened
-    // for by default, as it's needed for cleanup purposes.
-    var self = this;
-    function registerCheck(aEvent) {
-      var rmap = { "load": "app-startup",
-                   "ready": "final-ui-startup",
-                   "quit": "quit-application-requested"};
-      if (!(aEvent in rmap) || aEvent in self._registered)
-        return;
-
-      self._obs.addObserver(self, rmap[aEvent]);
-      self._registered[aEvent] = true;
-    }
-
-    let events = new Events(registerCheck);
-    this.__defineGetter__("events", function() events);
-    return this.events;
+    return this._events;
   },
 
   // helper method for correct quitting/restarting
   _quitWithFlags: function app__quitWithFlags(aFlags) {
+    let os = Components.classes["@mozilla.org/observer-service;1"]
+                       .getService(Components.interfaces.nsIObserverService);
     let cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
                                .createInstance(Components.interfaces.nsISupportsPRBool);
-    let quitType = aFlags & Components.interfaces.nsIAppStartup.eRestart ? "restart" : null;
-    this._obs.notifyObservers(cancelQuit, "quit-application-requested", quitType);
+    os.notifyObservers(cancelQuit, "quit-application-requested", null);
     if (cancelQuit.data)
       return false; // somebody canceled our quit request
 
