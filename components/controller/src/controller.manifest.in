@@ -1,0 +1,4 @@
+## components/controller ##
+component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} sbApplicationController.js
+contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
+# category profile-after-change sbApplicationController @songbirdnest.com/Songbird/ApplicationController;1

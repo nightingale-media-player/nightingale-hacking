@@ -1,0 +1,4 @@
+## components/dataremote ##
+component {e0990420-e9c0-11dd-ba2f-0800200c9a66} sbDataRemote.js
+contract @songbirdnest.com/Songbird/DataRemote;1 {e0990420-e9c0-11dd-ba2f-0800200c9a66}
+# category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1

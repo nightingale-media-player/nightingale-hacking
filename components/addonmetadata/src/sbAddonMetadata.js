@@ -413,62 +413,54 @@ AddonMetadata.prototype = {
 }; // AddonMetadata.prototype
 
 
-
-
-
-
-
 /**
  * ----------------------------------------------------------------------------
  * Registration for XPCOM
  * ----------------------------------------------------------------------------
  */
-var gModule = {
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    for (var key in this._objects) {
-      var obj = this._objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-                                               fileSpec, location, type);
-    }
-  },
+var NSGetModule = XPCOMUtils.generateNSGetFactory([AddonMetadata]);
 
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Components.interfaces.nsIFactory))
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+// var gModule = {
+//   registerSelf: function(componentManager, fileSpec, location, type) {
+//     componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
+//     for (var key in this._objects) {
+//       var obj = this._objects[key];
+//       componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
+//                                                fileSpec, location, type);
+//     }
+//   },
 
-    for (var key in this._objects) {
-      if (cid.equals(this._objects[key].CID))
-        return this._objects[key].factory;
-    }
+//   getClassObject: function(componentManager, cid, iid) {
+//     if (!iid.equals(Components.interfaces.nsIFactory))
+//       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+
+//     for (var key in this._objects) {
+//       if (cid.equals(this._objects[key].CID))
+//         return this._objects[key].factory;
+//     }
     
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
+//     throw Components.results.NS_ERROR_NO_INTERFACE;
+//   },
 
-  _makeFactory: #1= function(ctor) {
-    function ci(outer, iid) {
-      if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-      return (new ctor()).QueryInterface(iid);
-    } 
-    return { createInstance: ci };
-  },
+//   _makeFactory: #1= function(ctor) {
+//     function ci(outer, iid) {
+//       if (outer != null)
+//         throw Components.results.NS_ERROR_NO_AGGREGATION;
+//       return (new ctor()).QueryInterface(iid);
+//     } 
+//     return { createInstance: ci };
+//   },
   
-  _objects: {
-    AddonMetadata:     {   CID        : CID,
-                           contractID : CONTRACTID,
-                           className  : CLASSNAME,
-                           factory    : #1#(AddonMetadata)
-                         },
-  },
+//   _objects: {
+//     AddonMetadata:     {   CID        : CID,
+//                            contractID : CONTRACTID,
+//                            className  : CLASSNAME,
+//                            factory    : #1#(AddonMetadata)
+//                          },
+//   },
 
-  canUnload: function(componentManager) { 
-    return true; 
-  }
-}; // gModule
-
-function NSGetModule(comMgr, fileSpec) {
-  return gModule;
-} // NSGetModule
-
+//   canUnload: function(componentManager) { 
+//     return true; 
+//   }
+// }; // gModule
 

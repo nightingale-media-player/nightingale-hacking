@@ -52,7 +52,11 @@ IS_COMPONENT = 1
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/dataremote.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(topsrcdir)/components/dataremote/src/sbDataRemote.js \
+                      $(CURDIR)/dataremote.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

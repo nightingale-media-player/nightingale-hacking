@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/commandline.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbCommandLine.js \
+                      $(CURDIR)/commandline.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

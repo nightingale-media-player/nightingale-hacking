@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbBundle.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/bundle.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbBundle.js \
+                      $(CURDIR)/bundle.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

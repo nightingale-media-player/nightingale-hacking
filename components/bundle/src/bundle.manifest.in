@@ -1,0 +1,4 @@
+## components/bundle ##
+component {128badd1-aa05-4508-87cc-f3cb3e9b5499} sbBundle.js
+contract @songbirdnest.com/Songbird/Bundle;1 {128badd1-aa05-4508-87cc-f3cb3e9b5499}
+# category profile-after-change sbBundle @songbirdnest.com/Songbird/Bundle;1

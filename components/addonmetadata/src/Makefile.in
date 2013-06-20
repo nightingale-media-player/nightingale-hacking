@@ -29,6 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbAddonMetadata.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/addonmetadata.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbAddonMetadata.js \
+                      $(CURDIR)/addonmetadata.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

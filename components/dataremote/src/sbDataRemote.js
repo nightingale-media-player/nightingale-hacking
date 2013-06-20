@@ -626,7 +626,4 @@ const gDataRemoteModule = {
 
 }; // gDataRemoteModule
 
-function NSGetModule(compMgr, fileSpec) {
-  return gDataRemoteModule;
-} // NSGetModule
-
+var NSGetModule = XPCOMUtils.generateNSGetFactory([DataRemote]);

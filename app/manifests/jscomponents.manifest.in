@@ -1,7 +1,8 @@
-## components/addonmetadata ##
-component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} sbAddonMetadata.js
-contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
-# category profile-after-change sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
+### components/addonmetadata ##
+# component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} sbAddonMetadata.js
+# contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
+## category profile-after-change sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
+manifest addonmetadata.manifest
 
 
 ### components/appstartup ##
@@ -11,16 +12,18 @@ contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-a
 manifest appstartup.manifest
 
 
-## components/bundle ##
-component {128badd1-aa05-4508-87cc-f3cb3e9b5499} sbBundle.js
-contract @songbirdnest.com/Songbird/Bundle;1 {128badd1-aa05-4508-87cc-f3cb3e9b5499}
-# category profile-after-change sbBundle @songbirdnest.com/Songbird/Bundle;1
+### components/bundle ##
+# component {128badd1-aa05-4508-87cc-f3cb3e9b5499} sbBundle.js
+# contract @songbirdnest.com/Songbird/Bundle;1 {128badd1-aa05-4508-87cc-f3cb3e9b5499}
+## category profile-after-change sbBundle @songbirdnest.com/Songbird/Bundle;1
+manifest bundle.manifest
 
 
-## components/commandline ##
-component {ff29ec35-1294-42ae-a341-63d0303df969} sbCommandLine.js
-contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {ff29ec35-1294-42ae-a341-63d0303df969}
-# category profile-after-change sbCommandLine @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
+### components/commandline ##
+# component {ff29ec35-1294-42ae-a341-63d0303df969} sbCommandLine.js
+# contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {ff29ec35-1294-42ae-a341-63d0303df969}
+## category profile-after-change sbCommandLine @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
+manifest commandline.manifest
 
 
 ### components/contenthandling ##
@@ -30,16 +33,18 @@ contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {f
 manifest contenthandling.manifest
 
 
-## components/controller ##
-component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} sbApplicationController.js
-contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
-# category profile-after-change sbApplicationController @songbirdnest.com/Songbird/ApplicationController;1
+### components/controller ##
+# component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} sbApplicationController.js
+# contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
+## category profile-after-change sbApplicationController @songbirdnest.com/Songbird/ApplicationController;1
+manifest controller.manifest
 
 
-## components/dataremote ##
-component {e0990420-e9c0-11dd-ba2f-0800200c9a66} sbDataRemote.js
-contract @songbirdnest.com/Songbird/DataRemote;1 {e0990420-e9c0-11dd-ba2f-0800200c9a66}
-# category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1
+### components/dataremote ##
+# component {e0990420-e9c0-11dd-ba2f-0800200c9a66} sbDataRemote.js
+# contract @songbirdnest.com/Songbird/DataRemote;1 {e0990420-e9c0-11dd-ba2f-0800200c9a66}
+## category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1
+manifest dataremote.manifest
 
 
 ### components/devices/cd ##
@@ -341,18 +346,19 @@ manifest protocol.manifest
 manifest search.manifest
 
 
-## components/servicepane ##
-component {845c31ee-c30e-4fb6-9667-0b10e58c7069} sbDeviceServicePaneService.js
-contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58c7069}
-# category profile-after-change sbDeviceServicePaneService @songbirdnest.com/servicepane/device;1
+### components/servicepane ##
+# component {845c31ee-c30e-4fb6-9667-0b10e58c7069} sbDeviceServicePaneService.js
+# contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58c7069}
+## category profile-after-change sbDeviceServicePaneService @songbirdnest.com/servicepane/device;1
 
-component {64ec2154-3733-4862-af3f-9f2335b14821} sbLibraryServicePaneService.js
-contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
-# category profile-after-change sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
+# component {64ec2154-3733-4862-af3f-9f2335b14821} sbLibraryServicePaneService.js
+# contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
+## category profile-after-change sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
 
-component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
-contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
-# category profile-after-change sbServicePaneService @songbirdnest.com/servicepane/service;1
+# component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
+# contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
+## category profile-after-change sbServicePaneService @songbirdnest.com/servicepane/service;1
+manifest servicepane.manifest
 
 
 ### components/update ##
