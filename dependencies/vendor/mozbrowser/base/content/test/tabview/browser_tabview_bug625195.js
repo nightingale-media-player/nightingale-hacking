@@ -34,7 +34,7 @@ function test() {
       ok(!document.getElementById("context_openTabInWindow").disabled, "The 'Move to New Window' menu item is enabled");
 
       let newTabTwo = gBrowser.selectedTab;
-      gBrowser.selected = originalTab;
+      gBrowser.selectedTab = originalTab;
 
       gBrowser.removeTab(newTabOne);
       gBrowser.removeTab(newTabTwo);
@@ -49,5 +49,7 @@ function test() {
 function popup(tab) {
   document.popupNode = tab;
   TabContextMenu.updateContextMenu(document.getElementById("tabContextMenu"));
+  is(TabContextMenu.contextTab, tab, "TabContextMenu context is the expected tab");
+  TabContextMenu.contextTab = null;
 }
 

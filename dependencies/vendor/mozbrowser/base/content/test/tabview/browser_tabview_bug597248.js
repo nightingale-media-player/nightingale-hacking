@@ -22,7 +22,7 @@ function setupOne(win) {
   afterAllTabsLoaded(function () setupTwo(win), win);
 }
 
-let restoreWin;
+let restoredWin;
 
 function setupTwo(win) {
   let contentWindow = win.TabView.getContentWindow();
@@ -34,29 +34,25 @@ function setupTwo(win) {
 
   // force all canvases to update, and hook in imageData save detection
   tabItems.forEach(function(tabItem) {
-    contentWindow.TabItems.update(tabItem.tab);
-    tabItem.addSubscriber(tabItem, "savedCachedImageData", function(item) {
-      item.removeSubscriber(item, "savedCachedImageData");
-      --numTabsToSave;
+    // mark thumbnail as dirty
+    tabItem.tabCanvas.paint();
+
+    tabItem.addSubscriber("savedCachedImageData", function onSaved(item) {
+      item.removeSubscriber("savedCachedImageData", onSaved);
+
+      if (!--numTabsToSave)
+        restoreWindow();
     });
   });
 
   // after the window is closed, restore it.
-  let xulWindowDestory = function() {
-    Services.obs.removeObserver(
-       xulWindowDestory, "xul-window-destroyed", false);
-
-    // "xul-window-destroyed" is just fired just before a XUL window is
-    // destroyed so restore window and test it after a delay
+  let restoreWindow = function() {
     executeSoon(function() {
       restoredWin = undoCloseWindow();
       restoredWin.addEventListener("load", function onLoad(event) {
         restoredWin.removeEventListener("load", onLoad, false);
 
         registerCleanupFunction(function() restoredWin.close());
-
-        // ensure that closed tabs have been saved
-        is(numTabsToSave, 0, "All tabs were saved when window was closed.");
         is(restoredWin.gBrowser.tabs.length, 3, "The total number of tabs is 3");
 
         // setup tab variables and listen to the tabs load progress
@@ -87,8 +83,8 @@ function setupTwo(win) {
           let count = tabItems.length;
 
           tabItems.forEach(function(tabItem) {
-            tabItem.addSubscriber(tabItem, "loadedCachedImageData", function() {
-              tabItem.removeSubscriber(tabItem, "loadedCachedImageData");
+            tabItem.addSubscriber("showingCachedData", function onLoaded() {
+              tabItem.removeSubscriber("showingCachedData", onLoaded);
               ok(tabItem.isShowingCachedData(),
                 "Tab item is showing cached data and is just connected. " +
                 tabItem.tab.linkedBrowser.currentURI.spec);
@@ -103,7 +99,6 @@ function setupTwo(win) {
       }, false);
     });
   };
-  Services.obs.addObserver(xulWindowDestory, "xul-window-destroyed", false);
 
   win.close();
 }

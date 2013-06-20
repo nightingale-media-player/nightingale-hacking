@@ -70,7 +70,7 @@ function init(aEvent)
   if (/a\d+$/.test(version)) {
     let buildID = Services.appinfo.appBuildID;
     let buildDate = buildID.slice(0,4) + "-" + buildID.slice(4,6) + "-" + buildID.slice(6,8);
-    document.getElementById("version").value += " (" + buildDate + ")";
+    document.getElementById("version").textContent += " (" + buildDate + ")";
   }
 
 #ifdef MOZ_OFFICIAL_BRANDING
@@ -86,11 +86,11 @@ function init(aEvent)
 
 #ifdef MOZ_UPDATER
   gAppUpdater = new appUpdater();
-#endif
 
   let defaults = Services.prefs.getDefaultBranch("");
   let channelLabel = document.getElementById("currentChannel");
   channelLabel.value = defaults.getCharPref("app.update.channel");
+#endif
 
 #ifdef XP_MACOSX
   // it may not be sized at this point, and we need its width to calculate its position

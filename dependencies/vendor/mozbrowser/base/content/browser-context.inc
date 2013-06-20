@@ -21,6 +21,8 @@
 #
 # Contributor(s):
 #   Ehsan Akhgari <ehsan.akhgari@gmail.com>
+#   Rob Campbell <rcampbell@mozilla.com>
+#   Panagiotis Astithas <past@mozilla.com>
 #
 # Alternatively, the contents of this file may be used under the terms of
 # either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,6 +38,7 @@
 #
 # ***** END LICENSE BLOCK *****
 
+      <menuseparator id="page-menu-separator"/>
       <menuitem id="spell-no-suggestions"
                 disabled="true"
                 label="&spellNoSuggestions.label;"/>
@@ -339,3 +342,9 @@
                 label="&bidiSwitchPageDirectionItem.label;"
                 accesskey="&bidiSwitchPageDirectionItem.accesskey;"
                 oncommand="gContextMenu.switchPageDirection();"/>
+      <menuseparator id="inspect-separator" hidden="true"/>
+      <menuitem id="context-inspect"
+                hidden="true"
+                label="&inspectContextMenu.label;"
+                accesskey="&inspectContextMenu.accesskey;"
+                oncommand="gContextMenu.inspectNode();"/>

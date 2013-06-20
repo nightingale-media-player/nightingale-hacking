@@ -24,9 +24,7 @@ let PlacesOrganizer;
 
 function test() {
   waitForExplicitFinish();
-  gLibrary = window.openDialog("chrome://browser/content/places/places.xul",
-                               "", "chrome,toolbar=yes,dialog=no,resizable");
-  waitForFocus(onLibraryReady, gLibrary);
+  gLibrary = openLibrary(onLibraryReady);
 }
 
 function onLibraryReady() {
@@ -46,7 +44,8 @@ function onLibraryReady() {
 }
 
 function onClipboardReady() {
-  tests.pasteToTag();
+  tests.focusTag();
+  PlacesOrganizer._places.controller.paste();
   tests.historyNode();
   tests.checkForBookmarkInUI();
 
@@ -58,7 +57,7 @@ function onClipboardReady() {
   let tags = PlacesUtils.tagging.getTagsForURI(NetUtil.newURI(TEST_URL));
   is(tags.length, 0, "tags are gone");
   PlacesUtils.bookmarks.removeFolderChildren(PlacesUtils.unfiledBookmarksFolderId);
-  
+
   waitForClearHistory(finish);
 }
 
@@ -82,24 +81,18 @@ let tests = {
     is(tags[0], 'foo', "tag is foo");
   },
 
-  focusTag: function (paste){
+  focusTag: function (){
     // focus the new tag
     PlacesOrganizer.selectLeftPaneQuery("Tags");
     let tags = PlacesOrganizer._places.selectedNode;
     tags.containerOpen = true;
     let fooTag = tags.getChild(0);
-    this.tagNode = fooTag;
+    let tagNode = fooTag;
     PlacesOrganizer._places.selectNode(fooTag);
-    is(this.tagNode.title, 'foo', "tagNode title is foo");
+    is(tagNode.title, 'foo', "tagNode title is foo");
     let ip = PlacesOrganizer._places.insertionPoint;
     ok(ip.isTag, "IP is a tag");
-    if (paste) {
-      ok(true, "About to paste");
-      PlacesOrganizer._places.controller.paste();
-    }
   },
-
-  histNode: null,
 
   copyHistNode: function (){
     // focus the history object
@@ -108,17 +101,12 @@ let tests = {
     PlacesUtils.asContainer(histContainer);
     histContainer.containerOpen = true;
     PlacesOrganizer._places.selectNode(histContainer.getChild(0));
-    this.histNode = PlacesOrganizer._content.view.nodeForTreeIndex(0);
-    PlacesOrganizer._content.selectNode(this.histNode);
-    is(this.histNode.uri, MOZURISPEC,
-       "historyNode exists: " + this.histNode.uri);
+    let histNode = PlacesOrganizer._content.view.nodeForTreeIndex(0);
+    PlacesOrganizer._content.selectNode(histNode);
+    is(histNode.uri, MOZURISPEC,
+       "historyNode exists: " + histNode.uri);
     // copy the history node
     PlacesOrganizer._content.controller.copy();
-  },
-
-  pasteToTag: function (){
-    // paste history node into tag
-    this.focusTag(true);
   },
 
   historyNode: function (){
@@ -150,21 +138,4 @@ let tests = {
     ok(unsortedNode, "unsortedNode is not null: " + unsortedNode.uri);
     is(unsortedNode.uri, MOZURISPEC, "node uri's are the same");
   },
-
-  tagNode: null,
 };
-
-/**
- * Clears history invoking callback when done.
- */
-function waitForClearHistory(aCallback) {
-  const TOPIC_EXPIRATION_FINISHED = "places-expiration-finished";
-  let observer = {
-    observe: function(aSubject, aTopic, aData) {
-      Services.obs.removeObserver(this, TOPIC_EXPIRATION_FINISHED);
-      aCallback();
-    }
-  };
-  Services.obs.addObserver(observer, TOPIC_EXPIRATION_FINISHED, false);
-  PlacesUtils.bhistory.removeAllPages();
-}

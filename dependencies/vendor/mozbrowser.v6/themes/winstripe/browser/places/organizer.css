@@ -1,0 +1,186 @@
+/* Toolbar */
+#placesToolbar {
+  padding: 3px;
+  -moz-padding-end: 6px;
+}
+
+#placesToolbar > toolbarbutton[disabled] > .toolbarbutton-icon {
+  opacity: .4;
+}
+
+#back-button,
+#forward-button {
+  list-style-image: url("chrome://browser/skin/Toolbar.png");
+}
+
+#back-button {
+  -moz-image-region: rect(0, 18px, 18px, 0);
+}
+
+#forward-button {
+  -moz-image-region: rect(0, 36px, 18px, 18px);
+}
+
+#back-button:-moz-locale-dir(rtl) > .toolbarbutton-icon,
+#forward-button:-moz-locale-dir(rtl) > .toolbarbutton-icon {
+  -moz-transform: scaleX(-1);
+}
+
+/* Menu */
+#placesMenu {
+  -moz-margin-start: 6px;
+  -moz-appearance: none;
+  border: none;
+}
+
+#placesMenu > menu {
+  -moz-padding-start: 4px;
+  -moz-padding-end: 1px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  -moz-appearance: toolbarbutton;
+%ifdef XP_WIN
+% use standard menu colors on OS/2
+  color: -moz-DialogText;
+%endif
+  border: 1px solid transparent;
+}
+
+#placesMenu > menu[_moz-menuactive="true"] {
+  background-color: transparent;
+}
+
+#placesMenu > menu:hover {
+  border-color: ThreeDHighlight ThreeDShadow ThreeDShadow ThreeDHighlight;
+}
+
+#placesMenu > menu[open="true"] {
+  border-color: ThreeDShadow ThreeDHighlight ThreeDHighlight ThreeDShadow;
+  -moz-padding-start: 5px;
+  -moz-padding-end: 0px;
+  padding-top: 3px;
+  padding-bottom: 1px;
+}
+
+#placesMenu > menu > .menubar-text {
+  -moz-padding-end: 8px;
+  background: url(chrome://global/skin/arrow/arrow-dn.gif) right center no-repeat;
+}
+
+#placesMenu > menu > .menubar-text:-moz-locale-dir(rtl) {
+  background-position: left center;
+}
+
+/* organize, view and maintenance buttons icons */
+#organizeButton, 
+#viewMenu, 
+#maintenanceButton {
+  list-style-image: url("chrome://browser/skin/places/libraryToolbar.png");
+}
+
+/* organize button */
+#organizeButton {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+#organizeButton:hover,
+#organizeButton[open="true"] {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+
+/* view button */
+#viewMenu {
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+#viewMenu:hover,
+#viewMenu[open="true"] {
+  -moz-image-region: rect(16px, 32px, 32px, 16px);
+}
+
+/* maintenance button */
+#maintenanceButton {
+  -moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+#maintenanceButton:hover,
+#maintenanceButton[open="true"] {
+  -moz-image-region: rect(16px, 48px, 32px, 32px);
+}
+
+/* Root View */
+#placesView {
+  border-top: 1px solid ThreeDDarkShadow;
+}
+
+/* Place List, Place Content */
+.placesTree {
+  margin: 0px;
+}
+
+#placesList {
+  -moz-appearance: none;
+  margin: 0px;
+  border: none;
+  padding: 0;
+}
+
+#placeContent {
+  -moz-appearance: none;
+  border: 0px;
+}
+
+#infoPaneBox {
+  border-top: 1px solid ThreeDShadow;
+  padding: 5px;
+}
+
+.small, .small[disabled="true"] {
+  min-width: 0px;
+  padding: 0px 4px 0px 4px;
+  margin: 0px;  
+  border: 0px;
+}
+
+.small .button-text,
+.small .button-box {
+  padding: 0px;
+  border: 0px;
+}
+
+#infoBoxExpanderLabel {
+  -moz-padding-start: 2px;
+}
+
+#organizerScopeBar {
+  -moz-appearance: toolbox;
+  padding: 2px 0;
+  -moz-padding-end: 3px;
+}
+
+#organizerScopeBar > toolbarbutton {
+  -moz-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 0 !important;
+  margin: 0 1px;
+}
+
+#organizerScopeBar > toolbarbutton > .toolbarbutton-icon {
+  padding: 0;
+  margin: 0;
+}
+
+#organizerScopeBar > toolbarbutton > .toolbarbutton-text {
+   margin: 0;
+   padding: 2px 5px;
+}
+
+#organizerScopeBar > toolbarbutton:not([disabled="true"]):not([checked="true"]):hover {
+  border-color: ThreeDShadow;
+}
+
+#organizerScopeBar > toolbarbutton[checked="true"] {
+  border-color: ThreeDDarkShadow !important;
+}
+
+#searchFilter {
+  margin: 0;
+}

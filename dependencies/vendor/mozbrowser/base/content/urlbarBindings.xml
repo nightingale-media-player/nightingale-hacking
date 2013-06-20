@@ -91,6 +91,7 @@
         this.completeDefaultIndex = this._prefs.getBoolPref("autoFill");
         this.timeout = this._prefs.getIntPref("delay");
         this._formattingEnabled = this._prefs.getBoolPref("formatting.enabled");
+        this._mayTrimURLs = this._prefs.getBoolPref("trimURLs");
 
         this._urlTooltip = document.getElementById("urlTooltip");
 
@@ -180,6 +181,16 @@
         ]]></body>
       </method>
 
+      <field name="_mayTrimURLs">true</field>
+      <method name="trimValue">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          // This method must not modify the given URL such that calling
+          // nsIURIFixup::createFixupURI with the result will produce a different URI.
+          return this._mayTrimURLs ? trimURL(aURL) : aURL;
+        ]]></body>
+      </method>
+
       <field name="_formattingEnabled">true</field>
       <method name="formatValue">
         <body><![CDATA[
@@ -192,27 +203,41 @@
 
           let textNode = this.editor.rootElement.firstChild;
           let value = textNode.textContent;
-          let matchedURL = value.match(/^((?:http|https|ftp):\/\/(?:[^\/]+@)?)(.+?)(?::\d+)?(?:\/|$)/);
+
+          let protocol = value.match(/^[a-z\d.+\-]+:/);
+          if (protocol &&
+              ["http:", "https:", "ftp:"].indexOf(protocol[0]) == -1)
+            return;
+          let matchedURL = value.match(/^((?:[a-z]+:\/\/)?(?:[^\/]+@)?)(.+?)(?::\d+)?(?:\/|$)/);
           if (!matchedURL)
             return;
 
           let [, preDomain, domain] = matchedURL;
           let baseDomain = domain;
-          try {
-            baseDomain = Services.eTLD.getBaseDomainFromHost(domain);
-          } catch (e) {}
-          let segments = function (s) s.replace(/[^.]*/g, "").length + 1;
-          let subSegments = segments(domain) - segments(baseDomain);
-          let subDomain = domain.match(new RegExp("(?:[^.]*\.){" + subSegments + "}"))[0];
+          let subDomain = "";
+          // getBaseDomainFromHost doesn't recognize IPv6 literals in brackets as IPs (bug 667159)
+          if (domain[0] != "[") {
+            try {
+              baseDomain = Services.eTLD.getBaseDomainFromHost(domain);
+            } catch (e) {}
+          }
+          if (baseDomain != domain) {
+            let segments = function (s) s.replace(/[^.]*/g, "").length + 1;
+            let subSegments = segments(domain) - segments(baseDomain);
+            subDomain = domain.match(new RegExp("(?:[^.]*\.){" + subSegments + "}"))[0];
+          }
 
-          let range = document.createRange();
-          range.setStart(textNode, 0);
-          range.setEnd(textNode, preDomain.length + subDomain.length);
-          selection.addRange(range);
+          let rangeLength = preDomain.length + subDomain.length;
+          if (rangeLength) {
+            let range = document.createRange();
+            range.setStart(textNode, 0);
+            range.setEnd(textNode, rangeLength);
+            selection.addRange(range);
+          }
 
           let startRest = preDomain.length + domain.length;
           if (startRest < value.length) {
-            range = document.createRange();
+            let range = document.createRange();
             range.setStart(textNode, startRest);
             range.setEnd(textNode, value.length);
             selection.addRange(range);
@@ -304,6 +329,11 @@
             gBrowser.loadURIWithFlags(url, flags, null, null, postData);
           }
 
+          // Focus the content area before triggering loads, since if the load
+          // occurs in a new tab, we want focus to be restored to the content
+          // area when the current tab is re-selected.
+          gBrowser.selectedBrowser.focus();
+
           if (aTriggeringEvent instanceof MouseEvent) {
             // We have a mouse event (from the go button), so use the standard
             // UI link behaviors
@@ -312,18 +342,12 @@
               loadCurrent();
             } else {
               this.handleRevert();
-              content.focus();
               openUILinkIn(url, where,
                            { allowThirdPartyFixup: true, postData: postData });
             }
-            return;
-          }
-
-          if (aTriggeringEvent &&
-              aTriggeringEvent.altKey &&
-              !isTabEmpty(gBrowser.selectedTab)) {
+          } else if (aTriggeringEvent && aTriggeringEvent.altKey &&
+                     !isTabEmpty(gBrowser.selectedTab)) {
             this.handleRevert();
-            content.focus();
             gBrowser.loadOneTab(url, {
                                 postData: postData,
                                 inBackground: false,
@@ -333,8 +357,6 @@
           } else {
             loadCurrent();
           }
-
-          gBrowser.selectedBrowser.focus();
         ]]></body>
       </method>
 
@@ -347,7 +369,7 @@
 
           // Only add the suffix when the URL bar value isn't already "URL-like",
           // and only if we get a keyboard event, to match user expectations.
-          if (!/^\s*(www|https?)\b|\/\s*$/i.test(url) &&
+          if (/^\s*[^.:\/\s]+(?:\/.*|\s*)$/i.test(url) &&
               (aTriggeringEvent instanceof KeyEvent)) {
 #ifdef XP_MACOSX
             let accel = aTriggeringEvent.metaKey;
@@ -382,24 +404,15 @@
 
               // Tack www. and suffix on.  If user has appended directories, insert
               // suffix before them (bug 279035).  Be careful not to get two slashes.
-              // Also, don't add the suffix if it's in the original url (bug 233853).
 
               let firstSlash = url.indexOf("/");
-              let existingSuffix = url.indexOf(suffix.substring(0, suffix.length - 1));
-
-              // * Logic for slash and existing suffix (example)
-              // No slash, no suffix: Add suffix (mozilla)
-              // No slash, yes suffix: Add slash (mozilla.com)
-              // Yes slash, no suffix: Insert suffix (mozilla/stuff)
-              // Yes slash, suffix before slash: Do nothing (mozilla.com/stuff)
-              // Yes slash, suffix after slash: Insert suffix (mozilla/?stuff=.com)
 
               if (firstSlash >= 0) {
-                if (existingSuffix == -1 || existingSuffix > firstSlash)
-                  url = url.substring(0, firstSlash) + suffix +
-                        url.substring(firstSlash + 1);
-              } else
-                url = url + (existingSuffix == -1 ? suffix : "/");
+                url = url.substring(0, firstSlash) + suffix +
+                      url.substring(firstSlash + 1);
+              } else {
+                url = url + suffix;
+              }
 
               url = "http://www." + url;
             }
@@ -467,7 +480,7 @@
             SetPageProxyState("invalid");
             this.focus();
             try {
-              urlSecurityCheck(this.value,
+              urlSecurityCheck(url,
                                gBrowser.contentPrincipal,
                                Ci.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
             } catch (ex) {
@@ -482,26 +495,52 @@
         <body><![CDATA[
           // Grab the actual input field's value, not our value, which could include moz-action:
           var inputVal = this.inputField.value;
-          var val = inputVal.substring(this.selectionStart, this.selectionEnd);
+          var selectedVal = inputVal.substring(this.selectionStart, this.selectionEnd);
 
-          // If the entire value is selected and it's a valid non-javascript,
-          // non-data URI, encode it.
-          if (val == inputVal &&
-              this.getAttribute("pageproxystate") == "valid") {
-            let uri;
-            try {
-              uri = makeURI(val);
-            } catch (e) {}
+          // If the selection doesn't start at the beginning or URL bar is
+          // modified, nothing else to do here.
+          if (this.selectionStart > 0 || this.valueIsTyped)
+            return selectedVal;
 
-            if (uri && !uri.schemeIs("javascript") && !uri.schemeIs("data")) {
-              val = uri.spec;
+          let uriFixup = Cc["@mozilla.org/docshell/urifixup;1"].getService(Ci.nsIURIFixup);
 
+          let uri;
+          try {
+            uri = uriFixup.createFixupURI(inputVal, Ci.nsIURIFixup.FIXUP_FLAG_USE_UTF8);
+          } catch (e) {}
+          if (!uri)
+            return selectedVal;
+
+          // Only copy exposable URIs
+          try {
+            uri = uriFixup.createExposableURI(uri);
+          } catch (ex) {}
+
+          // If the entire URL is selected, just use the actual loaded URI.
+          if (inputVal == selectedVal) {
+            // ... but only if  isn't a javascript: or data: URI, since those
+            // are hard to read when encoded
+            if (!uri.schemeIs("javascript") && !uri.schemeIs("data")) {
               // Parentheses are known to confuse third-party applications (bug 458565).
-              val = val.replace(/[()]/g, function (c) escape(c));
+              selectedVal = uri.spec.replace(/[()]/g, function (c) escape(c));
             }
+
+            return selectedVal;
           }
 
-          return val;
+          // Just the beginning of the URL is selected, check for a trimmed
+          // value
+          let spec = uri.spec;
+          let trimmedSpec = this.trimValue(spec);
+          if (spec != trimmedSpec) {
+            // Prepend the portion that trimValue removed from the beginning.
+            // This assumes trimValue will only truncate the URL at
+            // the beginning or end (or both).
+            let trimmedSegments = spec.split(trimmedSpec);
+            selectedVal = trimmedSegments[0] + selectedVal;
+          }
+
+          return selectedVal;
         ]]></body>
       </method>
 
@@ -564,6 +603,9 @@
                 break;
               case "formatting.enabled":
                 this._formattingEnabled = this._prefs.getBoolPref(aData);
+                break;
+              case "trimURLs":
+                this._mayTrimURLs = this._prefs.getBoolPref(aData);
                 break;
             }
           }
@@ -978,7 +1020,7 @@
         // undetermined state and then schedule a proper check at the next
         // opportunity
         this.setProgress(0, -1);
-        setTimeout(this.updateProgress.bind(this), 0);
+        this._updateProgressTimeout = setTimeout(this.updateProgress.bind(this), 0);
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -1005,6 +1047,7 @@
           this.notification.options.installs.forEach(function(aInstall) {
             aInstall.removeListener(this);
           }, this);
+          clearTimeout(this._updateProgressTimeout);
         ]]></body>
       </method>
 
@@ -1352,7 +1395,7 @@
       <property name="_notificationMessage">
         <getter><![CDATA[
           return gNavigatorBundle.getFormattedString(
-            "syncPromoNotification." + this._notificationType + ".label",
+            "syncPromoNotification." + this._notificationType + ".description",
             [this._brandBundle.GetStringFromName("syncBrandShortName")]
           );
         ]]></getter>
@@ -1413,7 +1456,7 @@
             this._panel.addEventListener("popupshown", function (evt) {
               self._panel.removeEventListener("popupshown", arguments.callee, true);
               self._promomessage.width = self._promomessage.getBoundingClientRect().width;
-              self._promomessage.firstChild.textContent = self._notificationMessage + " ";
+              self._promomessage.firstChild.textContent = self._notificationMessage;
               self._promomessage.height = self._promomessage.getBoundingClientRect().height;
             }, true);
           }

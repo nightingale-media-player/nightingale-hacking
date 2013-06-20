@@ -1,0 +1,225 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is mozilla.org code.
+ *
+ * The Initial Developer of the Original Code is
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998-2004
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Kevin Gerich  <webmail@kmgerich.com>
+ *   Daniel Brooks <db48x@yahoo.com>
+ *   Florian QUEZE <f.qu@queze.net>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+@import "chrome://global/skin/";
+
+/* View buttons */
+@import "chrome://global/skin/viewbuttons.css";
+
+/* Extensions will provide icons because the view buttons have icons
+   on the winstripe and gnomestripe themes. We don't want to display them */
+.viewButtonIcon {
+  display: none;
+}
+
+deck {
+  padding: 10px 10px 10px 10px;
+}
+
+/* Misc */
+tree {
+  margin: .5em;
+}
+
+.gridSeparator {
+  width: .5em;
+}
+
+textbox {
+  background: transparent !important;
+  border: none;
+  padding: 0px;
+  margin-top: 1px;
+  -moz-appearance: none;
+}
+
+textbox.header {
+  -moz-margin-start: 0;
+}
+
+.iframe {
+  margin: .5em;
+  background: white;
+  overflow: auto;
+}
+
+.fixedsize {
+  height: 8.5em;
+}
+
+textbox[disabled] {
+  font-style: italic;
+}
+
+/* General Tab */
+groupbox.collapsable caption .caption-icon {
+  width: 11px;
+  height: 11px;
+  background-repeat: no-repeat;
+  background-position: center;
+  -moz-margin-end: 2px;
+  background-image: url("chrome://global/skin/arrow/arrow-dn.gif");
+}
+
+groupbox.collapsable[closed="true"] caption .caption-icon {
+  background-image: url("chrome://global/skin/arrow/arrow-rit.gif");
+}
+
+groupbox tree { 
+  margin: 0;
+  border: none;
+}
+
+groupbox.treebox .groupbox-body { 
+  padding: 0;
+}
+
+#securityBox description { 
+  -moz-margin-start: 10px;
+}
+
+#general-security-identity {
+  white-space: pre-wrap;
+  line-height: 2em;
+}
+
+/* Media Tab */
+#imagetree {
+  min-height: 10em;
+  margin-bottom: 0;
+}
+
+#mediaSplitter {
+  background: none;
+}
+
+#mediaGrid {
+  min-height: 9em;
+}
+
+#mediaLabelColumn {
+  min-width: 10em;
+}
+
+#thepreviewimage {
+  margin: 1em;
+}
+
+treechildren::-moz-tree-cell-text(broken) {
+  font-style: italic;
+  color: graytext;
+}
+
+/* Feeds Tab */
+#feedtree {
+  margin-bottom: 0px;
+}
+
+#feedListbox richlistitem {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  -moz-padding-start: 7px;
+  -moz-padding-end: 7px;
+  min-height: 25px;
+  border-bottom: 1px dotted #C0C0C0;
+}
+
+#feedListbox richlistitem[selected="true"] {
+  background-color: -moz-Dialog;
+  color: -moz-DialogText;
+}
+
+#feedListbox {
+  border: 2px solid;
+  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
+  -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
+}
+
+.feedTitle { 
+  font-weight: bold;
+}
+
+/* Permissions Tab */
+#permList {
+  margin-top: .5em;
+  overflow: auto;
+  border: 2px solid;
+  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
+  -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
+  background-color: -moz-field;
+}
+
+.permission {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  -moz-padding-start: 7px;
+  -moz-padding-end: 7px;
+  min-height: 25px;
+  border-bottom: 1px dotted #C0C0C0;
+}
+
+.permissionLabel {
+  font-weight: bold;
+}
+
+.permission:hover {
+  background-color: -moz-dialog;
+}
+
+/* Security Tab */
+#securityPanel .caption-icon {
+  display: none;
+}
+
+#securityPanel .header {
+  font-size: 120%;
+}
+ 
+#securityPanel .fieldLabel {
+  margin: 2px 10px 3px 10px;
+}
+
+#securityPanel .fieldValue {
+  font-weight: bold;
+  margin: 2px 10px 0px 10px;
+}

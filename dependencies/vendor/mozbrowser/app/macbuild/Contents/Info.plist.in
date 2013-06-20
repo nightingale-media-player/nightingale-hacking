@@ -92,9 +92,58 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>oga</string>
+				<string>ogg</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>document.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>audio/ogg</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>HTML5 Audio (Ogg)</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ogv</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>document.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>video/ogg</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>HTML5 Video (Ogg)</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>webm</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>document.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>video/webm</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>HTML5 Video (WebM)</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>firefox-bin</string>
+	<string>firefox</string>
 	<key>CFBundleGetInfoString</key>
 	<string>%APP_NAME% %APP_VERSION%</string>
 	<key>CFBundleIconFile</key>
@@ -165,5 +214,7 @@
 		<key>x86_64</key>
 		<string>10.6.0</string>
 	</dict>
+  <key>NSSupportsAutomaticGraphicsSwitching</key>
+  <true/>
 </dict>
 </plist>

@@ -10,12 +10,6 @@
 
 #filter substitution
 
-#if MOZ_UPDATE_CHANNEL == aurora
-#define SHIP_FEEDBACK
-#elif MOZ_UPDATE_CHANNEL == beta
-#define SHIP_FEEDBACK
-#endif
-
 #ifdef XP_MACOSX
 ; Mac bundle stuff
 @APPNAME@/Contents/Info.plist
@@ -51,6 +45,7 @@
 @BINPATH@/@DLL_PREFIX@xpcom@DLL_SUFFIX@
 @BINPATH@/@DLL_PREFIX@nspr4@DLL_SUFFIX@
 @BINPATH@/@DLL_PREFIX@mozalloc@DLL_SUFFIX@
+@BINPATH@/@DLL_PREFIX@mozutils@DLL_SUFFIX@
 #ifdef XP_MACOSX
 @BINPATH@/XUL
 #else
@@ -63,7 +58,6 @@
 @BINPATH@/@MOZ_CHILD_PROCESS_NAME@
 #endif
 #ifdef XP_WIN32
-#ifndef MOZ_MEMORY
 #if _MSC_VER == 1400
 @BINPATH@/Microsoft.VC80.CRT.manifest
 @BINPATH@/msvcm80.dll
@@ -78,10 +72,7 @@
 @BINPATH@/msvcp100.dll
 @BINPATH@/msvcr100.dll
 #endif
-#else
-@BINPATH@/mozcrt19.dll
-@BINPATH@/mozcpp19.dll
-#endif
+
 #endif
 
 [browser]
@@ -99,16 +90,12 @@
 #else
 @BINPATH@/mozsqlt3@DLL_SUFFIX@
 #endif
-@BINPATH@/README.txt
 @BINPATH@/blocklist.xml
 #ifdef XP_UNIX
 @BINPATH@/run-mozilla.sh
 #ifndef XP_MACOSX
 @BINPATH@/mozilla-xremote-client
 #endif
-#endif
-#ifdef MOZ_SPLASHSCREEN
-@BINPATH@/splash.bmp
 #endif
 
 ; [Components]
@@ -138,7 +125,6 @@
 @BINPATH@/components/content_canvas.xpt
 @BINPATH@/components/content_htmldoc.xpt
 @BINPATH@/components/content_html.xpt
-@BINPATH@/components/content_xmldoc.xpt
 @BINPATH@/components/content_xslt.xpt
 @BINPATH@/components/content_xtf.xpt
 @BINPATH@/components/cookie.xpt
@@ -188,6 +174,7 @@
 @BINPATH@/components/jar.xpt
 @BINPATH@/components/jetpack.xpt
 @BINPATH@/components/jsdservice.xpt
+@BINPATH@/components/jsdebugger.xpt
 @BINPATH@/components/layout_base.xpt
 @BINPATH@/components/layout_forms.xpt
 #ifdef NS_PRINTING
@@ -259,9 +246,11 @@
 @BINPATH@/components/xpcom_xpti.xpt
 @BINPATH@/components/xpconnect.xpt
 @BINPATH@/components/xulapp.xpt
+@BINPATH@/components/xul.xpt
 @BINPATH@/components/xuldoc.xpt
 @BINPATH@/components/xultmpl.xpt
 @BINPATH@/components/zipwriter.xpt
+@BINPATH@/components/telemetry.xpt
 
 ; JavaScript components
 @BINPATH@/components/ConsoleAPI.manifest

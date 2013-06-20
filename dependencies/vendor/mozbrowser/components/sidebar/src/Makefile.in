@@ -47,3 +47,4 @@ SONGBIRD_COMPONENTS = $(srcdir)/nsSidebar.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk
+

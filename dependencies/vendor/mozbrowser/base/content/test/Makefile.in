@@ -40,7 +40,9 @@ srcdir		= @srcdir@
 VPATH		= @srcdir@
 relativesrcdir  = browser/base/content/test
 
-DIRS += tabview
+DIRS += \
+		tabview \
+		$(NULL)
 
 include $(DEPTH)/config/autoconf.mk
 include $(topsrcdir)/config/rules.mk
@@ -50,6 +52,8 @@ _TEST_FILES = \
 		feed_discovery.html \
 		test_bug395533.html \
 		bug395533-data.txt \
+		test_contextmenu.html \
+		subtst_contextmenu.html \
 		ctxmenu-image.png \
 		video.ogg \
 		test_offlineNotification.html \
@@ -71,16 +75,6 @@ _TEST_FILES = \
 		gZipOfflineChild.cacheManifest \
 		gZipOfflineChild.cacheManifest^headers^ \
 		$(NULL)
-
-ifeq (,$(filter gtk2,$(MOZ_WIDGET_TOOLKIT)))
-_TEST_FILES += \
-		test_contextmenu.html \
-		subtst_contextmenu.html \
-		$(NULL)
-
-else
-$(warning test_contextmenu.html disabled because of intermittent failures; bug 513558)
-endif
 
 # The following tests are disabled because they are unreliable:
 #   browser_bug423833.js is bug 428712
@@ -150,6 +144,7 @@ _BROWSER_FILES = \
                  browser_zbug569342.js \
                  browser_bug575561.js \
                  browser_bug577121.js \
+                 browser_bug578534.js \
                  browser_bug579872.js \
                  browser_bug580638.js \
                  browser_bug580956.js \
@@ -171,6 +166,9 @@ _BROWSER_FILES = \
                  browser_bug623893.js \
                  browser_bug624734.js \
                  browser_bug647886.js \
+                 browser_bug655584.js \
+                 browser_bug664672.js \
+                 browser_canonizeURL.js \
                  browser_findbarClose.js \
                  browser_keywordBookmarklets.js \
                  browser_contextSearchTabPosition.js \
@@ -182,26 +180,6 @@ _BROWSER_FILES = \
                  browser_gestureSupport.js \
                  browser_getshortcutoruri.js \
                  browser_hide_removing.js \
-                 browser_inspector_initialization.js \
-                 browser_inspector_treeSelection.js \
-                 browser_inspector_highlighter.js \
-                 browser_inspector_stylePanel.js \
-                 browser_inspector_domPanel.js \
-                 browser_inspector_iframeTest.js \
-                 browser_inspector_scrolling.js \
-                 browser_inspector_store.js \
-                 browser_inspector_tab_switch.js \
-                 browser_inspector_treePanel_output.js \
-                 browser_inspector_treePanel_input.html \
-                 browser_inspector_treePanel_result.html \
-                 browser_scratchpad_initialization.js \
-                 browser_scratchpad_contexts.js \
-                 browser_scratchpad_tab_switch.js \
-                 browser_scratchpad_execute_print.js \
-                 browser_scratchpad_inspect.js \
-                 browser_scratchpad_files.js \
-                 browser_scratchpad_ui.js \
-                 browser_scratchpad_bug_646070_chrome_context_pref.js \
                  browser_overflowScroll.js \
                  browser_locationBarExternalLoad.js \
                  browser_pageInfo.js \
@@ -218,6 +196,10 @@ _BROWSER_FILES = \
                  browser_clearplugindata_noage.html \
                  browser_popupUI.js \
                  browser_sanitizeDialog.js \
+                 browser_save_video.js \
+                 bug564387.html \
+                 bug564387_video1.ogv \
+                 bug564387_video1.ogv^headers^ \
                  browser_scope.js \
                  browser_selectTabAtIndex.js \
                  browser_tab_dragdrop.js \
@@ -226,6 +208,8 @@ _BROWSER_FILES = \
                  browser_tabfocus.js \
                  browser_tabs_isActive.js \
                  browser_tabs_owner.js \
+                 browser_urlbarCopying.js \
+                 browser_urlbarTrimURLs.js \
                  browser_urlHighlight.js \
                  browser_visibleFindSelection.js \
                  browser_visibleTabs.js \
@@ -260,6 +244,10 @@ _BROWSER_FILES = \
                  browser_addon_bar_shortcut.js \
                  browser_addon_bar_aomlistener.js \
                  test_bug628179.html \
+                 browser_wyciwyg_urlbarCopying.js \
+                 test_wyciwyg_copying.html \
+                 authenticate.sjs \
+                 browser_minimize.js \
                  $(NULL)
 
 ifneq (cocoa,$(MOZ_WIDGET_TOOLKIT))

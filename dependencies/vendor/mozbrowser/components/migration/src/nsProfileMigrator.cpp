@@ -39,7 +39,7 @@
 
 #include "nsIBrowserProfileMigrator.h"
 #include "nsIComponentManager.h"
-#include "nsIDOMWindowInternal.h"
+#include "nsIDOMWindow.h"
 #include "nsILocalFile.h"
 #include "nsIObserverService.h"
 #include "nsIProperties.h"
@@ -162,7 +162,6 @@ NS_IMPL_ISUPPORTS1(nsProfileMigrator, nsIProfileMigrator)
 
 #define INTERNAL_NAME_IEXPLORE        "iexplore"
 #define INTERNAL_NAME_MOZILLA_SUITE   "apprunner"
-#define INTERNAL_NAME_SEAMONKEY       "seamonkey"
 #define INTERNAL_NAME_OPERA           "opera"
 #endif
 
@@ -243,12 +242,7 @@ nsProfileMigrator::GetDefaultBrowserMigratorKey(nsACString& aKey,
     aKey = "ie";
     return NS_OK;
   }
-  if (internalName.LowerCaseEqualsLiteral(INTERNAL_NAME_MOZILLA_SUITE) ||
-      internalName.LowerCaseEqualsLiteral(INTERNAL_NAME_SEAMONKEY)) {
-    aKey = "seamonkey";
-    return NS_OK;
-  }
-  if (internalName.LowerCaseEqualsLiteral(INTERNAL_NAME_OPERA)) {
+  else if (internalName.LowerCaseEqualsLiteral(INTERNAL_NAME_OPERA)) {
     aKey = "opera";
     return NS_OK;
   }
@@ -267,7 +261,6 @@ nsProfileMigrator::GetDefaultBrowserMigratorKey(nsACString& aKey,
 #if defined(XP_MACOSX)
   CHECK_MIGRATOR("safari");
 #endif
-  CHECK_MIGRATOR("seamonkey");
   CHECK_MIGRATOR("opera");
 
 #undef CHECK_MIGRATOR
@@ -282,11 +275,11 @@ nsProfileMigrator::ImportRegistryProfiles(const nsACString& aAppName)
 
   nsCOMPtr<nsIToolkitProfileService> profileSvc
     (do_GetService(NS_PROFILESERVICE_CONTRACTID));
-  NS_ENSURE_TRUE(profileSvc, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(profileSvc, PR_FALSE);
 
   nsCOMPtr<nsIProperties> dirService
     (do_GetService("@mozilla.org/file/directory_service;1"));
-  NS_ENSURE_TRUE(dirService, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(dirService, PR_FALSE);
 
   nsCOMPtr<nsILocalFile> regFile;
 #ifdef XP_WIN

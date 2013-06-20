@@ -21,16 +21,16 @@ browser.jar:
 *       content/browser/aboutHome.css                 (content/aboutHome.css)
         content/browser/aboutHome-restore-icon.png    (content/aboutHome-restore-icon.png)
         content/browser/aboutHome-restore-icon-small.png    (content/aboutHome-restore-icon-small.png)
+        content/browser/aboutHome-snippet1.png        (content/aboutHome-snippet1.png)
+        content/browser/aboutHome-snippet2.png        (content/aboutHome-snippet2.png)
         content/browser/aboutRobots-icon.png          (content/aboutRobots-icon.png)
         content/browser/aboutRobots-widget-left.png   (content/aboutRobots-widget-left.png)
 *       content/browser/browser.css                   (content/browser.css)
 *       content/browser/browser.js                    (content/browser.js)
 *       content/browser/browser.xul                   (content/browser.xul)
 *       content/browser/browser-tabPreviews.xml       (content/browser-tabPreviews.xml)
+*       content/browser/content.js                    (content/content.js)
 *       content/browser/fullscreen-video.xhtml        (content/fullscreen-video.xhtml)
-*       content/browser/inspector.html                (content/inspector.html)
-*       content/browser/scratchpad.xul                (content/scratchpad.xul)
-*       content/browser/scratchpad.js                 (content/scratchpad.js)
 *       content/browser/pageinfo/pageInfo.xul         (content/pageinfo/pageInfo.xul)
 *       content/browser/pageinfo/pageInfo.js          (content/pageinfo/pageInfo.js)
 *       content/browser/pageinfo/pageInfo.css         (content/pageinfo/pageInfo.css)
@@ -52,6 +52,7 @@ browser.jar:
         content/browser/tabview.css                   (content/tabview/tabview.css)
 *       content/browser/tabview.js                    (content/tabview/tabview.js)
         content/browser/tabview.html                  (content/tabview/tabview.html)
+        content/browser/tabview-content.js            (content/tabview/content.js)
 *       content/browser/urlbarBindings.xml            (content/urlbarBindings.xml)
 *       content/browser/utilityOverlay.js             (content/utilityOverlay.js)
 *       content/browser/web-panels.js                 (content/web-panels.js)
@@ -87,3 +88,6 @@ browser.jar:
 #ifdef XP_WIN
 *       content/browser/win6BrowserOverlay.xul        (content/win6BrowserOverlay.xul)
 #endif
+# the following files are browser-specific overrides
+*       content/browser/license.html                  (/toolkit/content/license.html)
+% override chrome://global/content/license.html chrome://browser/content/license.html

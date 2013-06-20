@@ -51,12 +51,12 @@ include $(DEPTH)/build/autodefs.mk
 #
 
 ifeq (cocoa,$(SB_PLATFORM))
-SUB_DIRS = pinstripe
+SUBDIRS = pinstripe
 else
-SUB_DIRS = winstripe
+SUBDIRS = winstripe
 endif
 ifneq (,$(filter gtk2 qt,$(SB_PLATFORM)))
-SUB_DIRS = gnomestripe
+SUBDIRS = gnomestripe
 endif
 
 include $(topsrcdir)/build/rules.mk

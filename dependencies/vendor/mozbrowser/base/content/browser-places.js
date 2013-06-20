@@ -659,8 +659,11 @@ HistoryMenu.prototype = {
   toggleTabsFromOtherComputers: function PHM_toggleTabsFromOtherComputers() {
     // This is a no-op if MOZ_SERVICES_SYNC isn't defined
 #ifdef MOZ_SERVICES_SYNC
-    // enable/disable the Tabs From Other Computers menu
-    let menuitem = document.getElementById("sync-tabs-menuitem");
+    // Enable/disable the Tabs From Other Computers menu. Some of the menus handled
+    // by HistoryMenu do not have this menuitem.
+    let menuitem = this._rootElt.getElementsByClassName("syncTabsMenuItem")[0];
+    if (!menuitem)
+      return;
 
     // If Sync isn't configured yet, then don't show the menuitem.
     if (Weave.Status.checkSetup() == Weave.CLIENT_NOT_CONFIGURED ||
@@ -840,6 +843,7 @@ var BookmarksEventHandler = {
 var PlacesMenuDNDHandler = {
   _springLoadDelay: 350, // milliseconds
   _loadTimer: null,
+  _closerTimer: null,
 
   /**
    * Called when the user enters the <menu> element during a drag.
@@ -875,8 +879,9 @@ var PlacesMenuDNDHandler = {
       this._loadTimer.cancel();
       this._loadTimer = null;
     }
-    let closeTimer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-    closeTimer.initWithCallback(function() {
+    this._closeTimer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+    this._closeTimer.initWithCallback(function() {
+      this._closeTimer = null;
       let node = PlacesControllerDragHelper.currentDropTarget;
       let inHierarchy = false;
       while (node && !inHierarchy) {

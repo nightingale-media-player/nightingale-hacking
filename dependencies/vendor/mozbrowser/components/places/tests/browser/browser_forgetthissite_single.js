@@ -37,29 +37,8 @@
 
 // This test makes sure that the Forget This Site command is hidden for multiple
 // selections.
-
-/**
- * Clears history invoking callback when done.
- */
-function waitForClearHistory(aCallback) {
-  const TOPIC_EXPIRATION_FINISHED = "places-expiration-finished";
-  let observer = {
-    observe: function(aSubject, aTopic, aData) {
-      Services.obs.removeObserver(this, TOPIC_EXPIRATION_FINISHED);
-      aCallback();
-    }
-  };
-  Services.obs.addObserver(observer, TOPIC_EXPIRATION_FINISHED, false);
-
-  let hs = Cc["@mozilla.org/browser/nav-history-service;1"].
-           getService(Ci.nsINavHistoryService);
-  hs.QueryInterface(Ci.nsIBrowserHistory).removeAllPages();
-}
-
 function test() {
   // initialization
-  let ww = Cc["@mozilla.org/embedcomp/window-watcher;1"].
-           getService(Ci.nsIWindowWatcher);
   waitForExplicitFinish();
 
   // Add a history entry.
@@ -73,13 +52,7 @@ function test() {
   });
 
   function testForgetThisSiteVisibility(selectionCount, funcNext) {
-    function observer(aSubject, aTopic, aData) {
-      if (aTopic != "domwindowopened")
-        return;
-      ww.unregisterNotification(observer);
-      let organizer = aSubject.QueryInterface(Ci.nsIDOMWindow);
-      SimpleTest.waitForFocus(function() {
-        executeSoon(function() {
+    openLibrary(function (organizer) {
           // Select History in the left pane.
           organizer.PlacesOrganizer.selectLeftPaneQuery('History');
           let PO = organizer.PlacesOrganizer;
@@ -106,14 +79,11 @@ function test() {
             // Close the context menu
             contextmenu.hidePopup();
             // Wait for the Organizer window to actually be closed
-            function closeObserver(aSubject, aTopic, aData) {
-              if (aTopic != "domwindowclosed")
-                return;
-              ww.unregisterNotification(closeObserver);
+            organizer.addEventListener("unload", function () {
+              organizer.removeEventListener("unload", arguments.callee, false);
               // Proceed
               funcNext();
-            }
-            ww.registerNotification(closeObserver);
+            }, false);
             // Close Library window.
             organizer.close();
           }, true);
@@ -123,16 +93,7 @@ function test() {
                                                   x, y, width, height);
           // Initiate a context menu for the selected cell
           EventUtils.synthesizeMouse(tree.body, x.value + width.value / 2, y.value + height.value / 2, {type: "contextmenu"}, organizer);
-        });
-      }, organizer);
-    }
-
-    ww.registerNotification(observer);
-    ww.openWindow(null,
-                  "chrome://browser/content/places/places.xul",
-                  "",
-                  "chrome,toolbar=yes,dialog=no,resizable",
-                  null);
+    });
   }
 
   testForgetThisSiteVisibility(1, function() {

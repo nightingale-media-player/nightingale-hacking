@@ -40,14 +40,18 @@ let TabView = {
   _deck: null,
   _iframe: null,
   _window: null,
+  _initialized: false,
   _browserKeyHandlerInitialized: false,
   _isFrameLoading: false,
   _initFrameCallbacks: [],
+  _lastSessionGroupName: null,
   PREF_BRANCH: "browser.panorama.",
   PREF_FIRST_RUN: "browser.panorama.experienced_first_run",
   PREF_STARTUP_PAGE: "browser.startup.page",
   PREF_RESTORE_ENABLED_ONCE: "browser.panorama.session_restore_enabled_once",
+  GROUPS_IDENTIFIER: "tabview-groups",
   VISIBILITY_IDENTIFIER: "tabview-visibility",
+  LAST_SESSION_GROUP_NAME_IDENTIFIER: "tabview-last-session-group-name",
 
   // ----------
   get windowTitle() {
@@ -88,6 +92,9 @@ let TabView = {
 
   // ----------
   init: function TabView_init() {
+    if (this._initialized)
+      return;
+
     if (this.firstUseExperienced) {
       if ((gBrowser.tabs.length - gBrowser.visibleTabs.length) > 0)
         this._setBrowserKeyHandlers();
@@ -95,14 +102,21 @@ let TabView = {
       // ___ visibility
       let sessionstore =
         Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-      let data = sessionstore.getWindowValue(window, this.VISIBILITY_IDENTIFIER);
 
+      let data = sessionstore.getWindowValue(window, this.VISIBILITY_IDENTIFIER);
       if (data && data == "true") {
         this.show();
       } else {
-        let self = this;
+        try {
+          data = sessionstore.getWindowValue(window, this.GROUPS_IDENTIFIER);
+          if (data) {
+            let parsedData = JSON.parse(data);
+            this.updateGroupNumberBroadcaster(parsedData.totalNumber || 1);
+          }
+        } catch (e) { }
 
-        // if a tab is changed from hidden to unhidden and the iframe is not 
+        let self = this;
+        // if a tab is changed from hidden to unhidden and the iframe is not
         // initialized, load the iframe and setup the tab.
         this._tabShowEventListener = function (event) {
           if (!self._window)
@@ -112,10 +126,16 @@ let TabView = {
         };
         gBrowser.tabContainer.addEventListener(
           "TabShow", this._tabShowEventListener, true);
+
+       // grab the last used group title
+       this._lastSessionGroupName = sessionstore.getWindowValue(window,
+         this.LAST_SESSION_GROUP_NAME_IDENTIFIER);
       }
     }
 
     Services.prefs.addObserver(this.PREF_BRANCH, this, false);
+
+    this._initialized = true;
   },
 
   // ----------
@@ -130,12 +150,17 @@ let TabView = {
   // ----------
   // Uninitializes TabView.
   uninit: function TabView_uninit() {
+    if (!this._initialized)
+      return;
+
     Services.prefs.removeObserver(this.PREF_BRANCH, this);
 
     if (this._tabShowEventListener) {
       gBrowser.tabContainer.removeEventListener(
         "TabShow", this._tabShowEventListener, true);
     }
+
+    this._initialized = false;
   },
 
   // ----------
@@ -228,18 +253,28 @@ let TabView = {
   },
   
   getActiveGroupName: function TabView_getActiveGroupName() {
+    if (!this._window)
+      return this._lastSessionGroupName;
+
     // We get the active group this way, instead of querying
     // GroupItems.getActiveGroupItem() because the tabSelect event
     // will not have happened by the time the browser tries to
     // update the title.
+    let groupItem = null;
     let activeTab = window.gBrowser.selectedTab;
-    if (activeTab._tabViewTabItem && activeTab._tabViewTabItem.parent){
-      let groupName = activeTab._tabViewTabItem.parent.getTitle();
-      if (groupName)
-        return groupName;
+    let activeTabItem = activeTab._tabViewTabItem;
+
+    if (activeTab.pinned) {
+      // It's an app tab, so it won't have a .tabItem. However, its .parent
+      // will already be set as the active group. 
+      groupItem = this._window.GroupItems.getActiveGroupItem();
+    } else if (activeTabItem) {
+      groupItem = activeTabItem.parent;
     }
-    return null;
-  },  
+
+    // groupItem may still be null, if the active tab is an orphan.
+    return groupItem ? groupItem.getTitle() : "";
+  },
 
   // ----------
   updateContextMenu: function(tab, popup) {
@@ -320,10 +355,8 @@ let TabView = {
           if (!tabItem)
             return;
 
-          // Switch to the new tab, and close the old group if it's now empty.
-          let oldGroupItem = groupItems.getActiveGroupItem();
+          // Switch to the new tab
           window.gBrowser.selectedTab = tabItem.tab;
-          oldGroupItem.closeIfEmpty();
         });
       }
     }, true);
@@ -335,8 +368,8 @@ let TabView = {
     if (this._window) {
       this._window.UI.restoredClosedTab = true;
 
-      if (blankTabToRemove)
-        blankTabToRemove._tabViewTabIsRemovedAfterRestore = true;
+      if (blankTabToRemove && blankTabToRemove._tabViewTabItem)
+        blankTabToRemove._tabViewTabItem.isRemovedAfterRestore = true;
     }
   },
 
@@ -381,6 +414,14 @@ let TabView = {
   },
 
   // ----------
+  // Function: updateGroupNumberBroadcaster
+  // Updates the group number broadcaster.
+  updateGroupNumberBroadcaster: function TabView_updateGroupNumberBroadcaster(number) {
+    let groupsNumber = document.getElementById("tabviewGroupsNumber");
+    groupsNumber.setAttribute("groups", number);
+  },
+
+  // ----------
   // Function: enableSessionRestore
   // Enables automatic session restore when the browser is started. Does
   // nothing if we already did that once in the past.
@@ -394,7 +435,12 @@ let TabView = {
 
     this.sessionRestoreEnabledOnce = true;
 
-    // enable session restore
-    Services.prefs.setIntPref(this.PREF_STARTUP_PAGE, 3);
+    // enable session restore if necessary
+    if (Services.prefs.getIntPref(this.PREF_STARTUP_PAGE) != 3) {
+      Services.prefs.setIntPref(this.PREF_STARTUP_PAGE, 3);
+
+      // show banner
+      this._window.UI.notifySessionRestoreEnabled();
+    }
   }
 };

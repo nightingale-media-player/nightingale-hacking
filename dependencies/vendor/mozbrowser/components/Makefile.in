@@ -58,6 +58,7 @@ SONGBIRD_COMPONENTS = \
 SONGBIRD_PP_RESOURCES = \
   $(srcdir)/nsBrowserContentHandler.js \
   $(srcdir)/nsBrowserGlue.js \
+  $(srcdir)/BrowserComponents.manifest \
   $(NULL)
 
 SONGBIRD_PP_DIR = $(SONGBIRD_COMPONENTSDIR)
@@ -65,5 +66,38 @@ SONGBIRD_PP_DIR = $(SONGBIRD_COMPONENTSDIR)
 EXTRA_JS_MODULES = distribution.js
 
 GARBAGE = $(XPIDL_MODULE_TYPELIBS)
+
+PARALLEL_DIRS = \
+  about \
+  certerror \
+  dirprovider \
+  feeds \
+  places \
+  preferences \
+  privatebrowsing \
+  search \
+  sessionstore \
+  shell \
+  sidebar \
+  migration \
+  $(NULL)
+
+ifeq ($(MOZ_WIDGET_TOOLKIT),windows) 
+PARALLEL_DIRS += wintaskbar
+endif
+
+ifdef MOZ_SAFE_BROWSING
+PARALLEL_DIRS += safebrowsing
+endif
+
+ifdef ENABLE_TESTS
+DIRS += test
+endif
+
+DIRS += build
+
+ifdef MOZILLA_OFFICIAL
+DEFINES += -DOFFICIAL_BUILD=1
+endif
 
 include $(topsrcdir)/build/rules.mk

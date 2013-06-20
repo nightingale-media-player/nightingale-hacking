@@ -48,8 +48,6 @@ JAR_MANIFEST = jar.mn
 EXTRA_JS_MODULES = \
 	content/openLocationLastURL.jsm \
 	content/NetworkPrioritizer.jsm \
-	content/domplate.jsm \
-	content/stylePanel.jsm \
 	$(NULL)
 
 include $(topsrcdir)/build/rules.mk
@@ -78,3 +76,5 @@ ifneq (,$(filter windows gtk2, $(MOZ_WIDGET_TOOLKIT)))
 DEFINES += -DMENUBAR_CAN_AUTOHIDE=1
 endif
 
+libs::
+	$(NSINSTALL) $(srcdir)/content/tabview/modules/* $(FINAL_TARGET)/modules/tabview

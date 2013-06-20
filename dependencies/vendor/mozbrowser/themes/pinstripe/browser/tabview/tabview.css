@@ -17,14 +17,13 @@ body {
 ----------------------------------*/
 
 .tab {
+  margin: 8px;
   padding-top: 4px;
   -moz-padding-end: 6px;
   padding-bottom: 6px;
   -moz-padding-start: 4px;
-  background-color: #D7D7D7;
+  background-color: rgb(240,240,240);
   border-radius: 0.4em;
-  box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
 
@@ -43,7 +42,7 @@ html[dir=rtl] .thumb {
 }
 
 .favicon {
-  background-color: #D7D7D7;
+  background-color: rgb(240,240,240);
   box-shadow:
     0 -1px 0 rgba(225, 225, 225, 0.8) inset,
     -1px 0 0 rgba(225, 225, 225, 0.8) inset;
@@ -134,8 +133,6 @@ html[dir=rtl] .expander {
   bottom: -20px;
   text-align: center;
   width: 94.5%;
-  white-space: nowrap;
-  overflow: hidden;
   text-shadow: 0 1px rgba(255, 255, 255, 0.6);
 }
 
@@ -193,19 +190,8 @@ html[dir=rtl] .stack-trayed .tab-title {
 /* Tab GroupItem
 ----------------------------------*/
 
-.tabInGroupItem {
-  box-shadow: none;
-  border-color: transparent;
-  background-color: rgb(240,240,240);
-  margin: 8px;
-}
-
-.tabInGroupItem .favicon {
-  background-color: rgb(240,240,240);
-}
-
 .groupItem {
-  cursor: move;
+  cursor: pointer;
   background-color: rgb(240,240,240);
   border-radius: 0.4em;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
@@ -224,6 +210,17 @@ html[dir=rtl] .groupItem.activeGroupItem {
 
 .groupItem .close {
   z-index: 10;
+  top: 0px;
+  right: 0px;
+  width: 22px;
+  height: 22px;
+  background-position: bottom left;
+}
+
+html[dir=rtl] .groupItem .close {
+  right: auto;
+  left: 0px;
+  background-position: bottom right;
 }
 
 .phantom {
@@ -390,25 +387,6 @@ html[dir=rtl] .guideTrench {
 /* Other
 ----------------------------------*/
 
-.newTabButton {
-  width: 16px;
-  height: 15px;
-  bottom: 10px;
-  left: 10px;
-  cursor: pointer;
-  opacity: .3;
-  background-image: url(chrome://browser/skin/tabview/new-tab.png);
-}
-
-html[dir=rtl] .newTabButton {
-  left: auto;
-  right: 10px;
-}
-
-.newTabButton:hover {
-  opacity: 1;
-}
-
 .active {
   box-shadow: 5px 5px 3px rgba(0,0,0,.5);
 }
@@ -426,6 +404,7 @@ html[dir=rtl] .acceptsDrop {
 }
 
 .titlebar {
+  cursor: move;
   font-size: 12px;
   height: 18px;
 }
@@ -669,10 +648,12 @@ html[dir=rtl] #otherresults {
   -moz-margin-end: 5px;
   position: relative;
   top: 2px;
+  width: 16px;
+  height: 16px;
 }
 
 .inlineMatch > span {
-  max-width:200px;
+  max-width: 200px;
   height: 15px;
 }
 

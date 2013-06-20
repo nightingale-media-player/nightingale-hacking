@@ -55,6 +55,7 @@
         xmlns:html="http://www.w3.org/1999/xhtml"
         id="change-dialog"
         windowtype="Weave:ChangeSomething"
+        persist="screenX screenY"
         onwizardnext="Change.onLoad()"
         onwizardfinish="return Change.onDialogAccept();">
 
@@ -137,7 +138,7 @@
     <vbox id="passphraseHelpBox"
           hidden="true">
       <description>
-        &existingSyncKey.description;
+        &existingRecoveryKey.description;
         <label class="text-link"
                href="https://services.mozilla.com/sync/help/manual-setup">
           &addDevice.showMeHow.label;

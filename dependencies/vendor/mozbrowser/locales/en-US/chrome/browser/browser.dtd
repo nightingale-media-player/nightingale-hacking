@@ -57,8 +57,6 @@ can reach it easily. -->
 <!ENTITY printCmd.label "Print…">
 <!ENTITY printCmd.accesskey "P">
 <!ENTITY printCmd.commandkey "p">
-<!ENTITY import.label "Import…">
-<!ENTITY import.accesskey "I">
 
 <!ENTITY goOfflineCmd.label "Work Offline">
 <!ENTITY goOfflineCmd.accesskey "w">
@@ -113,6 +111,8 @@ can reach it easily. -->
 <!ENTITY forwardCmd.label             "Forward">
 <!ENTITY forwardCmd.accesskey         "F">
 <!ENTITY forwardButton.tooltip        "Go forward one page">
+<!ENTITY backForwardButtonMenu.tooltip "Right-click or pull down to show history">
+<!ENTITY backForwardButtonMenuMac.tooltip "Pull down to show history">
 <!ENTITY reloadCmd.label              "Reload">
 <!ENTITY reloadCmd.accesskey          "R">
 <!ENTITY reloadButton.tooltip         "Reload current page">
@@ -194,6 +194,9 @@ can reach it easily. -->
 <!ENTITY inspectMenu.accesskey        "T">
 <!ENTITY inspectMenu.commandkey       "I">
 
+<!ENTITY inspectContextMenu.label     "Inspect Element">
+<!ENTITY inspectContextMenu.accesskey "Q">
+
 <!-- LOCALIZATION NOTE (scratchpad.label): This menu item label appears
   -  in the Tools menu. See bug 653093.
   -  The Scratchpad is intended to provide a simple text editor for creating
@@ -212,19 +215,6 @@ can reach it easily. -->
 <!ENTITY inspectPanelTitle.label      "HTML">
 <!ENTITY inspectButton.label          "Inspect">
 <!ENTITY inspectButton.accesskey      "I">
-<!ENTITY inspectNextButton.label      "Next">
-<!ENTITY inspectNextButton.accesskey  "N">
-<!ENTITY inspectPreviousButton.label  "Previous">
-<!ENTITY inspectPreviousButton.accesskey "P">
-<!ENTITY inspectStyleButton.label     "Style">
-<!ENTITY inspectStyleButton.accesskey "S">
-<!ENTITY inspectStylePanelTitle.label  "Style">
-<!-- LOCALIZATION NOTE (inspectObjectButton.label): This button label
-  -  appears on the Inspector's toolbar. It is used to open and close the Object
-  -  panel. There is also a label in inspector.properties for the panel
-  -  titlebar: object.objectPanelTitle. -->
-<!ENTITY inspectObjectButton.label       "Object">
-<!ENTITY inspectObjectButton.accesskey   "O">
 
 <!ENTITY getMoreDevtoolsCmd.label        "Get More Tools">
 <!ENTITY getMoreDevtoolsCmd.accesskey    "M">
@@ -309,7 +299,7 @@ can reach it easily. -->
 <!ENTITY appMenuSafeMode.accesskey "R">
 
 <!ENTITY openCmd.commandkey           "l">
-<!ENTITY urlbar.placeholder           "Go to a Web Site">
+<!ENTITY urlbar.placeholder           "Go to a Website">
 <!ENTITY urlbar.accesskey             "d">
 <!ENTITY urlbar.switchToTab.label     "Switch to tab:">
 
@@ -323,6 +313,7 @@ can reach it easily. -->
   Mac:  Cmd+K (cross platform binding)
         Cmd+Opt+F (platform convention)
   Win:  Ctrl+K (cross platform binding)
+        Ctrl+E (IE compat)
 
   We support Ctrl+K on all platforms now and advertise it in the menu since it is
   our standard - it is a "safe" choice since it is near no harmful keys like "W" as
@@ -333,6 +324,7 @@ can reach it easily. -->
 
  -->
 <!ENTITY searchFocus.commandkey       "k">
+<!ENTITY searchFocus.commandkey2      "e">
 <!ENTITY searchFocusUnix.commandkey   "j">
 
 <!ENTITY tabView.commandkey           "e">
@@ -503,7 +495,7 @@ you can use these alternative items. Otherwise, their values should be empty.  -
 <!ENTITY pageStylePersistentOnly.label "Basic Page Style">
 <!ENTITY pageStylePersistentOnly.accesskey "b">
 
-<!ENTITY pageReportIcon.tooltip            "Change pop-up blocking settings for this web site">
+<!ENTITY pageReportIcon.tooltip            "Change pop-up blocking settings for this website">
 
 <!ENTITY allowPopups.accesskey "p">
 <!-- On Windows we use the term "Options" to describe settings, but
@@ -535,7 +527,7 @@ you can use these alternative items. Otherwise, their values should be empty.  -
 <!ENTITY editBookmark.cancel.label                   "Cancel">
 <!ENTITY editBookmark.removeBookmark.accessKey       "R">
 
-<!ENTITY identity.unverifiedsite2 "This web site does not supply identity information.">
+<!ENTITY identity.unverifiedsite2 "This website does not supply identity information.">
 <!ENTITY identity.connectedTo "You are connected to">
 <!-- Localization note (identity.runBy) : This string appears between a
 domain name (above) and an organization name (below). E.g.

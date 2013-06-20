@@ -5,13 +5,16 @@
 <!ENTITY startupHomePage.label     "Show my home page">
 <!ENTITY startupBlankPage.label    "Show a blank page">
 <!ENTITY startupLastSession.label  "Show my windows and tabs from last time">
+<!ENTITY restoreOnDemand.label     "Don’t load tabs until selected">
+<!ENTITY restoreOnDemand.accesskey "l">
+
 <!ENTITY homepage.label            "Home Page:">
 <!ENTITY homepage.accesskey        "P">
 <!ENTITY useCurrentPage.label      "Use Current Page">
 <!ENTITY useCurrentPage.accesskey  "C">
 <!ENTITY useMultiple.label         "Use Current Pages">
-<!ENTITY useBookmark.label         "Use Bookmark">
-<!ENTITY useBookmark.accesskey     "B">
+<!ENTITY chooseBookmark.label      "Use Bookmark…">
+<!ENTITY chooseBookmark.accesskey  "B">
 <!ENTITY restoreDefault.label      "Restore to Default">
 <!ENTITY restoreDefault.accesskey  "R">
 

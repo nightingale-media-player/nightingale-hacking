@@ -56,7 +56,7 @@ XPCOMUtils.defineLazyGetter(this, "PlacesUtils", function() {
 });
 
 var PlacesUIUtils = {
-  ORGANIZER_LEFTPANE_VERSION: 6,
+  ORGANIZER_LEFTPANE_VERSION: 7,
   ORGANIZER_FOLDER_ANNO: "PlacesOrganizer/OrganizerFolder",
   ORGANIZER_QUERY_ANNO: "PlacesOrganizer/OrganizerQuery",
 
@@ -73,19 +73,6 @@ var PlacesUIUtils = {
    */
   createFixedURI: function PUIU_createFixedURI(aSpec) {
     return URIFixup.createFixupURI(aSpec, Ci.nsIURIFixup.FIXUP_FLAG_NONE);
-  },
-
-  /**
-   * Wraps a string in a nsISupportsString wrapper
-   * @param   aString
-   *          The string to wrap
-   * @returns A nsISupportsString object containing a string.
-   */
-  _wrapString: function PUIU__wrapString(aString) {
-    var s = Cc["@mozilla.org/supports-string;1"].
-            createInstance(Ci.nsISupportsString);
-    s.data = aString;
-    return s;
   },
 
   getFormattedString: function PUIU_getFormattedString(key, params) {
@@ -814,9 +801,7 @@ var PlacesUIUtils = {
                 browserWindow.whereToOpenLink(aEvent, false, true) : "window";
     if (where == "window") {
       // There is no browser window open, thus open a new one.
-      var uriList = Cc["@mozilla.org/supports-string;1"].
-                  createInstance(Ci.nsISupportsString);
-      uriList.data = urls.join("|");
+      var uriList = PlacesUtils.toISupportsString(urls.join("|"));
       var args = Cc["@mozilla.org/supports-array;1"].
                   createInstance(Ci.nsISupportsArray);
       args.AppendElement(uriList);      
@@ -827,8 +812,10 @@ var PlacesUIUtils = {
     }
 
     var loadInBackground = where == "tabshifted" ? true : false;
-    var replaceCurrentTab = where == "tab" ? false : true;
-    browserWindow.gBrowser.loadTabs(urls, loadInBackground, replaceCurrentTab);
+    // For consistency, we want all the bookmarks to open in new tabs, instead
+    // of having one of them replace the currently focused tab.  Hence we call
+    // loadTabs with aReplace set to false.
+    browserWindow.gBrowser.loadTabs(urls, loadInBackground, false);
   },
 
   /**
@@ -1001,6 +988,7 @@ var PlacesUIUtils = {
     let queries = {
       "PlacesRoot": { title: "" },
       "History": { title: this.getString("OrganizerQueryHistory") },
+      "Downloads": { title: this.getString("OrganizerQueryDownloads") },
       "Tags": { title: this.getString("OrganizerQueryTags") },
       "AllBookmarks": { title: this.getString("OrganizerQueryAllBookmarks") },
       "BookmarksToolbar":
@@ -1017,7 +1005,7 @@ var PlacesUIUtils = {
           concreteId: PlacesUtils.unfiledBookmarksFolderId },
     };
     // All queries but PlacesRoot.
-    const EXPECTED_QUERY_COUNT = 6;
+    const EXPECTED_QUERY_COUNT = 7;
 
     // Removes an item and associated annotations, ignoring eventual errors.
     function safeRemoveItem(aItemId) {
@@ -1190,7 +1178,12 @@ var PlacesUIUtils = {
                           "&sort=" +
                           Ci.nsINavHistoryQueryOptions.SORT_BY_DATE_DESCENDING);
 
-        // XXX: Downloads.
+        // Downloads.
+        this.create_query("Downloads", leftPaneRoot,
+                          "place:transition=" +
+                          Ci.nsINavHistoryService.TRANSITION_DOWNLOAD +
+                          "&sort=" +
+                          Ci.nsINavHistoryQueryOptions.SORT_BY_DATE_DESCENDING);
 
         // Tags Query.
         this.create_query("Tags", leftPaneRoot,

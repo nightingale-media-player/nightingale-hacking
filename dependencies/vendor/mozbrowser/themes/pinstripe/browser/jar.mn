@@ -14,7 +14,6 @@ browser.jar:
   skin/classic/browser/fullscreen-video.css
   skin/classic/browser/Geolocation-16.png
   skin/classic/browser/Geolocation-64.png
-  skin/classic/browser/Go-arrow.png
   skin/classic/browser/home.png
   skin/classic/browser/hud-style-check-box-checked.png
   skin/classic/browser/hud-style-check-box-empty.png
@@ -42,9 +41,10 @@ browser.jar:
   skin/classic/browser/section_collapsed-rtl.png
   skin/classic/browser/section_expanded.png
   skin/classic/browser/Secure-Glyph-White.png
-  skin/classic/browser/Secure-background.gif
+  skin/classic/browser/keyhole-circle.png
   skin/classic/browser/Toolbar.png
   skin/classic/browser/toolbarbutton-dropmarker.png
+  skin/classic/browser/urlbar-history-dropmarker.png
   skin/classic/browser/urlbar-arrow.png
   skin/classic/browser/urlbar-popup-blocked.png
   skin/classic/browser/feeds/subscribe.css                  (feeds/subscribe.css)
@@ -76,7 +76,6 @@ browser.jar:
   skin/classic/browser/places/plus.png                      (places/plus.png)
   skin/classic/browser/places/plus-active.png               (places/plus-active.png)
   skin/classic/browser/places/starPage.png                  (places/starPage.png)
-  skin/classic/browser/places/pageStarred.png               (places/pageStarred.png)
   skin/classic/browser/places/searching_16.png              (places/searching_16.png)
   skin/classic/browser/places/starred48.png                 (places/starred48.png)
   skin/classic/browser/places/unstarred48.png               (places/unstarred48.png)
@@ -84,6 +83,7 @@ browser.jar:
   skin/classic/browser/places/twisty-open.gif               (places/twisty-open.gif)
   skin/classic/browser/places/twisty-closed.gif             (places/twisty-closed.gif)
   skin/classic/browser/places/tag.png                       (places/tag.png)
+  skin/classic/browser/places/downloads.png                 (places/downloads.png)
   skin/classic/browser/places/expander-closed-active.png    (places/expander-closed-active.png)
   skin/classic/browser/places/expander-closed.png           (places/expander-closed.png)
   skin/classic/browser/places/expander-open-active.png      (places/expander-open-active.png)
@@ -118,11 +118,13 @@ browser.jar:
   skin/classic/browser/tabbrowser/tabDragIndicator.png                   (tabbrowser/tabDragIndicator.png)
   skin/classic/browser/tabview/close.png                    (tabview/close.png)
   skin/classic/browser/tabview/edit-light.png               (tabview/edit-light.png)
-  skin/classic/browser/tabview/new-tab.png                  (tabview/new-tab.png)
   skin/classic/browser/tabview/search.png                   (tabview/search.png)
   skin/classic/browser/tabview/stack-expander.png           (tabview/stack-expander.png)
   skin/classic/browser/tabview/tabview.png                  (tabview/tabview.png)
   skin/classic/browser/tabview/tabview.css                  (tabview/tabview.css)
+  skin/classic/browser/devtools/arrows.png                  (devtools/arrows.png)
+  skin/classic/browser/devtools/search.png                  (devtools/search.png)
+  skin/classic/browser/devtools/csshtmltree.css             (devtools/csshtmltree.css)
 #ifdef MOZ_SERVICES_SYNC
   skin/classic/browser/sync-throbber.png
   skin/classic/browser/sync-16.png
@@ -135,3 +137,16 @@ browser.jar:
   skin/classic/browser/syncCommon.css
   skin/classic/browser/syncQuota.css
 #endif
+  skin/classic/browser/lion/keyhole-circle.png              (keyhole-circle-lion.png)
+  skin/classic/browser/lion/Toolbar.png                     (Toolbar-lion.png)
+  skin/classic/browser/lion/toolbarbutton-dropmarker.png    (toolbarbutton-dropmarker-lion.png)
+  skin/classic/browser/lion/tabbrowser/alltabs-box-bkgnd-icon.png      (tabbrowser/alltabs-box-bkgnd-icon-lion.png)
+  skin/classic/browser/lion/tabview/tabview.png                        (tabview/tabview-lion.png)
+  skin/classic/browser/lion/places/toolbar.png              (places/toolbar-lion.png)
+
+% override chrome://browser/skin/keyhole-circle.png                        chrome://browser/skin/lion/keyhole-circle.png                           os=Darwin osversion>=10.7
+% override chrome://browser/skin/Toolbar.png                               chrome://browser/skin/lion/Toolbar.png                                  os=Darwin osversion>=10.7
+% override chrome://browser/skin/toolbarbutton-dropmarker.png              chrome://browser/skin/lion/toolbarbutton-dropmarker.png                 os=Darwin osversion>=10.7
+% override chrome://browser/skin/tabbrowser/alltabs-box-bkgnd-icon.png     chrome://browser/skin/lion/tabbrowser/alltabs-box-bkgnd-icon.png        os=Darwin osversion>=10.7
+% override chrome://browser/skin/tabview/tabview.png                       chrome://browser/skin/lion/tabview/tabview.png                          os=Darwin osversion>=10.7
+% override chrome://browser/skin/places/toolbar.png                        chrome://browser/skin/lion/places/toolbar.png                           os=Darwin osversion>=10.7

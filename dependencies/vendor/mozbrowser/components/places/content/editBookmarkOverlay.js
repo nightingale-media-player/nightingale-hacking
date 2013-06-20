@@ -77,7 +77,7 @@ var gEditItemOverlay = {
     if (aInfo && aInfo.hiddenRows)
       this._hiddenRows = aInfo.hiddenRows;
     else
-      this._hiddenRows.splice(0);
+      this._hiddenRows.splice(0, this._hiddenRows.length);
     // force-read-only
     this._readOnly = aInfo && aInfo.forceReadOnly;
   },
@@ -618,10 +618,12 @@ var gEditItemOverlay = {
     catch(ex) {  }
 
     var currentSiteURI = PlacesUtils.livemarks.getSiteURI(this._itemId);
-    if (!uri || !currentSiteURI.equals(uri)) {
-      var txn = PlacesUIUtils.ptm.editLivemarkSiteURI(this._itemId, uri);
-      PlacesUIUtils.ptm.doTransaction(txn);
+    if ((!uri && !currentSiteURI) ||
+        (uri && currentSiteURI && currentSiteURI.equals(uri))) {
+      return;
     }
+    var txn = PlacesUIUtils.ptm.editLivemarkSiteURI(this._itemId, uri);
+    PlacesUIUtils.ptm.doTransaction(txn);
   },
 
   onLoadInSidebarCheckboxCommand:

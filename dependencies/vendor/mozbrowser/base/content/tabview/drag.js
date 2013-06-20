@@ -67,8 +67,7 @@ var resize = {
 // Parameters:
 //   item - The <Item> being dragged
 //   event - The DOM event that kicks off the drag
-//   isFauxDrag - (boolean) true if a faux drag, which is used when simply snapping.
-function Drag(item, event, isFauxDrag) {
+function Drag(item, event) {
   Utils.assert(item && (item.isAnItem || item.isAFauxItem), 
       'must be an item, or at least a faux item');
 
@@ -85,19 +84,6 @@ function Drag(item, event, isFauxDrag) {
   this.safeWindowBounds = Items.getSafeWindowBounds();
 
   Trenches.activateOthersTrenches(this.el);
-
-  if (!isFauxDrag) {
-    // When a tab drag starts, make it the focused tab.
-    if (this.item.isAGroupItem) {
-      var tab = UI.getActiveTab();
-      if (!tab || tab.parent != this.item) {
-        if (this.item._children.length)
-          UI.setActive(this.item._children[0]);
-      }
-    } else if (this.item.isATabItem) {
-      UI.setActive(this.item);
-    }
-  }
 };
 
 Drag.prototype = {
@@ -295,10 +281,8 @@ Drag.prototype = {
     Trenches.hideGuides();
     this.item.isDragging = false;
 
-    if (this.parent && this.parent != this.item.parent &&
-       this.parent.isEmpty()) {
-      this.parent.close();
-    }
+    if (this.parent && this.parent != this.item.parent)
+      this.parent.closeIfEmpty();
 
     if (this.parent && this.parent.expanded)
       this.parent.arrange();
@@ -306,7 +290,7 @@ Drag.prototype = {
     if (this.item.parent)
       this.item.parent.arrange();
 
-    if (!this.item.parent) {
+    if (this.item.isAGroupItem) {
       this.item.setZ(drag.zIndex);
       drag.zIndex++;
 

@@ -151,10 +151,9 @@ Item.prototype = {
     this.dragOptions = {
       cancelClass: 'close stackExpander',
       start: function(e, ui) {
-        if (this.isAGroupItem) {
-          UI.setActive(this);
+        UI.setActive(this);
+        if (this.isAGroupItem)
           this._unfreezeItemSize();
-        }
         // if we start dragging a tab within a group, start with dropSpace on.
         else if (this.parent != null)
           this.parent._dropSpaceActive = true;
@@ -165,9 +164,13 @@ Item.prototype = {
       },
       stop: function() {
         drag.info.stop();
-        drag.info = null;
-        if (!this.isAGroupItem && !this.parent)
+
+        if (!this.isAGroupItem && !this.parent) {
+          new GroupItem([drag.info.$el], {focusTitle: true});
           gTabView.firstUseExperienced = true;
+        }
+
+        drag.info = null;
       },
       // The minimum the mouse must move after mouseDown in order to move an 
       // item
@@ -201,8 +204,7 @@ Item.prototype = {
       minWidth: 90,
       minHeight: 90,
       start: function(e,ui) {
-        if (this.isAGroupItem)
-          UI.setActive(this);
+        UI.setActive(this);
         resize.info = new Drag(this, e);
       },
       resize: function(e,ui) {
@@ -308,9 +310,14 @@ Item.prototype = {
   // Parameters:
   //  immediately - boolean for doing the pushAway without animation
   pushAway: function Item_pushAway(immediately) {
+    var items = Items.getTopLevelItems();
+
+    // we need at least two top-level items to push something away
+    if (items.length < 2)
+      return;
+
     var buffer = Math.floor(Items.defaultGutter / 2);
 
-    var items = Items.getTopLevelItems();
     // setup each Item's pushAwayData attribute:
     items.forEach(function pushAway_setupPushAwayData(item) {
       var data = {};
@@ -543,9 +550,7 @@ Item.prototype = {
     var defaultRadius = Trenches.defaultRadius;
     Trenches.defaultRadius = 2 * defaultRadius; // bump up from 10 to 20!
 
-    var event = {startPosition:{}}; // faux event
-    var FauxDragInfo = new Drag(this, event, true);
-    // true == isFauxDrag
+    var FauxDragInfo = new Drag(this, {});
     FauxDragInfo.snap('none', false);
     FauxDragInfo.stop(immediately);
 

@@ -5,7 +5,6 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=462856
 -->
 <head>
   <title>Test offline app notification</title>
-  <script type="text/javascript" src="/MochiKit/packed.js"></script>
   <script type="text/javascript" src="/tests/SimpleTest/SimpleTest.js"></script>
   <link rel="stylesheet" type="text/css" href="/tests/SimpleTest/test.css" />
 </head>
@@ -39,8 +38,8 @@ window.addEventListener("message", function(event) {
       var pm = Components.classes["@mozilla.org/permissionmanager;1"].
                getService(Components.interfaces.nsIPermissionManager);
 
-      pm.remove(frames.testFrame.document.documentURIObject.host, "offline-app");
-      pm.remove(frames.testFrame3.document.documentURIObject.host, "offline-app");
+      pm.remove(frames.testFrame.location.hostname, "offline-app");
+      pm.remove(frames.testFrame3.location.hostname, "offline-app");
 
       SimpleTest.finish();
     }

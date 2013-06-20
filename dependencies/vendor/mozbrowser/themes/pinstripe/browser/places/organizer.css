@@ -2,12 +2,6 @@
 
 /* Places Organizer Sidebars */
 
-#placesList {
-  -moz-appearance: none;
-  border: none;
-  margin: 0;
-}
-
 #placesList > treechildren::-moz-tree-row {
   background-color: transparent;
   border-color: transparent;
@@ -86,24 +80,9 @@
 #placesToolbar > toolbarbutton {
   list-style-image: url("chrome://browser/skin/places/toolbar.png");
   margin: 4px 4px 5px;
-  padding: 1px 3px;
-  border: 1px solid @toolbarbuttonBorderColor@;
-  border-radius: @toolbarbuttonCornerRadius@;
-  box-shadow: @loweredShadow@;
-  background: @toolbarbuttonBackground@;
-  background-origin: border-box;
-}
-
-#placesToolbar > toolbarbutton:not([disabled="true"]):active:hover,
-#placesToolbar > toolbarbutton[open="true"] {
-  background: @toolbarbuttonPressedBackgroundColor@;
-  text-shadow: @loweredShadow@;
-  box-shadow: @toolbarbuttonPressedInnerShadow@, @loweredShadow@;
-}
-
-#placesToolbar > toolbarbutton:-moz-window-inactive {
-  border-color: @toolbarbuttonInactiveBorderColor@;
-  background-image: @toolbarbuttonInactiveBackgroundImage@;
+  padding: 0;
+  height: 22px;
+  -moz-appearance: toolbarbutton;
 }
 
 #placesToolbar > toolbarbutton[disabled="true"] > .toolbarbutton-icon {
@@ -125,6 +104,20 @@
   -moz-margin-end: 2px;
 }
 
+@media (-moz-mac-lion-theme) {
+  #placesToolbar > toolbarbutton[disabled="true"] > .toolbarbutton-icon,
+  #placesToolbar > toolbarbutton:not(:hover):-moz-window-inactive > .toolbarbutton-icon,
+  #placesToolbar > toolbarbutton[type="menu"][disabled="true"] > .toolbarbutton-menu-dropmarker,
+  #placesToolbar > toolbarbutton:not(:hover):-moz-window-inactive[type="menu"] > .toolbarbutton-menu-dropmarker {
+    opacity: .5;
+  }
+
+  #placesToolbar > toolbarbutton:-moz-window-inactive[disabled="true"] > .toolbarbutton-icon,
+  #placesToolbar > toolbarbutton:-moz-window-inactive[type="menu"][disabled="true"] > .toolbarbutton-menu-dropmarker {
+    opacity: .25;
+  }
+}
+
 #placesToolbar > toolbarbutton > menupopup {
   margin-top: 1px;
 }
@@ -133,17 +126,12 @@
 #back-button:-moz-locale-dir(ltr),
 #forward-button:-moz-locale-dir(rtl) {
   -moz-image-region: rect(0px, 16px, 16px, 0px);
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
   margin-right: 0;
-  border-right: 0;
 }
 
 #forward-button:-moz-locale-dir(ltr),
 #back-button:-moz-locale-dir(rtl) {
   -moz-image-region: rect(0px, 32px, 16px, 16px);
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
   margin-left: 0;
 }
 
@@ -179,23 +167,17 @@
 }
 
 /* Place List, Place Content */
-.placesTree {
-  margin: 0px;
-}
-
 #placesList {
-  -moz-appearance: none;
   background-color: #d2d8e2;
   width: 160px;
-  margin: 0px;
-  border: 0px;
 }
 
 #placesList:-moz-window-inactive {
   background-color: #e8e8e8;
 }
 
-#infoPaneBox {
+/* Info box */
+#detailsDeck {
   border-top: 1px solid #919191;
   background-color: #f0f0f0;
   padding: 10px;
@@ -233,19 +215,6 @@
 
 #placeContent > treechildren::-moz-tree-cell(separator) {
   border-color: transparent;
-}
-
-.small {
-  min-width: 0px;
-  padding: 0px 4px 0px 4px;
-  margin: 0px;  
-  border: 0px;
-}
-
-.small .button-text,
-.small .button-box {
-  padding: 0px;
-  border: 0px;
 }
 
 /* Scope Bar */

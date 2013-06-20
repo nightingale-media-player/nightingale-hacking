@@ -3,17 +3,13 @@
 # These files are in alphabetical order, except that files removed only on
 # certain platforms are after all of the regular files and obsolete Talkback and
 # Inspector files are at the very end.
-#if MOZ_UPDATE_CHANNEL == aurora
-#define SHIP_FEEDBACK
-#elif MOZ_UPDATE_CHANNEL == beta
-#define SHIP_FEEDBACK
-#endif
 .autoreg
 @DLL_PREFIX@jsj@DLL_SUFFIX@
 @DLL_PREFIX@sqlite3@DLL_SUFFIX@
 @DLL_PREFIX@xpcom_compat@DLL_SUFFIX@
 @DLL_PREFIX@xpistub@DLL_SUFFIX@
 @DLL_PREFIX@zlib@DLL_SUFFIX@
+@DLL_PREFIX@jemalloc@DLL_SUFFIX@
 #ifdef MOZ_STATIC_JS
 @DLL_PREFIX@mozjs@DLL_SUFFIX@
 #endif
@@ -95,6 +91,13 @@ defaults/profile/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/
 defaults/profile/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/install.rdf
 defaults/profile/search.rdf
 #ifndef SHIP_FEEDBACK
+# In the average case, this directory is only used by Test Pilot, and will get
+# removed by the updater. In some cases (eg, partner builds), distribution/
+# will have other files and/or directories in it. In these cases, the updater
+# will print a non-fatal error and continue on, because we're not appending
+# '*' to force a recursive removal.
+distribution/
+distribution/extensions/
 distribution/extensions/testpilot@labs.mozilla.com.xpi
 #endif
 extensions/talkback@mozilla.org/
@@ -227,6 +230,7 @@ install.rdf
 modules/JSON.jsm
 mozilla-runtime@BIN_SUFFIX@
 old-homepage-default.properties
+README.txt
 res/arrow.gif
 res/arrowd.gif
 res/broken-image.gif
@@ -267,7 +271,6 @@ res/ua.css
 res/unixcharset.properties
 res/viewsource.css
 res/wincharset.properties
-searchplugins/
 searchplugins/DRAE.gif
 searchplugins/DRAE.png
 searchplugins/DRAE.src
@@ -308,6 +311,7 @@ searchplugins/atlas-sk.src
 searchplugins/baidu.gif
 searchplugins/baidu.png
 searchplugins/baidu.src
+searchplugins/bluu.xml
 searchplugins/bok-NO.gif
 searchplugins/bok-NO.png
 searchplugins/bok-NO.src
@@ -954,6 +958,7 @@ xpicleanup@BIN_SUFFIX@
   modules/PluralForm.jsm
   modules/PopupNotifications.jsm
   modules/PropertyPanel.jsm
+  modules/reflect.jsm
   modules/Services.jsm
   modules/services-sync/auth.js
   modules/services-sync/base_records/collection.js
@@ -989,7 +994,6 @@ xpicleanup@BIN_SUFFIX@
   modules/services-sync/type_records/prefs.js
   modules/services-sync/type_records/tabs.js
   modules/services-sync/util.js
-  modules/SpatialNavigation.js
   modules/stylePanel.jsm
   modules/tabview/AllTabs.jsm
   modules/tabview/groups.jsm
@@ -1256,7 +1260,6 @@ xpicleanup@BIN_SUFFIX@
     dictionaries/PL.dic
     icons/mozicon16.xpm
     icons/mozicon50.xpm
-    libjemalloc.so
     plugins/libnullplugin.so
     readme.txt
   #endif
@@ -1270,14 +1273,24 @@ xpicleanup@BIN_SUFFIX@
   components/nsPostUpdateWin.js
   js3250.dll
   plugins/npnul32.dll
-  #ifdef MOZ_MEMORY
-    Microsoft.VC80.CRT.manifest
-    msvcm80.dll
-    msvcp80.dll
-    msvcr80.dll
-  #else
-    mozcrt19.dll
+  #if _MSC_VER != 1400
+    @BINPATH@/Microsoft.VC80.CRT.manifest
+    @BINPATH@/msvcm80.dll
+    @BINPATH@/msvcp80.dll
+    @BINPATH@/msvcr80.dll
   #endif
+  #if _MSC_VER != 1500
+    @BINPATH@/Microsoft.VC90.CRT.manifest
+    @BINPATH@/msvcm90.dll
+    @BINPATH@/msvcp90.dll
+    @BINPATH@/msvcr90.dll
+  #endif
+  #if _MSC_VER != 1600
+    @BINPATH@/msvcp100.dll
+    @BINPATH@/msvcr100.dll
+  #endif
+  mozcrt19.dll
+  mozcpp19.dll
 #endif
 @DLL_PREFIX@xpcom_core@DLL_SUFFIX@
 components/@DLL_PREFIX@jar50@DLL_SUFFIX@

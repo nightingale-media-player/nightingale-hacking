@@ -201,6 +201,8 @@ code {
 
 .docType {
   position: absolute;
+  /* position DOCTYPE element above/outside the "nodeBox" that contains it */
+  /* Note: to be fixed in Bug #688439 */
   top: -16px;
   font-family: Menlo, Andale Mono, monospace;
   padding-left: 8px;
@@ -210,7 +212,9 @@ code {
 }
 
 .htmlNodeBox {
-  top: 16px;
+  /* make room for DOCTYPE element to be rendered above/outside "nodeBox" */
+  /* Note: to be fixed in Bug #688439 */
+  margin-top: 16px;
 }
 
 .nodeWhiteSpace {
@@ -348,3 +352,25 @@ code {
   background-image: url("chrome://global/skin/tree/twisty-open.png") !important;
 }
 
+.editingAttributeValue {
+  background-color: #492;
+}
+
+#attribute-editor {
+  visibility: hidden;
+  position: absolute;
+  z-index: 5000;
+  background-color: #fff;
+  border: 1px solid #000;
+}
+
+#attribute-editor.editing {
+  visibility: visible;
+}
+
+#attribute-editor-input {
+  border: none;
+  padding: 2px 5px;
+  font-family: Menlo, Andale Mono, monospace;
+  font-size: 11px;
+}

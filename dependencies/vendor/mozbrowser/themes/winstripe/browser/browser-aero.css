@@ -13,9 +13,9 @@
 
   #appmenu-button {
     border-width: 2px;
-    -moz-border-left-colors: rgba(255,255,255,.5) rgba(83,42,6,.9);
-    -moz-border-bottom-colors: rgba(255,255,255,.5) rgba(83,42,6,.9);
-    -moz-border-right-colors: rgba(255,255,255,.5) rgba(83,42,6,.9);
+    -moz-border-left-colors: @appMenuButtonBorderColor@;
+    -moz-border-bottom-colors: @appMenuButtonBorderColor@;
+    -moz-border-right-colors: @appMenuButtonBorderColor@;
     margin-bottom: 1px; /* compensate white outer border */
     box-shadow: 0 1px 0 rgba(255,255,255,.25) inset,
                 0 0 2px 1px rgba(255,255,255,.25) inset;
@@ -138,6 +138,13 @@
     border-right-style: none !important;
   }
 
+  #toolbar-menubar :-moz-any(@primaryToolbarButtons@):not(:-moz-any(#alltabs-button,#tabview-button,#new-tab-button,#sync-button[status])) > .toolbarbutton-icon:not(:-moz-lwtheme),
+  #TabsToolbar[tabsontop=true] :-moz-any(@primaryToolbarButtons@):not(:-moz-any(#alltabs-button,#tabview-button,#new-tab-button,#sync-button[status])) > .toolbarbutton-icon:not(:-moz-lwtheme),
+  #navigator-toolbox[tabsontop=false] > #nav-bar :-moz-any(@primaryToolbarButtons@):not(:-moz-any(#alltabs-button,#tabview-button,#new-tab-button,#sync-button[status])) > .toolbarbutton-icon:not(:-moz-lwtheme),
+  #nav-bar + #customToolbars + #PersonalToolbar[collapsed=true] + #TabsToolbar[tabsontop=false]:last-child :-moz-any(@primaryToolbarButtons@):not(:-moz-any(#alltabs-button,#tabview-button,#new-tab-button,#sync-button[status])) > .toolbarbutton-icon:not(:-moz-lwtheme) {
+    list-style-image: url("chrome://browser/skin/Toolbar-inverted.png");
+  }
+
   /* Vertical toolbar border */
   #main-window[sizemode=normal] #navigator-toolbox::after,
   #main-window[sizemode=normal] #navigator-toolbox[tabsontop=true] > toolbar:not(#toolbar-menubar):not(#TabsToolbar),
@@ -170,17 +177,18 @@
      because of the border radius on the toolbar below the tab bar. */
   #main-window[sizemode=normal][tabsontop=true] #nav-bar:not(:-moz-lwtheme),
   #main-window[sizemode=normal][tabsontop=true] > #nav-bar[collapsed=true]:not([customizing]) + toolbar:not(:-moz-lwtheme),
-  #main-window[sizemode=normal][tabsontop=true] > #nav-bar[collapsed=true]:not([customizing]) + #customToolbars + #PersonalToolbar:not(:-moz-lwtheme) {
+  #main-window[sizemode=normal][tabsontop=true] > #nav-bar[collapsed=true]:not([customizing]) + #customToolbars + #PersonalToolbar:not(:-moz-lwtheme),
+  #main-window[sizemode=normal][tabsontop=true][disablechrome] #navigator-toolbox:not(:-moz-lwtheme)::after {
     border-top: 1px solid @toolbarShadowColor@;
     border-top-left-radius: 3.5px;
     border-top-right-radius: 3.5px;
     background-clip: padding-box;
   }
-  #main-window[sizemode=normal]:not([disablechrome]) #TabsToolbar[tabsontop=true]:not(:-moz-lwtheme) {
+  #main-window[sizemode=normal] #TabsToolbar[tabsontop=true]:not(:-moz-lwtheme) {
     margin-bottom: -1px;
     background-image: none !important;
   }
-  #main-window[sizemode=normal]:not([disablechrome]) #tabbrowser-tabs[tabsontop=true] > .tabbrowser-arrowscrollbox > .arrowscrollbox-scrollbox > .scrollbox-innerbox:not(:-moz-lwtheme) {
+  #main-window[sizemode=normal] #tabbrowser-tabs[tabsontop=true] > .tabbrowser-arrowscrollbox > .arrowscrollbox-scrollbox > .scrollbox-innerbox:not(:-moz-lwtheme) {
     position: relative;
   }
 
@@ -201,6 +209,14 @@
   #main-window[sizemode=normal] #TabsToolbar[tabsontop=false] {
     padding-left: 2px;
     padding-right: 2px;
+  }
+
+  /* Rounded corners for when chrome is disabled */
+  #main-window[sizemode=normal][tabsontop=true][disablechrome] #navigator-toolbox:not(:-moz-lwtheme)::after {
+    visibility: visible;
+    background-color: @customToolbarColor@;
+    background-image: -moz-linear-gradient(@toolbarHighlight@, @toolbarHighlight@);
+    height: 4px;
   }
 
   /* Make the window draggable by glassed toolbars (bug 555081) */

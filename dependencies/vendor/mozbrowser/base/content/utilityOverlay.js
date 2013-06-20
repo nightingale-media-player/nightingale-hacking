@@ -23,6 +23,7 @@
 #   Alec Flett <alecf@netscape.com>
 #   Ehsan Akhgari <ehsan.akhgari@gmail.com>
 #   Gavin Sharp <gavin@gavinsharp.com>
+#   Dão Gottwald <dao@design-noir.de>
 #
 # Alternatively, the contents of this file may be used under the terms of
 # either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -418,10 +419,12 @@ function openAboutDialog() {
     return;
   }
 
-#ifdef XP_MACOSX
+#ifdef XP_WIN
+  var features = "chrome,centerscreen,dependent";
+#elifdef XP_MACOSX
   var features = "chrome,resizable=no,minimizable=no";
 #else
-  var features = "chrome,centerscreen,dependent";
+  var features = "chrome,centerscreen,dependent,dialog=no";
 #endif
   window.openDialog("chrome://browser/content/aboutDialog.xul", "", features);
 }
@@ -614,4 +617,13 @@ function openPrefsHelp() {
 
   var helpTopic = document.getElementsByTagName("prefwindow")[0].currentPane.helpTopic;
   openHelpLink(helpTopic, !instantApply);
+}
+
+function trimURL(aURL) {
+  // This function must not modify the given URL such that calling
+  // nsIURIFixup::createFixupURI with the result will produce a different URI.
+  return aURL /* remove single trailing slash for http/https/ftp URLs */
+             .replace(/^((?:http|https|ftp):\/\/[^/]+)\/$/, "$1")
+              /* remove http:// unless the host starts with "ftp\d*\." or contains "@" */
+             .replace(/^http:\/\/((?!ftp\d*\.)[^\/@]+(?:\/|$))/, "$1");
 }

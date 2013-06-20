@@ -89,7 +89,7 @@ function SessionStartup() {
 SessionStartup.prototype = {
 
   // the state to restore at startup
-  _iniString: null,
+  _initialState: null,
   _sessionType: Ci.nsISessionStartup.NO_SESSION,
 
 /* ........ Global Event Handlers .............. */
@@ -112,8 +112,9 @@ SessionStartup.prototype = {
                      getService(Ci.nsIProperties);
     let sessionFile = dirService.get("ProfD", Ci.nsILocalFile);
     sessionFile.append("sessionstore.js");
-    
-    let doResumeSession = prefBranch.getBoolPref("sessionstore.resume_session_once") ||
+
+    let doResumeSessionOnce = prefBranch.getBoolPref("sessionstore.resume_session_once");
+    let doResumeSession = doResumeSessionOnce ||
                           prefBranch.getIntPref("startup.page") == 3;
 
     // only continue if the session file exists
@@ -121,54 +122,61 @@ SessionStartup.prototype = {
       return;
 
     // get string containing session state
-    this._iniString = this._readStateFile(sessionFile);
-    if (!this._iniString)
+    let iniString = this._readStateFile(sessionFile);
+    if (!iniString)
       return;
 
     // parse the session state into a JS object
-    let initialState;
     try {
       // remove unneeded braces (added for compatibility with Firefox 2.0 and 3.0)
-      if (this._iniString.charAt(0) == '(')
-        this._iniString = this._iniString.slice(1, -1);
+      if (iniString.charAt(0) == '(')
+        iniString = iniString.slice(1, -1);
       try {
-        initialState = JSON.parse(this._iniString);
+        this._initialState = JSON.parse(iniString);
       }
       catch (exJSON) {
-        var s = new Cu.Sandbox("about:blank");
-        initialState = Cu.evalInSandbox("(" + this._iniString + ")", s);
-        this._iniString = JSON.stringify(initialState);
+        var s = new Cu.Sandbox("about:blank", {sandboxName: 'nsSessionStartup'});
+        this._initialState = Cu.evalInSandbox("(" + iniString + ")", s);
       }
+
+      // If this is a normal restore then throw away any previous session
+      if (!doResumeSessionOnce)
+        delete this._initialState.lastSessionState;
     }
     catch (ex) { debug("The session file is invalid: " + ex); }
 
     let resumeFromCrash = prefBranch.getBoolPref("sessionstore.resume_from_crash");
     let lastSessionCrashed =
-      initialState && initialState.session && initialState.session.state &&
-      initialState.session.state == STATE_RUNNING_STR;
+      this._initialState && this._initialState.session &&
+      this._initialState.session.state &&
+      this._initialState.session.state == STATE_RUNNING_STR;
+
+    // Report shutdown success via telemetry. Shortcoming here are
+    // being-killed-by-OS-shutdown-logic, shutdown freezing after
+    // session restore was written, etc.
+    let Telemetry = Cc["@mozilla.org/base/telemetry;1"].getService(Ci.nsITelemetry);
+    Telemetry.getHistogramById("SHUTDOWN_OK").add(!lastSessionCrashed);
 
     // set the startup type
     if (lastSessionCrashed && resumeFromCrash)
       this._sessionType = Ci.nsISessionStartup.RECOVER_SESSION;
     else if (!lastSessionCrashed && doResumeSession)
       this._sessionType = Ci.nsISessionStartup.RESUME_SESSION;
-    else if (initialState)
+    else if (this._initialState)
       this._sessionType = Ci.nsISessionStartup.DEFER_SESSION;
     else
-      this._iniString = null; // reset the state string
+      this._initialState = null; // reset the state
 
-    if (this.doRestore()) {
-      // wait for the first browser window to open
+    // wait for the first browser window to open
+    // Don't reset the initial window's default args (i.e. the home page(s))
+    // if all stored tabs are pinned.
+    if (this.doRestore() &&
+        (!this._initialState.windows ||
+        !this._initialState.windows.every(function (win)
+           win.tabs.every(function (tab) tab.pinned))))
+      Services.obs.addObserver(this, "domwindowopened", true);
 
-      // Don't reset the initial window's default args (i.e. the home page(s))
-      // if all stored tabs are pinned.
-      if (!initialState.windows ||
-          !initialState.windows.every(function (win)
-             win.tabs.every(function (tab) tab.pinned)))
-        Services.obs.addObserver(this, "domwindowopened", true);
-
-      Services.obs.addObserver(this, "sessionstore-windows-restored", true);
-    }
+    Services.obs.addObserver(this, "sessionstore-windows-restored", true);
   },
 
   /**
@@ -200,18 +208,9 @@ SessionStartup.prototype = {
       break;
     case "sessionstore-windows-restored":
       Services.obs.removeObserver(this, "sessionstore-windows-restored");
-      // We only want to start listening for the purge notification after we've
-      // sessionstore has finished its initial startup. That way we won't observe
-      // the purge notification & clear the old session before sessionstore loads
-      // it (in the case of a crash).
-      Services.obs.addObserver(this, "browser:purge-session-history", true);
-      break;
-    case "browser:purge-session-history":
-      // reset all state on sanitization
-      this._iniString = null;
+      // free _initialState after nsSessionStore is done with it
+      this._initialState = null;
       this._sessionType = Ci.nsISessionStartup.NO_SESSION;
-      // no need in repeating this, since startup state won't change
-      Services.obs.removeObserver(this, "browser:purge-session-history");
       break;
     }
   },
@@ -256,10 +255,10 @@ SessionStartup.prototype = {
 /* ........ Public API ................*/
 
   /**
-   * Get the session state as a string
+   * Get the session state as a jsval
    */
   get state() {
-    return this._iniString;
+    return this._initialState;
   },
 
   /**

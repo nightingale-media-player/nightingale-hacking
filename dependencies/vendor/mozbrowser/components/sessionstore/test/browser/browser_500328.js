@@ -98,7 +98,6 @@ function test() {
   // Tests session restore functionality of history.pushState and
   // history.replaceState().  (Bug 500328)
 
-  let ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
   waitForExplicitFinish();
 
   // We open a new blank window, let it load, and then load in
@@ -117,13 +116,13 @@ function test() {
 
       // After these push/replaceState calls, the window should have three
       // history entries:
-      //   testURL (state object: null)      <-- oldest
-      //   testURL (state object: {obj1:1})
-      //   page2   (state object: {obj3:/^a$/})  <-- newest
+      //   testURL        (state object: null)          <-- oldest
+      //   testURL        (state object: {obj1:1})
+      //   testURL?page2  (state object: {obj3:/^a$/})  <-- newest
       let contentWindow = tab.linkedBrowser.contentWindow;
       let history = contentWindow.history;
       history.pushState({obj1:1}, "title-obj1");
-      history.pushState({obj2:2}, "title-obj2", "page2");
+      history.pushState({obj2:2}, "title-obj2", "?page2");
       history.replaceState({obj3:/^a$/}, "title-obj3");
 
       let state = ss.getTabState(tab);
