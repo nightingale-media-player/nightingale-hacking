@@ -720,7 +720,7 @@ Application.prototype = {
   }
 };
 
-#include ../../../toolkit/components/exthelper/extApplication.js
+#include ../../../mozexthelper/extApplication.js
 
 // set the proto, defined in extApplication.js
 Application.prototype.__proto__ = extApplication.prototype;
