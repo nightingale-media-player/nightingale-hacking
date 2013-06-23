@@ -1963,14 +1963,10 @@ sbPlaybackHistoryService::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       // current item before starting to track the next one.
       if(mCurrentlyTracking) {
         rv = VerifyDataAndCreateNewEntry();
-        // first track's verification succeeds, so the tracking data isn't
-        // reset, but the second track's verification fails, which then
-        // causes the data to be reset allowing the third track's verification
-        // to succeed, etc.
-//        if(NS_FAILED(rv)) {
+        if(NS_FAILED(rv)) {
           rv = ResetTrackingData();
           NS_ENSURE_SUCCESS(rv, rv);
-//        }
+        }
       }
 
       rv = UpdateTrackingDataFromEvent(aEvent);
