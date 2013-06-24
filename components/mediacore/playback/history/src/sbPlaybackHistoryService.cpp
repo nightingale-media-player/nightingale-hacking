@@ -1701,9 +1701,13 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Regardless, we update playback metrics.
-  rv = UpdateMetrics();
-  NS_ENSURE_SUCCESS(rv, rv);
+  /* 
+    Playback metrics are timing out causing the play count
+    to fail to increment!
+    // Regardless, we update playback metrics.
+    // rv = UpdateMetrics();
+    // NS_ENSURE_SUCCESS(rv, rv);
+  */
 
   return NS_OK;
 }
