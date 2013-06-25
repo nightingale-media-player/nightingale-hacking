@@ -50,7 +50,7 @@ static PRLogModuleInfo* gDeviceContentLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbDeviceContent::sbDeviceContent()
-: mDeviceLibrariesMonitor(nsnull)
+: mDeviceLibrariesMonitor("sbDeviceContent::mDeviceLibrariesMonitor")
 {
 #ifdef PR_LOGGING
   if (!gDeviceContentLog) {

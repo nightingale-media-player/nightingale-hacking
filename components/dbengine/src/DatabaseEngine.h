@@ -232,7 +232,7 @@ public:
   , m_Running(PR_FALSE)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)
-  , m_pQueueMonitor(nsnull)
+  , m_pQueueMonitor("QueryProcessorQueue::m_pQueueMonitor")
   , m_AnalyzeCount(0) {
     MOZ_COUNT_CTOR(QueryProcessorQueue);
   }

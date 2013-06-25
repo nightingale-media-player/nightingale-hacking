@@ -52,7 +52,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreTypeSniffer,
                               sbIMediacoreTypeSniffer)
 
 sbMediacoreTypeSniffer::sbMediacoreTypeSniffer()
-: mMonitor(nsnull)
+: mMonitor("sbMediacoreTypeSniffer::mMonitor")
 {
 }
 

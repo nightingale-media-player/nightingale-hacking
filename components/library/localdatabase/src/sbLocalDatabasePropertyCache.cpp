@@ -97,8 +97,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 : mWritePendingCount(0),
-  mDependentGUIDArrayMonitor(nsnull),
-  mMonitor(nsnull),
+  mDependentGUIDArrayMonitor("sbLocalDatabasePropertyCache::mDependentGUIDArrayMonitor"),
+  mMonitor("sbLocalDatabasePropertyCache::mMonitor"),
   mCache(sbLocalDatabasePropertyCache::CACHE_SIZE),
   mLibrary(nsnull),
   mSortInvalidateJob(nsnull)

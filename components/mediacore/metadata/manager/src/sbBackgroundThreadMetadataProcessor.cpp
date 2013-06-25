@@ -65,7 +65,7 @@ sbBackgroundThreadMetadataProcessor::sbBackgroundThreadMetadataProcessor(
     mJobManager(aManager),
     mThread(nsnull),
     mShouldShutdown(PR_FALSE),
-    mMonitor(nsnull)
+    mMonitor("sbBackgroundThreadMetadataProcessor::mMonitor")
 {
   MOZ_COUNT_CTOR(sbBackgroundThreadMetadataProcessor);
   TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - ctor", this));

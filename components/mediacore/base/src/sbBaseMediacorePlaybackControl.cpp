@@ -57,7 +57,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacorePlaybackControl,
                               sbIMediacorePlaybackControl)
 
 sbBaseMediacorePlaybackControl::sbBaseMediacorePlaybackControl()
-: mMonitor(nsnull)
+: mMonitor("sbBaseMediacorePlaybackControl::mMonitor")
 , mPosition(0)
 , mDuration(0)
 {

@@ -50,7 +50,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreFactory,
                               sbIMediacoreFactory)
 
 sbBaseMediacoreFactory::sbBaseMediacoreFactory()
-: mMonitor(nsnull)
+: mMonitor("sbBaseMediacoreFactory::mMonitor")
 {
   MOZ_COUNT_CTOR(sbBaseMediacoreFactory);
 

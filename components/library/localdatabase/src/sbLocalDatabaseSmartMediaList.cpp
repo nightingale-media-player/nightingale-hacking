@@ -374,18 +374,18 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSmartMediaList,
                              nsIObserver);
 
 sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
-: mInnerMonitor(nsnull)
-, mConditionsMonitor(nsnull)
+: mInnerMonitor("sbLocalDatabaseSmartMediaList::mInnerMonitor")
+, mConditionsMonitor("sbLocalDatabaseSmartMediaList::mConditionsMonitor")
 , mMatchType(sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY)
 , mLimitType(sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE)
 , mLimit(0)
 , mSelectDirection(PR_TRUE)
 , mRandomSelection(PR_FALSE)
-, mAutoUpdateMonitor(nsnull)
+, mAutoUpdateMonitor("sbLocalDatabaseSmartMediaList::mAutoUpdateMonitor")
 , mAutoUpdate(false)
 , mNotExistsMode(sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO)
-, mListenersMonitor(nsnull)
-, mSourceMonitor(nsnull)
+, mListenersMonitor("sbLocalDatabaseSmartMediaList::mListenersMonitor")
+, mSourceMonitor("sbLocalDatabaseSmartMediaList::mSourceMonitor")
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseSmartMediaListLog) {

@@ -57,7 +57,7 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbMediaListEnumeratorWrapper,
 NS_IMPL_THREADSAFE_CI(sbMediaListEnumeratorWrapper);
 
 sbMediaListEnumeratorWrapper::sbMediaListEnumeratorWrapper()
-: mMonitor(nsnull)
+: mMonitor("sbMediaListEnumeratorWrapper::mMonitor")
 {
 }
 

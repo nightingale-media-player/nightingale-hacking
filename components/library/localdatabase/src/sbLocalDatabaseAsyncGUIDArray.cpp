@@ -65,7 +65,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS4(sbLocalDatabaseAsyncGUIDArray,
                               nsISupportsWeakReference)
 
 sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
-  mThreadShouldExit(PR_FALSE), mSyncMonitor(nsnull), mQueueMonitor(nsnull)
+  mThreadShouldExit(PR_FALSE),
+  mSyncMonitor("sbLocalDatabaseAsyncGUIDArray::mSyncMonitor"),
+  mQueueMonitor("sbLocalDatabaseAsyncGUIDArray::mQueueMonitor")
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseAsyncGUIDArrayLog) {

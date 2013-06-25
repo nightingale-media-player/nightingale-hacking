@@ -91,7 +91,7 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
   mPrimarySortsCount(0),
-  mCacheMonitor(nsnull),
+  mCacheMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor"),
   mIsDistinct(PR_FALSE),
   mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),

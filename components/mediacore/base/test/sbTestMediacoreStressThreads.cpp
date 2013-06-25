@@ -46,7 +46,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS4(sbTestMediacoreStressThreads,
 
 sbTestMediacoreStressThreads::sbTestMediacoreStressThreads()
  : mCounter(-999),
-   mMonitor(nsnull)
+   mMonitor("sbTestMediacoreStressThreads::mMonitor")
 {
   mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
   /* member initializers and constructor code */

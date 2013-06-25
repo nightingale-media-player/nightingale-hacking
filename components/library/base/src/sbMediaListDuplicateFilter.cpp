@@ -62,7 +62,7 @@ sbMediaListDuplicateFilter::sbMediaListDuplicateFilter() :
   mDuplicateItems(0),
   mTotalItems(0),
   mRemoveDuplicates(PR_FALSE),
-  mMonitor(nsnull)
+  mMonitor("sbMediaListDuplicateFilter::mMonitor")
 {
   mKeys.Init();
 }

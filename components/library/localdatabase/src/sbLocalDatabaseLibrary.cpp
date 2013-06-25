@@ -541,7 +541,7 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 : mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
   mPreventAddedNotification(PR_FALSE),
-  mMonitor(nsnull)
+  mMonitor("sbLocalDatabaseLibrary::mMonitor")
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {

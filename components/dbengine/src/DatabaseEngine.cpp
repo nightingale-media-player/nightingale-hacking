@@ -948,8 +948,8 @@ CDatabaseEngine *gEngine = nsnull;
 //-----------------------------------------------------------------------------
 CDatabaseEngine::CDatabaseEngine()
 : m_pDBStorePathLock(nsnull)
-, m_pThreadMonitor(nsnull)
-, m_CollationBuffersMapMonitor(nsnull)
+, m_pThreadMonitor("CDatabaseEngine:m_pThreadMonitor")
+, m_CollationBuffersMapMonitor("CDatabaseEngine::m_CollationBuffersMapMonitor")
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 , m_IsShutDown(PR_FALSE)
 , m_MemoryConstraintsSet(PR_FALSE)

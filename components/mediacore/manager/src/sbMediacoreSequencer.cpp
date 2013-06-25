@@ -173,7 +173,7 @@ NS_IMPL_ISUPPORTS7_CI(sbMediacoreSequencer,
 NS_IMPL_THREADSAFE_CI(sbMediacoreSequencer)
 
 sbMediacoreSequencer::sbMediacoreSequencer()
-: mMonitor(nsnull)
+: mMonitor("sbMediacoreSequencer::mMonitor")
 , mStatus(sbIMediacoreStatus::STATUS_STOPPED)
 , mIsWaitingForPlayback(PR_FALSE)
 , mSeenPlaying(PR_FALSE)

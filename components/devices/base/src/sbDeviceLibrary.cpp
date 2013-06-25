@@ -189,7 +189,7 @@ static PRLogModuleInfo* gDeviceLibraryLog = nsnull;
 
 sbDeviceLibrary::sbDeviceLibrary(sbIDevice* aDevice)
   : mDevice(aDevice),
-    mMonitor(nsnull)
+    mMonitor("sbDeviceLibrary::mMonitor")
 {
 #ifdef PR_LOGGING
   if (!gDeviceLibraryLog) {

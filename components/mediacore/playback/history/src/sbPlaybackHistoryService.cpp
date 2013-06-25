@@ -136,7 +136,7 @@ sbPlaybackHistoryService::sbPlaybackHistoryService()
 , mCurrentStartTime(0)
 , mCurrentPauseTime(0)
 , mCurrentDelta(0)
-, mMonitor(nsnull)
+, mMonitor("sbPlaybackHistoryService::mMonitor")
 {
   MOZ_COUNT_CTOR(sbPlaybackHistoryService);
 }

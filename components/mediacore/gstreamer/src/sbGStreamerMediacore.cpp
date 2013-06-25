@@ -166,7 +166,7 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbGStreamerMediacore,
 NS_IMPL_THREADSAFE_CI(sbGStreamerMediacore)
 
 sbGStreamerMediacore::sbGStreamerMediacore() :
-    mMonitor(nsnull),
+    mMonitor("sbGStreamerMediacore::mMonitor"),
     mIsVideoSupported(PR_FALSE),
     mPipeline(nsnull),
     mPlatformInterface(nsnull),
