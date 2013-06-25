@@ -1,0 +1,4 @@
+## extensions/albumartlastfm/components ##
+component {8569316f-13a0-44d8-9d08-800999ed1f1c} lastFmAlbumArtFetcher.js
+contract @songbirdnest.com/album-art/lastfm-fetcher;1 {8569316f-13a0-44d8-9d08-800999ed1f1c}
+category songbird-album-art-fetcher lastFmAlbumArtFetcher @songbirdnest.com/album-art/lastfm-fetcher;1

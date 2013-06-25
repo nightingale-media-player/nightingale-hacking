@@ -1,0 +1,4 @@
+## extensions/concerts/components ##
+component {12382b5a-e782-4de5-8b34-a26b82cdeeb8} pfServicePane.js
+contract @rsjtdrjgfuzkfg.com/servicepane/folders;1 {12382b5a-e782-4de5-8b34-a26b82cdeeb8}
+category service-pane pfServicePane @rsjtdrjgfuzkfg.com/servicepane/folders;1

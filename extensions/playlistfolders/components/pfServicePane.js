@@ -332,4 +332,4 @@ function pfServicePane_observe(subject, topic, data) {
 // XPCOM //
 ///////////
 
-var NSGetModule = XPCOMUtils.generateNSGetModule([pfServicePane]);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([pfServicePane]);

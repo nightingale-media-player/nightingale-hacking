@@ -23,6 +23,7 @@
 #
 
 playlistfolders.jar:
+% manifest components/pfServicePane.manifest
 % content playlistfolders  %content/
 % skin    playlistfolders  classic/1.0 %skin/
 % locale  playlistfolders  de     %locale/de/

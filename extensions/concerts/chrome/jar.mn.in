@@ -1,5 +1,6 @@
 #filter substitution
 concerts.jar:
+% manifest components/Songkick.manifest
 % content concerts  %content/	contentaccessible=yes
 % locale  concerts  en-US  %locale/en-US/
 % locale  concerts  ar %locale/ar/

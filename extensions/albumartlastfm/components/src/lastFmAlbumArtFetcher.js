@@ -282,7 +282,8 @@ sbLastFMAlbumArtFetcher.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIAlbumArtFetcher])
 }
 
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLastFMAlbumArtFetcher]);
 // This is for XPCOM to register this Fetcher as a module
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbLastFMAlbumArtFetcher]);
-}
+// function NSGetModule(compMgr, fileSpec) {
+  // return XPCOMUtils.generateModule([sbLastFMAlbumArtFetcher]);
+// }

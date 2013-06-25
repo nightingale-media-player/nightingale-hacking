@@ -35,6 +35,12 @@ COMPONENTS_DIR = $(EXTENSION_STAGE_DIR)/components
 
 CREATEDIRS = $(COMPONENTS_DIR)
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/pfServicePane.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(CURDIR)/pfServicePane.manifest \
+                      $(NULL)
+
 include $(topsrcdir)/build/rules.mk
 
 export::

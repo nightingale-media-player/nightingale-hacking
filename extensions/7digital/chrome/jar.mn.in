@@ -1,5 +1,6 @@
 #filter substitution
 7digital.jar:
+% manifest components/sb7Digital.manifest
 % content 7digital  %content/
 % locale  7digital  ar     %locale/ar/
 % locale  7digital  cs     %locale/cs/

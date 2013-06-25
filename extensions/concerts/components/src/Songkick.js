@@ -1529,8 +1529,9 @@ skConcertEnumerator.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsISimpleEnumerator]),
 }
 
-var components = [Songkick];
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([Songkick]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([Songkick]);
+// var components = [Songkick];
+// function NSGetModule(compMgr, fileSpec) {
+//   return XPCOMUtils.generateModule([Songkick]);
+// }
 

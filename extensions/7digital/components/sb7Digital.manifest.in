@@ -1,0 +1,4 @@
+## extensions/7digital/components ##
+component {2ceaef85-303f-4e6d-af40-b449f4922693} sb7Digitial.js
+contract @songbirdnest.com/7digital;1 {2ceaef85-303f-4e6d-af40-b449f4922693}
+category app-startup sb7Digitial @songbirdnest.com/7digital;1

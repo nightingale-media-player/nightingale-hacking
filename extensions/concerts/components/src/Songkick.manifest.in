@@ -1,0 +1,9 @@
+## extensions/concerts/components ##
+component {33268520-4d39-11dd-ae16-0800200c9a66} Songkick.js
+contract @songbirdnest.com/Songbird/Concerts/Songkick;1 {33268520-4d39-11dd-ae16-0800200c9a66}
+# category profile-after-change Songkick @songbirdnest.com/Songbird/Concerts/Songkick;1
+
+interfaces Songkick.xpt
+
+binary-component sbConcertsComponent_d.so
+category app-startup sbConcertsComponent @songbirdnest.com/songkick/dbservice;1

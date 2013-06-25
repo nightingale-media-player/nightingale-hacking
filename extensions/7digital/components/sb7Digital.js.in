@@ -76,6 +76,9 @@ sb7Digital.prototype = {
   classDescription: '7digital Music Store Integration',
   classID: Components.ID('{2ceaef85-303f-4e6d-af40-b449f4922693}'),
   contractID: '@songbirdnest.com/7digital;1',
+  _xpcom_categories: [{
+  	category: "app-startup"
+  }]
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
 
   // Observer stuff
@@ -336,12 +339,13 @@ function sb7Digital_uninstall() {
   Application.prefs.setValue(PREF_CONFIGURED, false);
 }
 
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sb7Digital]);
 // XPCOM NSGetModule implementation
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sb7Digital],
-  function(aCompMgr, aFileSpec, aLocation) {
-    XPCOMUtils.categoryManager.addCategoryEntry('app-startup',
-      sb7Digital.prototype.classDescription,
-      sb7Digital.prototype.contractID, true, true);
-  });
-}
+// function NSGetModule(compMgr, fileSpec) {
+//   return XPCOMUtils.generateModule([sb7Digital],
+//   function(aCompMgr, aFileSpec, aLocation) {
+//     XPCOMUtils.categoryManager.addCategoryEntry('app-startup',
+//       sb7Digital.prototype.classDescription,
+//       sb7Digital.prototype.contractID, true, true);
+//   });
+// }

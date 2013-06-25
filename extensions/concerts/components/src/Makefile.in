@@ -65,7 +65,11 @@ IS_COMPONENT = 1
 
 DYNAMIC_LIB = sbConcertsComponent
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/Songkick.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS += $(srcdir)/Songkick.js \
+                       $(CURDIR)/Songkick.manifest \
                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk
