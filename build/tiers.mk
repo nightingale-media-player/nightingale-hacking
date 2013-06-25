@@ -41,6 +41,7 @@ tiers = \
    base \
    deps \
    components \
+   manifests \
    $(NULL)
 
 tier_base_dirs = \
@@ -113,6 +114,10 @@ tier_ui_dirs = \
 tier_extensions_dirs = \
    extensions \
    $(NULL)
+
+tier_manifests_dirs = \
+	 manifests \
+	 $(NULL)
 
 ifdef HAS_EXTRAS
    tier_extensions_dirs += extras
