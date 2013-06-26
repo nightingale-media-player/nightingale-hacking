@@ -126,9 +126,5 @@ Flickr.prototype = {
 	},
 }
 
-var components = [Flickr];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([Flickr]);
-}
-
+var NSGetModule = XPCOMUtils.generateNSGetFactory([Flickr]);
 

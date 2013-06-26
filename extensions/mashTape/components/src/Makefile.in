@@ -8,6 +8,9 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/mashTape.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/Flickr.js \
                       $(srcdir)/GoogleBlogs.js \
                       $(srcdir)/HypeM.js \
@@ -16,6 +19,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/Flickr.js \
                       $(srcdir)/Wikipedia.js \
                       $(srcdir)/YouTube.js \
                       $(srcdir)/mashTapeManager.js \
+                      $(CURDIR)/mashTape.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

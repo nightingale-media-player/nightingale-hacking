@@ -1,0 +1,35 @@
+interfaces components/mashTape.xpt
+
+component {a86cc290-6990-11dd-ad8b-0800200c9a66} Flickr.js
+contract @songbirdnest.com/mashTape/provider/photo/Flickr;1 {a86cc290-6990-11dd-ad8b-0800200c9a66}
+# category profile-after-change Flickr @songbirdnest.com/mashTape/provider/photo/Flickr;1
+
+
+component {3814ef10-7a19-11dd-ad8b-0800200c9a66} GoogleBlogs.js
+contract @songbirdnest.com/mashTape/provider/rss/GoogleBlogs;1 {3814ef10-7a19-11dd-ad8b-0800200c9a66}
+# category profile-after-change GoogleBlogs @songbirdnest.com/mashTape/provider/rss/GoogleBlogs;1
+
+
+component {ad43af30-7a1c-11dd-ad8b-0800200c9a66} HypeM.js
+contract @songbirdnest.com/mashTape/provider/rss/HypeM;1 {ad43af30-7a1c-11dd-ad8b-0800200c9a66}
+# category profile-after-change HypeM @songbirdnest.com/mashTape/provider/rss/HypeM;1
+
+
+component {7792e470-75ec-11dd-ad8b-0800200c9a66} Info.js
+contract @songbirdnest.com/mashTape/provider/info/UberMash;1 {7792e470-75ec-11dd-ad8b-0800200c9a66}
+# category profile-after-change Info @songbirdnest.com/mashTape/provider/info/UberMash;1
+
+
+component {066D6E67-39FE-429B-80D8-99A1CEFF3934} mashTapeManager.js
+contract @songbirdnest.com/mashTape/manager;1 {066D6E67-39FE-429B-80D8-99A1CEFF3934}
+# category profile-after-change mashTapeManager @songbirdnest.com/mashTape/manager;1
+
+
+component {a7780910-8c10-11dd-ad8b-0800200c9a66} Wikipedia.js
+contract @songbirdnest.com/mashTape/provider/info/WikipediaLocal;1 {a7780910-8c10-11dd-ad8b-0800200c9a66}
+# category profile-after-change Wikipedia @songbirdnest.com/mashTape/provider/info/WikipediaLocal;1
+
+
+component {e0f43860-6a5c-11dd-ad8b-0800200c9a66} YouTube.js
+contract @songbirdnest.com/mashTape/provider/flash/YouTube;1 {e0f43860-6a5c-11dd-ad8b-0800200c9a66}
+# category profile-after-change YouTube @songbirdnest.com/mashTape/provider/flash/YouTube;1

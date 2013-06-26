@@ -43,7 +43,7 @@ sbLastFmProtocol.prototype = {
   // XPCOM magics
   classDescription: 'Last.fm protocol handler',
   contractID: '@mozilla.org/network/protocol;1?name=lastfm',
-  classID: Components.ID('2c2f00b0-833e-4006-a622-d31010f50fa6'),
+  classID: Components.ID('{2c2f00b0-833e-4006-a622-d31010f50fa6}'),
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIProtocolHandler]),
 
   // nsIProtocolHandler attributes
@@ -89,8 +89,5 @@ function sbLastFmProtocol_allowPort(port, scheme) {
 
 // nsIProtocolHandler
 
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLastFmProtocol]);
 
-// XPCOM glue stuff
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbLastFmProtocol]);
-}

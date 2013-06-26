@@ -8,8 +8,12 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/lastFm.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbLastFm.js \
                       $(srcdir)/sbLastFmProtocol.js \
+                      $(CURDIR)/lastFm.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

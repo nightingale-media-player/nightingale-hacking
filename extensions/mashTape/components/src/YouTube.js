@@ -121,7 +121,5 @@ YouTube.prototype = {
 	},
 }
 
-var components = [YouTube];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([YouTube]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([YouTube]);
+

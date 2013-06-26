@@ -58,8 +58,5 @@ mashTapeManager.prototype = {
 	}
 }
 
-var components = [mashTapeManager];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([mashTapeManager]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([mashTapeManager]);
 

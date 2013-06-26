@@ -16,7 +16,7 @@ var homepage;
 var wikipedia;
 
 // XPCOM constructor for our Artist Info mashTape provider
-function ArtistInfo() {
+function Wikipedia() {
 	this.wrappedJSObject = this;
 	Components.utils.import("resource://mashtape/mtUtils.jsm");
 
@@ -59,8 +59,8 @@ function ArtistInfo() {
 	}
 }
 
-ArtistInfo.prototype.constructor = ArtistInfo;
-ArtistInfo.prototype = {
+Wikipedia.prototype.constructor = Wikipedia;
+Wikipedia.prototype = {
 	classDescription: DESCRIPTION,
 	classID:          Components.ID(CID),
 	contractID:       CONTRACTID,
@@ -222,8 +222,5 @@ ArtistInfo.prototype = {
 	},
 }
 
-var components = [ArtistInfo];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([ArtistInfo]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([Wikipedia]);
 

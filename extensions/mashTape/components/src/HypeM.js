@@ -67,8 +67,5 @@ HypeM.prototype = {
 	},
 }
 
-var components = [HypeM];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([HypeM]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([HypeM]);
 

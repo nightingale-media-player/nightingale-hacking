@@ -534,7 +534,7 @@ function sbLastFm() {
 sbLastFm.prototype.classDescription = 'Songbird Last.fm Service'
 sbLastFm.prototype.contractID = '@songbirdnest.com/lastfm;1';
 sbLastFm.prototype.classID =
-    Components.ID('13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a');
+    Components.ID('{13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a}');
 sbLastFm.prototype.QueryInterface =
     XPCOMUtils.generateQI([Ci.sbIPlaybackHistoryListener, Ci.nsIObserver,
         Ci.sbILastFmWebServices, Ci.sbIMediacoreEventListener,
@@ -1925,6 +1925,4 @@ sbLastFm.prototype.shutdown = function sbLastFm_shutdown() {
   this._playbackHistory.removeListener(this);
 }
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbLastFm]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLastFm]);

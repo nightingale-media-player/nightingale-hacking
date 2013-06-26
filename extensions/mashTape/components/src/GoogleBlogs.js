@@ -68,8 +68,5 @@ GoogleBlogs.prototype = {
 	},
 }
 
-var components = [GoogleBlogs];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([GoogleBlogs]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([GoogleBlogs]);
 

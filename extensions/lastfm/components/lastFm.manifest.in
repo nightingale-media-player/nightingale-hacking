@@ -1,0 +1,10 @@
+interfaces sbLastFm.xpt
+
+component {13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a} sbLastFm.js
+contract @songbirdnest.com/lastfm;1 {13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a}
+# category profile-after-change sbLastFm @songbirdnest.com/lastfm;1
+
+
+component {2c2f00b0-833e-4006-a622-d31010f50fa6} sbLastFmProtocol.js
+contract @mozilla.org/network/protocol;1?name=lastfm {2c2f00b0-833e-4006-a622-d31010f50fa6}
+# category profile-after-change sbLastFmProtocol @mozilla.org/network/protocol;1?name=lastfm

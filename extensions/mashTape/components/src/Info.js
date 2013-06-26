@@ -466,8 +466,5 @@ ArtistInfo.prototype = {
 	},
 }
 
-var components = [ArtistInfo];
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule([ArtistInfo]);
-}
+var NSGetModule = XPCOMUtils.generateNSGetFactory([ArtistInfo]);
 
