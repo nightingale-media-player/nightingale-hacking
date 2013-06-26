@@ -25,7 +25,9 @@
 */
 
 #include "sbPlaybackHistoryService.h"
+#ifdef METRICS_ENABLED
 #include "sbPlaybackMetricsKeys.h"
+#endif
 
 #include <nsIArray.h>
 #include <nsICategoryManager.h>
@@ -239,9 +241,11 @@ sbPlaybackHistoryService::Init()
   rv = eventTarget->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef METRICS_ENABLED
   mMetrics = do_ProxiedCreateInstance("@songbirdnest.com/Songbird/Metrics;1", 
                                       &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+#endif
 
   return NS_OK;
 }
@@ -1699,9 +1703,15 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Regardless, we update playback metrics.
-  rv = UpdateMetrics();
-  NS_ENSURE_SUCCESS(rv, rv);
+  /* 
+    Playback metrics are timing out causing the play count
+    to fail to increment!
+#ifdef METRICS_ENABLED
+    // Regardless, we update playback metrics.
+    // rv = UpdateMetrics();
+    // NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  */
 
   return NS_OK;
 }
@@ -1720,6 +1730,7 @@ sbPlaybackHistoryService::ResetTrackingData()
   return NS_OK;
 }
 
+#ifdef METRICS_ENABLED
 nsresult 
 sbPlaybackHistoryService::UpdateMetrics()
 {
@@ -1867,6 +1878,7 @@ sbPlaybackHistoryService::UpdateMetrics()
 
   return NS_OK;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // nsIObserver
@@ -1899,12 +1911,14 @@ sbPlaybackHistoryService::Observe(nsISupports* aSubject,
     mCurrentItem = nsnull;
     mCurrentView = nsnull;
 
+#ifdef METRICS_ENABLED
     // Releasing metrics prevents a leak
     mMetrics = nsnull;
     rv = 
       observerService->RemoveObserver(this, 
                                       SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     NS_ENSURE_SUCCESS(rv, rv);
+#endif
   }
 
   return NS_OK;

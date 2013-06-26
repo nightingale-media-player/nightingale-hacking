@@ -51,7 +51,9 @@
 #include <sbIMediacoreVolumeControl.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#ifdef METRICS_ENABLED
 #include <sbIMetrics.h>
+#endif
 #include <sbIRemoteAPIService.h>
 #include <sbIPlaylistClickEvent.h>
 #include <sbIPlaylistCommands.h>
@@ -546,6 +548,7 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
   rv = mDownloadCallback->Initialize(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef METRICS_ENABLED
   // Set up metrics and count this session
   mMetrics = do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -555,6 +558,7 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
                             EmptyString(),
                             EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
+#endif
 
   mInitialized = PR_TRUE;
 
@@ -2113,11 +2117,12 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
                                    categoryID,
                                    hasAccess,
                                    PR_FALSE );
-
+#ifdef METRICS_ENABLED
         rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.notification"),
                                   value,
                                   EmptyString());
         NS_ENSURE_SUCCESS( rv, rv );
+#endif
       }
       else {
         LOG(( "sbRemotePlayer::HandleEvent() - %s",
@@ -2127,12 +2132,12 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
           return FireEventToContent( RAPI_EVENT_CLASS, type );
         }
         else if ( type.Equals(SB_EVENT_RAPI_PERMISSION_DENIED) ) {
-
+#ifdef METRICS_ENABLED
           rv = mMetrics->MetricsInc(NS_LITERAL_STRING("rapi.notification"),
                                     value,
                                     EmptyString());
           NS_ENSURE_SUCCESS( rv, rv );
-
+#endif
           return FireEventToContent( RAPI_EVENT_CLASS, type );
         } else {
           LOG(("sbRemotePlayer::HandleEvent() - Some other event"));
@@ -2369,6 +2374,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   bool retval = PR_FALSE;
+#ifdef METRICS_ENABLED
   nsString metricsCategory;
   metricsCategory.AssignLiteral("rapi.prompt.");
   switch(allowed) {
@@ -2400,6 +2406,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
                              EmptyString());
     NS_ENSURE_SUCCESS(rv, rv);
   }
+#endif // METRICS_ENABLED
 
   return retval;
 }
