@@ -664,7 +664,7 @@ sbAppStartupService.prototype =
     var uptime = SBNewDataRemote( "crashlog.uptime", null );
     uptime.intValue = uptime.intValue + minutes;
   },
-#endif // METRICS_ENABLED
+#endif
 
   /**
    * \brief Initialize the Extension Manager Permissions so it includes
