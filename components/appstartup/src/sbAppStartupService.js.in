@@ -195,6 +195,7 @@ sbAppStartupService.prototype =
       Cu.reportError(e);
     }
 
+#ifdef METRICS_ENABLED
     try {
       // Startup the Metrics
       this._metricsAppStart();
@@ -202,6 +203,7 @@ sbAppStartupService.prototype =
     catch (e) {
       Cu.reportError(e);
     }
+#endif
 
     try {
       // Handle dataremote commandline parameters
@@ -247,14 +249,17 @@ sbAppStartupService.prototype =
     // Shutdown dataremote commandline handler
     this._cleanupDataRemoteCmdLine();
 
+#ifdef METRICS_ENABLED
     // Shutdown the Metrics
     this._metricsAppShutdown();
+#endif
   },
 
   /**
    * \brief Main Application Window Startup
    */
   _mainWindowStart: function () {
+#ifdef METRICS_ENABLED
     try {
       var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                       .createInstance(Ci.sbIMetrics);
@@ -263,6 +268,7 @@ sbAppStartupService.prototype =
     catch (e) {
       Cu.reportError(e);
     }
+#endif
 
     // Check for recommended add-on bundle updates.  This may wait for recommended
     // add-on bundle download or the recommended add-on wizard.
@@ -585,6 +591,7 @@ sbAppStartupService.prototype =
     gconf.setBool("/desktop/gnome/url-handlers/songbird/needs_terminal", false);
   },
 
+#ifdef METRICS_ENABLED
   /**
    * \brief Metrics Startup Cleanup
    */
@@ -657,6 +664,7 @@ sbAppStartupService.prototype =
     var uptime = SBNewDataRemote( "crashlog.uptime", null );
     uptime.intValue = uptime.intValue + minutes;
   },
+#endif // METRICS_ENABLED
 
   /**
    * \brief Initialize the Extension Manager Permissions so it includes

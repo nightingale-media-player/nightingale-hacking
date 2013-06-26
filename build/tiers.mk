@@ -60,7 +60,9 @@ tier_componentsbase_dirs = \
    components/dbengine \
    components/sqlbuilder \
    components/job \
+ifdef METRICS_ENABLED
    components/metrics \
+endif
    components/dataremote \
    components/mediaimport \
    components/filesystemevents \
