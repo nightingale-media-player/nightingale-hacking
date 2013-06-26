@@ -45,8 +45,6 @@ include $(DEPTH)/build/autodefs.mk
 
 JAR_MANIFEST = jar.mn
 
-include $(topsrcdir)/build/rules.mk
-
 DEFINES += \
 	-DMOZ_APP_NAME=$(MOZ_APP_NAME) \
 	-DMOZ_APP_DISPLAYNAME=$(MOZ_APP_DISPLAYNAME) \
@@ -55,3 +53,5 @@ DEFINES += \
 ifneq (,$(filter windows gtk2 cocoa, $(MOZ_WIDGET_TOOLKIT)))
 DEFINES += -DHAVE_SHELL_SERVICE=1
 endif
+
+include $(topsrcdir)/build/rules.mk
