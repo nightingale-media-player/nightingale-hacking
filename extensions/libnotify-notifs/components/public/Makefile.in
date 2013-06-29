@@ -32,23 +32,10 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-XPIDL_SRCS = INotifyProxy.idl \
+XPIDL_SRCS = ILNNotifs.idl \
              $(NULL)
 
-XPIDL_HEADERS =  INotifyProxy.h \
-
-XPIDL_TYPELIBS = INotifyProxy.xpt \
-                 $(NULL)
-
-export::
-	$(INSTALL_FILE) $(srcdir)/INotifyProxy
-.idl $(EXTENSION_STAGE_DIR)/components/INotifyProxy
-.idl
+XPIDL_MODULE = ILNNotifs.xpt \
+               $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-
-libs::
-	$(INSTALL_FILE) INotifyProxy
-.xpt $(EXTENSION_STAGE_DIR)/components/INotifyProxy
-.xpt
-

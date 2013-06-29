@@ -58,6 +58,10 @@ ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    DEFAULT_EXTENSIONS += systray
 endif
 
+# libnotify
+ifeq (1,$(NIGHTINGALE_LIBNOTIFY))
+    DEFAULT_EXTENSIONS += libnotify-notifs
+endif
 
 # Unity Integration
 ifeq (1,$(NIGHTINGALE_UNITY))
