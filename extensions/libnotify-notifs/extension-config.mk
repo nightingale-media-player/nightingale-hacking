@@ -28,3 +28,6 @@ EXTENSION_UUID = $(EXTENSION_NAME)@getnightingale.com
 EXTENSION_VER = 1.0.0.0
 EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
 EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
+
+# This is needed to build since targetPlatform can't be set install.rdf
+EXTENSION_SUPPORTED_PLATFORMS = linux

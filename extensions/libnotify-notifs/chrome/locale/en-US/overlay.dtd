@@ -1,4 +1,0 @@
-<!ENTITY libnotify-notif.test "This is test">
-<!ENTITY libnotify-notif.options.title "Unity Integration options">
-<!ENTITY libnotify-notif.options.hideOnClose "Hide on close">
-<!ENTITY libnotify-notif.options.enableNotifications "Enable notifications">

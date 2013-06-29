@@ -32,37 +32,20 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-CPP_SRCS = UnityProxy.cpp \
-           UnityProxyModule.cpp \
+CPP_SRCS = lnNotifs.cpp \
+           lnNotifsModule.cpp \
            $(NULL)
 
 CPP_DEFS = -DXPCOM_GLUE \
            -DXPCOM_GLUE_USE_NSPR \
            $(NULL)
 
-# The 64 bit version needs -fPIC, I don't know if it'll harm
-# the 32 bit version though. It wasn't used for the 32 bit 
-# version before, but I don't want to break it.
+ CPP_EXTRA_FLAGS += -fno-rtti \
+                    -fno-exceptions \
+                    -shared \
+                    $(NULL)
 
-ifeq (i686,$(SB_ARCH))
-   CPP_EXTRA_FLAGS += -fno-rtti \
-                      -fno-exceptions \
-                      -shared \
-                      $(NULL)
-else
-   CPP_EXTRA_FLAGS += -fno-rtti \
-                      -fno-exceptions \
-                      -shared \
-                      -fPIC \
-                      $(NULL)
-endif
-
-# The main problem with the extension not working previously was 
-# not linking to the 64 bit SDK. This issue is solved pretty easily
-# because MOZSDK_DIR points to the 32 or 64 bit SDK. Also need to 
-# include the public dir where IUnityProxy.h gets generated
-
-CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/unity-integration/components/public \
+CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/libnotify-notifs/components/public \
                       $(MOZSDK_DIR) \
                       $(NULL)
 
@@ -73,8 +56,8 @@ CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
 # Build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
 
-# Build the library - UnityProxy.so
-DYNAMIC_LIB = UnityProxy
+# Build the library - lnNotifs.so
+DYNAMIC_LIB = lnNotifs
 
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(MOZSDK_LIB_DIR) \
                                   $(NULL)
@@ -88,7 +71,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                              plc4 \
                              pthread \
                              dl \
-                             unity \
                              $(NULL)
 
 DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \

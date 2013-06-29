@@ -3,26 +3,6 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
-<!DOCTYPE overlay [
-  <!ENTITY % sbDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-	%sbDTD;
-	<!ENTITY % mlyricsDTD SYSTEM "chrome://libnotify-notif/locale/overlay.dtd">
-	%libnotify-notifDTD;
-]>
-
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<script type="application/x-javascript" src="chrome://libnotify-notif/content/sound-menu.js"/>
-
-	<hbox id="control_pane">
-		<vbox>
-			<spacer flex="1" />
-				<toolbarbutton 
-					id="libnotify-notif-enableNotifTButton" 
-					type="checkbox" 
-					image="chrome://libnotify-notif/content/notif.png" 
-					tooltiptext = "12345"
-					oncommand="onNotifTButtonClick(this);"/>
-			<spacer flex="1" />
-		</vbox>
-	</hbox>
+	<script type="application/x-javascript" src="chrome://libnotify-notifs/content/track-metadata.js"/>
 </overlay>

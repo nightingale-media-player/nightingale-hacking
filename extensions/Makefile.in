@@ -59,6 +59,11 @@ ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    DEFAULT_EXTENSIONS += systray
 endif
 
+# libnotify
+ifeq (1,$(NIGHTINGALE_LIBNOTIFY))
+    DEFAULT_EXTENSIONS += libnotify-notifs
+endif
+
 SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
           $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
 

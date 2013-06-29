@@ -41,18 +41,10 @@
     <em:name>libnotify-notifs</em:name>
     <em:targetPlatform>Linux</em:targetPlatform>
     <em:description>Notifications through libnotify</em:description>
-    <em:iconURL>chrome://libnotify-notifs/skin/icon.png</em:iconURL>
-    <em:optionsURL>chrome://libnotify-notifs/content/options.xul</em:optionsURL>
+    <!-- <em:iconURL>chrome://libnotify-notifs/skin/icon.png</em:iconURL> -->
+    <!-- <em:optionsURL>chrome://libnotify-notifs/content/options.xul</em:optionsURL> -->
     <em:creator>johnmurrayvi</em:creator>
 
-    <em:targetApplication>
-      <Description>
-        <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>1.2.*</em:minVersion>
-        <em:maxVersion>2.2.*</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-    
     <em:targetApplication>
       <Description>
         <em:id>nightingale@getnightingale.com</em:id>
