@@ -52,7 +52,7 @@ class lnNotifs : public ILNNotifs
         virtual ~lnNotifs();
 
     protected:
-//        bool notifsEnabled;
+        bool notifsEnabled;
         NotifyNotification *notification;
 };
 

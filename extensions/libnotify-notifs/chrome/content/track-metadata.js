@@ -39,33 +39,26 @@ try {
     alert("lnNotifs: Unexpected error - module import error\n\n" + error)
 }
 
-if (typeof lnNotifs == 'undefined') {
-  var lnNotifs = {};
-};
-
-lnNotifs.trackMetadata = {
+lnNotifs = {
     mmService: null,
     strConv: null,
     lastItem: null,
     wm: null,
     mainwindow: null,
+    prefs: null,
     lnNotifsService: null,
 
     onLoad: function() {
         var mainwindow = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation)
                                .QueryInterface(Ci.nsIDocShellTreeItem).rootTreeItem
                                .QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
-        this.mmService = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                             .getService(Ci.sbIMediacoreManager);
-        this.strConv = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
-                                   .getService(Ci.nsIScriptableUnicodeConverter);
-        this.lnNotifsService = Cc["@getnightingale.com/Nightingale/lnNotifs;1"]
-                                   .getService(Ci.ILNNotifs);
-        this.wm = Cc["@mozilla.org/appshell/window-mediator;1"]
-                      .getService(Ci.nsIWindowMediator);
+        this.mmService = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"].getService(Ci.sbIMediacoreManager);
+        this.strConv = Cc["@mozilla.org/intl/scriptableunicodeconverter"].getService(Ci.nsIScriptableUnicodeConverter);
+        this.lnNotifsService = Cc["@getnightingale.com/Nightingale/lnNotifs;1"].getService(Ci.ILNNotifs);
+        this.wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
         this.mainwindow = this.wm.getMostRecentWindow("Songbird:Main");
-        var windowTitle = this.mainwindow.document.getElementById("mainplayer")
-                              .getAttribute("title");
+        var windowTitle = this.mainwindow.document.getElementById("mainplayer").getAttribute("title");
+        this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.libnotify-notifs.");
 
         this.lnNotifsService.InitNotifs(windowTitle);
 
@@ -75,26 +68,29 @@ lnNotifs.trackMetadata = {
 
         this.mmService.addListener({
             onMediacoreEvent: function(event) {
+                // Get mediacore event
                 var item = event.data;
                 if (that.mmService.sequencer.view == null) return;
                 var list = that.mmService.sequencer.view.mediaList;
 
                 switch (event.type) {
                     case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+                        // Check if notifications are enabled
+                        var notifsEnabled = lnNotifs.prefs.getBoolPref("enableNotifications");
+                        lnNotifs.lnNotifsService.EnableNotifications(notifsEnabled);
+
                         var curItem = that.mmService.sequencer.currentItem;
                         // Don't notify for mediacore sequencing oddities
                         if (that.lastItem == curItem) return;
                         else that.lastItem = curItem;
 
                         var resourceURL = curItem.getProperty(SBProperties.primaryImageURL);
-                        var artist = that.strConv.ConvertFromUnicode(
-                                         curItem.getProperty(SBProperties.artistName));
-                        var album = that.strConv.ConvertFromUnicode(
-                                         curItem.getProperty(SBProperties.albumName));
-                        var track = that.strConv.ConvertFromUnicode(
-                                         curItem.getProperty(SBProperties.trackName));
+                        var artist = that.strConv.ConvertFromUnicode(curItem.getProperty(SBProperties.artistName));
+                        var album = that.strConv.ConvertFromUnicode(curItem.getProperty(SBProperties.albumName));
+                        var track = that.strConv.ConvertFromUnicode(curItem.getProperty(SBProperties.trackName));
+                        var timeout = that.prefs.getIntPref("notificationTimeout");
                         that.downloadFileToTemp(resourceURL, function (coverFilePath) {
-                            that.lnNotifsService.TrackChangeNotify(track, artist, album, coverFilePath);
+                            that.lnNotifsService.TrackChangeNotify(track, artist, album, coverFilePath, timeout);
                         });
                         break;
                     default:
@@ -169,8 +165,7 @@ lnNotifs.trackMetadata = {
                               null,
                               tempFile);  // File to save to
     }
-
 };
 
-window.addEventListener("load",   function(e) { lnNotifs.trackMetadata.onLoad(); },   false);
-window.addEventListener("unload", function(e) { lnNotifs.trackMetadata.onUnload(); }, false);
+window.addEventListener("load",   function(e) { lnNotifs.onLoad(); },   false);
+window.addEventListener("unload", function(e) { lnNotifs.onUnload(); }, false);

@@ -1,7 +1,7 @@
 #
 # BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Nightingale media player.
+# This file is part of the Nightingale Media Player.
 #
 # Copyright(c) 2013
 # http://www.getnightingale.com

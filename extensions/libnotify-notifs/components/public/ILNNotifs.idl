@@ -29,5 +29,8 @@
 interface ILNNotifs : nsISupports
 {
     void InitNotifs(in string windowTitle);
-    void TrackChangeNotify(in string title, in string artist, in string album, in string coverFilePath);
+    void TrackChangeNotify(in string title, in string artist, 
+                           in string album, in string coverFilePath,
+                           in PRInt32 timeout);
+    void EnableNotifications(in PRBool enable);
 };
