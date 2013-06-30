@@ -6,7 +6,7 @@
  *
  * BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Nightingale media player.
+ * This file is part of the Nightingale Media Player.
  *
  * Copyright(c) 2013
  * http://www.getnightingale.com
@@ -42,7 +42,7 @@
     <em:targetPlatform>Linux</em:targetPlatform>
     <em:description>Notifications through libnotify</em:description>
     <!-- <em:iconURL>chrome://libnotify-notifs/skin/icon.png</em:iconURL> -->
-    <!-- <em:optionsURL>chrome://libnotify-notifs/content/options.xul</em:optionsURL> -->
+    <em:optionsURL>chrome://libnotify-notifs/content/options.xul</em:optionsURL>
     <em:creator>johnmurrayvi</em:creator>
 
     <em:targetApplication>

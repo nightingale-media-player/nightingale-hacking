@@ -45,7 +45,7 @@ lnNotifs::lnNotifs()
 {
     /* member initializers and constructor code */
     g_message("lnNotifs: constructor");
-//    notifsEnabled = false;
+    notifsEnabled = true;
     notification = NULL;
     playerGtkWindow = NULL;
 }
@@ -73,9 +73,6 @@ NS_IMETHODIMP lnNotifs::InitNotifs(const char *windowTitle)
     notification = notify_notification_new("", "", "");
     if (!notification) return NS_ERROR_NOT_INITIALIZED;
 
-    // 3 second timeout (probably should make this pref based later)
-    notify_notification_set_timeout(notification, 3000);
-
     return NS_OK;
 }
 
@@ -83,15 +80,19 @@ NS_IMETHODIMP lnNotifs::InitNotifs(const char *windowTitle)
 /* void TrackChangeNotify(in string title,
  *                        in string artist,
  *                        in string album,
- *                        in string coverFilePath);
+ *                        in string coverFilePath,
+ *                        in PRInt32 timeout);
  */
 NS_IMETHODIMP lnNotifs::TrackChangeNotify(const char *title,
                                           const char *artist,
                                           const char *album,
-                                          const char *coverFilePath)
+                                          const char *coverFilePath,
+                                          PRInt32 timeout)
 {
+    notify_notification_set_timeout(notification, timeout);
+
     // don't show notifications if the window is active
-    if (!gtk_window_is_active(playerGtkWindow)) {
+    if (notifsEnabled && !gtk_window_is_active(playerGtkWindow)) {
         gchar *summary = g_strdup_printf("%s", title);
         gchar *body = g_strdup_printf("%s - %s", artist, album);
         const char *image = (!coverFilePath) ? NULL : coverFilePath;
@@ -102,6 +103,15 @@ NS_IMETHODIMP lnNotifs::TrackChangeNotify(const char *title,
         g_free(summary);
         g_free(body);
     }
+
+    return NS_OK;
+}
+
+
+/* void EnableNotifications(in PRBool enable); */
+NS_IMETHODIMP lnNotifs::EnableNotifications(PRBool enable)
+{
+    notifsEnabled = !!enable;
 
     return NS_OK;
 }
