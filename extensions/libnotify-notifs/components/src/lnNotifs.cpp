@@ -30,6 +30,9 @@
 static GtkWindow *playerGtkWindow = NULL;
 
 
+/* Used to get a handle on the window so notifications don't
+ * fire while the window is already on the top-level
+ */
 void checkWindowTitle(gpointer data, gpointer user_data)
 {
     const gchar *title = gtk_window_get_title((GtkWindow*) data);
@@ -48,6 +51,9 @@ lnNotifs::lnNotifs()
     notifsEnabled = true;
     notification = NULL;
     playerGtkWindow = NULL;
+
+    unitySoundMenuAction = false;
+    observerService = do_GetService("@mozilla.org/observer-service;1");
 }
 
 
@@ -62,6 +68,7 @@ lnNotifs::~lnNotifs()
 NS_IMETHODIMP lnNotifs::InitNotifs(const char *windowTitle)
 {
     g_message("lnNotifs: Initializing");
+    // Get handle to window
     GList* wlist = gtk_window_list_toplevels();
     g_list_foreach(wlist, checkWindowTitle, (gpointer) windowTitle);
     g_list_free(wlist);
@@ -76,6 +83,22 @@ NS_IMETHODIMP lnNotifs::InitNotifs(const char *windowTitle)
     return NS_OK;
 }
 
+
+/* Callback functions so that notifications aren't shown if 
+ * the track change was done through the unity sound menu.
+ */
+
+/* void unitySoundMenuNext(); */
+void lnNotifs::unitySoundMenuNext()
+{
+    unitySoundMenuAction = true;
+}
+
+/* void unitySoundMenuPrevious(); */
+void lnNotifs::unitySoundMenuPrevious()
+{
+    unitySoundMenuAction = true;
+}
 
 /* void TrackChangeNotify(in string title,
  *                        in string artist,
@@ -93,15 +116,22 @@ NS_IMETHODIMP lnNotifs::TrackChangeNotify(const char *title,
 
     // don't show notifications if the window is active
     if (notifsEnabled && !gtk_window_is_active(playerGtkWindow)) {
-        gchar *summary = g_strdup_printf("%s", title);
-        gchar *body = g_strdup_printf("%s - %s", artist, album);
-        const char *image = (!coverFilePath) ? NULL : coverFilePath;
+        // if the unity sound menu is on top (if it's even running)
+        // then we don't need to show the notification
+        if (!unitySoundMenuAction) {
+            gchar *summary = g_strdup_printf("%s", title);
+            gchar *body = g_strdup_printf("%s - %s", artist, album);
+            const char *image = (!coverFilePath) ? NULL : coverFilePath;
 
-        notify_notification_update(notification, summary, body, image);
-        notify_notification_show(notification, NULL);
+            notify_notification_update(notification, summary, body, image);
+            notify_notification_show(notification, NULL);
 
-        g_free(summary);
-        g_free(body);
+            g_free(summary);
+            g_free(body);
+        } else {
+            // reset so we can catch the next track change
+            unitySoundMenuAction = false;
+        }
     }
 
     return NS_OK;
