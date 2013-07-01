@@ -53,9 +53,7 @@ class lnNotifs : public ILNNotifs
 
     protected:
         bool notifsEnabled;
-        bool unitySoundMenuAction;
         NotifyNotification *notification;
-        nsCOMPtr<nsIObserverService> observerService;
 };
 
 #endif // _LN_NOTIFS_H_
