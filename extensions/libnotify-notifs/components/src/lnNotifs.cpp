@@ -51,9 +51,6 @@ lnNotifs::lnNotifs()
     notifsEnabled = true;
     notification = NULL;
     playerGtkWindow = NULL;
-
-    unitySoundMenuAction = false;
-    observerService = do_GetService("@mozilla.org/observer-service;1");
 }
 
 
@@ -84,22 +81,6 @@ NS_IMETHODIMP lnNotifs::InitNotifs(const char *windowTitle)
 }
 
 
-/* Callback functions so that notifications aren't shown if 
- * the track change was done through the unity sound menu.
- */
-
-/* void unitySoundMenuNext(); */
-void lnNotifs::unitySoundMenuNext()
-{
-    unitySoundMenuAction = true;
-}
-
-/* void unitySoundMenuPrevious(); */
-void lnNotifs::unitySoundMenuPrevious()
-{
-    unitySoundMenuAction = true;
-}
-
 /* void TrackChangeNotify(in string title,
  *                        in string artist,
  *                        in string album,
@@ -116,22 +97,15 @@ NS_IMETHODIMP lnNotifs::TrackChangeNotify(const char *title,
 
     // don't show notifications if the window is active
     if (notifsEnabled && !gtk_window_is_active(playerGtkWindow)) {
-        // if the unity sound menu is on top (if it's even running)
-        // then we don't need to show the notification
-        if (!unitySoundMenuAction) {
-            gchar *summary = g_strdup_printf("%s", title);
-            gchar *body = g_strdup_printf("%s - %s", artist, album);
-            const char *image = (!coverFilePath) ? NULL : coverFilePath;
+        gchar *summary = g_strdup_printf("%s", title);
+        gchar *body = g_strdup_printf("%s - %s", artist, album);
+        const char *image = (!coverFilePath) ? NULL : coverFilePath;
 
-            notify_notification_update(notification, summary, body, image);
-            notify_notification_show(notification, NULL);
+        notify_notification_update(notification, summary, body, image);
+        notify_notification_show(notification, NULL);
 
-            g_free(summary);
-            g_free(body);
-        } else {
-            // reset so we can catch the next track change
-            unitySoundMenuAction = false;
-        }
+        g_free(summary);
+        g_free(body);
     }
 
     return NS_OK;

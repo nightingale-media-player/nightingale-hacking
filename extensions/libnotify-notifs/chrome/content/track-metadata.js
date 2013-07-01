@@ -45,7 +45,6 @@ lnNotifs = {
     lastItem: null,
     wm: null,
     mainwindow: null,
-    observerService: null,
     prefs: null,
     lnNotifsService: null,
 
@@ -66,24 +65,6 @@ lnNotifs = {
         this.strConv.charset = 'utf-8';
         var mm = this.mmService;
         var that = this;
-
-        var unityObserver = {
-            observe : function(subject, topic, data) {
-                switch (topic) {
-                    case "sound-menu-next":
-                        this.lnNotifsService.unitySoundMenuNext();
-                        break;
-                        
-                    case "sound-menu-previous":
-                        this.lnNotifsService.unitySoundMenuPrevious();
-                        break;
-                }
-            }
-        };
-
-        this.observerService = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-        this.observerService.addObserver(unityObserver, "sound-menu-next", false);
-        this.observerService.addObserver(unityObserver, "sound-menu-previous", false);
 
         this.mmService.addListener({
             onMediacoreEvent: function(event) {
