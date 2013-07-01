@@ -33,4 +33,6 @@ interface ILNNotifs : nsISupports
                            in string album, in string coverFilePath,
                            in PRInt32 timeout);
     void EnableNotifications(in PRBool enable);
+    void unitySoundMenuNext();
+    void unitySoundMenuPrevious();
 };
