@@ -567,81 +567,81 @@
   <!-- ********************************************************************* -->
 
   <!-- Load the Mozilla helpers -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://global/content/dialogOverlay.js" />
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://global/content/editMenuOverlay.js"/>
 
   <!-- Dataremotes utility functions -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
 
   <!-- Mouse wheel support for volume control -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
 
   <!-- Support for media file/url opening -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/playerOpen.js"/>
 
   <!-- Mozilla helpers -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://global/content/globalOverlay.js"/>
 
   <!-- Drag and drop -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://global/content/nsDragAndDrop.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://global/content/nsTransferable.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
 
   <!-- Command line -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/commandLine.js"/>
 
   <!-- Window utilities -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/windowUtils.js" />
 
   <!-- Menubar handler -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
 
   <!-- Locales switcher -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/switchLocale.js" />
 
   <!-- Generic message box -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/messageBox.js" />
 
   <!-- Generic restart box -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/restartBox.js" />
 
   <!-- Metrics functions -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/metrics.js" />
 
   <!-- Sanitizer Support (moz) -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://browser/content/sanitize.js" />
 
   <!-- Sanitizer Support (songbird) -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/sanitize.js" />
 
   <!-- Extension Overlay Support -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/overlayLoader.js" />
 
   <!-- after first-run has run - run the update service with special args -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/updateOnceAfterFirstRun.js" />
 
   <!-- 0.6 Feedback Delegate, manages prompting the user for a survey -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
    src="chrome://songbird/content/scripts/feedbackDelegate.js" />
 
   <!-- ********************************************************************* -->

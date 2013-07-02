@@ -49,7 +49,7 @@
     extends="chrome://songbird/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
   >
     <content/>
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
       <constructor>
       <![CDATA[
         const Cc = Components.classes;

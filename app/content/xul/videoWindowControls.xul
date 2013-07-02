@@ -42,11 +42,11 @@
         xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/windowUtils.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/videoWindowControls.js"/>
 
   <hbox id="osd_wrapper_hbox" pack="center" flex="1">

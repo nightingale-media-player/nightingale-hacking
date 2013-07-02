@@ -37,7 +37,7 @@
       <children/>
     </content>
 
-    <implementation type="application/x-javascript" implements="sbIWindowResizeHookCallback">
+    <implementation type="application/javascript" implements="sbIWindowResizeHookCallback">
 
       <constructor>
         <![CDATA[

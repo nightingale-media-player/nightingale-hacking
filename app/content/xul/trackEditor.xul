@@ -369,17 +369,17 @@
 #endif
   </hbox>
 
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/trackEditorState.js" />
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/trackEditorWidgets.js" />
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/trackEditorWidgetAlbumArtwork.js" />
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/trackEditor.js" />
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
           src="chrome://songbird/content/scripts/windowUtils.js" />
   <script src="chrome://global/content/nsDragAndDrop.js"/>
   

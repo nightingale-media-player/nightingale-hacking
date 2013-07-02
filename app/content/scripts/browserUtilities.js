@@ -776,7 +776,7 @@ function getBrowserSelection(aCharLen) {
 function mimeTypeIsTextBased(aMimeType)
 {
   return /^text\/|\+xml$/.test(aMimeType) ||
-         aMimeType == "application/x-javascript" ||
+         aMimeType == "application/javascript" ||
          aMimeType == "application/javascript" ||
          aMimeType == "application/xml" ||
          aMimeType == "mozilla.application/cached-xul";

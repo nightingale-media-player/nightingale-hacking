@@ -74,7 +74,7 @@
       </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript" 
+    <implementation type="application/javascript" 
                     implements="sbIFaceplateManagerListener">
 
       <constructor>
@@ -349,7 +349,7 @@
     Replace _onDataChanged with a function that updates your UI.
     -->
   <binding id="base-pane">
-    <implementation type="application/x-javascript" 
+    <implementation type="application/javascript" 
                     implements="nsIObserver">
 
       <constructor>
@@ -517,7 +517,7 @@
         </xul:vbox>
     </content>
     
-    <implementation type="application/x-javascript" 
+    <implementation type="application/javascript" 
                     implements="nsIObserver">
 
       <constructor>
@@ -621,7 +621,7 @@
         <xul:progressmeter anonid="progressmeter" mode="undetermined" class="faceplate-progressmeter" />
       </xul:vbox>   
     </content>
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
 
       <field name="_label1">document.getAnonymousElementByAttribute(this,
           "anonid", "label1");</field>

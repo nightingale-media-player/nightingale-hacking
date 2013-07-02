@@ -45,15 +45,15 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
 
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
    src="chrome://songbird/content/scripts/overlayLoader.js" />
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
    src="chrome://songbird/content/scripts/metrics.js"/>
-  <script type="application/x-javascript"  
+  <script type="application/javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js"/> 
-  <script type="application/x-javascript"  
+  <script type="application/javascript"  
    src="chrome://songbird/content/scripts/playerOpen.js"/> 
 
 </overlay>

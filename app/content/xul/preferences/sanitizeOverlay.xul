@@ -33,11 +33,11 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <prefwindow id="SanitizeDialog">
-    <script type="application/x-javascript"  
+    <script type="application/javascript"  
       src="chrome://songbird/content/scripts/windowUtils.js" />
-    <script type="application/x-javascript" 
+    <script type="application/javascript" 
       src="chrome://songbird/content/scripts/preferences/sanitizeOverlay.js"/>
-    <script type="application/x-javascript" 
+    <script type="application/javascript" 
       src="chrome://songbird/content/scripts/sanitize.js"/>
   
 </prefwindow>

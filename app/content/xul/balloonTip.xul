@@ -48,7 +48,7 @@
  windowtype="Songbird:BalloonTip"
 >
 
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
    
   <!-- note: for size calculation purposes, it is required that all four arrows be visible by default -->

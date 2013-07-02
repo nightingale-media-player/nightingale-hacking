@@ -48,11 +48,11 @@
          oncommand="videoWindowController._toggleFullScreen();"/>
   </keyset>
   
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/windowUtils.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/videoWindow.js"/>
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>

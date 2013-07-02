@@ -48,9 +48,9 @@
   ondialogcancel="multiCDDialog.oncancel();"
   minwidth="600" minheight="450" width="600" height="450">
 
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/windowUtils.js"/>
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/device/multiCDLookupResultsDialog.js"/>
+  <script type="application/javascript" src="chrome://songbird/content/scripts/windowUtils.js"/>
+  <script type="application/javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/javascript" src="chrome://songbird/content/scripts/device/multiCDLookupResultsDialog.js"/>
 
   <groupbox>
     <caption label="&cdrip.lookup.multiple.title;"/>

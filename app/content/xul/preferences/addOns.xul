@@ -33,7 +33,7 @@
   <prefpane id="paneAddons"
             onpaneload="AddonsPrefPane.load();">
 
-    <script type="application/x-javascript"
+    <script type="application/javascript"
             src="chrome://songbird/content/scripts/preferences/addOns.js"/>
 
     <browser id="addonsFrame"

@@ -43,7 +43,7 @@
   
   <binding id="drawer-base">
 
-   <implementation type="application/x-javascript">
+   <implementation type="application/javascript">
 
      <constructor>
        <![CDATA[

@@ -30,7 +30,7 @@
 <overlay id="songbirdUnknownContentTypeOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript"><![CDATA[
+  <script type="application/javascript"><![CDATA[
     function removeSeparatorsAndResize(event) {
       window.removeEventListener("load", removeSeparatorsAndResize, false);
 

@@ -100,10 +100,10 @@
     </hbox>
   </vbox>
 
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/windowUtils.js" />
   <script>
   <![CDATA[

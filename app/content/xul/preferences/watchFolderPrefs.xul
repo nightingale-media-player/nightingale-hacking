@@ -121,7 +121,7 @@
 
   <!-- Import the watch folder preferences panel services. -->
   <script
-    type="application/x-javascript"
+    type="application/javascript"
     src="chrome://songbird/content/scripts/preferences/watchFolderPrefs.js"/>
 
 </overlay>

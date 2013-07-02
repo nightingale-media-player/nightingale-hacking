@@ -38,7 +38,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script
-    type="application/x-javascript"
+    type="application/javascript"
     src="chrome://songbird/content/scripts/preferences/playbackPrefs.js"/>
 
   <prefpane id="panePlayback"

@@ -59,7 +59,7 @@
                   onchange="gRemoteAPIPane.onChange()"/>
     </preferences>
 
-    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
+    <script type="application/javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
 
     <vbox align="start" class="bottomBox">
       <groupbox id="rapiAccessGroup">

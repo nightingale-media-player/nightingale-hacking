@@ -84,7 +84,7 @@
        Registers a window.mediaPage object implementing the 
        sbIMediaPage interface.
     -->
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
     src="chrome://songbird/content/mediapages/playlistPage.js" />
 
 </page>

@@ -226,7 +226,7 @@
 
   <!-- Import the import library preferences panel services. -->
   <script
-    type="application/x-javascript"
+    type="application/javascript"
     src="chrome://songbird/content/scripts/preferences/importLibraryPrefs.js"/>
 
 </overlay>

@@ -39,7 +39,7 @@
     extends="chrome://songbird/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
   >
     <content/>
-    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
+    <implementation type="application/javascript" implements="nsIDOMEventListener">
       <constructor>
       <![CDATA[
         this._feathersManager = 
@@ -381,7 +381,7 @@
         </xul:button>
       </xul:hbox>
     </content>
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
       <constructor>
       <![CDATA[
         this._feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']

@@ -29,7 +29,7 @@
 
 <overlay id="songbirdProfileSelectionOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript"><![CDATA[
+  <script type="application/javascript"><![CDATA[
 
     // Initialize the profile selection overlay on window load.
     function sbProfileSelectionOverlayInit() {

@@ -251,19 +251,19 @@
    ************************************************************************* -->
 
   <!-- Import the Songbird services. -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://global/content/globalOverlay.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/windowUtils.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/switchLocale.js"/>
 
   <!-- Import the first run wizard services. -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/firstRunWizard.js"/>
-  <script type="application/x-javascript;version=1.8"
+  <script type="application/javascript;version=1.8"
           src="chrome://songbird/content/scripts/firstRun/firstRunAppUpdate.js"/>
 
 </wizard>

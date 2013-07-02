@@ -51,7 +51,7 @@
       * or just call _addToMenu 
    -->
   <binding id="generated-menuitems-base">
-    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
+    <implementation type="application/javascript" implements="nsIDOMEventListener">
       <constructor>
       <![CDATA[
           this._addedElements = [];

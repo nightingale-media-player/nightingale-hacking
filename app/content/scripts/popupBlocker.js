@@ -305,10 +305,10 @@ try
       // If the info message is showing at the top of the window, and the user has never
       // hidden the message before, show an info box telling the user where the info
       // will be displayed.
-      if (showMessage && firstTime) {
-        window.openDialog("chrome://browser/content/pageReportFirstTime.xul", "_blank",
-                "dependent");
-      }
+//      if (showMessage && firstTime) {
+//        window.openDialog("chrome://browser/content/pageReportFirstTime.xul", "_blank",
+//                "dependent");
+//      }
     
       this._prefService.setBoolPref("privacy.popups.showBrowserMessage", !showMessage);
     

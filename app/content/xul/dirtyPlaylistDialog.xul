@@ -117,11 +117,11 @@
    ************************************************************************* -->
 
   <!-- Import the Songbird services. -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://global/content/globalOverlay.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/windowUtils.js" />
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
   <!-- Dirty playlist dialog services. -->

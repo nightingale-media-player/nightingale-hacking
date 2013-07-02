@@ -33,7 +33,7 @@
 
   <binding id="commands-base">
 
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
 
       <constructor>
         <![CDATA[
@@ -486,7 +486,7 @@
       </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
 
     <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
     <field name="toolbarbuttons">new Array();</field>
@@ -865,7 +865,7 @@
 
   <binding id="commands-menuitems" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
 
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
 
     <constructor>
       // hide the binding (this does not hide the items, just the binding)
@@ -1180,7 +1180,7 @@
       <xul:sb-dynamic-keyset sbid="keyset"/>
     </content>
 
-    <implementation type="application/x-javascript">
+    <implementation type="application/javascript">
 
     <constructor>
     </constructor>

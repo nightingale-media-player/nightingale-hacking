@@ -39,7 +39,7 @@
                           flex="1"/>
     </content>
 
-    <implementation type="application/x-javascript" >
+    <implementation type="application/javascript" >
 
       <!-- This is the root of our panel children we create -->
       <field name="panelRoot">
@@ -312,7 +312,7 @@
       </xul:vbox>
     </content>
 
-    <implementation type="application/x-javascript" >
+    <implementation type="application/javascript" >
 
       <method name="onIconClick">
         <parameter name="aEvent" />

@@ -44,7 +44,7 @@
         class="feedback-dialog"
         ondialogaccept="onDialogAccept();">
         
-  <script type="application/x-javascript">
+  <script type="application/javascript">
     
     function onDialogAccept()
     {

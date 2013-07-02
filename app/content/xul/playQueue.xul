@@ -92,6 +92,6 @@
 
   </stack>
 
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/playQueue.js" />
 </window>

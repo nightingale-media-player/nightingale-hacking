@@ -49,11 +49,11 @@
   <label id="songbird_restartbox_label" value="" />
   
   <!-- And intrepid instructions! -->  
-  <script type="application/x-javascript"
+  <script type="application/javascript"
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
     src="chrome://global/content/globalOverlay.js"/> 
-  <script type="application/x-javascript"  
+  <script type="application/javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js" />
   <script>
   <![CDATA[

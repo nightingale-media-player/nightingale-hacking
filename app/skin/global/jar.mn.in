@@ -3,7 +3,7 @@ songbird.jar:
 % overlay chrome://global/content/commonDialog.xul                           chrome://global/skin/dialog/commonDialog.xul
 % overlay chrome://global/content/commonDialog.xul?useHTML                   chrome://global/skin/dialog/commonDialog.xul
 % override chrome://browser/skin/Info.png                                    chrome://songbird/skin/notification-bar/icon-web-api.png
-% style chrome://browser/content/pageReportFirstTime.xul                     chrome://global/skin/pageReport.css
+# % style chrome://browser/content/pageReportFirstTime.xul                     chrome://global/skin/pageReport.css
 @include_all_to skin/global/
 *       skin/global/wizard.css                      (wizard.css)
 

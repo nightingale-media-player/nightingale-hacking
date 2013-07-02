@@ -58,9 +58,9 @@
  onunload="checkForDontShowMe();"
 >
 
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
           src="chrome://global/content/globalOverlay.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
   <commandset id="selectEditMenuItems">
@@ -109,7 +109,7 @@
   </vbox>
 
   <!-- Import the Songbird services code. -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
           src="chrome://songbird/content/scripts/windowUtils.js" />
 
   <script>

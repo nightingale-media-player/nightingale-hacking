@@ -52,11 +52,11 @@
   <description value="&device.dialog.wait_for_completion.msg;"/>
 
   <!-- Import the Songbird services code. -->  
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
           src="chrome://songbird/content/scripts/windowUtils.js" />
 
   <!-- Import the dialog box Javascript code. -->  
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
           src="chrome://songbird/content/scripts/waitForCompletion.js"/>
 
 </dialog>

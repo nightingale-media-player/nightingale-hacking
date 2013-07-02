@@ -98,7 +98,7 @@
 
     <implementation
       implements="nsISupportsWeakReference,sbIPlaylistWidget,sbIMediaListViewTreeViewObserver,sbIMediaListViewListener"
-      type="application/x-javascript"
+      type="application/javascript"
     >
 
       <constructor>

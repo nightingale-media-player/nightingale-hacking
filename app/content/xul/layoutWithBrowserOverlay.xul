@@ -490,47 +490,49 @@
   <!-- ********************************************************************* -->
   
   <!-- Load the main window data bindings -->
-  <script type="application/x-javascript"   
+  <script type="application/javascript"   
   src="chrome://songbird/content/scripts/mainWinInit.js" />
 
   <!-- Load the Mozilla helpers -->
-  <script type="application/x-javascript"   
+  <script type="application/javascript"   
   src="chrome://global/content/viewSourceUtils.js" />
-  <script type="application/x-javascript"   
+  <script type="application/javascript"   
   src="chrome://songbird/content/scripts/browserUtilities.js" />
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
   src="chrome://songbird/content/scripts/browserViewMenu.js" />
-  <script type="application/x-javascript"
-  src="chrome://browser/content/browser-textZoom.js"/>
-  <script type="application/x-javascript"
+  <!-- 
+    <script type="application/javascript"
+       src="chrome://browser/content/browser-textZoom.js"/>
+    -->
+  <script type="application/javascript"
   src="chrome://global/content/viewZoomOverlay.js"/>
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://global/content/printUtils.js"/>
 
   <!-- Web Scraper implementation -->
-  <script type="application/x-javascript;version=1.8" 
+  <script type="application/javascript;version=1.8" 
   src="chrome://songbird/content/scripts/webscraper/scraperSteps.js"/>
-  <script type="application/x-javascript;version=1.8" 
+  <script type="application/javascript;version=1.8" 
   src="chrome://songbird/content/scripts/webscraper/webScraper.js" />
 
   <!-- Generic search engine support -->
-  <script type="application/x-javascript"   
+  <script type="application/javascript"   
   src="chrome://songbird/content/scripts/searchHandler.js" />
 
   <!-- Popup Blocker UI functions -->
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
   src="chrome://songbird/content/scripts/popupBlocker.js" />
 
   <!-- Callbacks for xpinstall-denied browser hat (notification) -->
-  <script type="application/x-javascript" 
+  <script type="application/javascript" 
   src="chrome://songbird/content/scripts/xpInstallHat.js" />
 
   <!-- Window Controller -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/mainPlayerWindow.js" />
 
   <!-- Device support -->
-  <script type="application/x-javascript"
+  <script type="application/javascript"
   src="chrome://songbird/content/scripts/device/deviceSupport.js" />
 
   <!-- ********************************************************************* -->
