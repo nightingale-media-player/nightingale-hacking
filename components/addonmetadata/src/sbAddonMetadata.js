@@ -30,6 +30,8 @@
  * \brief Provides an nsIRDFDataSource with the contents of all 
  *        addon install.rdf files.
  */ 
+
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
  
 const CONTRACTID = "@mozilla.org/rdf/datasource;1?name=addon-metadata";
 const CLASSNAME = "Songbird Addon Metadata Datasource";
@@ -229,44 +231,43 @@ AddonMetadata.prototype = {
                        .getService(Components.interfaces.nsIRDFContainerUtils);
     var container = cu.MakeSeq(this._datasource, itemRoot);
 
-    var extManager = Components.classes["@mozilla.org/extensions/manager;1"]
-                           .getService(Components.interfaces.nsIExtensionManager);
-   
-    // Read the install.rdf for every addon
-    var addons = extManager.getItemList(Components.interfaces.nsIUpdateItem.TYPE_ADDON, {});
-    for (var i = 0; i < addons.length; i++)
-    {
-      var id = addons[i].id;
-            
-      // If the extension is disabled, do not include it in our datasource 
-      if (this._isExtensionDisabled(id))  {
-        //debug("\nAddonMetadata:  id {" + id +  "} is disabled.\n");
-        continue;
-      }
-      
-      //debug("\nAddonMetadata:  loading install.rdf for id {" + id +  "}\n");
-      
-      var location = extManager.getInstallLocation(id);
-      var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
+    AddonManager.getAllAddons(function(aAddons) {
+      // Read the install.rdf for every addon
+      for (var i = 0; i < aAddons.length; i++) {
 
-      if (!installManifestFile.exists()) {
-        this._reportErrors(["install.rdf for id " + id +  " was not found " + 
-                  "at location " + installManifestFile.path]);
-      }
-      
-      var manifestDS = this._getDatasource(installManifestFile);
-      var itemNode = this._RDF.GetResource(ADDON_NS(id));
-      // Copy the install.rdf metadata into the master datasource
-      this._copyManifest(itemNode, manifestDS);
-      
-      // Add the new install.rdf root to the list of extensions
-      container.AppendElement(itemNode);
-    }
+        var id = aAddons[i].id;
+        // If the extension is disabled, do not include it in our datasource 
+        // XXX FIX ME!!!!!
+        // if (this._isExtensionDisabled(id)) {
+          // continue;
+        // }
 
-    // Save changes  
-    this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
-                    .Flush();
-    //debug("\nAddonMetadata: _buildDatasource complete \n");
+        var location = AddonManager.getAddonByID(id, function(addon) {
+          return addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file.path;
+        });
+
+        var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
+
+        if (!installManifestFile.exists()) {
+          this._reportErrors(["install.rdf for id " + id +  " was not found " + 
+                    "at location " + installManifestFile.path]);
+        }
+        
+        var manifestDS = this._getDatasource(installManifestFile);
+        var itemNode = this._RDF.GetResource(ADDON_NS(id));
+        // Copy the install.rdf metadata into the master datasource
+        this._copyManifest(itemNode, manifestDS);
+        
+        // Add the new install.rdf root to the list of extensions
+        container.AppendElement(itemNode);
+      }
+
+      // Save changes  
+      this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
+                      .Flush();
+      //debug("\nAddonMetadata: _buildDatasource complete \n");
+      }
+    });
   },
   
   
@@ -274,28 +275,28 @@ AddonMetadata.prototype = {
   /**
    * Return true if the given extension GUID has been disabled in the EM
    */
-  _isExtensionDisabled: function _isExtensionDisabled(id) {
-    var item = this._RDF.GetResource(ITEM_NS(id));
-    var extManager = Components.classes["@mozilla.org/extensions/manager;1"]
-                        .getService(Components.interfaces.nsIExtensionManager);
-    var userDisabled = this._RDF.GetResource(EM_NS("userDisabled"));
-    if (extManager.datasource.hasArcOut(item, userDisabled)) {
-      var target = extManager.datasource.GetTarget(item, userDisabled, true);
-      if (target instanceof Components.interfaces.nsIRDFLiteral){
-        target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
-        return target.Value == "true";
-      }
-    }                      
-    var appDisabled = this._RDF.GetResource(EM_NS("appDisabled"));
-    if (extManager.datasource.hasArcOut(item, appDisabled)) {
-      var target = extManager.datasource.GetTarget(item, appDisabled, true);
-      if (target instanceof Components.interfaces.nsIRDFLiteral){
-        target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
-        return target.Value == "true";
-      }
-    }
-    return false;
-  },
+  // _isExtensionDisabled: function _isExtensionDisabled(id) {
+  //   var item = this._RDF.GetResource(ITEM_NS(id));
+  //   // var extManager = Components.classes["@mozilla.org/extensions/manager;1"]
+  //   //                     .getService(Components.interfaces.nsIExtensionManager);
+  //   var userDisabled = this._RDF.GetResource(EM_NS("userDisabled"));
+  //   if (extManager.datasource.hasArcOut(item, userDisabled)) {
+  //     var target = extManager.datasource.GetTarget(item, userDisabled, true);
+  //     if (target instanceof Components.interfaces.nsIRDFLiteral){
+  //       target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
+  //       return target.Value == "true";
+  //     }
+  //   }                      
+  //   var appDisabled = this._RDF.GetResource(EM_NS("appDisabled"));
+  //   if (extManager.datasource.hasArcOut(item, appDisabled)) {
+  //     var target = extManager.datasource.GetTarget(item, appDisabled, true);
+  //     if (target instanceof Components.interfaces.nsIRDFLiteral){
+  //       target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
+  //       return target.Value == "true";
+  //     }
+  //   }
+  //   return false;
+  // },
  
   
   

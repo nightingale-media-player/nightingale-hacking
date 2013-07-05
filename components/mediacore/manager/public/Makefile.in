@@ -32,6 +32,4 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIMediacoreErrorHandler.idl \
              $(NULL)
 
-XPIDL_MODULE = sbIMediacoreErrorHandler.xpt
-
 include $(topsrcdir)/build/rules.mk

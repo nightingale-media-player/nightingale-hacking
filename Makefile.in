@@ -33,12 +33,12 @@ TIERS = base \
         deps \
         appbase \
         componentsbase \
+        ui \
+        componentsall \
+        extensions \
+        branding \
         manifests \
         $(NULL)
-#        ui \
-#        componentsall \
-#        extensions \
-#        branding \
 
 ifdef SB_ENABLE_TESTS
    TIERS += unittests

@@ -31,6 +31,9 @@
  * \brief Javascript source for the add-on bundle installer widget services.
  */
 
+
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
@@ -332,12 +335,14 @@ addOnBundleInstallerSvc.prototype = {
     }
 
     // Get the extension manager.
-    var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
-                             .getService(Ci.nsIExtensionManager);
+//    var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
+//                             .getService(Ci.nsIExtensionManager);
 
     // Install the add-on.
     try {
-      extensionManager.installItemFromFile(aInstallInfo.file, "app-profile");
+      AddonManager.getInstallForFile(aInstallInfo.file, function(aInstall) {
+    	  aInstall.install();
+      }, "application/x-xpinstall");
       this.restartRequired = true;
     } catch (ex) {
       // Report exception.

@@ -32,6 +32,4 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIURIImportService.idl \
              $(NULL)
 
-XPIDL_MODULE = sbIURIImportService.xpt
-
 include $(topsrcdir)/build/rules.mk

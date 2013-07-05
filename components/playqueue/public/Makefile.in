@@ -32,6 +32,4 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIPlayQueueService.idl \
              $(NULL)
 
-XPIDL_MODULE = sbIPlayQueueService.xpt
-
 include $(topsrcdir)/build/rules.mk

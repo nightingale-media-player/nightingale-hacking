@@ -36,6 +36,7 @@
 Components.utils.import("resource://app/jsmodules/ObserverUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
 
 const Ci = Components.interfaces;
 const Cc = Components.classes; 
@@ -1362,33 +1363,38 @@ FeathersManager.prototype = {
    * not appDisabled, so addons that have been disabled because
    * of a compatibility or security issue remain disabled.
    */
-  _ensureAddOnEnabled: function(id) {
-    const nsIUpdateItem = Ci.nsIUpdateItem;
-    var em = Cc["@mozilla.org/extensions/manager;1"]
-               .getService(Ci.nsIExtensionManager);
-    var ds = em.datasource; 
-    var rdf = Cc["@mozilla.org/rdf/rdf-service;1"]
-                .getService(Ci.nsIRDFService);
+  // _ensureAddOnEnabled: function(id) {
+  //   const nsIUpdateItem = Ci.nsIUpdateItem;
+  //   AddonManager.getAddonByID(id, function(addon) {
+  //     if (addon.userDisabled == "false") {
+  //       addon.userDisabled 
+  //     }
+  //   });
+  //   var em = Cc["@mozilla.org/extensions/manager;1"]
+  //              .getService(Ci.nsIExtensionManager);
+  //   var ds = em.datasource; 
+  //   var rdf = Cc["@mozilla.org/rdf/rdf-service;1"]
+  //               .getService(Ci.nsIRDFService);
 
-    var resource = rdf.GetResource("urn:mozilla:item:" + id); 
+  //   var resource = rdf.GetResource("urn:mozilla:item:" + id); 
 
-    var property = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#userDisabled");
-    var target = ds.GetTarget(resource, property, true);
+  //   var property = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#userDisabled");
+  //   var target = ds.GetTarget(resource, property, true);
 
-    function getData(literalOrResource) {
-      if (literalOrResource instanceof Ci.nsIRDFLiteral ||
-          literalOrResource instanceof Ci.nsIRDFResource ||
-          literalOrResource instanceof Ci.nsIRDFInt)
-        return literalOrResource.Value;
-      return undefined;
-    }
+  //   function getData(literalOrResource) {
+  //     if (literalOrResource instanceof Ci.nsIRDFLiteral ||
+  //         literalOrResource instanceof Ci.nsIRDFResource ||
+  //         literalOrResource instanceof Ci.nsIRDFInt)
+  //       return literalOrResource.Value;
+  //     return undefined;
+  //   }
 
-    var userDisabled = getData(target);
+  //   var userDisabled = getData(target);
       
-    if (userDisabled == "true") {
-      em.enableItem(id); 
-    }
-  }, 
+  //   if (userDisabled == "true") {
+  //     em.enableItem(id); 
+  //   }
+  // }, 
 
   /**
    * See nsISupports.idl
