@@ -44,8 +44,5 @@ IS_EXTENSION = 1
 XPIDL_SRCS = Songkick.idl \
              $(NULL)
 
-# into this xpt (an xpt is like a compiled IDL read at runtime)
-XPIDL_MODULE = Songkick.xpt
-
 include $(topsrcdir)/build/rules.mk
 
