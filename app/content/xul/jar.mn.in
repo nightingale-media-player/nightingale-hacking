@@ -5,7 +5,7 @@ songbird.jar:
 % overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/mainOverlay.xul
 % overlay chrome://browser/content/preferences/tabs.xul                      chrome://songbird/content/xul/preferences/tabsOverlay.xul
 % overlay chrome://browser/content/preferences/permissions.xul               chrome://songbird/content/xul/preferences/permissionsOverlay.xul
-% overlay chrome://browser/content/preferences/sanitize.xul                  chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
+# % overlay chrome://browser/content/preferences/sanitize.xul                  chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
 % overlay chrome://browser/content/preferences/advanced.xul                  chrome://songbird/content/xul/preferences/advancedOverlay.xul
 # remove help button from pref windows
 % overlay chrome://browser/content/preferences/colors.xul                    chrome://songbird/content/xul/preferences/helpRemovalOverlay.xul
@@ -17,7 +17,7 @@ songbird.jar:
 # % overlay chrome://mozapps/content/extensions/extensions.xul?type=extensions chrome://songbird/content/xul/extensionManagerOverlay.xul
 # % overlay chrome://mozapps/content/extensions/extensions.xul?type=themes     chrome://songbird/content/xul/extensionManagerOverlay.xul
 % overlay chrome://mozapps/content/update/updates.xul                        chrome://songbird/content/xul/updateOverlay.xul
-% overlay chrome://browser/content/sanitize.xul                              chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
+# % overlay chrome://browser/content/sanitize.xul                              chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
 % overlay chrome://mozapps/content/downloads/unknownContentType.xul          chrome://songbird/content/xul/unknownContentTypeOverlay.xul
 @include_all_to content/songbird/xul/
 * content/songbird/xul/trackEditor.xul                                       (trackEditor.xul)
