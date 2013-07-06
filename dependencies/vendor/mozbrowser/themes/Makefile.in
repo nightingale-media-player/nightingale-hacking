@@ -50,13 +50,14 @@ include $(DEPTH)/build/autodefs.mk
 # MacOS X                 Pinstripe
 #
 
-ifeq (cocoa,$(SB_PLATFORM))
-SUB_DIRS = pinstripe
+ifeq ($(SB_PLATFORM), macosx)
+  SUB_DIRS = pinstripe/browser
 else
-SUB_DIRS = winstripe
-endif
-ifneq (,$(filter gtk2 qt,$(SB_PLATFORM)))
-SUB_DIRS = gnomestripe
+  ifeq ($(SB_PLATFORM),windows)
+    SUB_DIRS = winstripe/browser
+  else
+    SUB_DIRS = gnomestripe/browser
+  endif
 endif
 
 include $(topsrcdir)/build/rules.mk

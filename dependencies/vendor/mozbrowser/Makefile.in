@@ -52,6 +52,7 @@ SUBDIRS = components/preferences \
   components/sidebar/src \
   components \
   base \
+  devtools \
   $(NULL)
 
 #PARALLEL_DIRS = \

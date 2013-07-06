@@ -82,7 +82,7 @@ browser-locale.jar:
     locale/browser/syncQuota.dtd                (en-US/chrome/browser/syncQuota.dtd)
     locale/browser/syncQuota.properties         (en-US/chrome/browser/syncQuota.properties)
 #endif
-% locale browser-region @AB_CD@ %locale/browser-region/
+% locale browser-region en-US %locale/browser-region/
     locale/browser-region/region.properties        (en-US/chrome/browser-region/region.properties)
 # the following files are browser-specific overrides
 *   locale/browser/netError.dtd                (en-US/chrome/overrides/netError.dtd)

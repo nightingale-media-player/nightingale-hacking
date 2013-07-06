@@ -35,17 +35,17 @@
 #
 # ***** END LICENSE BLOCK *****
 
-DEPTH   = ../../../..
+DEPTH   = ../../../../../..
 topsrcdir = @top_srcdir@
 srcdir    = @srcdir@
 VPATH   = @srcdir@
 
-include $(DEPTH)/config/autoconf.mk
+include $(DEPTH)/build/autodefs.mk
 
 MODULE = shellservice
 XPIDL_MODULE  = shellservice
 
-XPIDLSRCS = nsIShellService.idl
+XPIDL_SRCS = nsIShellService.idl
 
 ifeq ($(OS_ARCH),WINNT)
 XPIDLSRCS += nsIWindowsShellService.idl
@@ -55,4 +55,4 @@ ifeq (cocoa,$(MOZ_WIDGET_TOOLKIT))
 XPIDLSRCS += nsIMacShellService.idl
 endif
 
-include $(topsrcdir)/config/rules.mk
+include $(topsrcdir)/build/rules.mk
