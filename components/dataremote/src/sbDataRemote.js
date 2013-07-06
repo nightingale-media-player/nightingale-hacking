@@ -36,6 +36,9 @@ var DEBUG_DATAREMOTES = false;
 var Cr = Components.results;
 var Ci = Components.interfaces;
 var Cc = Components.classes;
+var Cu = Components.utils;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // This object should not be instantiated by user code.  Instead, use 
 // the original contract id "@songbirdnest.com/Songbird/DataRemote;1"
@@ -65,6 +68,16 @@ DataRemote.prototype = {
   _isBool: false,          // Is the data a yes/no true/false chunk of data?
   _isNot: false,           // Is the linked data state opposite of target data?
   _evalString: "",         // a string of js to evaluate when the data changes
+
+  QueryInterface: XPCOMUtils.generateQI([
+    SONGBIRD_DATAREMOTE_IID,
+    Ci.nsIClassInfo, 
+    Ci.nsIObserver, 
+    Ci.nsISecurityCheckedComponent,
+    Ci.sbISecurityAggregator,
+    Ci.nsISupportsWeakReference,
+    Ci.nsISupports
+  ]),
 
   init: function(aKey, aRoot) {
     // Only allow initialization once per object

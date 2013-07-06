@@ -792,20 +792,4 @@ SmartMediaListsUpdater.prototype = {
 
 }; // SmartMediaListsUpdater.prototype
 
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-
-// function postRegister(aCompMgr, aFileSpec, aLocation) {
-//   // Get instantiated on startup
-//   XPCOMUtils.categoryManager
-//             .addCategoryEntry('app-startup',
-//                               'smartplaylists-updater', 
-//                               'service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1',
-//                               true, 
-//                               true);
-// }
-
-// module
-var NSGetModule = 
-  XPCOMUtils.generateNSGetFactory([SmartMediaListsUpdater], 
-                                  postRegister);
+var NSGetModule = XPCOMUtils.generateNSGetFactory([SmartMediaListsUpdater]);

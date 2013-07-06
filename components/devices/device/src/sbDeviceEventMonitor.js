@@ -55,7 +55,7 @@ var deviceEventMonitorConfig = {
     {
       category: 'app-startup',
       entry: 'service-device-event-monitor',
-      value: 'service,@songbirdnest.com/device/event-monitor-service;1'.
+      value: 'service,@songbirdnest.com/device/event-monitor-service;1',
       service: true
     }
   ]
