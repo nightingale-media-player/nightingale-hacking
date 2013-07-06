@@ -1,10 +1,10 @@
 manifest chrome/browser-locale.manifest
 manifest chrome/browser.manifest
-# manifest chrome/coppery.manifest
-# manifest chrome/gonzo.manifest
-# manifest chrome/locales.manifest
-# manifest chrome/pinkmartini.manifest
-# manifest chrome/purplerain.manifest
+manifest chrome/coppery.manifest
+manifest chrome/gonzo.manifest
+manifest chrome/locales.manifest
+manifest chrome/pinkmartini.manifest
+manifest chrome/purplerain.manifest
 manifest chrome/songbird.manifest
 manifest components/components.manifest
 manifest components/interfaces.manifest
