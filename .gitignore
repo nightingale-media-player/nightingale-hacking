@@ -30,3 +30,6 @@ conftest.o
 confdefs.h
 thumbs.db
 .directory
+.cproject
+.project
+.settings
