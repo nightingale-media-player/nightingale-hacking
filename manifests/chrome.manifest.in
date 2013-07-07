@@ -9,4 +9,4 @@ manifest chrome/songbird.manifest
 manifest components/components.manifest
 manifest components/interfaces.manifest
 manifest components/jscomponents.manifest
-# manifest lib/libs.manifest
+manifest lib/libs.manifest

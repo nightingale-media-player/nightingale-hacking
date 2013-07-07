@@ -6,20 +6,19 @@ binary-component sbDBEngine_d.so
 binary-component sbDeviceBase_d.so
 binary-component sbMockCDDevice_d.so
 binary-component sbCDDevice_d.so
-category profile-after-change SongbirdCDDeviceController @songbirdnest.com/Songbird/CDDeviceController;1
-binary-component sbDeviceController_d.so
+# category profile-after-change SongbirdCDDeviceController @songbirdnest.com/Songbird/CDDeviceController;1
+# binary-component sbDeviceController_d.so
 binary-component sbDeviceDeviceTester_d.so
-binary-component sbDeviceCore_d.so
+# binary-component sbDeviceCore_d.so
 binary-component sbDeviceFirmwareTester_d.so
 binary-component sbDeviceFirmwareUpdater_d.so
 category app-startup sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
 binary-component sbDeviceManager2_d.so
 category app-startup sbDeviceManager2 @songbirdnest.com/Songbird/DeviceManager;2
-binary-component sbDeviceMarshall_d.so
+# binary-component sbDeviceMarshall_d.so
 binary-component sbDownloadDevice_d.so
 binary-component sbDeviceManager_d.so
 category app-startup sbDeviceManager @songbirdnest.com/Songbird/DeviceManager;1
-binary-component sbFileSystemEventsBase_d.so
 binary-component sbLinuxFileSystemEvents_d.so
 binary-component sbIntegration_d.so
 binary-component sbIntl_d.so
@@ -30,7 +29,6 @@ binary-component sbIdentityServiceComponent_d.so
 binary-component sbLocalDatabaseLibrary_d.so
 binary-component sbMediacoreBase_d.so
 binary-component sbTestMediacoreBase_d.so
-binary-component sbGStreamerStub_d.so
 binary-component sbMediacoreManager_d.so
 binary-component sbMetadataHandlerTaglib_d.so
 binary-component sbMetadataModule_d.so
@@ -43,8 +41,8 @@ binary-component sbFileScan_d.so
 binary-component sbiTunesMediaImport_d.so
 binary-component sbMediaManager_d.so
 binary-component sbClipboardHelper_d.so
-binary-component sbDirectoryProvider_d.so
-category app-startup sbDirectoryProvider @songbirdnest.com/moz/directory/provider;1
+# binary-component sbDirectoryProvider_d.so
+# category app-startup sbDirectoryProvider @songbirdnest.com/moz/directory/provider;1
 binary-component sbFileUtils_d.so
 binary-component sbImageParser_d.so
 binary-component sbPrompter_d.so
