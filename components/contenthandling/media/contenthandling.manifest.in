@@ -1,4 +1,4 @@
 ## components/contenthandling/media ##
 component {2803c9e8-b0b6-4dfe-8333-53430128f7e7} sbMediaContentListener.js
 contract @songbirdnest.com/contentlistener/media;1 {2803c9e8-b0b6-4dfe-8333-53430128f7e7}
-category profile-after-change sbMediaContentListener @songbirdnest.com/contentlistener/media;1
+# category profile-after-change sbMediaContentListener @songbirdnest.com/contentlistener/media;1
