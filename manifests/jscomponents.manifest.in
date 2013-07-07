@@ -182,7 +182,7 @@ manifest mediacore-base.manifest
 # component {ea82983c-4e22-43e0-8942-ae5f31d3671a} sbAboutGStreamer.js
 # contract @mozilla.org/network/protocol/about;1?what=gstreamer {ea82983c-4e22-43e0-8942-ae5f31d3671a}
 ## category profile-after-change sbAboutGStreamer @mozilla.org/network/protocol/about;1?what=gstreamer
-manifest mediacoregstreamer.manifest
+manifest mediacore-gstreamer.manifest
 
 
 ### components/mediacore/manager ##

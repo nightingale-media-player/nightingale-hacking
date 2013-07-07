@@ -29,11 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/moz-urlformmater.manifest.in \
+SONGBIRD_PP_RESOURCES = $(srcdir)/moz-urlformatter.manifest.in \
                         $(NULL)
 
 SONGBIRD_COMPONENTS = $(topsrcdir)/components/moz/urlformatter/src/sbURLFormatter.js \
-                      $(CURDIR)/moz-urlformmater.manifest \
+                      $(CURDIR)/moz-urlformatter.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk
