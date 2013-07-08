@@ -76,11 +76,7 @@ sbCDDeviceMarshall::sbCDDeviceMarshall()
 
 sbCDDeviceMarshall::~sbCDDeviceMarshall()
 {
-  // XXX Is this necessary? Why was the lock obtained previously
-  // immediately before exiting it, then destroying it?
-  {
-    mozilla::MonitorAutoLock mon(mKnownDevicesLock);
-  }
+
 }
 
 nsresult
