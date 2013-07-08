@@ -1,4 +1,4 @@
 ## components/appstartup ##
 component {bf8300d3-95a7-4f52-b8e1-7012d8c639b8} sbAppStartupService.js
 contract @songbirdnest.com/app-startup-service;1 {bf8300d3-95a7-4f52-b8e1-7012d8c639b8}
-category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
+# category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1

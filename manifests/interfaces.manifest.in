@@ -30,7 +30,7 @@ interfaces sbLocalDatabaseLibrary.xpt
 interfaces sbMediacoreBase.xpt
 interfaces sbTestMediacoreBase.xpt
 interfaces sbGStreamerMediacore.xpt
-interfaces sbIMediacoreErrorHandler.xpt
+# interfaces sbIMediacoreErrorHandler.xpt
 interfaces sbMetadataHandlerTaglib.xpt
 interfaces sbMetadataLookup.xpt
 interfaces sbMetadataModule.xpt

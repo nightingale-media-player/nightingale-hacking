@@ -46,7 +46,7 @@ static const mozilla::Module::ContractIDEntry kPlayQueueServiceContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kPlayQueueServiceCategories[] = {
-  { "app-startup", SB_PLAYQUEUESERVICE_CLASSNAME, SB_PLAYQUEUESERVICE_CONTRACTID },
+  // { "app-startup", SB_PLAYQUEUESERVICE_CLASSNAME, SB_PLAYQUEUESERVICE_CONTRACTID },
   { NULL }
 };
 

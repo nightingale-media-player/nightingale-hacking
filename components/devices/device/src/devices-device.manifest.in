@@ -9,5 +9,5 @@ category app-startup sbDeviceErrorMonitor @songbirdnest.com/device/error-monitor
 
 component {57b32ce8-a373-4d8d-babb-9d23afeeb409} sbDeviceEventMonitor.js
 contract @songbirdnest.com/device/event-monitor-service;1 {57b32ce8-a373-4d8d-babb-9d23afeeb409}
-category app-startup sbDeviceEventMonitor @songbirdnest.com/device/event-monitor-service;1
+# category app-startup sbDeviceEventMonitor @songbirdnest.com/device/event-monitor-service;1
 # category profile-after-change sbDeviceEventMonitor @songbirdnest.com/device/event-monitor-service;1

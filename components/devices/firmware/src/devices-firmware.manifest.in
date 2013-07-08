@@ -1,4 +1,4 @@
 ## components/devices/firmware ##
 component {2137a87f-2ade-448b-a093-bad4f6649fa3} sbDeviceFirmwareAutoCheckForUpdate.js
 contract @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1 {2137a87f-2ade-448b-a093-bad4f6649fa3}
-category app-startup sbDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
+# category app-startup sbDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1

@@ -1,7 +1,7 @@
 ## components/library/localdatabase ##
 component {35af253e-c7b0-40d6-a1a2-c747de924639} sbSmartMediaListsUpdater.js
 contract @songbirdnest.com/Songbird/SmartMediaListsUpdater;1 {35af253e-c7b0-40d6-a1a2-c747de924639}
-category app-startup sbSmartMediaListsUpdater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
+# category app-startup sbSmartMediaListsUpdater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
 
 component {744f6217-4cb9-4929-8d1d-72492c1b8c83} sbLocalDatabaseMigrationHelper.js
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1 {744f6217-4cb9-4929-8d1d-72492c1b8c83}
