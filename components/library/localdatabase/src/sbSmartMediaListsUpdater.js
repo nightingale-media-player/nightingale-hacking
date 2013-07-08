@@ -51,10 +51,10 @@ SmartMediaListsUpdater.prototype = {
   classID         : Components.ID("{35af253e-c7b0-40d6-a1a2-c747de924639}"),
   contractID      : "@songbirdnest.com/Songbird/SmartMediaListsUpdater;1",
 
-  _xpcom_categories: [{
-    category: "app-startup",
-    service: true
-  }],
+//  _xpcom_categories: [{
+//    category: "app-startup",
+//    service: true
+//  }],
   
   // medialistlistener batch count
   _batchCount            : 0,

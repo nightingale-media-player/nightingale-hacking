@@ -594,7 +594,7 @@ sbWindowWatcher::Shutdown()
   }
 
   // Remove quit-application-granted observer.
-  mObserverService->RemoveObserver(this, "quit-application-granted");
+//  mObserverService->RemoveObserver(this, "quit-application-granted");
 
   // Invoke all call with window callbacks.
   InvokeCallWithWindowCallbacks(nsnull);

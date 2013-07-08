@@ -4,7 +4,7 @@ contract @songbirdnest.com/Songbird/Device/Base/Helper;1 {ebe6e08a-0604-44fd-a3d
 
 component {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd} sbDeviceErrorMonitor.js
 contract @songbirdnest.com/device/error-monitor-service;1 {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}
-category app-startup sbDeviceErrorMonitor @songbirdnest.com/device/error-monitor-service;1
+# category app-startup sbDeviceErrorMonitor @songbirdnest.com/device/error-monitor-service;1
 # category profile-after-change sbDeviceErrorMonitor @songbirdnest.com/device/error-monitor-service;1
 
 component {57b32ce8-a373-4d8d-babb-9d23afeeb409} sbDeviceEventMonitor.js

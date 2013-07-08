@@ -1,7 +1,7 @@
 ## components/library/base ##
 component {10a07ef5-8ab6-4728-9172-4e609f65b4a2} sbDynamicPlaylist.js
 contract @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1 {10a07ef5-8ab6-4728-9172-4e609f65b4a2}
-category app-startup sbDynamicPlaylist @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
+# category app-startup sbDynamicPlaylist @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
 
 component {1ed101bc-a11c-4e03-83af-514672bd3a70} sbLibrarySearchSuggester.js
 contract @mozilla.org/autocomplete/search;1?name=library-distinct-properties {1ed101bc-a11c-4e03-83af-514672bd3a70}
