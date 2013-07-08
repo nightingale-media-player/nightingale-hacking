@@ -31,6 +31,7 @@
  *        addon install.rdf files.
  */ 
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://gre/modules/AddonManager.jsm");
  
 const CONTRACTID = "@mozilla.org/rdf/datasource;1?name=addon-metadata";
@@ -101,6 +102,9 @@ function AddonMetadata() {
 };
 
 AddonMetadata.prototype = {
+  classDescription: CLASSNAME,
+  classID: CID,
+  contractID: CONTRACTID,
 
   constructor: AddonMetadata,
 
@@ -266,7 +270,6 @@ AddonMetadata.prototype = {
       this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
                       .Flush();
       //debug("\nAddonMetadata: _buildDatasource complete \n");
-      }
     });
   },
   

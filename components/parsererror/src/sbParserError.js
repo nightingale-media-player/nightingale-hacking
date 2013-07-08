@@ -23,6 +23,9 @@
 // END SONGBIRD GPL
 //
  */
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 const SONGBIRD_PARSERERRORHANDLER_CONTRACTID = "@songbirdnest.com/Songbird/ParserErrorHandler;1";
 const SONGBIRD_PARSERERRORHANDLER_CLASSNAME = "Songbird Parser Error Handler";
 const SONGBIRD_PARSERERRORHANDLER_CID = Components.ID("{213a0ebb-12b3-492f-bc4c-f472f8f24d2c}");
@@ -103,7 +106,7 @@ function ParserErrorHandler() {
 ParserErrorHandler.prototype.constructor = ParserErrorHandler;
 
 ParserErrorHandler.prototype = {
-  classDescription: ,
+  classDescription: SONGBIRD_PARSERERRORHANDLER_CLASSNAME,
   classID: SONGBIRD_PARSERERRORHANDLER_CID,
   contractID: SONGBIRD_PARSERERRORHANDLER_CONTRACTID,
   _xpcom_categories: [{

@@ -625,8 +625,10 @@ sbAlbumArtService::Finalize()
   // Remove observers.
   nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
           "@mozilla.org/observer-service;1", &rv);
-  obsSvc->RemoveObserver(this, "profile-after-change");
-  obsSvc->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+  if (obsSvc) {
+    obsSvc->RemoveObserver(this, "profile-after-change");
+    obsSvc->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+  }
 
   if (mCacheFlushTimer) {
     rv = mCacheFlushTimer->Cancel();

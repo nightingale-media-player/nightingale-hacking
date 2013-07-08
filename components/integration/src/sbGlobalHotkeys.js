@@ -534,7 +534,7 @@ sbHotkeyService.prototype =
     {
       category: "app-startup",
       entry:    SB_HOTKEY_SERVICE_DESC,
-      value:    "service," + SB_HOTKEY_SERVICE_CONTRACTID
+      value:    "service," + SB_HOTKEY_SERVICE_CONTRACTID,
       service:  true
     }
   ],
