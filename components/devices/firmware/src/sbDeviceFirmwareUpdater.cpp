@@ -1303,7 +1303,7 @@ sbDeviceFirmwareUpdater::Observe(nsISupports* aSubject,
                                  const char* aTopic,
                                  const PRUnichar* aData)
 {
-  LOG(("[sbDeviceFirmwareUpdater] - Observe: %s", this, aTopic));
+  LOG(("[sbDeviceFirmwareUpdater] - Observe: %s", aTopic));
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService =
