@@ -1,234 +1,234 @@
 ### components/addonmetadata ##
-# component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} sbAddonMetadata.js
-# contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
-## category profile-after-change sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
-manifest addonmetadata.manifest
+component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} sbAddonMetadata.js
+contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
+category profile-after-change sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
+# manifest addonmetadata.manifest
 
 
 ### components/appstartup ##
-# component {bf8300d3-95a7-4f52-b8e1-7012d8c639b8} sbAppStartupService.js
-# contract @songbirdnest.com/app-startup-service;1 {bf8300d3-95a7-4f52-b8e1-7012d8c639b8}
-## category profile-after-change sbAppStartupService @songbirdnest.com/app-startup-service;1
-manifest appstartup.manifest
+component {bf8300d3-95a7-4f52-b8e1-7012d8c639b8} sbAppStartupService.js
+contract @songbirdnest.com/app-startup-service;1 {bf8300d3-95a7-4f52-b8e1-7012d8c639b8}
+category profile-after-change sbAppStartupService @songbirdnest.com/app-startup-service;1
+# manifest appstartup.manifest
 
 
 ### components/bundle ##
-# component {128badd1-aa05-4508-87cc-f3cb3e9b5499} sbBundle.js
-# contract @songbirdnest.com/Songbird/Bundle;1 {128badd1-aa05-4508-87cc-f3cb3e9b5499}
-## category profile-after-change sbBundle @songbirdnest.com/Songbird/Bundle;1
-manifest bundle.manifest
+component {128badd1-aa05-4508-87cc-f3cb3e9b5499} sbBundle.js
+contract @songbirdnest.com/Songbird/Bundle;1 {128badd1-aa05-4508-87cc-f3cb3e9b5499}
+category profile-after-change sbBundle @songbirdnest.com/Songbird/Bundle;1
+# manifest bundle.manifest
 
 
 ### components/commandline ##
-# component {ff29ec35-1294-42ae-a341-63d0303df969} sbCommandLine.js
-# contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {ff29ec35-1294-42ae-a341-63d0303df969}
-## category profile-after-change sbCommandLine @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
-manifest commandline.manifest
+component {ff29ec35-1294-42ae-a341-63d0303df969} sbCommandLine.js
+contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {ff29ec35-1294-42ae-a341-63d0303df969}
+category profile-after-change sbCommandLine @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
+# manifest commandline.manifest
 
 
 ### components/contenthandling ##
-# component {2803c9e8-b0b6-4dfe-8333-53430128f7e7} sbMediaContentListener.js
-# contract @songbirdnest.com/contentlistener/media;1 {2803c9e8-b0b6-4dfe-8333-53430128f7e7}
-## category profile-after-change sbMediaContentListener @songbirdnest.com/contentlistener/media;1
-manifest contenthandling.manifest
+component {2803c9e8-b0b6-4dfe-8333-53430128f7e7} sbMediaContentListener.js
+contract @songbirdnest.com/contentlistener/media;1 {2803c9e8-b0b6-4dfe-8333-53430128f7e7}
+category profile-after-change sbMediaContentListener @songbirdnest.com/contentlistener/media;1
+# manifest contenthandling.manifest
 
 
 ### components/controller ##
-# component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} sbApplicationController.js
-# contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
-## category profile-after-change sbApplicationController @songbirdnest.com/Songbird/ApplicationController;1
-manifest controller.manifest
+component {8492c5a0-ab8e-11dd-ad8b-0800200c9a66} sbApplicationController.js
+contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
+category profile-after-change sbApplicationController @songbirdnest.com/Songbird/ApplicationController;1
+# manifest controller.manifest
 
 
 ### components/dataremote ##
-# component {e0990420-e9c0-11dd-ba2f-0800200c9a66} sbDataRemote.js
-# contract @songbirdnest.com/Songbird/DataRemote;1 {e0990420-e9c0-11dd-ba2f-0800200c9a66}
-## category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1
-manifest dataremote.manifest
+component {e0990420-e9c0-11dd-ba2f-0800200c9a66} sbDataRemote.js
+contract @songbirdnest.com/Songbird/DataRemote;1 {e0990420-e9c0-11dd-ba2f-0800200c9a66}
+category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1
+# manifest dataremote.manifest
 
 
 ### components/devices/cd ##
-# component {9925b565-5c19-4feb-87a8-413d86570cd9} sbCDRipServicePaneService.js
-# contract @songbirdnest.com/servicepane/cdDevice;1 {9925b565-5c19-4feb-87a8-413d86570cd9}
-## category profile-after-change sbCDRipServicePaneService @songbirdnest.com/servicepane/cdDevice;1
-manifest devices-cd.manifest
+component {9925b565-5c19-4feb-87a8-413d86570cd9} sbCDRipServicePaneService.js
+contract @songbirdnest.com/servicepane/cdDevice;1 {9925b565-5c19-4feb-87a8-413d86570cd9}
+category profile-after-change sbCDRipServicePaneService @songbirdnest.com/servicepane/cdDevice;1
+# manifest devices-cd.manifest
 
 
 ### components/devices/device ##
-# component {ebe6e08a-0604-44fd-a3d7-2be556b96b24} sbBaseDeviceHelper.js
-# contract @songbirdnest.com/Songbird/Device/Base/Helper;1 {ebe6e08a-0604-44fd-a3d7-2be556b96b24}
-## category profile-after-change sbBaseDeviceHelper @songbirdnest.com/Songbird/Device/Base/Helper;1
+component {ebe6e08a-0604-44fd-a3d7-2be556b96b24} sbBaseDeviceHelper.js
+contract @songbirdnest.com/Songbird/Device/Base/Helper;1 {ebe6e08a-0604-44fd-a3d7-2be556b96b24}
+category profile-after-change sbBaseDeviceHelper @songbirdnest.com/Songbird/Device/Base/Helper;1
 
-# component {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd} sbDeviceErrorMonitor.js
-# contract @songbirdnest.com/device/error-monitor-service;1 {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}
-## category profile-after-change sbDeviceErrorMonitor @songbirdnest.com/device/error-monitor-service;1
+component {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd} sbDeviceErrorMonitor.js
+contract @songbirdnest.com/device/error-monitor-service;1 {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}
+category profile-after-change sbDeviceErrorMonitor @songbirdnest.com/device/error-monitor-service;1
 
-# component {57b32ce8-a373-4d8d-babb-9d23afeeb409} sbDeviceEventMonitor.js
-# contract @songbirdnest.com/device/event-monitor-service;1 {57b32ce8-a373-4d8d-babb-9d23afeeb409}
-## category profile-after-change sbDeviceEventMonitor @songbirdnest.com/device/event-monitor-service;1
-manifest devices-device.manifest
+component {57b32ce8-a373-4d8d-babb-9d23afeeb409} sbDeviceEventMonitor.js
+contract @songbirdnest.com/device/event-monitor-service;1 {57b32ce8-a373-4d8d-babb-9d23afeeb409}
+category profile-after-change sbDeviceEventMonitor @songbirdnest.com/device/event-monitor-service;1
+# manifest devices-device.manifest
 
 
 ### components/devices/firmware/mock ##
-# component {c0a0ebce-1dd1-11b2-afed-a5eeb1302690} sbMockFirmwareHandlerURLService.js
-# contract @songbirdnest.com/mock-firmware-url-handler;1 {c0a0ebce-1dd1-11b2-afed-a5eeb1302690}
-## category profile-after-change sbMockFirmwareHandlerURLService @songbirdnest.com/mock-firmware-url-handler;1
-manifest devices-firmware-mock.manifest
+component {c0a0ebce-1dd1-11b2-afed-a5eeb1302690} sbMockFirmwareHandlerURLService.js
+contract @songbirdnest.com/mock-firmware-url-handler;1 {c0a0ebce-1dd1-11b2-afed-a5eeb1302690}
+category profile-after-change sbMockFirmwareHandlerURLService @songbirdnest.com/mock-firmware-url-handler;1
+# manifest devices-firmware-mock.manifest
 
 
 ### components/devices/firmware ##
-# component {2137a87f-2ade-448b-a093-bad4f6649fa3} sbDeviceFirmwareAutoCheckForUpdate.js
-# contract @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1 {2137a87f-2ade-448b-a093-bad4f6649fa3}
-## category profile-after-change sbDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
-manifest devices-firmware.manifest
+component {2137a87f-2ade-448b-a093-bad4f6649fa3} sbDeviceFirmwareAutoCheckForUpdate.js
+contract @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1 {2137a87f-2ade-448b-a093-bad4f6649fa3}
+category profile-after-change sbDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
+# manifest devices-firmware.manifest
 
 
 ## components/devicesobsolete/download ##
-# component {a3d7426b-0b22-4f07-b72c-e44bab0759f7} sbAutoDownloader.js
-# contract @songbirdnest.com/autodownloader;1 {a3d7426b-0b22-4f07-b72c-e44bab0759f7}
-## category profile-after-change sbAutoDownloader @songbirdnest.com/autodownloader;1
+component {a3d7426b-0b22-4f07-b72c-e44bab0759f7} sbAutoDownloader.js
+contract @songbirdnest.com/autodownloader;1 {a3d7426b-0b22-4f07-b72c-e44bab0759f7}
+category profile-after-change sbAutoDownloader @songbirdnest.com/autodownloader;1
 
-# component {576b6833-15d8-483a-84d6-2fbd329c82e1} sbDownloadDeviceHelper.js
-# contract @songbirdnest.com/Songbird/DownloadDeviceHelper;1 {576b6833-15d8-483a-84d6-2fbd329c82e1}
-## category profile-after-change sbDownloadDeviceHelper @songbirdnest.com/Songbird/DownloadDeviceHelper;1
+component {576b6833-15d8-483a-84d6-2fbd329c82e1} sbDownloadDeviceHelper.js
+contract @songbirdnest.com/Songbird/DownloadDeviceHelper;1 {576b6833-15d8-483a-84d6-2fbd329c82e1}
+category profile-after-change sbDownloadDeviceHelper @songbirdnest.com/Songbird/DownloadDeviceHelper;1
 
-# component {ee93796b-090e-4703-982a-1d27bea552c3} sbDownloadDeviceServicePaneModule.js
-# contract @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 {ee93796b-090e-4703-982a-1d27bea552c3}
-## category profile-after-change sbDownloadDeviceServicePaneModule @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
-manifest devicesobsolete-download.manifest
+component {ee93796b-090e-4703-982a-1d27bea552c3} sbDownloadDeviceServicePaneModule.js
+contract @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 {ee93796b-090e-4703-982a-1d27bea552c3}
+category profile-after-change sbDownloadDeviceServicePaneModule @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
+# manifest devicesobsolete-download.manifest
 
 
 ### components/displaypanes ##
-# component {6aef120f-d7ad-414d-a93d-3ac945e64301} sbDisplayPanes.js
-# contract @songbirdnest.com/Songbird/DisplayPane/Manager;1 {6aef120f-d7ad-414d-a93d-3ac945e64301}
-## category profile-after-change sbDisplayPanes @songbirdnest.com/Songbird/DisplayPane/Manager;1
-manifest displaypanes.manifest
+component {6aef120f-d7ad-414d-a93d-3ac945e64301} sbDisplayPanes.js
+contract @songbirdnest.com/Songbird/DisplayPane/Manager;1 {6aef120f-d7ad-414d-a93d-3ac945e64301}
+category profile-after-change sbDisplayPanes @songbirdnest.com/Songbird/DisplayPane/Manager;1
+# manifest displaypanes.manifest
 
 
 ## components/draganddrop ##
 component {54b21a93-5b1b-46a2-a60f-5378ccf7f65c} sbDndSourceTracker.js
 contract @songbirdnest.com/Songbird/DndSourceTracker;1 {54b21a93-5b1b-46a2-a60f-5378ccf7f65c}
-# category profile-after-change sbDndSourceTracker @songbirdnest.com/Songbird/DndSourceTracker;1
+category profile-after-change sbDndSourceTracker @songbirdnest.com/Songbird/DndSourceTracker;1
 
 
 ## components/faceplate ##
 component {eb5c665a-bfe2-49f0-a747-cd3554e55606} sbFaceplateManager.js
 contract @songbirdnest.com/faceplate/manager;1 {eb5c665a-bfe2-49f0-a747-cd3554e55606}
-# category profile-after-change sbFaceplateManager @songbirdnest.com/faceplate/manager;1
+category profile-after-change sbFaceplateManager @songbirdnest.com/faceplate/manager;1
 
 
 ### components/feathers ##
-# component {99f24350-a67f-11db-befa-0800200c9a66} sbFeathersManager.js
-# contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0800200c9a66}
-## category profile-after-change sbFaceplateManager @songbirdnest.com/songbird/feathersmanager;1
-manifest feathers.manifest
+component {99f24350-a67f-11db-befa-0800200c9a66} sbFeathersManager.js
+contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0800200c9a66}
+category profile-after-change sbFaceplateManager @songbirdnest.com/songbird/feathersmanager;1
+# manifest feathers.manifest
 
 
 ### components/integration ##
-# component {76512c09-7f02-48f5-86c0-c3a8670ead3f} sbGlobalHotkeys.js
-# contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {76512c09-7f02-48f5-86c0-c3a8670ead3f}
-## category profile-after-change sbGlobalHotkeys @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1
+component {76512c09-7f02-48f5-86c0-c3a8670ead3f} sbGlobalHotkeys.js
+contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {76512c09-7f02-48f5-86c0-c3a8670ead3f}
+category profile-after-change sbGlobalHotkeys @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1
 
-# component {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb} sbHotkeyActions.js
-# contract @songbirdnest.com/Songbird/HotkeyService;1 {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}
-## category profile-after-change sbHotkeyActions @songbirdnest.com/Songbird/HotkeyService;1
-manifest integration.manifest
+component {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb} sbHotkeyActions.js
+contract @songbirdnest.com/Songbird/HotkeyService;1 {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}
+category profile-after-change sbHotkeyActions @songbirdnest.com/Songbird/HotkeyService;1
+# manifest integration.manifest
 
 
 ### components/job ##
-# component {afef6b00-90d5-11dd-ad8b-0800200c9a66} sbJobProgressService.js
-# contract @songbirdnest.com/Songbird/JobProgressService;1 {afef6b00-90d5-11dd-ad8b-0800200c9a66}
-## category profile-after-change sbJobProgressService @songbirdnest.com/Songbird/JobProgressService;1
-manifest job.manifest
+component {afef6b00-90d5-11dd-ad8b-0800200c9a66} sbJobProgressService.js
+contract @songbirdnest.com/Songbird/JobProgressService;1 {afef6b00-90d5-11dd-ad8b-0800200c9a66}
+category profile-after-change sbJobProgressService @songbirdnest.com/Songbird/JobProgressService;1
+# manifest job.manifest
 
 
 ### components/library/base ##
-# component {10a07ef5-8ab6-4728-9172-4e609f65b4a2} sbDynamicPlaylist.js
-# contract @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1 {10a07ef5-8ab6-4728-9172-4e609f65b4a2}
-## category profile-after-change sbDynamicPlaylist @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
+component {10a07ef5-8ab6-4728-9172-4e609f65b4a2} sbDynamicPlaylist.js
+contract @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1 {10a07ef5-8ab6-4728-9172-4e609f65b4a2}
+category profile-after-change sbDynamicPlaylist @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
 
-# component {1ed101bc-a11c-4e03-83af-514672bd3a70} sbLibrarySearchSuggester.js
-# contract @mozilla.org/autocomplete/search;1?name=library-distinct-properties {1ed101bc-a11c-4e03-83af-514672bd3a70}
-## category profile-after-change sbLibrarySearchSuggester @mozilla.org/autocomplete/search;1?name=library-distinct-properties
+component {1ed101bc-a11c-4e03-83af-514672bd3a70} sbLibrarySearchSuggester.js
+contract @mozilla.org/autocomplete/search;1?name=library-distinct-properties {1ed101bc-a11c-4e03-83af-514672bd3a70}
+category profile-after-change sbLibrarySearchSuggester @mozilla.org/autocomplete/search;1?name=library-distinct-properties
 
-# component {6c236836-1dd2-11b2-bd72-d1a4ceb6bef3} sbMediaItemControllerTest.js
-# contract @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=TEST_MEDIA_ITEM_CONTROLLER_ADDED {6c236836-1dd2-11b2-bd72-d1a4ceb6bef3}
-## category profile-after-change sbMediaItemControllerTest @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=TEST_MEDIA_ITEM_CONTROLLER_ADDED
-manifest library-base.manifest
+component {6c236836-1dd2-11b2-bd72-d1a4ceb6bef3} sbMediaItemControllerTest.js
+contract @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=TEST_MEDIA_ITEM_CONTROLLER_ADDED {6c236836-1dd2-11b2-bd72-d1a4ceb6bef3}
+category profile-after-change sbMediaItemControllerTest @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=TEST_MEDIA_ITEM_CONTROLLER_ADDED
+# manifest library-base.manifest
 
 
 ### components/library/localdatabase ##
-# component {35af253e-c7b0-40d6-a1a2-c747de924639} sbSmartMediaListsUpdater.js
-# contract @songbirdnest.com/Songbird/SmartMediaListsUpdater;1 {35af253e-c7b0-40d6-a1a2-c747de924639}
-## category profile-after-change sbSmartMediaListsUpdater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
+component {35af253e-c7b0-40d6-a1a2-c747de924639} sbSmartMediaListsUpdater.js
+contract @songbirdnest.com/Songbird/SmartMediaListsUpdater;1 {35af253e-c7b0-40d6-a1a2-c747de924639}
+category profile-after-change sbSmartMediaListsUpdater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
 
-# component {744f6217-4cb9-4929-8d1d-72492c1b8c83} sbLocalDatabaseMigrationHelper.js
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1 {744f6217-4cb9-4929-8d1d-72492c1b8c83}
-## category profile-after-change sbLocalDatabaseMigrationHelper @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1
-manifest library-localdatabase.manifest
+component {744f6217-4cb9-4929-8d1d-72492c1b8c83} sbLocalDatabaseMigrationHelper.js
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1 {744f6217-4cb9-4929-8d1d-72492c1b8c83}
+category profile-after-change sbLocalDatabaseMigrationHelper @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1
+# manifest library-localdatabase.manifest
 
 
 ###### TODO: Migration helpers ######
 
 
 ### components/mediacore/base ##
-# component {03F78779-FCB7-4442-9A0C-E8547B4F1368} sbOSDControlService.js
-# contract @songbirdnest.com/mediacore/osd-control-service;1 {03F78779-FCB7-4442-9A0C-E8547B4F1368}
-## category profile-after-change sbOSDControlService @songbirdnest.com/mediacore/osd-control-service;1
-manifest mediacore-base.manifest
+component {03F78779-FCB7-4442-9A0C-E8547B4F1368} sbOSDControlService.js
+contract @songbirdnest.com/mediacore/osd-control-service;1 {03F78779-FCB7-4442-9A0C-E8547B4F1368}
+# category profile-after-change sbOSDControlService @songbirdnest.com/mediacore/osd-control-service;1
+# manifest mediacore-base.manifest
 
 
 ### components/mediacore/gstreamer ##
-# component {ea82983c-4e22-43e0-8942-ae5f31d3671a} sbAboutGStreamer.js
-# contract @mozilla.org/network/protocol/about;1?what=gstreamer {ea82983c-4e22-43e0-8942-ae5f31d3671a}
-## category profile-after-change sbAboutGStreamer @mozilla.org/network/protocol/about;1?what=gstreamer
-manifest mediacore-gstreamer.manifest
+component {ea82983c-4e22-43e0-8942-ae5f31d3671a} sbAboutGStreamer.js
+contract @mozilla.org/network/protocol/about;1?what=gstreamer {ea82983c-4e22-43e0-8942-ae5f31d3671a}
+category profile-after-change sbAboutGStreamer @mozilla.org/network/protocol/about;1?what=gstreamer
+# manifest mediacore-gstreamer.manifest
 
 
 ### components/mediacore/manager ##
-# component {8bb6de60-a11b-11de-8a39-0800200c9a66} sbMediacoreErrorHandler.js
-# contract @songbirdnest.com/Songbird/MediacoreErrorHandler;1 {8bb6de60-a11b-11de-8a39-0800200c9a66}
-## category profile-after-change sbMediacoreErrorHandler @songbirdnest.com/Songbird/MediacoreErrorHandler;1
-manifest mediacore-manager.manifest
+component {8bb6de60-a11b-11de-8a39-0800200c9a66} sbMediacoreErrorHandler.js
+contract @songbirdnest.com/Songbird/MediacoreErrorHandler;1 {8bb6de60-a11b-11de-8a39-0800200c9a66}
+category profile-after-change sbMediacoreErrorHandler @songbirdnest.com/Songbird/MediacoreErrorHandler;1
+# manifest mediacore-manager.manifest
 
 
 ## components/mediacore/metadata/lookup/manager ##
 # sbMetadataAlbumDetail.js
 # sbMetadataLookupJob.js
 # sbMetadataLookupManager.js
-manifest mediacore-metadata-lookup-manager.manifest
+# manifest mediacore-metadata-lookup-manager.manifest
 
 
 ## components/mediacore/metadata/lookup/testprovider ##
-manifest mediacore-metadata-lookup-testprovider.manifest
+# manifest mediacore-metadata-lookup-testprovider.manifest
 
 
 ### components/mediaexport/playlist/handler ##
-# component {a11690c2-1dd1-11b2-82ba-8a4e72869f7a} sbM3UPlaylistWriter.js
-# contract @songbirdnest.com/Songbird/PlaylistWriter/M3U;1 {a11690c2-1dd1-11b2-82ba-8a4e72869f7a}
-## category profile-after-change sbM3UPlaylistWriter @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
-manifest mediaexport-playlist-handler.manifest
+component {a11690c2-1dd1-11b2-82ba-8a4e72869f7a} sbM3UPlaylistWriter.js
+contract @songbirdnest.com/Songbird/PlaylistWriter/M3U;1 {a11690c2-1dd1-11b2-82ba-8a4e72869f7a}
+category profile-after-change sbM3UPlaylistWriter @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
+# manifest mediaexport-playlist-handler.manifest
 
 
 ### components/mediaexport/playlist/manager ##
-# component {9d66cb86-951e-49f4-bef8-26a578891275} sbPlaylistWriterManager.js
-# contract @songbirdnest.com/Songbird/PlaylistWriterManager;1 {9d66cb86-951e-49f4-bef8-26a578891275}
-## category profile-after-change sbPlaylistWriterManager @songbirdnest.com/Songbird/PlaylistWriterManager;1
-manifest mediaexport-playlist-manager.manifest
+component {9d66cb86-951e-49f4-bef8-26a578891275} sbPlaylistWriterManager.js
+contract @songbirdnest.com/Songbird/PlaylistWriterManager;1 {9d66cb86-951e-49f4-bef8-26a578891275}
+category profile-after-change sbPlaylistWriterManager @songbirdnest.com/Songbird/PlaylistWriterManager;1
+# manifest mediaexport-playlist-manager.manifest
 
 
 ### components/mediaimport/directory ##
-# component {6e542f90-44a0-11dd-ae16-0800200c9a66} sbDirectoryImportService.js
-# contract @songbirdnest.com/Songbird/DirectoryImportService;1 {6e542f90-44a0-11dd-ae16-0800200c9a66}
-## category profile-after-change sbDirectoryImportService @songbirdnest.com/Songbird/DirectoryImportService;1
-manifest mediaimport-directory.manifest
+component {6e542f90-44a0-11dd-ae16-0800200c9a66} sbDirectoryImportService.js
+contract @songbirdnest.com/Songbird/DirectoryImportService;1 {6e542f90-44a0-11dd-ae16-0800200c9a66}
+category profile-after-change sbDirectoryImportService @songbirdnest.com/Songbird/DirectoryImportService;1
+# manifest mediaimport-directory.manifest
 
 
 ### components/mediaimport/library/base ##
-# component {0ed2a7e0-78ac-4574-8554-b1e422b02642} sbLibraryImporterManager.js
-# contract @songbirdnest.com/Songbird/LibraryImporterManager;1 {0ed2a7e0-78ac-4574-8554-b1e422b02642}
-## category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
-manifest mediaimport-library-base.manifest
+component {0ed2a7e0-78ac-4574-8554-b1e422b02642} sbLibraryImporterManager.js
+contract @songbirdnest.com/Songbird/LibraryImporterManager;1 {0ed2a7e0-78ac-4574-8554-b1e422b02642}
+category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
+# manifest mediaimport-library-base.manifest
 
 
 ## components/mediaimport/playlist/handler ##
@@ -243,144 +243,145 @@ manifest mediaimport-library-base.manifest
 ## components/mediaimport/playlist/manager ##
 # sbPlaylistReaderManager.js
 # sbPlaylistReaderListener.js
-manifest mediaimport-playlist-manager.manifest
+# manifest mediaimport-playlist-manager.manifest
 
 
 ## components/mediaimport/uri ##
 # sbURIImportService.js
-manifest mediaimport-uri.manifest
+# manifest mediaimport-uri.manifest
 
 
 ### components/mediapages ##
-# component {e63463d0-357c-4035-af33-db670ee1b7f2} sbMediaPageManager.js
-# contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-db670ee1b7f2}
-## category profile-after-change sbMediaPageManager @songbirdnest.com/Songbird/MediaPageManager;1
-manifest mediapages.manifest
+component {e63463d0-357c-4035-af33-db670ee1b7f2} sbMediaPageManager.js
+contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-db670ee1b7f2}
+category profile-after-change sbMediaPageManager @songbirdnest.com/Songbird/MediaPageManager;1
+# manifest mediapages.manifest
 
 
 ## components/metrics ##
 # sbMetrics.js
-manifest metrics.manifest
+# manifest metrics.manifest
 
 
 ### components/moz/filedownloader ##
-# component {f93a67e4-d97d-4607-971e-00ae2bf8ef8f} sbFileDownloader.js
-# contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
-## category profile-after-change sbFileDownloader @songbirdnest.com/Songbird/FileDownloader;1
-manifest moz-filedownloader.manifest
+component {f93a67e4-d97d-4607-971e-00ae2bf8ef8f} sbFileDownloader.js
+contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
+category profile-after-change sbFileDownloader @songbirdnest.com/Songbird/FileDownloader;1
+# manifest moz-filedownloader.manifest
 
 
 ### components/moz/shutdownservice ##
-# component {594137ED-DB4A-4530-8635-2573C018B4FB} sbShutdownService.js
-# contract @songbirdnest.com/shutdown-service;1 {594137ED-DB4A-4530-8635-2573C018B4FB}
-## category profile-after-change sbShutdownService @songbirdnest.com/shutdown-service;1
-manifest moz-shutdownservice.manifest
+component {594137ED-DB4A-4530-8635-2573C018B4FB} sbShutdownService.js
+contract @songbirdnest.com/shutdown-service;1 {594137ED-DB4A-4530-8635-2573C018B4FB}
+category profile-after-change sbShutdownService @songbirdnest.com/shutdown-service;1
+# manifest moz-shutdownservice.manifest
 
 
 ### components/moz/urlformatter ##
-# component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
-# contract @songbirdnest.com/moz/sburlformatter;1 {4dc7da1b-89d1-48b5-8582-64c98bfb3410}
-## category profile-after-change sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
-manifest moz-urlformatter.manifest
+component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
+contract @songbirdnest.com/moz/sburlformatter;1 {4dc7da1b-89d1-48b5-8582-64c98bfb3410}
+category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
+# category profile-after-change sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
+# manifest moz-urlformatter.manifest
 
 
 ### components/parsererror ##
-# component {213a0ebb-12b3-492f-bc4c-f472f8f24d2c} sbParserError.js
-# contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
-## category profile-after-change sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1
-manifest parsererror.manifest
+component {213a0ebb-12b3-492f-bc4c-f472f8f24d2c} sbParserError.js
+contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
+category profile-after-change sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1
+# manifest parsererror.manifest
 
 
 ### components/playlistcommands ##
-# component {18c4b63c-d5b4-4aa2-918f-a31304d254ec} sbPlaylistCommandsBuilder.js
-# contract @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1 {18c4b63c-d5b4-4aa2-918f-a31304d254ec}
-## category profile-after-change sbPlaylistCommandsBuilder @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1
+component {18c4b63c-d5b4-4aa2-918f-a31304d254ec} sbPlaylistCommandsBuilder.js
+contract @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1 {18c4b63c-d5b4-4aa2-918f-a31304d254ec}
+category profile-after-change sbPlaylistCommandsBuilder @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1
 
-# component {1126ee77-2d85-4f79-a07a-b014da404e53} sbPublicPlaylistCommands.js
-# contract @songbirdnest.com/Songbird/PublicPlaylistCommands;1 {1126ee77-2d85-4f79-a07a-b014da404e53}
-## category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
-manifest playlistcommands.manifest
+component {1126ee77-2d85-4f79-a07a-b014da404e53} sbPublicPlaylistCommands.js
+contract @songbirdnest.com/Songbird/PublicPlaylistCommands;1 {1126ee77-2d85-4f79-a07a-b014da404e53}
+category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
+# manifest playlistcommands.manifest
 
 
 ### components/playqueue ##
-# component {e0d6e860-1dd1-11b2-8663-a4d535a29859} sbPlayQueueContentInfo.js
-# contract @songbirdnest.com/Songbird/playqueue/contentInfo;1 {e0d6e860-1dd1-11b2-8663-a4d535a29859}
-## category profile-after-change sbPlayQueueContentInfo @songbirdnest.com/Songbird/playqueue/contentInfo;1
-manifest playqueue.manifest
+component {e0d6e860-1dd1-11b2-8663-a4d535a29859} sbPlayQueueContentInfo.js
+contract @songbirdnest.com/Songbird/playqueue/contentInfo;1 {e0d6e860-1dd1-11b2-8663-a4d535a29859}
+category profile-after-change sbPlayQueueContentInfo @songbirdnest.com/Songbird/playqueue/contentInfo;1
+# manifest playqueue.manifest
 
 
 ### components/property ##
-# component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} sbSmartPlaylistPropertyRegistrar.js
-# contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
-## category profile-after-change sbSmartPlaylistPropertyRegistrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
-manifest property.manifest
+component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} sbSmartPlaylistPropertyRegistrar.js
+contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
+category profile-after-change sbSmartPlaylistPropertyRegistrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
+# manifest property.manifest
 
 
 ### components/protocol ##
-# component {B6C04B7A-C640-4314-8093-C52370D05ECF} sbAboutCredits.js
-# contract @mozilla.org/network/protocol/about;1?what=credits {B6C04B7A-C640-4314-8093-C52370D05ECF}
-## category profile-after-change sbAboutCredits @mozilla.org/network/protocol/about;1?what=credits
+component {B6C04B7A-C640-4314-8093-C52370D05ECF} sbAboutCredits.js
+contract @mozilla.org/network/protocol/about;1?what=credits {B6C04B7A-C640-4314-8093-C52370D05ECF}
+category profile-after-change sbAboutCredits @mozilla.org/network/protocol/about;1?what=credits
 
-# component {416a028e-1dd2-11b2-a247-cc08533670be} sbAboutDRM.js
-# contract @mozilla.org/network/protocol/about;1?what=drm {416a028e-1dd2-11b2-a247-cc08533670be}
-## category profile-after-change sbAboutDRM @mozilla.org/network/protocol/about;1?what=drm
+component {416a028e-1dd2-11b2-a247-cc08533670be} sbAboutDRM.js
+contract @mozilla.org/network/protocol/about;1?what=drm {416a028e-1dd2-11b2-a247-cc08533670be}
+category profile-after-change sbAboutDRM @mozilla.org/network/protocol/about;1?what=drm
 
-# component {2c15f30e-815f-4414-8d18-277d943a2f68} sbSongbirdProtocol.js
-# contract @mozilla.org/network/protocol;1?name=songbird {2c15f30e-815f-4414-8d18-277d943a2f68}
-## category profile-after-change sbSongbirdProtocol @mozilla.org/network/protocol;1?name=songbird
+component {2c15f30e-815f-4414-8d18-277d943a2f68} sbSongbirdProtocol.js
+contract @mozilla.org/network/protocol;1?name=songbird {2c15f30e-815f-4414-8d18-277d943a2f68}
+category profile-after-change sbSongbirdProtocol @mozilla.org/network/protocol;1?name=songbird
 
-# component {42631c40-1cbe-4f3a-b859-7936e542130f} sbAboutRedirector.js
-# contract @songbirdnest.com/aboutRedirector {42631c40-1cbe-4f3a-b859-7936e542130f}
-## category profile-after-change sbAboutRedirector @songbirdnest.com/aboutRedirector
-manifest protocol.manifest
+component {42631c40-1cbe-4f3a-b859-7936e542130f} sbAboutRedirector.js
+contract @songbirdnest.com/aboutRedirector {42631c40-1cbe-4f3a-b859-7936e542130f}
+category profile-after-change sbAboutRedirector @songbirdnest.com/aboutRedirector
+# manifest protocol.manifest
 
 
 ### components/search ##
-# component {13d82f60-a625-11df-981c-0800200c9a66} sbLibrarySearch.js
-# contract @songbirdnest.com/Songbird/songbird-internal-search;1 {13d82f60-a625-11df-981c-0800200c9a66}
-## category profile-after-change sbLibrarySearch @songbirdnest.com/Songbird/songbird-internal-search;1
+component {13d82f60-a625-11df-981c-0800200c9a66} sbLibrarySearch.js
+contract @songbirdnest.com/Songbird/songbird-internal-search;1 {13d82f60-a625-11df-981c-0800200c9a66}
+category profile-after-change sbLibrarySearch @songbirdnest.com/Songbird/songbird-internal-search;1
 
-# component {0be64502-ee00-11db-8314-0800200c9a66} sbSearchSuggester.js
-# contract @mozilla.org/autocomplete/search;1?name=songbird-autocomplete {0be64502-ee00-11db-8314-0800200c9a66}
-## category profile-after-change sbSearchSuggester @mozilla.org/autocomplete/search;1?name=songbird-autocomplete
-manifest search.manifest
+component {0be64502-ee00-11db-8314-0800200c9a66} sbSearchSuggester.js
+contract @mozilla.org/autocomplete/search;1?name=songbird-autocomplete {0be64502-ee00-11db-8314-0800200c9a66}
+category profile-after-change sbSearchSuggester @mozilla.org/autocomplete/search;1?name=songbird-autocomplete
+# manifest search.manifest
 
 
 ### components/servicepane ##
-# component {845c31ee-c30e-4fb6-9667-0b10e58c7069} sbDeviceServicePaneService.js
-# contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58c7069}
-## category profile-after-change sbDeviceServicePaneService @songbirdnest.com/servicepane/device;1
+component {845c31ee-c30e-4fb6-9667-0b10e58c7069} sbDeviceServicePaneService.js
+contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58c7069}
+category service-pane sbDeviceServicePaneService @songbirdnest.com/servicepane/device;1
 
-# component {64ec2154-3733-4862-af3f-9f2335b14821} sbLibraryServicePaneService.js
-# contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
-## category profile-after-change sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
+component {64ec2154-3733-4862-af3f-9f2335b14821} sbLibraryServicePaneService.js
+contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
+category service-pane sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
 
-# component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
-# contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
-## category profile-after-change sbServicePaneService @songbirdnest.com/servicepane/service;1
-manifest servicepane.manifest
+component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
+contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
+category service-pane sbServicePaneService @songbirdnest.com/servicepane/service;1
+# manifest servicepane.manifest
 
 
 ### components/update ##
-# component {927d9849-8565-4bc4-805a-f3a6ad1b25ec} sbAddOnBundleUpdateService.js
-# contract @songbirdnest.com/AddOnBundleUpdateService;1 {927d9849-8565-4bc4-805a-f3a6ad1b25ec}
-## category profile-after-change sbAddOnBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
-manifest update.manifest
+component {927d9849-8565-4bc4-805a-f3a6ad1b25ec} sbAddOnBundleUpdateService.js
+contract @songbirdnest.com/AddOnBundleUpdateService;1 {927d9849-8565-4bc4-805a-f3a6ad1b25ec}
+category profile-after-change sbAddOnBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
+# manifest update.manifest
 
 
 ### components/watchfolder ##
-# component {02ba1ba0-fee5-11dd-87af-0800200c9a66} sbMoveRenameHelper.js
-# contract @songbirdnest.com/Songbird/MoveRenameHelper;1 {02ba1ba0-fee5-11dd-87af-0800200c9a66}
-## category profile-after-change sbMoveRenameHelper @songbirdnest.com/Songbird/MoveRenameHelper;1
+component {02ba1ba0-fee5-11dd-87af-0800200c9a66} sbMoveRenameHelper.js
+contract @songbirdnest.com/Songbird/MoveRenameHelper;1 {02ba1ba0-fee5-11dd-87af-0800200c9a66}
+category profile-after-change sbMoveRenameHelper @songbirdnest.com/Songbird/MoveRenameHelper;1
 
-# component {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4} sbRemoveHelper.js
-# contract @songbirdnest.com/Songbird/RemoveHelper;1 {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4}
-## category profile-after-change sbRemoveHelper @songbirdnest.com/Songbird/RemoveHelper;1
-manifest watchfolder.manifest
+component {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4} sbRemoveHelper.js
+contract @songbirdnest.com/Songbird/RemoveHelper;1 {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4}
+category profile-after-change sbRemoveHelper @songbirdnest.com/Songbird/RemoveHelper;1
+# manifest watchfolder.manifest
 
 
 ### components/webservices/lastfm ##
-# component {6582d596-95dd-4449-be8b-7793a15bdfa2} sbLastFmWebServices.js
-# contract @songbirdnest.com/Songbird/webservices/last-fm;1 {6582d596-95dd-4449-be8b-7793a15bdfa2}
-## category profile-after-change sbLastFmWebServices @songbirdnest.com/Songbird/webservices/last-fm;1
-manifest webservices-lastfm.manifest
+component {6582d596-95dd-4449-be8b-7793a15bdfa2} sbLastFmWebServices.js
+contract @songbirdnest.com/Songbird/webservices/last-fm;1 {6582d596-95dd-4449-be8b-7793a15bdfa2}
+category profile-after-change sbLastFmWebServices @songbirdnest.com/Songbird/webservices/last-fm;1
+# manifest webservices-lastfm.manifest
