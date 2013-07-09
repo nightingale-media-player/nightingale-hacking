@@ -170,7 +170,6 @@
   <!-- Add-ons page. -->
   <wizardpage id="first_run_add_ons_page"
               pageid="first_run_add_ons_page"
-              next="first_run_feedback_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();"
               postfinish="first_run_install_add_ons_page">
@@ -180,7 +179,7 @@
   </wizardpage>
 
   <!-- Feedback page. -->
-  <wizardpage id="first_run_feedback_page"
+  <!--<wizardpage id="first_run_feedback_page"
               pageid="first_run_feedback_page"
               postfinish="first_run_install_add_ons_page"
               label="&first_run.title;"
@@ -188,7 +187,7 @@
     <sb-first-run-feedback id="first_run_feedback"
                            class="first-run-wizard-page"
                            firstrunwizardpage="true"/>
-  </wizardpage>
+  </wizardpage>-->
 
 
   <!--
