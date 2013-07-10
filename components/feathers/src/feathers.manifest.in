@@ -1,4 +1,4 @@
 ## components/feathers ##
 component {99f24350-a67f-11db-befa-0800200c9a66} sbFeathersManager.js
 contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0800200c9a66}
-# category app-startup sbFaceplateManager @songbirdnest.com/songbird/feathersmanager;1
+# category app-startup sbFeathersManager @songbirdnest.com/songbird/feathersmanager;1
