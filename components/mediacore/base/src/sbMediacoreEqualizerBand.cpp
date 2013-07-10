@@ -35,7 +35,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreEqualizerBand,
                               sbIMediacoreEqualizerBand);
 
 sbMediacoreEqualizerBand::sbMediacoreEqualizerBand()
-: mLock(nsnull)
+: mLock("sbMediacoreEqualizerBand::mLock")
 , mIndex(0)
 , mFrequency(0)
 , mGain(0)

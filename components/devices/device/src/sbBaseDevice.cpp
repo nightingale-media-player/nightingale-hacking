@@ -402,7 +402,7 @@ sbBaseDevice::sbBaseDevice() :
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
   mInfoRegistrarType(sbIDeviceInfoRegistrar::NONE),
-  mPreferenceLock(nsnull),
+  mPreferenceLock("sbBaseDevice::mPreferenceLock"),
   mMusicLimitPercent(100),
   mDeviceTranscoding(nsnull),
   mDeviceImages(nsnull),
@@ -411,8 +411,8 @@ sbBaseDevice::sbBaseDevice() :
   mSyncType(0),
   mEnsureSpaceChecked(false),
   mConnected(PR_FALSE),
-  mVolumeLock(nsnull),
-  mPreviousStateLock(nsnull)
+  mVolumeLock("sbBaseDevice::mVolumeLock"),
+  mPreviousStateLock("sbBaseDevice::mPreviousStateLock")
 {
   mStatus = new sbDeviceStatusHelper(this);
   NS_ENSURE_TRUE(mStatus, /* void */ );

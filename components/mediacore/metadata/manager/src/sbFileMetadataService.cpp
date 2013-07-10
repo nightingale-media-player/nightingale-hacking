@@ -88,7 +88,7 @@ sbFileMetadataService::sbFileMetadataService() :
   mNotificationTimer(nsnull),
   mNextJobIndex(0),
   mCrashTracker(nsnull),
-  mJobLock(nsnull)
+  mJobLock("sbFileMetadataService::mJobLock")
 {
   MOZ_COUNT_CTOR(sbFileMetadataService);
   TRACE(("%s[%.8x]", __FUNCTION__, this));
