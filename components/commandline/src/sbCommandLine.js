@@ -35,10 +35,12 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+
 const SONGBIRD_CLH_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
 const SONGBIRD_CLH_CID = Components.ID("{128badd1-aa05-4508-87cc-f3cb3e9b5499}");
 const SONGBIRD_CLH_CLASSNAME = "Songbird Command Line Handler";
-// "m" for ordinary priority see sbICommandLineHandler.idl
+// "m" for ordinary priority see sbICommandLineManager.idl
 const SONGBIRD_CLH_CATEGORY= "m-songbird-clh";
 
 // Command Line Startup Topic that's used to notify that the application
@@ -109,6 +111,24 @@ function sbCommandLineHandler() {
 }
 
 sbCommandLineHandler.prototype = {
+  className: SONGBIRD_CLH_CLASSNAME,
+  classDescription: SONGBIRD_CLH_CLASSNAME,
+  classID: SONGBIRD_CLH_CID,
+  contractID: SONGBIRD_CLH_CONTRACTID,
+
+  _xpcom_categories: [
+    {
+      category: "xpcom-startup",
+      entry: SONGBIRD_CLH_CATEGORY,
+      value: SONGBIRD_CLH_CONTRACTID
+    },
+    {
+      category: "command-line-handler",
+      entry: SONGBIRD_CLH_CATEGORY,
+      value: SONGBIRD_CLH_CONTRACTID
+    }
+  ],
+
   // there are specific formatting guidelines for help test, see nsICommandLineHandler
   helpInfo : "  -test [tests]        Run tests on the components listed in the\n" +
              "                       optional comma-separated list of tests.\n" +
@@ -392,15 +412,12 @@ sbCommandLineHandler.prototype = {
     }
   },
 
-  QueryInterface : function clh_QI(iid) {
-    if (iid.equals(Ci.nsICommandLineHandler) ||
-        iid.equals(Ci.sbICommandLineManager) ||
-        iid.equals(Ci.nsISupports))
-      return this;
-
-    throw Cr.NS_ERROR_NO_INTERFACE;
-  }
-}; // sbCommandeLineHandler
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.nsICommandLineHandler,
+    Ci.sbICommandLineManager,
+    Ci.nsISupports
+  ])
+}; // sbCommandLineHandler
 
 /**
  * /brief The module for getting the commandline handler
@@ -462,7 +479,4 @@ const sbCommandLineHandlerModule = {
 
 }; // sbCommandLineHandlerModule
 
-function NSGetModule(comMgr, fileSpec)
-{
-  return sbCommandLineHandlerModule;
-}
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbCommandLineHandler]);
