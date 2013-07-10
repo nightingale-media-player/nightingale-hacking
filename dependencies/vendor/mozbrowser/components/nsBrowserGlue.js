@@ -92,10 +92,16 @@ function BrowserGlue() {
                                      "@mozilla.org/widget/idleservice;1",
                                      "nsIIdleService");
 
+  // XPCOMUtils.defineLazyGetter(this, "_distributionCustomizer", function() {
+  //                               Cu.import("resource:///modules/distribution.js");
+  //                               return new DistributionCustomizer();
+  //                             });
+
   XPCOMUtils.defineLazyGetter(this, "_distributionCustomizer", function() {
-                                Cu.import("resource:///modules/distribution.js");
-                                return new DistributionCustomizer();
-                              });
+                                Cu.import("resource://app/jsmodules/Distribution.jsm");
+                                return ("function" == typeof(DistributionCustomizer) ? new DistributionCustomizer() : null);
+                               });
+
 
   XPCOMUtils.defineLazyGetter(this, "_sanitizer",
     function() {
@@ -869,6 +875,9 @@ BrowserGlue.prototype = {
    *   bookmarks.
    */
   _initPlaces: function BG__initPlaces() {
+    // XXX Songbird: Songbird does not use Places
+    return;
+
     // We must instantiate the history service since it will tell us if we
     // need to import or restore bookmarks due to first-run, corruption or
     // forced migration (due to a major schema change).
