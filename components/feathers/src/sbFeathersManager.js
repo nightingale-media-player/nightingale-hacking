@@ -1461,5 +1461,5 @@ FeathersManager_switchFeathers_callback.prototype = {
  * ----------------------------------------------------------------------------
  */
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([FeathersManager]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([FeathersManager]);
 

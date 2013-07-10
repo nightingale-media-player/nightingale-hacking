@@ -267,7 +267,7 @@ function sbAutoDownloader__clearTimer() {
 }
 
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAutoDownloader]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAutoDownloader]);
 
 //   function(aCompMgr, aFileSpec, aLocation) {
 //     XPCOMUtils.categoryManager.addCategoryEntry(

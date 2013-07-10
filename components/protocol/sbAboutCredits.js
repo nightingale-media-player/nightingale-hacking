@@ -60,4 +60,4 @@ sbAboutCredits.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule])
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAboutCredits]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAboutCredits]);

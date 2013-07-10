@@ -243,4 +243,4 @@ deviceEventMonitor.prototype = {
 /**
  * /brief XPCOM initialization code
  */
-var NSGetModule = XPCOMUtils.generateNSGetFactory([deviceEventMonitor]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([deviceEventMonitor]);

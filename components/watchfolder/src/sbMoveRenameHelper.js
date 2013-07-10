@@ -412,4 +412,4 @@ MoveRenameHelper.prototype = {
 } // MoveRenameHelper.prototype
 
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([MoveRenameHelper]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([MoveRenameHelper]);

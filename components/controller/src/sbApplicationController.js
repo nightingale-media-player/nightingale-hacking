@@ -150,4 +150,4 @@ ApplicationController.prototype = {
 }
 
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([ApplicationController]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([ApplicationController]);

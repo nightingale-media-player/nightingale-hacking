@@ -2745,7 +2745,7 @@ function LOG(str) {
   dump(str+"\n");
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([PublicPlaylistCommands]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([PublicPlaylistCommands]);
 //  function(aCompMgr, aFileSpec, aLocation) {
 //    XPCOMUtils.categoryManager.addCategoryEntry(
 //      "app-startup",

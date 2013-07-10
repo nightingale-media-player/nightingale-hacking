@@ -503,4 +503,4 @@ function sbDownloadDeviceHelper__setDownloadDestinationIfNotSet(
   }
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbDownloadDeviceHelper]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbDownloadDeviceHelper]);

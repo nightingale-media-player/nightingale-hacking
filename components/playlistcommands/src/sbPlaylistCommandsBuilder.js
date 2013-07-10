@@ -1412,5 +1412,5 @@ PlaylistCommandsBuilder.prototype = {
 }; // PlaylistCommandsBuilder.prototype
 
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([PlaylistCommandsBuilder]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([PlaylistCommandsBuilder]);
 

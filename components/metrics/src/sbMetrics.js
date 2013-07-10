@@ -444,4 +444,4 @@ Metrics.prototype = {
   },
 } // Metrics.prototype
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([Metrics]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([Metrics]);

@@ -163,7 +163,7 @@ ParserErrorHandler.prototype = {
  * ----------------------------------------------------------------------------
  */
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([ParserErrorHandler]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([ParserErrorHandler]);
 
 // var gModule = {
 //   registerSelf: function(componentManager, fileSpec, location, type) {

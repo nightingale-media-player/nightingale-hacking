@@ -709,7 +709,7 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
   ddh.downloadSome(array.enumerate());
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbDynamicPlaylistService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbDynamicPlaylistService]);
 
 // function NSGetModule(compMgr, fileSpec) {
 

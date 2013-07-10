@@ -501,4 +501,4 @@ LibrarySearchSuggester.prototype = {
 };
 
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([LibrarySearchSuggester]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([LibrarySearchSuggester]);

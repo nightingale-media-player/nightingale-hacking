@@ -798,4 +798,4 @@ deviceErrorMonitor.prototype = {
 /**
  * /brief XPCOM initialization code
  */
-var NSGetModule = XPCOMUtils.generateNSGetFactory([deviceErrorMonitor]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([deviceErrorMonitor]);

@@ -58,4 +58,4 @@ sbMLAlbumDetail.prototype = {
   },
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbMLAlbumDetail]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbMLAlbumDetail]);

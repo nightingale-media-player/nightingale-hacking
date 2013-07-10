@@ -291,4 +291,4 @@ sbMediaContentListener.prototype = {
 // var NSGetModule = XPCOMUtils.generateNSGetModule([sbMediaContentListener],
 //                                                  postRegister, preUnregister);
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbMediaContentListener]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbMediaContentListener]);

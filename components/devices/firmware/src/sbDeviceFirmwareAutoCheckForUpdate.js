@@ -463,7 +463,7 @@ function sbDeviceFirmwareAutoCheckForUpdate__promptForRepair(aDevice) {
   }
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbDeviceFirmwareAutoCheckForUpdate]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbDeviceFirmwareAutoCheckForUpdate]);
 
 //   function(aCompMgr, aFileSpec, aLocation) {
 //     XPCOMUtils.categoryManager.addCategoryEntry(

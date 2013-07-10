@@ -57,4 +57,4 @@ sbMockDeviceFirmwareHandlerURLService.prototype =
 
 //------------------------------------------------------------------------------
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbMockDeviceFirmwareHandlerURLService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbMockDeviceFirmwareHandlerURLService]);

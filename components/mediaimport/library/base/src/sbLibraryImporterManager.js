@@ -676,5 +676,5 @@ sbLibraryImporterManager.prototype = {
 //
 //------------------------------------------------------------------------------
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLibraryImporterManager]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLibraryImporterManager]);
 

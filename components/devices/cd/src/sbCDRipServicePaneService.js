@@ -644,4 +644,4 @@ sbCDRipServicePaneService.prototype = {
 };
 
 // Instantiate an XPCOM module.
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbCDRipServicePaneService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbCDRipServicePaneService]);

@@ -498,4 +498,4 @@ sbFileDownloader.prototype = {
 //
 //------------------------------------------------------------------------------
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbFileDownloader]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbFileDownloader]);

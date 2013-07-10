@@ -315,7 +315,7 @@ sbShutdownJobService.prototype =
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbShutdownJobService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbShutdownJobService]);
 
 //    function(aCompMgr, aFileSpec, aLocation) {
 //      XPCOMUtils.categoryManager.addCategoryEntry("app-startup",

@@ -512,4 +512,4 @@ sbOSDControlService.prototype.QueryInterface =
                          Ci.sbIWindowMoveListener,
                          Ci.nsITimerCallback]);
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbOSDControlService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbOSDControlService]);

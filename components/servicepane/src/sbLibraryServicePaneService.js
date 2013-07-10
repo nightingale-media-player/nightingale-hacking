@@ -2184,4 +2184,4 @@ function sbLibraryServicePane_observe(subject, topic, data) {
 // XPCOM //
 ///////////
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLibraryServicePane]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLibraryServicePane]);

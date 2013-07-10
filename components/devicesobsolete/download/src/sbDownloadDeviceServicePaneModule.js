@@ -208,5 +208,5 @@ function sbDownloadDeviceServicePaneModule_onStateChanged()
 //   return module;
 // }
 
-var NSGetModule = 
+var NSGetFactory = 
   XPCOMUtils.generateNSGetFactory([sbDownloadDeviceServicePaneModule]);

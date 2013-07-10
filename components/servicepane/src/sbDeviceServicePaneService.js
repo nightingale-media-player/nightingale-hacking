@@ -753,4 +753,4 @@ function sbDeviceServicePane__moveLibraryResourceNode(aNode) {
 // XPCOM //
 ///////////
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbDeviceServicePane]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbDeviceServicePane]);

@@ -144,6 +144,6 @@ SmartPlaylistPropertyRegistrar.prototype = {
 //                              true);
 //}
 
-var NSGetModule = 
+var NSGetFactory = 
   XPCOMUtils.generateNSGetFactory([SmartPlaylistPropertyRegistrar]);
 

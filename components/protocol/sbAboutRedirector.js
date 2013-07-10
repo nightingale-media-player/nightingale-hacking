@@ -82,4 +82,4 @@ sbAboutRedirector.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule])
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAboutRedirector]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAboutRedirector]);

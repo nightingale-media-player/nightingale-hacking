@@ -135,4 +135,4 @@ sbLibrarySearch.prototype = {
 //-----------------------------------------------------------------------------
 // Module
 //-----------------------------------------------------------------------------
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbLibrarySearch]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLibrarySearch]);

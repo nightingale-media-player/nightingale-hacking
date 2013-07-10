@@ -135,4 +135,4 @@ sbM3UPlaylistWriter.prototype = {
   },
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbM3UPlaylistWriter]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbM3UPlaylistWriter]);

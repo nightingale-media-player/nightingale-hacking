@@ -131,7 +131,7 @@ sbSongbirdDispatch.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIProtocolHandler])
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbSongbirdDispatch]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbSongbirdDispatch]);
 
 /* We need to be able to throw NS_ERROR_NO_CONTENT to placate the channel
    consumer so that it knows it doesn't have to do any work. 

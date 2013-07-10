@@ -86,4 +86,4 @@ ErrorHandler.prototype = {
   }
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([ErrorHandler])
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([ErrorHandler])

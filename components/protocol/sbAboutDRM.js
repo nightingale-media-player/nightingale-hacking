@@ -99,4 +99,4 @@ sbAboutDRM.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule])
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAboutDRM]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAboutDRM]);

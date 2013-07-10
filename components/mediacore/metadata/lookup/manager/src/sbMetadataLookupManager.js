@@ -131,4 +131,4 @@ sbMLM.prototype = {
   },
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbMLM]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbMLM]);

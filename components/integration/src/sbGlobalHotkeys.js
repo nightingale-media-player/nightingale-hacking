@@ -747,4 +747,4 @@ sbHotkeyConfiguration.prototype =
 //                                     sbHotkeyConfiguration]);
 // }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbHotkeyService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyService]);

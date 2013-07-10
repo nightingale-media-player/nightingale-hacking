@@ -959,7 +959,7 @@ sbAppStartupService.prototype =
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAppStartupService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAppStartupService]);
 
 // function NSGetModule(compMgr, fileSpec)
 // {

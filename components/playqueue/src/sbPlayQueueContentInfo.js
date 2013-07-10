@@ -91,4 +91,4 @@ PlayQueueContentInfo.prototype = {
 
 };
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([PlayQueueContentInfo]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([PlayQueueContentInfo]);

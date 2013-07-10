@@ -586,4 +586,4 @@ sbAddOnBundleUpdateService.prototype = {
 //
 //------------------------------------------------------------------------------
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbAddOnBundleUpdateService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAddOnBundleUpdateService]);

@@ -273,7 +273,7 @@ sbTestProvider.prototype = {
   },
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbTestProvider]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbTestProvider]);
 
 //	  // our post-register function to register ourselves with
 //      // the category manager

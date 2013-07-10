@@ -368,4 +368,4 @@ function SB_ArrayContains(a, v) {
   return a.some(function(e) { return e == v; } );
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([CPlaylistReaderManager]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([CPlaylistReaderManager]);

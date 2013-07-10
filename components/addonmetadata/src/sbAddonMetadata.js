@@ -422,7 +422,7 @@ AddonMetadata.prototype = {
  * Registration for XPCOM
  * ----------------------------------------------------------------------------
  */
-var NSGetModule = XPCOMUtils.generateNSGetFactory([AddonMetadata]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([AddonMetadata]);
 
 // var gModule = {
 //   registerSelf: function(componentManager, fileSpec, location, type) {

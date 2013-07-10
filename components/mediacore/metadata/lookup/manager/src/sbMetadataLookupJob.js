@@ -113,4 +113,4 @@ sbMLJob.prototype = {
   }
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([sbMLJob]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbMLJob]);

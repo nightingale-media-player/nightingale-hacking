@@ -792,4 +792,4 @@ SmartMediaListsUpdater.prototype = {
 
 }; // SmartMediaListsUpdater.prototype
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([SmartMediaListsUpdater]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([SmartMediaListsUpdater]);

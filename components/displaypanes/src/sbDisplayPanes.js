@@ -562,5 +562,5 @@ DisplayPaneManager.prototype = {
     XPCOMUtils.generateQI([Ci.sbIDisplayPaneManager])
 }; // DisplayPaneManager.prototype
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([DisplayPaneManager]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([DisplayPaneManager]);
 
