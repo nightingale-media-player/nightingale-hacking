@@ -50,7 +50,6 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-//#include <nsIGenericFactory.h>
 #include <mozilla/ModuleUtils.h>
 #include <nsServiceManagerUtils.h>
 
@@ -92,7 +91,7 @@ static const mozilla::Module::ContractIDEntry kStringBundleContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kStringBundleCategories[] = {
-  { "profile-after-change", "service", SB_STRINGBUNDLESERVICE_CONTRACTID },
+  { "xpcom-startup", "service", SB_STRINGBUNDLESERVICE_CONTRACTID },
   { NULL }
 };
 

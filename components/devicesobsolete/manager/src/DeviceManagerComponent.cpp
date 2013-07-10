@@ -50,7 +50,7 @@ static const mozilla::Module::ContractIDEntry kDeviceManagerObsoleteContracts[] 
 };
 
 static const mozilla::Module::CategoryEntry kDeviceManagerObsoleteCategories[] = {
-  { "app-startup", SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME, SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID },
+  { "profile-after-change", SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME, SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID },
   { NULL }
 };
 
