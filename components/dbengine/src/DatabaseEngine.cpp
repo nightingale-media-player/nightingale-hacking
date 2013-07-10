@@ -979,6 +979,10 @@ CDatabaseEngine::CDatabaseEngine()
       NS_Free(m_pScratchSpace);
     }
   }
+
+  if (m_pDBStorePathLock) {
+    PR_DestroyLock(m_pDBStorePathLock);
+  }
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -1013,6 +1017,9 @@ NS_IMETHODIMP CDatabaseEngine::Init()
 {
   LOG("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
        this, sqlite3_libversion());
+
+  m_pDBStorePathLock = PR_NewLock();
+  NS_ASSERTION(m_pDBStorePathLock, "Couldn't allocate m_pDBStorePathLock!");
 
   PRBool success = m_QueuePool.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
