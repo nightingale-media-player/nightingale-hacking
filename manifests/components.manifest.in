@@ -1,62 +1,239 @@
 binary-component sbAlbumArt_d.so
 category app-startup sbAlbumArt @songbirdnest.com/Songbird/album-art-service;1
+category app-startup sbAlbumArt @songbirdnest.com/Songbird/album-art/scanner;1
+category app-startup sbAlbumArt @songbirdnest.com/Songbird/album-art-fetcher-set;1
+category app-startup sbAlbumArt @songbirdnest.com/Songbird/album-art/file-fetcher;1
+category app-startup sbAlbumArt @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
+
 binary-component sbBrowserAPI_d.so
+# category profile-after-change sbBrowserAPI @songbirdnest.com/remoteapi/remoteapiservice;1
+
 binary-component sbCDDevice_d.so
-category profile-after-change SongbirdCDDeviceController @songbirdnest.com/Songbird/CDDeviceController;1
+## category profile-after-change SongbirdCDDeviceController @songbirdnest.com/Songbird/CDDeviceController;1
+
 binary-component sbClipboardHelper_d.so
+## category profile-after-change sbClipboardHelper @songbirdnest.com/moz/clipboard/helper;1
+
 binary-component sbdataremote_d.so
+# category profile-after-change sbDataRemote @songbirdnest.com/Songbird/DataRemote;1
+
 binary-component sbDBEngine_d.so
+category profile-after-change sbDBEngine @songbirdnest.com/Songbird/DatabaseEngine;1
+
 binary-component sbDeviceBase_d.so
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/DeviceProperties;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/DeviceCapabilities;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/DeviceCapsCompatibility;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/DeviceStatus;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbaudioformattype;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbvideoformattype;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbformattypeconstraint;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbimageformattype;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbimagesize;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbdevcapvideostream;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbrange;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbplaylistformattype;1
+## category profile-after-change sbDeviceBase @songbirdnest.com/Songbird/Device/sbfraction;1
+
+
 binary-component sbDeviceDeviceTester_d.so
+## category profile-after-change sbDeviceDeviceTester @songbirdnest.com/Songbird/Device/DeviceTester/Utils;1
+## category profile-after-change sbDeviceDeviceTester @songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1
+
 binary-component sbDeviceFirmwareTester_d.so
+# category profile-after-change sbDeviceFirmwareTester @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
+
 binary-component sbDeviceFirmwareUpdater_d.so
-category profile-after-change sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
+## category profile-after-change sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Support;1
+## category profile-after-change sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Update;1
+## category profile-after-change sbDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
+
 binary-component sbDeviceManager2_d.so
 category profile-after-change sbDeviceManager2 @songbirdnest.com/Songbird/DeviceManager;2
+
 binary-component sbDeviceManager_d.so
-category profile-after-change sbDeviceManager @songbirdnest.com/Songbird/DeviceManager;1
+# category profile-after-change sbDeviceManager @songbirdnest.com/Songbird/DeviceManager;1
+
 binary-component sbDownloadDevice_d.so
+# category profile-after-change sbDownloadDevice @songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1
+
 binary-component sbFileScan_d.so
-binary-component sbFileSystemEventsBase_d.so
+# category profile-after-change sbFileScan
+
+# binary-component sbFileSystemEventsBase_d.so
+# category profile-after-change sbFileSystemEventsBase @songbirdnest.com/filesystem/watcher;1
+
 binary-component sbFileUtils_d.so
-binary-component sbGStreamerStub_d.so
+## category profile-after-change sbFileUtils @songbirdnest.com/Songbird/DirectoryEnumerator;1
+## category profile-after-change sbFileUtils @songbirdnest.com/Songbird/FileUtils;1
+
+# ***** 
+# XXX Look in sbGStreamerStub.cpp at NSGetModule...
+# binary-component sbGStreamerStub_d.so
+# category profile-after-change sbGstreamerStub
+
 binary-component sbIdentityServiceComponent_d.so
+# category profile-after-change sbIdentityServiceComponent 
+
 binary-component sbImageParser_d.so
+## category profile-after-change sbImageParser @songbirdnest.com/Songbird/ImageParser;1
+
 binary-component sbIntegration_d.so
+## category profile-after-change sbIntegration @songbirdnest.com/Songbird/WindowCloak;1
+## category profile-after-change sbIntegration @songbirdnest.com/integration/native-window-manager;1
+## category profile-after-change sbIntegration @songbirdnest.com/integration/window-move-resize-service;1
+## category profile-after-change sbIntegration @songbirdnest.com/Songbird/ScreenSaverSuppressor;1
+
 binary-component sbIntl_d.so
-category profile-after-change sbIntl @songbirdnest.com/Songbird/Intl/StringTransform;1
+category app-startup sbIntl @songbirdnest.com/Songbird/Intl/StringTransform;1
+
 binary-component sbiTunesMediaImport_d.so
+## category profile-after-change sbiTunesMediaImport @songbirdnest.com/Songbird/sbiTunesXMLParser;1
+## category profile-after-change sbiTunesMediaImport @songbirdnest.com/Songbird/ITunesImporter;1
+
 binary-component sbLibraryManager_d.so
+category profile-after-change sbLibraryManager @songbirdnest.com/Songbird/library/Manager;1
+
+# *****
 binary-component sbLinuxFileSystemEvents_d.so
+## category profile-after-change sbLinuxFileSystemEvents @songbirdnest.com/filesystem/watcher;1
+
+
 binary-component sbLocalDatabaseLibrary_d.so
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/AsyncGUIDArray;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/DynamicMediaListFactory;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/LocalDatabase/MediaListViewState;1
+## category profile-after-change sbLocalDatabaseLibrary @songbirdnest.com/Songbird/Library/DiffingService;1
+
 binary-component sbMediacoreBase_d.so
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/Capabilities;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/equalizerband;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/event;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/FactoryWrapper;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/Wrapper;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/mediaformatcontainer;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/mediaformatvideo;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/mediaformataudio;1
+## category profile-after-change sbMediacoreBase @songbirdnest.com/Songbird/Mediacore/mediaformat;1
+# @songbirdnest.com/Songbird/Mediacore/mediainspector;1
+
 binary-component sbMediacoreManager_d.so
+category profile-after-change sbMediacoreManager @songbirdnest.com/Songbird/Mediacore/Manager;1
+# category profile-after-change sbMediacoreManager @songbirdnest.com/Songbird/Mediacore/TypeSniffer;1
+
 binary-component sbMediaExport_d.so
 category profile-after-change sbMediaExport @songbirdnest.com/media-export-service;1
+
 binary-component sbMediaItemDownloadService_d.so
+
+
 binary-component sbMediaManager_d.so
+## category profile-after-change sbMediaManager @songbirdnest.com/Songbird/media-manager/file;1 
+
+
 binary-component sbMediaSniffer_d.so
+# category profile-after-change sbMediaSniffer 
+
 binary-component sbMetadataHandlerTaglib_d.so
+## category profile-after-change sbMetadataHandlerTaglib @songbirdnest.com/Songbird/MetadataHandler/Taglib;1
+## category profile-after-change sbMetadataHandlerTaglib @songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1
+## category profile-after-change sbMetadataHandlerTaglib @songbirdnest.com/Songbird/SeekableChannel;1
+
 binary-component sbMetadataModule_d.so
+## category profile-after-change sbMetadataModule @songbirdnest.com/Songbird/MetadataManager;1
+## category profile-after-change sbMetadataModule @songbirdnest.com/Songbird/MetadataChannel;1
+## category profile-after-change sbMetadataModule @songbirdnest.com/Songbird/FileMetadataService;1
+
 binary-component sbMockCDDevice_d.so
+# category profile-after-change sbMockCDDevice @songbirdnest.com/Songbird/MockCDDevice;1
+# category profile-after-change sbMockCDDevice @songbirdnest.com/Songbird/MockCDTOC;1
+# category profile-after-change sbMockCDDevice @songbirdnest.com/Songbird/MockCDTOCEntry;1
+
 binary-component sbMozVariant_d.so
+category app-startup sbMozVariant @songbirdnest.com/Songbird/Variant;1
+
 binary-component sbNetworkProxy_d.so
+## category profile-after-change sbNetworkProxy @songbirdnest.com/Songbird/NetworkProxyImport;1
+
 binary-component sbPlaybackHistoryService_d.so
+# category profile-after-change sbPlaybackHistoryService @songbirdnest.com/Songbird/PlaybackHistoryEntry;1
+# category profile-after-change sbPlaybackHistoryService @songbirdnest.com/Songbird/PlaybackHistoryService;1
+
 binary-component sbPlaylistCommands_d.so
+## category profile-after-change sbPlaylistCommands @songbirdnest.com/Songbird/PlaylistCommandsManager;1
+## category profile-after-change sbPlaylistCommands @songbirdnest.com/Songbird/PlaylistCommandsHelper;1
+
 binary-component sbPlayQueueService_d.so
-category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
+# category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
+
 binary-component sbPrompter_d.so
+category profile-after-change sbPrompter @songbirdnest.com/Songbird/Prompter;1
+
 binary-component sbProperties_d.so
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/MutablePropertyArray;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/PropertyFactory;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/PropertyManager;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Operator;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/Datetime;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/Duration;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/Number;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/Text;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/URI;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/Boolean;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Info/ImageLabelLink;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/DownloadButton;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/StatusProperty;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/SimpleButton;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/Image;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/ImageLabelLink;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/Rating;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/Builder/OriginPageImage;1
+## category profile-after-change sbProperties @songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1
+
 binary-component sbSQLBuilder_d.so
+
+
 binary-component sbStrings_d.so
+## category profile-after-change sbStrings @songbirdnest.com/Songbird/stringbundle;1
+## category profile-after-change sbStrings @songbirdnest.com/Songbird/sbstringmap;1
+## category profile-after-change sbStrings @songbirdnest.com/Songbird/CharsetDetector;1
+
 binary-component sbTemporaryFileService_d.so
 category profile-after-change sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
+
 binary-component sbTestMediacoreBase_d.so
+# category profile-after-change sbTestMediacodeBase @songbirdnest.com/mediacore/sbTestDummyMediacoreManager;1
+# category profile-after-change sbTestMediacodeBase @songbirdnest.com/mediacore/sbTestMediacoreEventCreator;1
+# category profile-after-change sbTestMediacodeBase @songbirdnest.com/mediacore/sbTestMediacoreStressThreads;1
+
 binary-component sbThreadPoolService_d.so
+category profile-after-change sbThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
+
 binary-component sbTranscodeModule_d.so
+## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Mediacore/TranscodeManager;1
+## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Mediacore/TranscodeAlbumArt;1
+## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Mediacore/TranscodeError;1
+## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Transcode/Profile;1
+## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Transcode/ProfileLoader;1
+## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Mediacore/TranscodingConfigurator;1
+
 binary-component sbUpdate_d.so
+
 binary-component sbWatchFolderService_d.so
-category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
+## category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
+
 binary-component sbWindowWatcher_d.so
-category profile-after-change sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+## category profile-after-change sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+
 binary-component sbxpcom_d.so
+## category profile-after-change sbXPCOM @songbirdnest.com/moz/xpcom/sbpropertybag;1
+## category profile-after-change sbXPCOM @songbirdnest.com/moz/xpcom/threadsafe-array;1
+## category profile-after-change sbXPCOM @songbirdnest.com/Songbird/ServiceManager;1
