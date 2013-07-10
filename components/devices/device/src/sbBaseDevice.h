@@ -626,8 +626,8 @@ public:
    * MTP property implementation needs to lock the state for formatting
    * so that properties do not block the main thread when formatting
    */
-  mozilla::Mutex& StateLock() {
-    return *mStateLock;
+  PRLock * StateLock() {
+    return mStateLock;
   }
   /**
    * Return the state without locking. This is for use in conjunction with
@@ -682,7 +682,7 @@ private:
 protected:
 
 
-  mozilla::Mutex *mStateLock;
+  PRLock *mStateLock;
   PRUint32 mState;
   mozilla::Mutex mPreviousStateLock;
   PRUint32 mPreviousState;

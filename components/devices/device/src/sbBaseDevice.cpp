@@ -429,7 +429,8 @@ sbBaseDevice::sbBaseDevice() :
     PRBool success;
   #endif
 
-  mStateLock = (mozilla::Mutex*) malloc(sizeof(mozilla::Mutex));
+  mStateLock = PR_NewLock();
+  NS_ASSERTION(mStateLock, "Failed to allocate state lock");
 
   mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
                               __FILE__"::mConnectLock");
@@ -1204,7 +1205,8 @@ NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
 NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 {
   NS_ENSURE_ARG_POINTER(aIsBusy);
-  mozilla::MutexAutoLock lock(*mStateLock);
+  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+  sbSimpleAutoLock lock(mStateLock);
   switch (mState) {
     case STATE_IDLE:
     case STATE_CANCEL:
@@ -1224,7 +1226,8 @@ NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
-  mozilla::MutexAutoLock lock(*mStateLock);
+  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+  sbSimpleAutoLock lock(mStateLock);
   switch(mState) {
     case STATE_IDLE:
     case STATE_CANCEL:
@@ -1265,7 +1268,8 @@ nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
-  mozilla::MutexAutoLock lock(*mStateLock);
+  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+  sbSimpleAutoLock lock(mStateLock);
   *aState = mState;
 
   return NS_OK;
@@ -1281,7 +1285,8 @@ NS_IMETHODIMP sbBaseDevice::SetState(PRUint32 aState)
 
   // set state, checking if it changed
   {
-    mozilla::MutexAutoLock lock(*mStateLock);
+    NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+    sbSimpleAutoLock lock(mStateLock);
 
     // Only allow the cancel state to transition to the idle state.  This
     // prevents the request processing code from changing the state from cancel
