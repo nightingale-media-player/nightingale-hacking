@@ -494,6 +494,8 @@ sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
 NS_IMETHODIMP
 sbLibraryManager::GetMainLibrary(sbILibrary** _retval)
 {
+  TRACE("sbLibraryManager[0x%x] - GetMainLibrary", this);
+
   nsresult rv;
   nsCOMPtr<nsIPrefBranch> prefService =
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
