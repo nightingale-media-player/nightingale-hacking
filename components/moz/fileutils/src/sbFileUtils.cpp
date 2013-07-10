@@ -66,6 +66,20 @@
 #endif
 
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbFileUtils:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gFileUtils = nsnull;
+#define TRACE(args) PR_LOG(gFileUtils, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gFileUtils, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+
 //------------------------------------------------------------------------------
 //
 // Songbird file utilities defs.
@@ -97,7 +111,7 @@
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileUtils, sbIFileUtils)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileUtils, sbIFileUtils);
 
 
 //------------------------------------------------------------------------------
@@ -118,6 +132,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileUtils, sbIFileUtils)
 NS_IMETHODIMP
 sbFileUtils::GetCurrentDir(nsIFile** aCurrentDir)
 {
+  TRACE(("FileUtils[0x%x] - GetCurrentDir", this));
+
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aCurrentDir);
 
@@ -154,6 +170,8 @@ sbFileUtils::GetCurrentDir(nsIFile** aCurrentDir)
 NS_IMETHODIMP
 sbFileUtils::SetCurrentDir(nsIFile* aCurrentDir)
 {
+  TRACE(("FileUtils[0x%x] - SetCurrentDir", this));
+
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aCurrentDir);
 
@@ -179,6 +197,8 @@ sbFileUtils::SetCurrentDir(nsIFile* aCurrentDir)
 NS_IMETHODIMP
 sbFileUtils::GetExactPath(const nsAString& aFilePath, nsAString& aExactPath)
 {
+  TRACE(("FileUtils[0x%x] - GetExactPath", this));
+
   // Default to an empty string
   aExactPath.Truncate();
 
@@ -232,6 +252,12 @@ sbFileUtils::GetExactPath(const nsAString& aFilePath, nsAString& aExactPath)
 
 sbFileUtils::sbFileUtils()
 {
+#ifdef PR_LOGGING
+  if (!gFileUtils)
+    gFileUtils = PR_NewLogModule("sbFileUtils");
+#endif
+
+  TRACE(("FileUtils[0x%x] - Created", this));
 }
 
 
@@ -241,5 +267,6 @@ sbFileUtils::sbFileUtils()
 
 sbFileUtils::~sbFileUtils()
 {
+  TRACE(("FileUtils[0x%x] - Destroyed", this));
 }
 

@@ -62,6 +62,21 @@
 #include <prerror.h>
 #include <nsStringAPI.h>
 
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbDirectoryEnumerator:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gDirectoryEnumerator = nsnull;
+#define TRACE(args) PR_LOG(gDirectoryEnumerator, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gDirectoryEnumerator, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+
 //------------------------------------------------------------------------------
 //
 // Songbird directory enumerator nsISupports implementation.
@@ -150,6 +165,7 @@ sbDirectoryEnumeratorHelper::~sbDirectoryEnumeratorHelper()
 {
   CloseDir();
 }
+
 nsresult sbDirectoryEnumeratorHelper::Init(nsIFile * aDirectory)
 {
   NS_ENSURE_ARG_POINTER(aDirectory);
@@ -335,6 +351,8 @@ nsresult sbDirectoryEnumeratorHelper::ReadDir(nsAString & aPath)
 NS_IMETHODIMP
 sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
 {
+  TRACE(("DirectoryEnumerator[0x%x] - Enumerate", this));
+
   // Validate arguments and state.
   NS_ENSURE_ARG_POINTER(aDirectory);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
@@ -531,6 +549,12 @@ sbDirectoryEnumerator::sbDirectoryEnumerator() :
   mDirectoriesOnly(PR_FALSE),
   mFilesOnly(PR_FALSE)
 {
+#ifdef PR_LOGGING
+  if (!gDirectoryEnumerator)
+    gDirectoryEnumerator = PR_NewLogModule("sbDirectoryEnumerator");
+#endif
+
+  TRACE(("DirectoryEnumerator[0x%x] - Created", this));
 }
 
 /**
@@ -541,6 +565,7 @@ sbDirectoryEnumerator::~sbDirectoryEnumerator()
 {
   // Finalize the Songbird directory enumerator.
   Finalize();
+  TRACE(("DirectoryEnumerator[0x%x] - Destroyed", this));
 }
 
 
@@ -551,6 +576,8 @@ sbDirectoryEnumerator::~sbDirectoryEnumerator()
 nsresult
 sbDirectoryEnumerator::Initialize()
 {
+  TRACE(("DirectoryEnumerator[0x%x] - Initialize", this));
+
   // Do nothing if already initialized.
   if (mIsInitialized)
     return NS_OK;
@@ -569,6 +596,8 @@ sbDirectoryEnumerator::Initialize()
 void
 sbDirectoryEnumerator::Finalize()
 {
+  TRACE(("DirectoryEnumerator[0x%x] - Finalize", this));
+
   // Indicate that the directory enumerator is no longer initialized.
   mIsInitialized = PR_FALSE;
 
