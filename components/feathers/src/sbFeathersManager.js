@@ -573,7 +573,7 @@ FeathersManager.prototype = {
     // basic layouts and default skin have been disabled too. We need to 
     // check if that's the case, and reenable them if needed
     var defaultFeather = AppPrefs.getValue(PREF_DEFAULT_FEATHER_ID, "");
-    this._ensureAddOnEnabled(defaultFeather);
+    // this._ensureAddOnEnabled(defaultFeather);
 
     // Read in defaults
     this._defaultLayoutURL = AppPrefs.getValue(PREF_DEFAULT_MAIN_LAYOUT, "");
