@@ -57,8 +57,8 @@ static const mozilla::Module::ContractIDEntry kSongbirdMediacoreManagerContracts
 };
 
 static const mozilla::Module::CategoryEntry kSongbirdMediacoreManagerCategoroes[] = {
-  { SB_MEDIACOREMANAGER_CLASSNAME, "startup", SB_MEDIACOREMANAGER_CONTRACTID },
-  { SB_MEDIACORETYPESNIFFER_CLASSNAME, "startup", SB_MEDIACORETYPESNIFFER_CLASSNAME },
+  { "app-startup", SB_MEDIACOREMANAGER_CLASSNAME, SB_MEDIACOREMANAGER_CONTRACTID },
+  { "app-startup", SB_MEDIACORETYPESNIFFER_CLASSNAME, SB_MEDIACORETYPESNIFFER_CLASSNAME },
   { NULL }
 };
 
