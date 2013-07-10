@@ -92,7 +92,7 @@ sbDeviceManagerObsolete::~sbDeviceManagerObsolete()
 NS_IMETHODIMP
 sbDeviceManagerObsolete::Initialize()
 {
-  LOG(("DeviceManager[0x%x] - Initialize", this));
+  LOG(("DeviceManagerObsolete[0x%x] - Initialize", this));
 
   // Test to make sure that we haven't been initialized yet. If consumers are
   // doing the right thing (using getService) then we should never get here
