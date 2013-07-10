@@ -127,28 +127,6 @@ NS_IMPL_ISUPPORTS11_CI(sbMediacoreManager,
                             nsIClassInfo,
                             nsIObserver);
 
-//NS_IMPL_THREADSAFE_ADDREF(sbMediacoreManager)
-//NS_IMPL_THREADSAFE_RELEASE(sbMediacoreManager)
-//NS_IMPL_QUERY_INTERFACE11_CI(sbMediacoreManager,
-//                            sbIMediacoreManager,
-//                            sbPIMediacoreManager,
-//                            sbIMediacoreEventTarget,
-//                            sbIMediacoreFactoryRegistrar,
-//                            sbIMediacoreVideoWindow,
-//                            sbIMediacoreMultibandEqualizer,
-//                            sbIMediacoreVolumeControl,
-//                            sbIMediacoreVoting,
-//                            nsISupportsWeakReference,
-//                            nsIClassInfo,
-//                            nsIObserver)
-//NS_IMPL_CI_INTERFACE_GETTER5(sbMediacoreManager,
-//                             sbIMediacoreManager,
-//                             sbIMediacoreEventTarget,
-//                             sbIMediacoreFactoryRegistrar,
-//                             sbIMediacoreVoting,
-//                             nsISupportsWeakReference)
-//
-//NS_DECL_CLASSINFO(sbMediacoreManager)
 NS_IMPL_THREADSAFE_CI(sbMediacoreManager)
 
 /**
