@@ -31,25 +31,26 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDataRemoteWrapper, InitWrapper);
 NS_DEFINE_NAMED_CID(SB_DATAREMOTEWRAPPER_CID);
 
-static const mozilla::Module::CIDEntry kDataRemoteLibCIDs[] = {
+static const mozilla::Module::CIDEntry kDataRemoteWrapperCIDs[] = {
   { &kSB_DATAREMOTEWRAPPER_CID, false, NULL, sbDataRemoteWrapperConstructor },
   { NULL }
 };
 
-static const mozilla::Module::ContractIDEntry kDataRemoteLibContracts[] = {
+static const mozilla::Module::ContractIDEntry kDataRemoteWrapperContracts[] = {
   { SB_DATAREMOTEWRAPPER_CONTRACTID, &kSB_DATAREMOTEWRAPPER_CID },
   { NULL }
 };
 
-static const mozilla::Module::CategoryEntry kDataRemoteLibCategories[] = {
+static const mozilla::Module::CategoryEntry kDataRemoteWrapperCategories[] = {
+  // { "profile-after-change", SB_DATAREMOTEWRAPPER_CLASSNAME, SB_DATAREMOTEWRAPPER_CONTRACTID },
   { NULL }
 };
 
-static const mozilla::Module kDataRemoteLibModule = {
+static const mozilla::Module kDataRemoteWrapperModule = {
   mozilla::Module::kVersion,
-  kDataRemoteLibCIDs,
-  kDataRemoteLibContracts,
-  kDataRemoteLibCategories
+  kDataRemoteWrapperCIDs,
+  kDataRemoteWrapperContracts,
+  kDataRemoteWrapperCategories
 };
 
-NSMODULE_DEFN(sbDataRemoteLib) = &kDataRemoteLibModule;
+NSMODULE_DEFN(sbDataRemoteWrapper) = &kDataRemoteWrapperModule;
