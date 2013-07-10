@@ -34,6 +34,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Ce = Components.Exception;
+const Cu = Components.utils;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const URL_BINDING_DEFAULT_PANE = "chrome://songbird/content/bindings/facePlate.xml#default-pane";
 const URL_BINDING_DASHBOARD_PANE = "chrome://songbird/content/bindings/facePlate.xml#playback-pane"; 
@@ -405,104 +408,107 @@ FaceplateManager.prototype = {
     }
   },
 
-  /**
-   * See nsISupports.idl
-   */
-  QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbIFaceplateManager) &&
-        !iid.equals(Components.interfaces.nsIObserver) && 
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
-}; // FaceplateManager.prototype
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.sbIFaceplateManager,
+    Ci.nsIObserver,
+    Ci.nsISupports
+  ]),
 
-
-
-
-
-
-/**
- * \brief XPCOM initialization code
- */
-function makeGetModule(CONSTRUCTOR, CID, CLASSNAME, CONTRACTID, CATEGORIES) {
-  return function (comMgr, fileSpec) {
-    return {
-      registerSelf : function (compMgr, fileSpec, location, type) {
-        compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.registerFactoryLocation(CID,
-                        CLASSNAME,
-                        CONTRACTID,
-                        fileSpec,
-                        location,
-                        type);
-        if (CATEGORIES && CATEGORIES.length) {
-          var catman =  Cc["@mozilla.org/categorymanager;1"]
-              .getService(Ci.nsICategoryManager);
-          for (var i=0; i<CATEGORIES.length; i++) {
-            var e = CATEGORIES[i];
-            catman.addCategoryEntry(e.category, e.entry, e.value, 
-              true, true);
-          }
-        }
-      },
-
-      getClassObject : function (compMgr, cid, iid) {
-        if (!cid.equals(CID)) {
-          throw Cr.NS_ERROR_NO_INTERFACE;
-        }
-
-        if (!iid.equals(Ci.nsIFactory)) {
-          throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-        }
-
-        return this._factory;
-      },
-
-      _factory : {
-        createInstance : function (outer, iid) {
-          if (outer != null) {
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-          }
-          return (new CONSTRUCTOR()).QueryInterface(iid);
-        }
-      },
-
-      unregisterSelf : function (compMgr, location, type) {
-        compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.unregisterFactoryLocation(CID, location);
-        if (CATEGORIES && CATEGORIES.length) {
-          var catman =  Cc["@mozilla.org/categorymanager;1"]
-              .getService(Ci.nsICategoryManager);
-          for (var i=0; i<CATEGORIES.length; i++) {
-            var e = CATEGORIES[i];
-            catman.deleteCategoryEntry(e.category, e.entry, true);
-          }
-        }
-      },
-
-      canUnload : function (compMgr) {
-        return true;
-      },
-
-      QueryInterface : function (iid) {
-        if ( !iid.equals(Ci.nsIModule) ||
-             !iid.equals(Ci.nsISupports) )
-          throw Cr.NS_ERROR_NO_INTERFACE;
-        return this;
-      }
-
-    };
-  }
-}
-
-var NSGetModule = makeGetModule (
-  FaceplateManager,
-  Components.ID("{eb5c665a-bfe2-49f0-a747-cd3554e55606}"),
-  "Songbird Faceplate Pane Manager Service",
-  "@songbirdnest.com/faceplate/manager;1",
-  [{
+  className: "Songbird Faceplate Pane Manager Service",
+  classID: Components.ID("{eb5c665a-bfe2-49f0-a747-cd3554e55606}"),
+  contractID: "@songbirdnest.com/faceplate/manager;1",
+  _xpcom_categories: [{
     category: 'app-startup',
     entry: 'faceplate-pane-manager',
     value: 'service,@songbirdnest.com/faceplate/manager;1'
-  }]);
+  }]
+}; // FaceplateManager.prototype
+
+
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([FaceplateManager]);
+
+
+// /**
+//  * \brief XPCOM initialization code
+//  */
+// function makeGetModule(CONSTRUCTOR, CID, CLASSNAME, CONTRACTID, CATEGORIES) {
+//   return function (comMgr, fileSpec) {
+//     return {
+//       registerSelf : function (compMgr, fileSpec, location, type) {
+//         compMgr.QueryInterface(Ci.nsIComponentRegistrar);
+//         compMgr.registerFactoryLocation(CID,
+//                         CLASSNAME,
+//                         CONTRACTID,
+//                         fileSpec,
+//                         location,
+//                         type);
+//         if (CATEGORIES && CATEGORIES.length) {
+//           var catman =  Cc["@mozilla.org/categorymanager;1"]
+//               .getService(Ci.nsICategoryManager);
+//           for (var i=0; i<CATEGORIES.length; i++) {
+//             var e = CATEGORIES[i];
+//             catman.addCategoryEntry(e.category, e.entry, e.value, 
+//               true, true);
+//           }
+//         }
+//       },
+
+//       getClassObject : function (compMgr, cid, iid) {
+//         if (!cid.equals(CID)) {
+//           throw Cr.NS_ERROR_NO_INTERFACE;
+//         }
+
+//         if (!iid.equals(Ci.nsIFactory)) {
+//           throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+//         }
+
+//         return this._factory;
+//       },
+
+//       _factory : {
+//         createInstance : function (outer, iid) {
+//           if (outer != null) {
+//             throw Cr.NS_ERROR_NO_AGGREGATION;
+//           }
+//           return (new CONSTRUCTOR()).QueryInterface(iid);
+//         }
+//       },
+
+//       unregisterSelf : function (compMgr, location, type) {
+//         compMgr.QueryInterface(Ci.nsIComponentRegistrar);
+//         compMgr.unregisterFactoryLocation(CID, location);
+//         if (CATEGORIES && CATEGORIES.length) {
+//           var catman =  Cc["@mozilla.org/categorymanager;1"]
+//               .getService(Ci.nsICategoryManager);
+//           for (var i=0; i<CATEGORIES.length; i++) {
+//             var e = CATEGORIES[i];
+//             catman.deleteCategoryEntry(e.category, e.entry, true);
+//           }
+//         }
+//       },
+
+//       canUnload : function (compMgr) {
+//         return true;
+//       },
+
+//       QueryInterface : function (iid) {
+//         if ( !iid.equals(Ci.nsIModule) ||
+//              !iid.equals(Ci.nsISupports) )
+//           throw Cr.NS_ERROR_NO_INTERFACE;
+//         return this;
+//       }
+
+//     };
+//   }
+// }
+
+// var NSGetModule = makeGetModule (
+//   FaceplateManager,
+//   Components.ID("{eb5c665a-bfe2-49f0-a747-cd3554e55606}"),
+//   "Songbird Faceplate Pane Manager Service",
+//   "@songbirdnest.com/faceplate/manager;1",
+//   [{
+//     category: 'app-startup',
+//     entry: 'faceplate-pane-manager',
+//     value: 'service,@songbirdnest.com/faceplate/manager;1'
+//   }]);
