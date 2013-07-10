@@ -44,7 +44,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 // the original contract id "@songbirdnest.com/Songbird/DataRemote;1"
 // which will give a wrapper around this object.  See sbPIDataRemote2
 // and sbDataRemoteWrapper for details.
-const SONGBIRD_DATAREMOTE_CONTRACTID = null;
+const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemoteInstance;1";
 const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Instance";
 const SONGBIRD_DATAREMOTE_CID = Components.ID("{e0990420-e9c0-11dd-ba2f-0800200c9a66}");
 const SONGBIRD_DATAREMOTE_IID = Ci.sbPIDataRemote2;
@@ -56,6 +56,10 @@ function DataRemote() {
 // Define the prototype block before adding to the prototype object or the
 //   additions will get blown away (at least the setters/getters were).
 DataRemote.prototype = {
+  className: SONGBIRD_DATAREMOTE_CLASSNAME,
+  classID: SONGBIRD_DATAREMOTE_CID,
+  contractID: SONGBIRD_DATAREMOTE_IID,
+
   _initialized: false,     // has init been called
   _observing: false,       // are we hooked up to the pref branch as a listener
   _prefBranch: null,       // the pref branch associated with the root
@@ -424,18 +428,6 @@ DataRemote.prototype = {
       count.value = ifaces.length;
       return ifaces;
   },
- 
-  get classDescription() {
-      return SONGBIRD_DATAREMOTE_CLASSNAME;
-  },
-
-  get contractID() {
-      return SONGBIRD_DATAREMOTE_CONTRACTID;
-  },
-
-  get classID() {
-      return SONGBIRD_DATAREMOTE_CID;
-  },
 
   getHelperForLanguage: function( language ) { return null; },
 
@@ -639,4 +631,4 @@ const gDataRemoteModule = {
 
 }; // gDataRemoteModule
 
-var NSGetModule = XPCOMUtils.generateNSGetFactory([DataRemote]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([DataRemote]);
