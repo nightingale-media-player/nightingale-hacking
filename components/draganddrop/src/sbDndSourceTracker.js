@@ -23,7 +23,9 @@
 // END SONGBIRD GPL
 //
  */
- 
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 /**
  * \file sbDndSourceTracker.js
  */
@@ -71,44 +73,23 @@ DndSourceTracker.prototype = {
         !iid.equals(Ci.nsISupports))
       throw Cr.NS_ERROR_NO_INTERFACE;
     return this;
-  }
+  },
+
+  QueryInterface: XPCOMUtils.generateQI([
+    IID,
+    Ci.nsISupports
+  ]),
+
+  className: CLASSNAME,
+  classID: CID,
+  contractID: CONTRACTID
 };
+
 
 /**
  * ----------------------------------------------------------------------------
  * Registration for XPCOM
  * ----------------------------------------------------------------------------
  */
-var gModule = {
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Ci.nsIComponentRegistrar);
-    componentManager.registerFactoryLocation(CID, CLASSNAME, CONTRACTID,
-                                             fileSpec, location, type);
-  },
 
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Ci.nsIFactory))
-      throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
-    if (cid.equals(CID)) {
-       return {
-          createInstance: function(outer, iid) {
-            if (outer != null)
-              throw Cr.NS_ERROR_NO_AGGREGATION;
-            return (new DndSourceTracker()).QueryInterface(iid);;
-          }
-       };
-    }
-
-    throw Cr.NS_ERROR_NO_INTERFACE;
-  },
-
-  canUnload: function(componentManager) { 
-    return true; 
-  }
-};
-
-function NSGetModule(comMgr, fileSpec) {
-  return gModule;
-}
-
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([DndSourceTracker]);
