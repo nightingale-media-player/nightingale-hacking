@@ -26,8 +26,22 @@
 #include <nsMemory.h> 
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
+#include <prlog.h>
 
 #include "sbDataRemoteWrapper.h"
+
+
+/*
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbDataRemoteWrapper:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gDataRemoteWrapperLog = nsnull;
+#define LOG(args) PR_LOG(gDataRemoteWrapperLog, PR_LOG_DEBUG, args)
+#else
+#define LOG(args) /* nothing */
+#endif
+
 
 // CID for the original dataremote implementation, to which
 // this object will delegate.
@@ -52,7 +66,14 @@ NS_IMPL_THREADSAFE_CI(sbDataRemoteWrapper)
 sbDataRemoteWrapper::sbDataRemoteWrapper()
 : mInnerDataRemote(nsnull), 
   mObserver(nsnull)
-{}
+{
+#ifdef PR_LOGGING
+  if (!gDataRemoteWrapperLog)
+    gDataRemoteWrapperLog = PR_NewLogModule("sbDataRemoteWrapper");
+#endif
+
+  LOG(("DataRemoteWrapper[0x%x] - Created", this));
+}
 
 sbDataRemoteWrapper::~sbDataRemoteWrapper()
 {
@@ -64,10 +85,14 @@ sbDataRemoteWrapper::~sbDataRemoteWrapper()
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unbind");
   }
   mInnerDataRemote = nsnull;
+
+  LOG(("DataRemoteWrapper[0x%x] - Destroyed", this));
 }
 
 nsresult sbDataRemoteWrapper::InitWrapper()
 {
+  LOG(("DataRemoteWrapper[0x%x] - InitWrapper", this));
+
   nsresult rv;
   // Forward everything to the original dataremote implementation
   mInnerDataRemote =
@@ -122,6 +147,8 @@ NS_IMETHODIMP sbDataRemoteWrapper::SetIntValue(PRInt64 aIntValue)
 /* void bindObserver (in nsIObserver aObserver, [optional] in boolean aSuppressFirst); */
 NS_IMETHODIMP sbDataRemoteWrapper::BindObserver(nsIObserver *aObserver, PRBool aSuppressFirst)
 {
+  LOG(("DataRemoteWrapper[0x%x] - BindObserver", this));
+
   NS_ENSURE_STATE(mInnerDataRemote);
   NS_ENSURE_ARG_POINTER(aObserver);
   mObserver = aObserver;  
@@ -131,6 +158,8 @@ NS_IMETHODIMP sbDataRemoteWrapper::BindObserver(nsIObserver *aObserver, PRBool a
 /* void bindRemoteObserver (in sbIRemoteObserver, [optional] in boolean aSuppressFirst); */
 NS_IMETHODIMP sbDataRemoteWrapper::BindRemoteObserver(sbIRemoteObserver *aObserver, PRBool aSuppressFirst)
 {
+  LOG(("DataRemoteWrapper[0x%x] - BindRemoteObserver", this));
+
   NS_ENSURE_STATE(mInnerDataRemote);
   NS_ENSURE_ARG_POINTER(aObserver);
   
@@ -142,6 +171,8 @@ NS_IMETHODIMP sbDataRemoteWrapper::BindRemoteObserver(sbIRemoteObserver *aObserv
 /* void unbind (); */
 NS_IMETHODIMP sbDataRemoteWrapper::Unbind()
 {
+  LOG(("DataRemoteWrapper[0x%x] - Unbind", this));
+
   NS_ENSURE_STATE(mInnerDataRemote);
   nsresult rv = mInnerDataRemote->Unbind();
   mObserver = nsnull;
@@ -159,6 +190,8 @@ NS_IMETHODIMP sbDataRemoteWrapper::Observe( nsISupports *aSubject,
                                             const char *aTopic,
                                             const PRUnichar *aData )
 {
+  LOG(("DataRemoteWrapper[0x%x] - Observe: %s", this, aTopic));
+
   NS_ENSURE_STATE(mObserver);
   // Make sure our observer thinks the message is coming
   // from this instance
