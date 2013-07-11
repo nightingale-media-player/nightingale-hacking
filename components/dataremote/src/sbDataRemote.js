@@ -73,16 +73,6 @@ DataRemote.prototype = {
   _isNot: false,           // Is the linked data state opposite of target data?
   _evalString: "",         // a string of js to evaluate when the data changes
 
-  QueryInterface: XPCOMUtils.generateQI([
-    SONGBIRD_DATAREMOTE_IID,
-    Ci.nsIClassInfo, 
-    Ci.nsIObserver, 
-    Ci.nsISecurityCheckedComponent,
-    Ci.sbISecurityAggregator,
-    Ci.nsISupportsWeakReference,
-    Ci.nsISupports
-  ]),
-
   init: function(aKey, aRoot) {
     // Only allow initialization once per object
     if (this._initialized)
@@ -500,18 +490,15 @@ DataRemote.prototype = {
   },
 
   // nsISupports
-  QueryInterface: function(iid) {
-    if (!iid.equals(SONGBIRD_DATAREMOTE_IID) &&
-        !iid.equals(Ci.nsIClassInfo) && 
-        !iid.equals(Ci.nsIObserver) && 
-        !iid.equals(Ci.nsISecurityCheckedComponent) &&
-        !iid.equals(Ci.sbISecurityAggregator) &&
-        !iid.equals(Ci.nsISupportsWeakReference) &&
-        !iid.equals(Ci.nsISupports)) {
-      throw Cr.NS_ERROR_NO_INTERFACE;
-    }
-    return this;
-  }
+  QueryInterface: XPCOMUtils.generateQI([
+    SONGBIRD_DATAREMOTE_IID,
+    Ci.nsIClassInfo, 
+    Ci.nsIObserver, 
+    Ci.nsISecurityCheckedComponent,
+    Ci.sbISecurityAggregator,
+    Ci.nsISupportsWeakReference,
+    Ci.nsISupports
+  ])
 }; // DataRemote.prototype
 
 // be specific

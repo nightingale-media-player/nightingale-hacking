@@ -68,13 +68,6 @@ DndSourceTracker.prototype = {
     return this.getSource(aHandle.data);
   },
 
-  QueryInterface: function(iid) {
-    if (!iid.equals(IID) &&
-        !iid.equals(Ci.nsISupports))
-      throw Cr.NS_ERROR_NO_INTERFACE;
-    return this;
-  },
-
   QueryInterface: XPCOMUtils.generateQI([
     IID,
     Ci.nsISupports

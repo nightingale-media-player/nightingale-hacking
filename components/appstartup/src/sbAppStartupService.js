@@ -961,20 +961,6 @@ sbAppStartupService.prototype =
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAppStartupService]);
 
-// function NSGetModule(compMgr, fileSpec)
-// {
-//   return XPCOMUtils.generateModule([sbAppStartupService],
-//     function(aCompMgr, aFileSpec, aLocation) {
-//       XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
-//                                                   SB_APPSTARTUPSERVICE_DESC,
-//                                                   "service," +
-//                                                   SB_APPSTARTUPSERVICE_CONTRACTID,
-//                                                   true,
-//                                                   true);
-//     }
-//   );
-// }
-
 //------------------------------------------------------------------------------
 // Startup command line handler
 
