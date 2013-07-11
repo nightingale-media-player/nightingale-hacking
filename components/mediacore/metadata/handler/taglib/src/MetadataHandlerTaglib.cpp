@@ -155,7 +155,8 @@ static PRLogModuleInfo* gLog = nsnull;
 // the minimum number of chracters to feed into the charset detector
 #define GUESS_CHARSET_MIN_CHAR_COUNT 256
 
-//mozilla::Mutex sbMetadataHandlerTaglib::sTaglibLock;
+// XXX FIX ME XUL 9.0.1
+// mozilla::Mutex sbMetadataHandlerTaglib::sTaglibLock = "sbMetadataHandlerTaglib::sTaglibLock";
 
 /*
  *

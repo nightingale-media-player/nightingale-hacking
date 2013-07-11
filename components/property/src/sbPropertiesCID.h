@@ -59,7 +59,7 @@
   "@songbirdnest.com/Songbird/Properties/PropertyManager;1"
 
 #define SB_PROPERTYOPERATOR_DESCRIPTION                    \
-  "Songbird Datetime Property Info Implementation"
+  "Songbird Operator Property Info Implementation"
 #define SB_PROPERTYOPERATOR_CID                            \
   { /*{B2829D86-A53A-45fc-943E-03CB6DD83E4D}*/             \
     0xb2829d86,                                            \
