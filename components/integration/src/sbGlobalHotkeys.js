@@ -532,7 +532,7 @@ sbHotkeyService.prototype =
   contractID: SB_HOTKEY_SERVICE_CONTRACTID,
   _xpcom_categories: [
     {
-      category: "app-startup",
+      category: "final-ui-startup",
       entry:    SB_HOTKEY_SERVICE_DESC,
       value:    "service," + SB_HOTKEY_SERVICE_CONTRACTID,
       service:  true
@@ -748,3 +748,5 @@ sbHotkeyConfiguration.prototype =
 // }
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyService]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyConfiguration]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbDefaultGlobalHotkeyActions]);

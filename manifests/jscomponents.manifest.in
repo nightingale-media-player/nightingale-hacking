@@ -132,13 +132,20 @@ category quit-application sbFeathersManager @songbirdnest.com/songbird/feathersm
 
 
 ### components/integration ##
+component {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb} sbGlobalHotkeys.js
+contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}
+category final-ui-startup sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
+category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
+
+component {5c6b204c-1dd2-11b2-8005-83725e03a0d0} sbGlobalHotkeys.js
+contract @songbirdnest.com/Songbird/HotkeyConfiguration;1 {5c6b204c-1dd2-11b2-8005-83725e03a0d0}
+
 component {76512c09-7f02-48f5-86c0-c3a8670ead3f} sbGlobalHotkeys.js
 contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {76512c09-7f02-48f5-86c0-c3a8670ead3f}
-# category profile-after-change sbGlobalHotkeys @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1
 
-component {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb} sbHotkeyActions.js
-contract @songbirdnest.com/Songbird/HotkeyService;1 {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}
-# category profile-after-change sbHotkeyActions @songbirdnest.com/Songbird/HotkeyService;1
+component {0BB80965-77C8-4212-866C-F22677F75A2C} sbHotkeyActions.js
+contract @songbirdnest.com/Songbird/HotkeyActions;1 {0BB80965-77C8-4212-866C-F22677F75A2C}
+category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActions;1
 # manifest integration.manifest
 
 
