@@ -74,15 +74,12 @@ ArrayEnumerator.prototype = {
   hasMore: function () {
     return this.hasMoreElements();
   },
-  
-  QueryInterface: function(iid)
-  {
-    if (!iid.equals(Ci.nsISimpleEnumerator) &&
-        !iid.equals(Ci.nsIStringEnumerator) &&        
-        !iid.equals(Ci.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.nsISimpleEnumerator,
+    Ci.nsIStringEnumerator,
+    Ci.nsISupports
+  ])
 }
 
 
@@ -162,14 +159,11 @@ FaceplatePane.prototype = {
       observer.observe(thisPane, topic, null);
     });    
   },
-  
-  QueryInterface: function(iid)
-  {
-    if (!iid.equals(Components.interfaces.sbIFaceplatePane) &&
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.sbIFaceplatePane,
+    Ci.nsISupports
+  ])
 }
 
 

@@ -149,12 +149,10 @@ ParserErrorHandler.prototype = {
   /**
    * See nsISupports.idl
    */
-  QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.nsIObserver) && 
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+  QueryInterface: XPCOMUtils.generateQI([
+    Components.interfaces.nsIObserver,
+    Components.interfaces.nsISupports
+  ])
 }; // ParserErrorHandler.prototype
 
 /**
