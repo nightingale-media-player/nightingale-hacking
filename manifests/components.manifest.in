@@ -215,7 +215,7 @@ binary-component sbTestMediacoreBase_d.so
 # category profile-after-change sbTestMediacodeBase @songbirdnest.com/mediacore/sbTestMediacoreStressThreads;1
 
 binary-component sbThreadPoolService_d.so
-category profile-after-change sbThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
+category xpcom-startup sbThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
 
 binary-component sbTranscodeModule_d.so
 ## category profile-after-change sbTranscodeModule @songbirdnest.com/Songbird/Mediacore/TranscodeManager;1
@@ -228,10 +228,10 @@ binary-component sbTranscodeModule_d.so
 binary-component sbUpdate_d.so
 
 binary-component sbWatchFolderService_d.so
-## category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
+category app-startup sbWatchFolderService @songbirdnest.com/watch-folder-service;1
 
 binary-component sbWindowWatcher_d.so
-## category profile-after-change sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+category xpcom-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
 
 binary-component sbxpcom_d.so
 ## category profile-after-change sbXPCOM @songbirdnest.com/moz/xpcom/sbpropertybag;1

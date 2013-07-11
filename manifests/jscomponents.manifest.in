@@ -2,6 +2,7 @@
 component {a1edd551-0f29-4ce9-aebc-92fbee77f37e} sbAddonMetadata.js
 contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
 # category profile-after-change sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
+category xpcom-shutdown sbAddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
 # manifest addonmetadata.manifest
 
 
@@ -116,12 +117,16 @@ contract @songbirdnest.com/Songbird/DndSourceTracker;1 {54b21a93-5b1b-46a2-a60f-
 component {eb5c665a-bfe2-49f0-a747-cd3554e55606} sbFaceplateManager.js
 contract @songbirdnest.com/faceplate/manager;1 {eb5c665a-bfe2-49f0-a747-cd3554e55606}
 category app-startup sbFaceplateManager @songbirdnest.com/faceplate/manager;1
+category songbird-library-manager-ready sbFaceplateManager @songbirdnest.com/faceplate/manager;1
+category songbird-library-manager-shutdown sbFaceplateManager @songbirdnest.com/faceplate/manager;1
 
 
 ### components/feathers ##
 component {99f24350-a67f-11db-befa-0800200c9a66} sbFeathersManager.js
 contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0800200c9a66}
-# category app-startup sbFeathersManager @songbirdnest.com/songbird/feathersmanager;1
+category app-startup sbFeathersManager @songbirdnest.com/songbird/feathersmanager;1
+category final-ui-startup sbFeathersManager @songbirdnest.com/songbird/feathersmanager;1
+category quit-application sbFeathersManager @songbirdnest.com/songbird/feathersmanager;1
 # manifest feathers.manifest
 
 
@@ -204,7 +209,7 @@ contract @songbirdnest.com/Songbird/MetadataLookup/job;1 {e4fd9496-1dd1-11b2-93c
 
 component {46733000-1dd2-11b2-8022-ba2da8a6a950} sbMetadataLookupManager.js
 contract @songbirdnest.com/Songbird/MetadataLookup/manager;1 {46733000-1dd2-11b2-8022-ba2da8a6a950}
-# category profile-after-change sbMetadataLookupManager @songbirdnest.com/Songbird/MetadataLookup/manager;1
+category profile-after-change sbMetadataLookupManager @songbirdnest.com/Songbird/MetadataLookup/manager;1
 # manifest mediacore-metadata-lookup-manager.manifest
 
 
@@ -239,7 +244,7 @@ contract @songbirdnest.com/Songbird/DirectoryImportService;1 {6e542f90-44a0-11dd
 ### components/mediaimport/library/base ##
 component {0ed2a7e0-78ac-4574-8554-b1e422b02642} sbLibraryImporterManager.js
 contract @songbirdnest.com/Songbird/LibraryImporterManager;1 {0ed2a7e0-78ac-4574-8554-b1e422b02642}
-# category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
+category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
 # manifest mediaimport-library-base.manifest
 
 
@@ -296,6 +301,8 @@ contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00
 ### components/moz/shutdownservice ##
 component {594137ED-DB4A-4530-8635-2573C018B4FB} sbShutdownService.js
 contract @songbirdnest.com/shutdown-service;1 {594137ED-DB4A-4530-8635-2573C018B4FB}
+category app-startup sbShutdownService @songbirdnest.com/shutdown-service;1
+category quit-application-requested sbShutdownService @songbirdnest.com/shutdown-service;1
 # category profile-after-change sbShutdownService @songbirdnest.com/shutdown-service;1
 # manifest moz-shutdownservice.manifest
 
@@ -311,7 +318,8 @@ category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlforma
 ### components/parsererror ##
 component {213a0ebb-12b3-492f-bc4c-f472f8f24d2c} sbParserError.js
 contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
-# category profile-after-change sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1
+category profile-after-change sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1
+category xpcom-shutdown sbParserError @songbirdnest.com/Songbird/ParserErrorHandler;1
 # manifest parsererror.manifest
 
 
@@ -378,10 +386,14 @@ category service-pane sbDeviceServicePaneService @songbirdnest.com/servicepane/d
 component {64ec2154-3733-4862-af3f-9f2335b14821} sbLibraryServicePaneService.js
 contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
 category service-pane sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
+category songbird-library-manager-before-shutdown sbLibraryServicePaneService @songbirdnest.com/servicepane/library;1
 
 component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
 contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
 category service-pane sbServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-added sbServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-removed sbServicePaneService @songbirdnest.com/servicepane/service;1
+category quit-application sbServicePaneService @songbirdnest.com/servicepane/service;1
 # manifest servicepane.manifest
 
 
