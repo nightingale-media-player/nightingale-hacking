@@ -66,7 +66,7 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbPropertyArray, nsIArray,
                                               sbIMutablePropertyArray,
                                               nsIClassInfo);
 sbPropertyArray::sbPropertyArray()
-: mArrayMutex(nsnull),
+: mArrayMutex("sbPropertyArray::mArrayMutex"),
   mStrict(PR_TRUE)
 {
 }
