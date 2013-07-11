@@ -103,6 +103,7 @@ function AddonMetadata() {
 
 AddonMetadata.prototype = {
   classDescription: CLASSNAME,
+  className: CLASSNAME,
   classID: CID,
   contractID: CONTRACTID,
 
@@ -240,11 +241,9 @@ AddonMetadata.prototype = {
       for (var i = 0; i < aAddons.length; i++) {
 
         var id = aAddons[i].id;
-        // If the extension is disabled, do not include it in our datasource 
-        // XXX FIX ME!!!!!
-        // if (this._isExtensionDisabled(id)) {
-          // continue;
-        // }
+        if (this._isExtensionDisabled(id))) {
+          continue;
+        }
 
         var location = AddonManager.getAddonByID(id, function(addon) {
           return addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file.path;
@@ -278,31 +277,25 @@ AddonMetadata.prototype = {
   /**
    * Return true if the given extension GUID has been disabled in the EM
    */
-  // _isExtensionDisabled: function _isExtensionDisabled(id) {
-  //   var item = this._RDF.GetResource(ITEM_NS(id));
-  //   // var extManager = Components.classes["@mozilla.org/extensions/manager;1"]
-  //   //                     .getService(Components.interfaces.nsIExtensionManager);
-  //   var userDisabled = this._RDF.GetResource(EM_NS("userDisabled"));
-  //   if (extManager.datasource.hasArcOut(item, userDisabled)) {
-  //     var target = extManager.datasource.GetTarget(item, userDisabled, true);
-  //     if (target instanceof Components.interfaces.nsIRDFLiteral){
-  //       target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
-  //       return target.Value == "true";
-  //     }
-  //   }                      
-  //   var appDisabled = this._RDF.GetResource(EM_NS("appDisabled"));
-  //   if (extManager.datasource.hasArcOut(item, appDisabled)) {
-  //     var target = extManager.datasource.GetTarget(item, appDisabled, true);
-  //     if (target instanceof Components.interfaces.nsIRDFLiteral){
-  //       target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
-  //       return target.Value == "true";
-  //     }
-  //   }
-  //   return false;
-  // },
- 
-  
-  
+
+  _isExtensionDisabled: function _isExtensionDisabled(id) {
+    var ret;
+    this._checkExtension(id, function(cbRet) { ret = cbRet; });
+    return ret;
+  },
+
+  _checkExtension: function _checkExtension(id, callback) {
+    AddonManager.getAddonByID(id, function(addon) {
+      if (addon.userDisabled || addon.appDisabled) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    })
+  },
+
+
+
   /**
    * Copy all nodes and assertions into the main datasource,
    * renaming the install manifest to the id of the extension.
@@ -414,6 +407,11 @@ AddonMetadata.prototype = {
     
     return this;
   }
+  // QueryInterface: XPCOMUtils.generateQI([
+  //   IID,
+  //   Ci.nsIObserver,
+  //   Ci.nsISupports
+  // ])
 }; // AddonMetadata.prototype
 
 
