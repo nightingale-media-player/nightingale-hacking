@@ -70,7 +70,7 @@ static const mozilla::Module::ContractIDEntry kRemoteAPIContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kRemoteAPICategories[] = {
-  // { "profile-after-change", SONGBIRD_REMOTEAPI_SERVICE_CLASSNAME, SONGBIRD_REMOTEAPI_SERVICE_CONTRACTID },
+  { "profile-after-change", SONGBIRD_REMOTEAPI_SERVICE_CLASSNAME, SONGBIRD_REMOTEAPI_SERVICE_CONTRACTID },
   { NULL }
 };
 

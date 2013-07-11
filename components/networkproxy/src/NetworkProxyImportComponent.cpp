@@ -61,6 +61,7 @@ static const mozilla::Module::ContractIDEntry kNetworkProxyImportContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kNetworkProxyImportCategories[] = {
+  { "app-startup", SONGBIRD_NetworkProxyImport_CLASSNAME, SONGBIRD_NetworkProxyImport_CONTRACTID },
   { NULL }
 };
 
