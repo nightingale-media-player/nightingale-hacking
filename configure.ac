@@ -1380,6 +1380,20 @@ fi
 AC_SUBST(NIGHTINGALE_LIBNOTIFY)
 
 #
+# Check for --enable-metrics
+#
+
+AC_ARG_ENABLE(metrics,
+              [ --enable-metrics  enabling of metrics system (default=no)])
+if test "$enable_metrics" = "yes"; then
+  METRICS_ENABLED=1
+  AC_DEFINE(METRICS_ENABLED)
+else
+  METRICS_ENABLED=
+fi
+AC_SUBST(METRICS_ENABLED)
+
+#
 # Checks for libraries.
 #
 

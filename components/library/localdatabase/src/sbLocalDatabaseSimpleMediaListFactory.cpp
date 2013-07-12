@@ -39,7 +39,9 @@
 #include <sbStandardProperties.h>
 
 #define SB_SIMPLE_MEDIALIST_FACTORY_TYPE "simple"
+//#ifdef METRICS_ENABLED
 #define SB_SIMPLE_MEDIALIST_METRICS_TYPE "simple"
+//#endif
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseSimpleMediaListFactory, sbIMediaListFactory)
 
@@ -96,6 +98,7 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   rv = newMediaList->Init(localLibraryPtr, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+//#ifdef METRICS_ENABLED
   // Get customType so we don't overwrite it.  Grrrr.
   nsAutoString customType;
   rv = newMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType );
@@ -104,6 +107,7 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     rv = newMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
                                    NS_LITERAL_STRING(SB_SIMPLE_MEDIALIST_METRICS_TYPE));
   }
+//#endif
 
   // don't override sortable property
   nsAutoString isSortable;

@@ -49,8 +49,10 @@
    src="chrome://songbird/content/scripts/overlayLoader.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+#ifdef METRICS_ENABLED
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/metrics.js"/>
+#endif
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js"/> 
   <script type="application/x-javascript"  

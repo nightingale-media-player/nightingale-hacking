@@ -71,11 +71,13 @@
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
         this._scrapers = [];
-          
+
+#ifdef METRICS_ENABLED
         this._metrics =
           Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Components.interfaces.sbIMetrics);
-        
+#endif
+
         // Watch for page unloading so that we can store
         // the MediaListView state in the history
         this._onBrowserUnloadListener = function(e) {
@@ -134,8 +136,10 @@
               this._splitter = null;
             }
 
+#ifdef METRICS_ENABLED
             this._metrics = null;
-            
+#endif
+
             if (this._mediaListRemovalMonitor) {
               this._mediaListRemovalMonitor.setMediaList(null);
               this._mediaListRemovalMonitor = null;
@@ -177,7 +181,9 @@
       <!-- LibraryUtils.RemovalMonitor -->
       <field name="_mediaListRemovalMonitor">null</field>
 
+#ifdef METRICS_ENABLED
       <field name="_metrics">null</field>
+#endif
 
       <method name="createOuterPlaylist">
         <body><![CDATA[
@@ -962,7 +968,9 @@
               }
 
             } else {
+#ifdef METRICS_ENABLED
               this._metrics.metricsInc("app.browser", "pageViews", "");
+#endif
               // start slow-loading pages after 500ms.
               // this works because of the dupechecker, which prevents problems
               // from arising due to rescanning the same document when it finishes

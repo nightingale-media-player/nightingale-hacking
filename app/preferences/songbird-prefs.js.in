@@ -261,7 +261,7 @@ pref("songbird.url.addons.feathers", "http://addons.getnightingale.com/");
 pref("songbird.url.addons.mediaviews", "http://addons.getnightingale.com/");
 pref("browser.startup.homepage", "http://addons.getnightingale.com/");
 pref("songbird.url.bugzilla", "http://github.com/nightingale-media-player/nightingale-hacking/issues/");
-pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
+pref("songbird.url.metrics", "");
 pref("songbird.url.support", "http://forum.getnightingale.com/");
 pref("songbird.url.keyboard", "about:keyboard-help");
 pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
