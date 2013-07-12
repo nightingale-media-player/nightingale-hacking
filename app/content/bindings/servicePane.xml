@@ -461,6 +461,7 @@
                                                    view);
               this.browser.selectedTab = tab;
 
+#ifdef METRICS_ENABLED
               // Record list type metrics for some reason.
               // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
               // changed to loadNode from click as there are ways other than clicking
@@ -470,6 +471,7 @@
                 var libType = mediaList.library.getProperty(SBProperties.customType);
                 metrics_inc("app.servicepane.loadnode.medialist", libType + "." + listType, null);
               } catch(e) { Components.utils.reportError(e); }
+#endif
 
             } else {
               // we have no handler for this service pane node load
