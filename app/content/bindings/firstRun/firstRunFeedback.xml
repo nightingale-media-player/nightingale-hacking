@@ -74,9 +74,9 @@
           &first_run.feedback.description;
         </xul:description>
 
+#ifdef METRICS_ENABLED
         <!-- Options box. -->
         <xul:vbox anonid="options_box">
-
           <!-- Metrics collection checkbox. -->
           <xul:checkbox anonid="metrics_checkbox"
                         label="&first_run.feedback.metrics.label;"/>
@@ -85,6 +85,7 @@
           </xul:description>
 
         </xul:vbox> <!-- options_box -->
+#endif
 
         <!-- E-mail box. -->
         <xul:groupbox anonid="email_box" class="sb-first-run-feedback-email-box">
@@ -117,6 +118,7 @@
 
     <implementation>
       <constructor><![CDATA[
+#ifdef METRICS_ENABLED
         var metricsChecked = 
           Application.prefs.getValue("app.metrics.checkedByDefault", true);
         var metricsCheckbox = 
@@ -124,6 +126,7 @@
                                                   "anonid",
                                                   "metrics_checkbox");
         metricsCheckbox.checked = metricsChecked;
+#endif
       ]]></constructor>
 
       <!--
@@ -131,6 +134,7 @@
        -->
 
       <method name="saveSettings"><body><![CDATA[
+#ifdef METRICS_ENABLED
         // Save the metrics collection setting.
         var metricsCheckbox =
               document.getAnonymousElementByAttribute(this,
@@ -138,6 +142,7 @@
                                                       "metrics_checkbox");
         var metricsEnabled = metricsCheckbox.checked ? "1" : "0";
         Application.prefs.setValue("app.metrics.enabled", metricsEnabled);
+#endif
 
         // Register the subscription e-mail.
         var eMailTextBox =

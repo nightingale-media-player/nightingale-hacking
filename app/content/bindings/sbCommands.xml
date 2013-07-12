@@ -440,6 +440,7 @@
         </body>
       </method>
 
+#ifdef METRICS_ENABLED
       <method name="reportMetrics">
         <parameter name="cmdid"/>
         <body>
@@ -463,7 +464,7 @@
           ]]>
         </body>
       </method>
-
+#endif
 
     </implementation>
 
@@ -798,7 +799,9 @@
             var cmdobject = evt.originalTarget.commandobject;
             if (!cmdobject) return;
 
+#ifdef METRICS_ENABLED
             this.reportMetrics(evt.originalTarget.id);
+#endif
 
             cmdobject.onCommand(evt.originalTarget.commandmenu,
                                 evt.originalTarget.commandindex,
@@ -834,7 +837,9 @@
               element = element.parentNode;
             }
 
+#ifdef METRICS_ENABLED
             this.reportMetrics(element.id);
+#endif
 
             var cmdobject = element.commandobject;
             if (!cmdobject) return;
@@ -1142,7 +1147,9 @@
             var cmdobject = evt.originalTarget.commandobject;
             if (!cmdobject) return;
 
+#ifdef METRICS_ENABLED
             this.reportMetrics(evt.originalTarget.id);
+#endif
 
             cmdobject.onCommand(evt.originalTarget.commandmenu,
                                 evt.originalTarget.commandindex,
@@ -1384,7 +1391,9 @@
             var cmdobject = evt.originalTarget.commandobject;
             if (!cmdobject) return;
 
+#ifdef METRICS_ENABLED
             this.reportMetrics(evt.originalTarget.id);
+#endif
 
             cmdobject.onCommand(evt.originalTarget.commandmenu,
                                 evt.originalTarget.commandindex,

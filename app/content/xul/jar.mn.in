@@ -23,7 +23,12 @@ songbird.jar:
 * content/songbird/xul/trackEditor.xul                                       (trackEditor.xul)
 * content/songbird/xul/trackEditorVideo.xul                                  (trackEditorVideo.xul)
 * content/songbird/xul/layoutWithBrowserOverlay.xul                          (layoutWithBrowserOverlay.xul)
-% override chrome://browser/content/browser.xul                                       chrome://songbird/content/xul/browserCompatibilityStub.xul
+# metrics preprocessing
+* content/songbird/xul/layoutBaseOverlay.xul                                 (layoutBaseOverlay.xul)
+* content/songbird/xul/mediaPageOverlay.xul                                  (mediaPageOverlay.xul)
+* content/songbird/xul/subscribe.xul                                         (subscribe.xul)
+#
+% override chrome://browser/content/browser.xul                              chrome://songbird/content/xul/browserCompatibilityStub.xul
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/linuxMenuOverlay.xul OS=Linux
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/macMenuOverlay.xul OS=Darwin
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul         chrome://songbird/content/xul/contentAreaContextOverlay.xul
