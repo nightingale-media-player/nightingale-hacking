@@ -34,7 +34,7 @@
 #define SONGBIRD_MEDIASNIFFER_DESCRIPTION                  \
   "Songbird Media Sniffer"
 #define SONGBIRD_MEDIASNIFFER_CONTRACTID                   \
-  "@songbirdnest.com/sontentsniffer/manager;1"
+  "@songbirdnest.com/contentsniffer/manager;1"
 #define SONGBIRD_MEDIASNIFFER_CLASSNAME                    \
   "sbMediaSniffer"
 #define SONGBIRD_MEDIASNIFFER_CID                          \
