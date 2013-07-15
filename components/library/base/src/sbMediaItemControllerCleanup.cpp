@@ -98,7 +98,7 @@ sbMediaItemControllerCleanup::sbMediaItemControllerCleanup()
   : mAvailableTypesInitialized(false),
     mIdleServiceRegistered(false),
     mState(STATE_IDLE),
-    mMutex(nsnull)
+    mMutex("sbMediaItemControllerCleanup::mMutex")
 {
   SB_PRLOG_SETUP(sbMediaItemControllerCleanup);
   TRACE_FUNCTION("");

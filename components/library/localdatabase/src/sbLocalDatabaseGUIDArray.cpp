@@ -100,7 +100,7 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mPrefetchedRows(PR_FALSE),
   mIsFullLibrary(PR_FALSE),
   mSuppress(0),
-  mPropIdsLock(nsnull)
+  mPropIdsLock("sbLocalDatabaseGUIDArray::mPropIdsLock")
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {

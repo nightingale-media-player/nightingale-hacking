@@ -230,7 +230,7 @@ public:
   : m_pEngine(nsnull)
   , m_Shutdown(PR_FALSE)
   , m_Running(PR_FALSE)
-  , m_pHandleLock(nsnull)
+  , m_pHandleLock("QueryProcessorQueue::m_pHandleLock")
   , m_pHandle(nsnull)
   , m_pQueueMonitor("QueryProcessorQueue::m_pQueueMonitor")
   , m_AnalyzeCount(0) {
