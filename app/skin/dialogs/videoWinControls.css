@@ -202,7 +202,7 @@
   width: 24px !important;
   height: 25px !important;
   -moz-appearance: none !important;
-  -moz-background-clip: padding !important;
+  background-clip: padding-box !important;
   background-color: transparent !important;
   background-image: none !important;
   -moz-border-radius: 0 !important;
@@ -217,7 +217,7 @@
 #full_screen_button:active {
   list-style-image: url("chrome://songbird/skin/video/osd-fullscreen-press.png") !important;
   -moz-appearance: none !important;
-  -moz-background-clip: padding !important;
+  background-clip: padding-box !important;
   background-color: transparent !important;
   background-image: none !important;
   -moz-border-radius: 0 !important;

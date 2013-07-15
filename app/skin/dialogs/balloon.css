@@ -113,7 +113,7 @@ Additional styles imported directly by notification popup balloons.
 
 .balloontip-close-button {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-background-clip: padding !important;
+  background-clip: padding-box !important;
   border: none !important;
   margin: 0px !important;
   padding: 0px !important;

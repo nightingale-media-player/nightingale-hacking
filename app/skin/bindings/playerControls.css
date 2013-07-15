@@ -44,7 +44,7 @@ Imported by bindings.css or directly into feathers.
 .sb-player-button > .clickhold-button
 {
   -moz-appearance: none !important;
-  -moz-background-clip: padding !important;
+  background-clip: padding-box !important;
   background-color: transparent !important;
   border: none !important;
   margin: 0px;
