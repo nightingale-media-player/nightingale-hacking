@@ -164,7 +164,7 @@ treecolpicker > .tree-columnpicker-icon {
 
 
 #nav-bar toolbarbutton {  
-  -moz-background-clip:border;
+  background-clip:border-box;
 
   min-width:22px;
     

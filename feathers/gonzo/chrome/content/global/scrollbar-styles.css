@@ -135,7 +135,7 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"] {
 
 scrollbarbutton {
   background-position:center 0px;
-  -moz-background-clip:border;
+  background-clip:border-box;
 }
 scrollbarbutton:hover {
   background-position:center -10px;

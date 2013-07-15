@@ -175,7 +175,7 @@ treecolpicker > .tree-columnpicker-icon {
 
 
 #nav-bar toolbarbutton {  
-  -moz-background-clip:border;
+  background-clip:border-box;
 
   min-width:24px;
   min-height:20px;
@@ -202,7 +202,7 @@ treecolpicker > .tree-columnpicker-icon {
   display: none;
 }
 #nav-bar toolbarbutton#mediapages-button {  
-  -moz-background-clip:border;
+  background-clip:border-box;
   -moz-image-region: rect(0px 11px 20px 0px);
 }
 #nav-bar toolbarbutton#mediapages-button:hover {
@@ -219,7 +219,7 @@ treecolpicker > .tree-columnpicker-icon {
 
 #nav-bar toolbarbutton#forward-button,
 #nav-bar toolbarbutton#mediapages-button-listview {  
-  -moz-background-clip:border;
+  background-clip:border-box;
   -moz-image-region: rect(0px 24px 20px 0px);
 }
 #nav-bar toolbarbutton#forward-button:hover,

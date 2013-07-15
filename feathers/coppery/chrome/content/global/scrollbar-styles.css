@@ -145,7 +145,7 @@ scrollbar[orient="horizontal"] > stack {
 }
 scrollbar[orient="horizontal"] > scrollbarbutton {
   background-position:center 0px;
-  -moz-background-clip:border;
+  background-clip:border-box;
 }
 scrollbar[orient="horizontal"] > scrollbarbutton:hover {
   background-position:center -18px;
@@ -158,7 +158,7 @@ scrollbar[orient="horizontal"] > scrollbarbutton[disabled="true"] {
 }
 scrollbar[orient="vertical"] > scrollbarbutton {
   background-position:center 0px;
-  -moz-background-clip:border;
+  background-clip:border-box;
 }
 scrollbar[orient="vertical"] > scrollbarbutton:hover {
   background-position:center -20px;

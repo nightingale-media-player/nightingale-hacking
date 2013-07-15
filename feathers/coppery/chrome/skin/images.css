@@ -94,7 +94,7 @@ menulist .dropmarker-icon {
 button,
 toolbarbutton,
 menulist {
-  -moz-background-clip:border;
+  background-clip:border-box;
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;
   background-position:center 0px;
@@ -572,7 +572,7 @@ treechildren::-moz-tree-twisty(open) {
   background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-button.png');
   background-position: center 0px;
   background-repeat: no-repeat;
-  -moz-background-clip:border;
+  background-clip:border-box;
   -moz-image-region: rect(0px 24px 20px 0px);
   opacity: 1.0 !important;
 }

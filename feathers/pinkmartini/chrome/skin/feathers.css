@@ -137,7 +137,7 @@ menupopup,
 popup {
   background-color:rgb(255,255,255);
   border: 1px solid rgb(131,131,131) !important;
-  -moz-background-clip: padding;
+  background-clip: padding-box;
 }
 
 tree,
@@ -1742,7 +1742,7 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"] {
 
 scrollbarbutton {
   background-position:center 0px !important;
-  -moz-background-clip:border !important;
+  background-clip:border-box !important;
 }
 scrollbarbutton:hover {
   background-position:center -10px !important;

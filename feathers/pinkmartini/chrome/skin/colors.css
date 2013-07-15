@@ -165,7 +165,7 @@ treecolpicker > .tree-columnpicker-icon {
 
 
 #nav-bar toolbarbutton {  
-  -moz-background-clip:border;
+  background-clip:border-boz;
   min-width:22px;
   min-height:22px;
   max-height:22px;
@@ -189,7 +189,7 @@ treecolpicker > .tree-columnpicker-icon {
   display: none;
 }
 #nav-bar toolbarbutton#mediapages-button {  
-  -moz-background-clip:border;
+  background-clip:border-box;
   -moz-image-region: rect(0px 11px 20px 0px);
 }
 #nav-bar toolbarbutton#mediapages-button:hover {
