@@ -337,7 +337,9 @@ BrowserGlue.prototype = {
   _onAppDefaults: function BG__onAppDefaults() {
     // apply distribution customizations (prefs)
     // other customizations are applied in _onProfileStartup()
-    this._distributionCustomizer.applyPrefDefaults();
+    // XXX Songbird: allow not having a distribution customizer
+    if (this._distributionCustomizer)
+      this._distributionCustomizer.applyPrefDefaults();
   },
 
   // profile startup handler (contains profile initialization routines)
@@ -351,7 +353,9 @@ BrowserGlue.prototype = {
 
     // apply distribution customizations
     // prefs are applied in _onAppDefaults()
-    this._distributionCustomizer.applyCustomizations();
+    // XXX Songbird: allow not having a distribution customizer
+    if (this._distributionCustomizer)
+      this._distributionCustomizer.applyCustomizations();
 
     // handle any UI migration
     this._migrateUI();
