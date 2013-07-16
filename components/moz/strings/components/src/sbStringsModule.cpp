@@ -91,7 +91,7 @@ static const mozilla::Module::ContractIDEntry kStringBundleContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kStringBundleCategories[] = {
-  { "xpcom-startup", "service", SB_STRINGBUNDLESERVICE_CONTRACTID },
+  { "xpcom-startup", "service,@songbirdnest.com/Songbird/stringbundle;1", SB_STRINGBUNDLESERVICE_CONTRACTID },
   { NULL }
 };
 
