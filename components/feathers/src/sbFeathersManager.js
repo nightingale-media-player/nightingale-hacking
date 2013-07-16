@@ -1023,8 +1023,8 @@ FeathersManager.prototype = {
       return;
     }
 
-    layoutDescription = this.getLayoutDescription(layoutURL);
-    skinDescription = this.getSkinDescription(internalName);
+    var layoutDescription = this.getLayoutDescription(layoutURL);
+    var skinDescription = this.getSkinDescription(internalName);
     
     // Make sure we know about the requested skin and layout
     if (layoutDescription == null || skinDescription == null) {
