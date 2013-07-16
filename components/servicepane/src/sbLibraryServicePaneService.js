@@ -114,6 +114,8 @@ sbLibraryServicePane.prototype.classID =
   Components.ID("{64ec2154-3733-4862-af3f-9f2335b14821}");
 sbLibraryServicePane.prototype.classDescription =
   "Songbird Library Service Pane Service";
+sbLibraryServicePane.prototype.className =
+  "LibraryServicePaneService";
 sbLibraryServicePane.prototype.contractID =
   CONTRACTID;
 sbLibraryServicePane.prototype._xpcom_categories = [{

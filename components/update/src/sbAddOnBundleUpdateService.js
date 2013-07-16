@@ -97,7 +97,8 @@ if (typeof(Cu) == "undefined")
 //
 
 var sbAddOnBundleUpdateServiceCfg = {
-  className: "Songbird Add-on Bundle Update Service",
+  classDescription: "Songbird Add-on Bundle Update Service",
+  className: "AddonBundleUpdateService",
   cid: Components.ID("{927d9849-8565-4bc4-805a-f3a6ad1b25ec}"),
   contractID: "@songbirdnest.com/AddOnBundleUpdateService;1",
   ifList: [ Ci.sbIAddOnBundleUpdateService, Ci.nsIObserver ],
@@ -159,7 +160,8 @@ sbAddOnBundleUpdateService.prototype = {
   //   _addOnBundleLoader       Add-on bundle loader object.
   //
 
-  classDescription: sbAddOnBundleUpdateServiceCfg.className,
+  classDescription: sbAddOnBundleUpdateServiceCfg.classDescription,
+  className: sbAddOnBundleUpdateServiceCfg.className,
   classID: sbAddOnBundleUpdateServiceCfg.cid,
   contractID: sbAddOnBundleUpdateServiceCfg.contractID,
   _xpcom_categories: sbAddOnBundleUpdateServiceCfg.categoryList,
@@ -256,7 +258,10 @@ sbAddOnBundleUpdateService.prototype = {
   //
   //----------------------------------------------------------------------------
 
-  QueryInterface: XPCOMUtils.generateQI(sbAddOnBundleUpdateServiceCfg.ifList),
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.sbIAddOnBundleUpdateService, 
+    Ci.nsIObserver
+  ]),
 
 
   //----------------------------------------------------------------------------

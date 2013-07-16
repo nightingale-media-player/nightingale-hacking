@@ -39,7 +39,8 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_CLH_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
 const SONGBIRD_CLH_CID = Components.ID("{128badd1-aa05-4508-87cc-f3cb3e9b5499}");
-const SONGBIRD_CLH_CLASSNAME = "Songbird Command Line Handler";
+const SONGBIRD_CLH_CLASSDESC = "Songbird Command Line Handler";
+const SONGBIRD_CLH_CLASSNAME = "sbCommandLineHandler";
 // "m" for ordinary priority see sbICommandLineManager.idl
 const SONGBIRD_CLH_CATEGORY= "m-songbird-clh";
 
@@ -112,7 +113,7 @@ function sbCommandLineHandler() {
 
 sbCommandLineHandler.prototype = {
   className: SONGBIRD_CLH_CLASSNAME,
-  classDescription: SONGBIRD_CLH_CLASSNAME,
+  classDescription: SONGBIRD_CLH_CLASSDESC,
   classID: SONGBIRD_CLH_CID,
   contractID: SONGBIRD_CLH_CONTRACTID,
 

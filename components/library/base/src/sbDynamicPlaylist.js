@@ -83,6 +83,7 @@ function sbDynamicPlaylistService()
 
 sbDynamicPlaylistService.prototype = {
   classDescription: "Dynamic Playlist Service",
+  className: "DynamicPlaylistService",
   classID:    Components.ID("{10a07ef5-8ab6-4728-9172-4e609f65b4a2}"),
   contractID: "@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1",
   _xpcom_catrgories: [{

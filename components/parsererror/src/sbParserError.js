@@ -27,7 +27,8 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_PARSERERRORHANDLER_CONTRACTID = "@songbirdnest.com/Songbird/ParserErrorHandler;1";
-const SONGBIRD_PARSERERRORHANDLER_CLASSNAME = "Songbird Parser Error Handler";
+const SONGBIRD_PARSERERRORHANDLER_CLASSDESC = "Songbird Parser Error Handler";
+const SONGBIRD_PARSERERRORHANDLER_CLASSNAME = "ParserErrorHandler";
 const SONGBIRD_PARSERERRORHANDLER_CID = Components.ID("{213a0ebb-12b3-492f-bc4c-f472f8f24d2c}");
 
 const MSG_ERROR_UNDEFINEDENTITY = '[JavaScript Error: "undefined entity"';
@@ -106,7 +107,8 @@ function ParserErrorHandler() {
 ParserErrorHandler.prototype.constructor = ParserErrorHandler;
 
 ParserErrorHandler.prototype = {
-  classDescription: SONGBIRD_PARSERERRORHANDLER_CLASSNAME,
+  classDescription: SONGBIRD_PARSERERRORHANDLER_CLASSDESC,
+  className: SONGBIRD_PARSERERRORHANDLER_CLASSNAME,
   classID: SONGBIRD_PARSERERRORHANDLER_CID,
   contractID: SONGBIRD_PARSERERRORHANDLER_CONTRACTID,
   _xpcom_categories: [{
