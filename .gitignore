@@ -2,7 +2,7 @@
 *.anjuta*
 dependencies/linux-*
 .DS_Store
-dependencies/vendor
+# dependencies/vendor
 dependencies/*.zip
 dependencies/*.tar.???
 dependencies/*.tar.????
