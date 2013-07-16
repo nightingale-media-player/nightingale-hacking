@@ -31,7 +31,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_HOTKEYACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyActions;1";
 const SONGBIRD_HOTKEYACTIONS_CLASSNAME = "Songbird Hotkey Actions Service Interface";
-const SONGBIRD_HOTKEYACTIONS_CID = Components.ID("{0BB80965-77C8-4212-866C-F22677F75A2C}");
+const SONGBIRD_HOTKEYACTIONS_CID = Components.ID("{0bb80965-77c8-4212-866c-f22677f75a2c}");
 
 function HotkeyActions() {
   this._bundles = new Array();
