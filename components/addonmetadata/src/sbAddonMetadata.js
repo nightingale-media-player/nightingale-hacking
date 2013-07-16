@@ -35,7 +35,8 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://gre/modules/AddonManager.jsm");
  
 const CONTRACTID = "@mozilla.org/rdf/datasource;1?name=addon-metadata";
-const CLASSNAME = "Songbird Addon Metadata Datasource";
+const CLASSNAME = "AddonMetadata";
+const CLASSDESC = "Songbird Addon Metadata Datasource";
 const CID = Components.ID("{a1edd551-0f29-4ce9-aebc-92fbee77f37e}");
 const IID = Components.interfaces.nsIRDFDataSource;
 
@@ -102,7 +103,7 @@ function AddonMetadata() {
 };
 
 AddonMetadata.prototype = {
-  classDescription: CLASSNAME,
+  classDescription: CLASSDESC,
   className: CLASSNAME,
   classID: CID,
   contractID: CONTRACTID,
