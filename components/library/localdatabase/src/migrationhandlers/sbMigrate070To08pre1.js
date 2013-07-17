@@ -115,8 +115,5 @@ sbLocalDatabaseMigrate070to08pre1.prototype = {
 // Module
 // 
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLocalDatabaseMigrate070to08pre1
-  ]);
-}
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLocalDatabaseMigrate070to08pre1]);
+

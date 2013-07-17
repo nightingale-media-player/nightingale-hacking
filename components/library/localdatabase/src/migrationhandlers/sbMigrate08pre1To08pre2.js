@@ -56,7 +56,7 @@ sbLocalDatabaseMigrate08pre1to08pre2.prototype = {
 
   classDescription: 'Songbird Migration Handler for 0.8pre1 to 0.8pre2, removing unused indices',
   classID: Components.ID("{3a67a390-8b2e-11dd-ad8b-0800200c9a66}"),
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.8.0 pre1 to 0.8.0 pre2",
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.8.0pre1to0.8.0pre2",
   
   _databaseLocation: null,
   _databaseGUID: null,
@@ -115,8 +115,5 @@ sbLocalDatabaseMigrate08pre1to08pre2.prototype = {
 // Module
 // 
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLocalDatabaseMigrate08pre1to08pre2
-  ]);
-}
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLocalDatabaseMigrate08pre1to08pre2]);
+

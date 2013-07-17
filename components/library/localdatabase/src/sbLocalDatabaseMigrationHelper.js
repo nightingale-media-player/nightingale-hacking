@@ -49,6 +49,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
   __proto__: SBJobUtils.JobBase.prototype,
   
   classDescription: "Songbird Local Database Library Migration",
+  className:        "LocalDatabaseLibraryMigration",
   classID:          Components.ID("{744f6217-4cb9-4929-8d1d-72492c1b8c83}"),
   contractID:       SBLDBCOMP + "MigrationHelper;1",
   implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,

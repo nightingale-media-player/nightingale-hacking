@@ -51,6 +51,30 @@ component {e4fd9496-1dd1-11b2-93ca-d33e8cc507ba} sbMetadataLookupJob.js
 component {46733000-1dd2-11b2-8022-ba2da8a6a950} sbMetadataLookupManager.js
 component {9e599632-1dd1-11b2-ab82-e0952e7285ce} sbMetadataLookupTestProvider.js
 component {1066527d-b135-4e0c-9ea4-f6109ae97d02} sbMetrics.js
+component {54a1d507-d085-4bfe-b729-1ffa13291c24} sbMigrate061to070.js
+component {60e48ff7-13b4-498d-9c2e-a077a34a9ca6} sbMigrate070RC1to070.js
+component {116c3a20-dd68-45e9-81fd-ebeebfd21bf6} sbMigrate070RC2to070.js
+component {b080f650-7ef2-11dd-ad8b-a0800200c9a6} sbMigrate070To08pre1.js
+component {3a67a390-8b2e-11dd-ad8b-0800200c9a66} sbMigrate08pre1To08pre2.js
+component {62bb8fb0-8fd8-11dd-ad8b-0800200c9a66} sbMigrate08pre2To08pre3.js
+component {e313d2f1-d1be-4683-963f-5f43c5245c6c} sbMigrate08pre3To08pre4.js
+component {98aafd32-9ed8-4a67-9cb6-1d8babe3c0c9} sbMigrate10To11pre1.js
+component {cd3b44bf-1f72-4006-aa06-2f00fc0948bb} sbMigrate11pre1To11pre1b.js
+component {3e473356-a84a-4243-a597-6919cb1a26ff} sbMigrate11pre1bTo11pre1c.js
+component {bcc617e0-1dd1-11b2-b34d-d3db6eea6e70} sbMigrate11pre1cTo11pre1d.js
+component {e0ac0880-f709-11dd-87af-0800200c9a66} sbMigrate11pre1dTo11pre1e.js
+component {2cba8c55-029a-4313-b7a3-492f6fc765b2} sbMigrate11pre1eTo11pre1f.js
+component {0dc77be1-9a74-4d19-8a11-15fa3a9dcad0} sbMigrate12pre1To12pre1b.js
+component {783f8680-5156-11de-8a39-0800200c9a66} sbMigrate12To13pre.js
+component {925d55b1-9fed-451b-857b-3cdb08150d8c} sbMigrate13to14.wmaprotected.js
+component {6c8ba317-bd30-479d-9d9a-8ee44d1f36f7} sbMigrate14to15pre.smartplaylist.js
+component {73b78226-1dd2-11b2-92ba-c4ba81af8fc1} sbMigrate14to15pre0.contentType.js
+component {6f74cb1d-49b5-4475-99ca-63ebb3696a40} sbMigrate14to17pre0.smartplaylist.js
+component {0f5c7861-873d-419e-9de7-8a1d157050b0} sbMigrate18to19pre0.discSortTrackSort.js
+component {d460596d-aa22-4bd4-ae83-e82fb5a70019} sbMigrate18to19pre0.fileURL.js
+component {073f0b42-b3c1-465a-bcce-9f1f50fbd06d} sbMigrate18to19pre0.index.js
+component {7f77e6fa-b3b0-40d5-88f8-203482abfbd9} sbMigrate18to19pre0.indexSort.js
+component {4eba22e9-d657-4599-a181-b8340852e7a2} sbMigrate19to110pre0.addMetadataHashIdentity.js
 component {c0a0ebce-1dd1-11b2-afed-a5eeb1302690} sbMockFirmwareHandlerURLService.js
 component {02ba1ba0-fee5-11dd-87af-0800200c9a66} sbMoveRenameHelper.js
 component {03f78779-fcb7-4442-9a0c-e8547b4f1368} sbOSDControlService.js
@@ -189,30 +213,30 @@ contract @songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1 {c7d2688a-
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1 {f7035bf4-3eae-4733-991e-ea5800672101}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1 {aa55f918-cb84-45e6-9827-9c22d3e9f92d}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/MediaListViewState;1 {9a1a9305-ca11-4067-aa24-baeb64231dfa}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 12 to 13 {98aafd32-9ed8-4a67-9cb6-1d8babe3c0c9}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 13 to 14 {cd3b44bf-1f72-4006-aa06-2f00fc0948bb}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 14 to 15 {3e473356-a84a-4243-a597-6919cb1a26ff}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 15 to 16 {bcc617e0-1dd1-11b2-b34d-d3db6eea6e70}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 16 to 17 {e0ac0880-f709-11dd-87af-0800200c9a66}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 17 to 18 {2cba8c55-029a-4313-b7a3-492f6fc765b2}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 18 to 19 {0dc77be1-9a74-4d19-8a11-15fa3a9dcad0}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/ 19 to 20 {783f8680-5156-11de-8a39-0800200c9a66}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.6.1 to 0.7.0 {54a1d507-d085-4bfe-b729-1ffa13291c24}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0 RC1 to 0.7.0 {60e48ff7-13b4-498d-9c2e-a077a34a9ca6}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0 RC2 to 0.7.0 {116c3a20-dd68-45e9-81fd-ebeebfd21bf6}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0 to 0.8.0 pre1 {b080f650-7ef2-11dd-ad8b-a0800200c9a6}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.8.0 pre1 to 0.8.0 pre2 {3a67a390-8b2e-11dd-ad8b-0800200c9a66}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/10 to 11 {62bb8fb0-8fd8-11dd-ad8b-0800200c9a66}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/20to21 {925d55b1-9fed-451b-857b-3cdb08150d8c}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/21to22 {73b78226-1dd2-11b2-92ba-c4ba81af8fc1}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/22to23 {6c8ba317-bd30-479d-9d9a-8ee44d1f36f7}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/23to24 {6f74cb1d-49b5-4475-99ca-63ebb3696a40}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/24to25 {d460596d-aa22-4bd4-ae83-e82fb5a70019}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/25to26 {0f5c7861-873d-419e-9de7-8a1d157050b0}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/26to27 {073f0b42-b3c1-465a-bcce-9f1f50fbd06d}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/27to28 {7f77e6fa-b3b0-40d5-88f8-203482abfbd9}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/28to29 {4eba22e9-d657-4599-a181-b8340852e7a2}
-# contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/utf16 to utf8 {e313d2f1-d1be-4683-963f-5f43c5245c6c}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.6.1to0.7.0 {54a1d507-d085-4bfe-b729-1ffa13291c24}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0RC1to0.7.0 {60e48ff7-13b4-498d-9c2e-a077a34a9ca6}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0RC2to0.7.0 {116c3a20-dd68-45e9-81fd-ebeebfd21bf6}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0to0.8.0pre1 {b080f650-7ef2-11dd-ad8b-a0800200c9a6}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.8.0pre1to0.8.0pre2 {3a67a390-8b2e-11dd-ad8b-0800200c9a66}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/10to11 {62bb8fb0-8fd8-11dd-ad8b-0800200c9a66}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/12to13 {98aafd32-9ed8-4a67-9cb6-1d8babe3c0c9}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/13to14 {cd3b44bf-1f72-4006-aa06-2f00fc0948bb}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/14to15 {3e473356-a84a-4243-a597-6919cb1a26ff}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/15to16 {bcc617e0-1dd1-11b2-b34d-d3db6eea6e70}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/16to17 {e0ac0880-f709-11dd-87af-0800200c9a66}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/17to18 {2cba8c55-029a-4313-b7a3-492f6fc765b2}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/18to19 {0dc77be1-9a74-4d19-8a11-15fa3a9dcad0}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/19to20 {783f8680-5156-11de-8a39-0800200c9a66}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/20to21 {925d55b1-9fed-451b-857b-3cdb08150d8c}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/21to22 {73b78226-1dd2-11b2-92ba-c4ba81af8fc1}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/22to23 {6c8ba317-bd30-479d-9d9a-8ee44d1f36f7}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/23to24 {6f74cb1d-49b5-4475-99ca-63ebb3696a40}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/24to25 {d460596d-aa22-4bd4-ae83-e82fb5a70019}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/25to26 {0f5c7861-873d-419e-9de7-8a1d157050b0}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/26to27 {073f0b42-b3c1-465a-bcce-9f1f50fbd06d}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/27to28 {7f77e6fa-b3b0-40d5-88f8-203482abfbd9}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/28to29 {4eba22e9-d657-4599-a181-b8340852e7a2}
+contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/utf16toutf8 {e313d2f1-d1be-4683-963f-5f43c5245c6c}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1 {744f6217-4cb9-4929-8d1d-72492c1b8c83}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1 {6b9b9718-05b4-4ee3-ab09-a9d575f4c2aa}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1 {89cc7c59-2d70-4d6f-8472-59e15f2a3581}

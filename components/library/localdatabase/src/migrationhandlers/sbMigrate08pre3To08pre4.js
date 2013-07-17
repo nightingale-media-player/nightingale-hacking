@@ -58,7 +58,7 @@ sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
   classDescription: 'Songbird Migration Handler for converting utf16 to utf8 storage.',
   classID: Components.ID("{E313D2F1-D1BE-4683-963F-5F43C5245C6C}"),  
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "utf16 to utf8",
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "utf16toutf8",
 
   _mOldLibrary: null,
   _databaseGUID: null,
@@ -236,9 +236,6 @@ sbLibraryMigration.prototype = {
 //-----------------------------------------------------------------------------
 // Module
 //-----------------------------------------------------------------------------
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLibraryMigration
-  ]);
-}
+
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLibraryMigration]);
 

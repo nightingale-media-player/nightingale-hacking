@@ -51,12 +51,12 @@ function sbLocalDatabaseMigrate070RC1to070()
 // sbLocalDatabaseMigration Implementation
 //-----------------------------------------------------------------------------
 
-sbLocalDatabaseMigrate070RC1to070.prototype = {
+sbLocalDatabaseMigrate070RC2to070.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
 
   classDescription: 'Songbird Migration Handler for 0.7.0 RC2 to 0.7.0',
   classID: Components.ID("{116C3A20-DD68-45E9-81FD-EBEEBFD21BF6}"),
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.7.0 RC2 to 0.7.0",
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.7.0RC2to0.7.0",
   
   _databaseLocation: null,
   _databaseGUID: null,
@@ -142,8 +142,5 @@ sbLocalDatabaseMigrate070RC1to070.prototype = {
 // Module
 // 
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLocalDatabaseMigrate070RC1to070
-  ]);
-}
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLocalDatabaseMigrate070RC2to070]);
+

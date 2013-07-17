@@ -129,9 +129,6 @@ sbLibraryMigration.prototype = {
 //-----------------------------------------------------------------------------
 // Module
 //-----------------------------------------------------------------------------
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLibraryMigration
-  ]);
-}
+
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLibraryMigration]);
 

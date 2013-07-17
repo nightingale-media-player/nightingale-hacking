@@ -58,7 +58,7 @@ sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
   classDescription: 'Songbird Migration Handler, version 13 to 14',
   classID: Components.ID("{cd3b44bf-1f72-4006-aa06-2f00fc0948bb}"),
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + ' 13 to 14',
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + '13to14',
 
   _databaseLocation: null,
   _databaseGUID: null,
@@ -113,9 +113,6 @@ sbLibraryMigration.prototype = {
 //-----------------------------------------------------------------------------
 // Module
 //-----------------------------------------------------------------------------
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([
-    sbLibraryMigration
-  ]);
-}
+
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbLibraryMigration]);
 
