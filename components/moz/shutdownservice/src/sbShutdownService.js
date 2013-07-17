@@ -316,14 +316,3 @@ sbShutdownJobService.prototype =
 // XPCOM Registration
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbShutdownJobService]);
-
-//    function(aCompMgr, aFileSpec, aLocation) {
-//      XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
-//                                                  SB_SHUTDOWNSERVICE_DESC,
-//                                                  "service," +
-//                                                  SB_SHUTDOWNSERVICE_CONTRACTID,
-//                                                  true,
-//                                                  true);
-//    }
-//  );
-//}
