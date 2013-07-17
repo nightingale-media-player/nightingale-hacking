@@ -777,6 +777,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getSkinDescription: function getSkinDescription(internalName) {
+    dump("sbFeathersManager::getSkinDescription(internalName = "+internalName+")\n");
     return this._skins[internalName];
   },
   
@@ -813,6 +814,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */    
   getLayoutDescription: function getLayoutDescription(url) {
+    dump("sbFeathersManager::getLayoutDescription(url = "+url+")\n");
     return (url in this._layouts ? this._layouts[url] : null);
   }, 
 
@@ -1023,9 +1025,12 @@ FeathersManager.prototype = {
       return;
     }
 
+    dump("sbFeathersManager::switchFeathers(layoutURL = "+layoutURL+", internalName = "+internalName+")\n");
     var layoutDescription = this.getLayoutDescription(layoutURL);
     var skinDescription = this.getSkinDescription(internalName);
-    
+    dump("sbFeathersManager::switchFeathers -- layoutDescription = "+layoutDescription+"\n");
+    dump("sbFeathersManager::switchFeathers -- skinDescription = "+skinDescription+"\n");
+
     // Make sure we know about the requested skin and layout
     if (layoutDescription == null || skinDescription == null) {
       throw new Components.Exception("Unknown layout/skin passed to switchFeathers");
