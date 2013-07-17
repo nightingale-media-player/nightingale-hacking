@@ -2,11 +2,11 @@
 *.anjuta*
 dependencies/linux-*
 .DS_Store
-#dependencies/vendor
+# dependencies/vendor
 dependencies/*.zip
 dependencies/*.tar.???
 dependencies/*.tar.????
-dependencies/linux-x86_64
+dependencies/**/*
 tools/win32/reshacker/ResHacker.ini
 tools/win32/reshacker/ResHacker.log
 songbirdconfig.out
