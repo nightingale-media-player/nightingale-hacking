@@ -81,6 +81,7 @@ component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
 # CONTRACTS #
 #############
 
+contract @mozilla.org/rdf/datasource;1?name=addon-metadata {a1edd551-0f29-4ce9-aebc-92fbee77f37e}
 contract @songbirdnest.com/aboutRedirector {42631c40-1cbe-4f3a-b859-7936e542130f}
 contract @songbirdnest.com/AddOnBundleUpdateService;1 {927d9849-8565-4bc4-805a-f3a6ad1b25ec}
 # contract @songbirdnest.com/AmazonMusic;1 {413cc7f0-3a16-4573-8c18-d7a583cf77f1}
@@ -396,7 +397,6 @@ category playlist-reader html @songbirdnest.com/Songbird/Playlist/Reader/HTML;1
 category playlist-reader m3u @songbirdnest.com/Songbird/Playlist/Reader/M3U;1
 category playlist-reader pls @songbirdnest.com/Songbird/Playlist/Reader/PLS;1
 category playlist-writer m3u @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
-# category app-startup AddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
 category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
 # REGISTERED IN MODULE # category profile-after-change sbStringBundleService service,@songbirdnest.com/Songbird/stringbundle;1
 category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
@@ -423,4 +423,4 @@ category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdn
 category xpcom-category-entry-added ServicePaneService service,@songbirdnest.com/servicepane/service;1
 category xpcom-category-entry-removed ServicePaneService service,@songbirdnest.com/servicepane/service;1
 # category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
-category xpcom-shutdown AddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
+# category xpcom-shutdown AddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
