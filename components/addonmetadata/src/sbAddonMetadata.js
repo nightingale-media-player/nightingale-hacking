@@ -237,63 +237,53 @@ AddonMetadata.prototype = {
                        .getService(Components.interfaces.nsIRDFContainerUtils);
     var container = cu.MakeSeq(this._datasource, itemRoot);
 
+    var that = this;
     AddonManager.getAllAddons(function(aAddons) {
       // Read the install.rdf for every addon
       for (var i = 0; i < aAddons.length; i++) {
-
         var id = aAddons[i].id;
 
-        if (this._isExtensionDisabled(id)) {
-          continue;
-        }
-
-        var location = AddonManager.getAddonByID(id, function(addon) {
-          return addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file.path;
-        });
-
-        var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
-
-        if (!installManifestFile.exists()) {
-          this._reportErrors(["install.rdf for id " + id +  " was not found " + 
-                    "at location " + installManifestFile.path]);
-        }
-        
-        var manifestDS = this._getDatasource(installManifestFile);
-        var itemNode = this._RDF.GetResource(ADDON_NS(id));
-        // Copy the install.rdf metadata into the master datasource
-        this._copyManifest(itemNode, manifestDS);
-        
-        // Add the new install.rdf root to the list of extensions
-        container.AppendElement(itemNode);
+        dump("AddonMetadata::_buildDatasource -- about to call this._checkExtension(id = "+id+")\n");
+        that._checkExtension(id);
       }
 
-      // Save changes  
-      this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
+      // Save changes
+      that._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
                       .Flush();
       //debug("\nAddonMetadata: _buildDatasource complete \n");
     });
   },
-  
-  
-  
-  /**
-   * Return true if the given extension GUID has been disabled in the EM
-   */
 
-  _isExtensionDisabled: function _isExtensionDisabled(id) {
-    var ret;
-    this._checkExtension(id, function(cbRet) { ret = cbRet; });
-    return ret;
+
+  _checkExtension: function _checkExtension(id) {
+    this._getExtension(id, function(addon) {
+      // if (addon) {
+        dump("in callback, addon.name = "+addon.name+"\n");
+        if (!addon.userDisabled && !addon.appDisabled) {
+          var location = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file.path;
+
+          var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
+
+          if (!installManifestFile.exists()) {
+            this._reportErrors(["install.rdf for id " + id +  " was not found " + 
+                                "at location " + installManifestFile.path]);
+          }
+          
+          var manifestDS = this._getDatasource(installManifestFile);
+          var itemNode = this._RDF.GetResource(ADDON_NS(id));
+          // Copy the install.rdf metadata into the master datasource
+          this._copyManifest(itemNode, manifestDS);
+          
+          // Add the new install.rdf root to the list of extensions
+          container.AppendElement(itemNode);
+        }
+      // }
+    });
   },
 
-  _checkExtension: function _checkExtension(id, callback) {
-    AddonManager.getAddonByID(id, function(addon) {
-      if (addon.userDisabled || addon.appDisabled) {
-        callback(true);
-      } else {
-        callback(false);
-      }
-    })
+
+  _getExtension: function _getExtension(id, callback) {
+      AddonManager.getAddonByID(id, function(addon) { callback(addon); })
   },
 
 

@@ -177,8 +177,9 @@ AddonMetadataReader.prototype = {
       "urn:songbird:addon:root",
       RDFHelper.DEFAULT_RDF_NAMESPACES
     );
-    
+
     for (var i = 0; i < addons.length; i++) {
+      dump("AddonMetadataReader::loadMetadata -- in loop: i = "+i+"\n");
       // first a little workaround to for backwards compatibility 
       // with the now obsolete <feathers> element
       // TODO: remove this when we stop supporting 0.4 feathers
@@ -188,7 +189,8 @@ AddonMetadataReader.prototype = {
                        "install.rdf is deprecated and will go away in a future version.");
         feathersHub = feathersHub.feathers[0];
       }
-      
+
+      dump("AddonMetadataReader::loadMetadata -- about to check feathersHub.skin\n");
       if (feathersHub.skin) {
         var skins = feathersHub.skin;
         for (var j = 0; j < skins.length; j++) {
@@ -222,6 +224,7 @@ AddonMetadataReader.prototype = {
    * Extract skin metadata
    */
   _registerSkin: function _registerSkin(addon, skin) {
+    dump("AddonMetadataReader::_registerSkin(addon = "+addon+", skin = "+skin+")\n");
     var description = new SkinDescription();
     
     // Array of error messages
@@ -1105,6 +1108,8 @@ FeathersManager.prototype = {
    * Relaunch the main window
    */
   openPlayerWindow: function openPlayerWindow() {
+    dump("sbFeathersManager::openPlayerWindow\n");
+
     // First, check if we should auto switch to a new skin/layout
     // (but only if we're not already in the middle of a switch)
     if (this._autoswitch && !this._switching) {
