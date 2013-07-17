@@ -87,6 +87,7 @@ PublicPlaylistCommands.prototype.constructor = PublicPlaylistCommands;
 PublicPlaylistCommands.prototype = {
 
   classDescription: "Songbird Public Playlist Commands",
+  className:        "sbPublicPlaylistCommands",
   classID:          Components.ID("{1126ee77-2d85-4f79-a07a-b014da404e53}"),
   contractID:       "@songbirdnest.com/Songbird/PublicPlaylistCommands;1",
   _xpcom_categories: [{

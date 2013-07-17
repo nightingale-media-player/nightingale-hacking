@@ -30,6 +30,8 @@
 #define SONGBIRD_WATCHFOLDERSERVICE_CONTRACTID            \
   "@songbirdnest.com/watch-folder-service;1"
 #define SONGBIRD_WATCHFOLDERSERVICE_CLASSNAME             \
+  "sbWatchFolderService" 
+#define SONGBIRD_WATCHFOLDERSERVICE_DESCRIPTION           \
   "Songbird Watch Folder Service" 
 #define SONGBIRD_WATCHFOLDERSERVICE_CID                   \
 { /* BC4A17B5-4B9D-4A2C-BE93-7699CDD6B583 */              \

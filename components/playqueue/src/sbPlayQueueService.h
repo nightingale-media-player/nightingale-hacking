@@ -321,6 +321,8 @@ private:
 #define SB_PLAYQUEUESERVICE_CONTRACTID                                         \
   "@songbirdnest.com/Songbird/playqueue/service;1"
 #define SB_PLAYQUEUESERVICE_CLASSNAME                                          \
+  "sbPlayQueueService"
+#define SB_PLAYQUEUESERVICE_DESCRIPTION                                        \
   "Songbird Play Queue Service"
 #define SB_PLAYQUEUESERVICE_CID                                                \
   { 0xe6407d63, 0x33d2, 0x402e,                                                \

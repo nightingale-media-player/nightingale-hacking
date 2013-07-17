@@ -85,7 +85,8 @@ if (typeof(Cu) == "undefined")
 //
 
 var sbLibraryImporterManagerCfg = {
-  className: "Songbird Library Importer Manager Service",
+  classDescription: "Songbird Library Importer Manager Service",
+  className: "sbLibraryImporterManagerService",
   cid: Components.ID("{0ed2a7e0-78ac-4574-8554-b1e422b02642}"),
   contractID: "@songbirdnest.com/Songbird/LibraryImporterManager;1",
   ifList: [ Ci.nsIObserver,
@@ -136,7 +137,8 @@ sbLibraryImporterManager.prototype = {
   //   _observerSvc             Observer services object.
   //
 
-  classDescription: sbLibraryImporterManagerCfg.className,
+  classDescription: sbLibraryImporterManagerCfg.classDescription,
+  className: sbLibraryImporterManagerCfg.className,
   classID: sbLibraryImporterManagerCfg.cid,
   contractID: sbLibraryImporterManagerCfg.contractID,
   _xpcom_categories: sbLibraryImporterManagerCfg.categoryList,

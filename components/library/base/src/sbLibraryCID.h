@@ -28,7 +28,7 @@
 #define SONGBIRD_LIBRARYMANAGER_CONTRACTID                 \
   "@songbirdnest.com/Songbird/library/Manager;1"
 #define SONGBIRD_LIBRARYMANAGER_CLASSNAME                  \
-  "Songbird Library Manager"
+  "sbLibraryManager"
 #define SONGBIRD_LIBRARYMANAGER_CID                        \
 { /* ff27fd1d-183d-4c6d-89e7-1cd489f18bb9 */               \
   0xff27fd1d,                                              \
