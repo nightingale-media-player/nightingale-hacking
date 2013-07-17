@@ -385,7 +385,6 @@ category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlforma
 category external-uricontentlisteners application/vnd.songbird.maybe.media @songbirdnest.com/contentlistener/media;1
 category external-uricontentlisteners application/vnd.songbird.maybe.playlist @songbirdnest.com/contentlistener/media;1
 category external-uricontentlisteners sbMediaContentListener @songbirdnest.com/contentlistener/media;1
-category final-ui-startup feathers-manager @songbirdnest.com/songbird/feathersmanager;1
 category final-ui-startup sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
 category JavaScript-global-property songbird @songbirdnest.com/remoteapi/remoteplayer;1
 category library-importer iTunesLibraryImporter @songbirdnest.com/Songbird/ITunesImporter;1
