@@ -242,7 +242,8 @@ AddonMetadata.prototype = {
       for (var i = 0; i < aAddons.length; i++) {
 
         var id = aAddons[i].id;
-        if (this._isExtensionDisabled(id))) {
+
+        if (this._isExtensionDisabled(id)) {
           continue;
         }
 
@@ -410,8 +411,8 @@ AddonMetadata.prototype = {
   }
   // QueryInterface: XPCOMUtils.generateQI([
   //   IID,
-  //   Ci.nsIObserver,
-  //   Ci.nsISupports
+  //   Components.interfaces.nsIObserver,
+  //   Components.interfaces.nsISupports
   // ])
 }; // AddonMetadata.prototype
 
