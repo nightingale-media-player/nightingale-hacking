@@ -244,7 +244,7 @@ AddonMetadata.prototype = {
         var id = aAddons[i].id;
 
         dump("AddonMetadata::_buildDatasource -- about to call this._checkExtension(id = "+id+")\n");
-        that._checkExtension(id);
+        that._checkExtension(id, container);
       }
 
       // Save changes
@@ -255,29 +255,29 @@ AddonMetadata.prototype = {
   },
 
 
-  _checkExtension: function _checkExtension(id) {
+  _checkExtension: function _checkExtension(id, container) {
+    var that = this;
     this._getExtension(id, function(addon) {
-      // if (addon) {
-        dump("in callback, addon.name = "+addon.name+"\n");
-        if (!addon.userDisabled && !addon.appDisabled) {
-          var location = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file.path;
+      dump("in callback, addon.name = "+addon.name+"\n");
+      if (!addon.userDisabled && !addon.appDisabled) {
+        var file = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file;
+        file.append(FILE_INSTALL_MANIFEST);
 
-          var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
+        // dump("in callback, file = "+file+"\n");
+        var installManifestFile = file.clone();
 
-          if (!installManifestFile.exists()) {
-            this._reportErrors(["install.rdf for id " + id +  " was not found " + 
-                                "at location " + installManifestFile.path]);
-          }
-          
-          var manifestDS = this._getDatasource(installManifestFile);
-          var itemNode = this._RDF.GetResource(ADDON_NS(id));
-          // Copy the install.rdf metadata into the master datasource
-          this._copyManifest(itemNode, manifestDS);
-          
-          // Add the new install.rdf root to the list of extensions
-          container.AppendElement(itemNode);
+        if (!installManifestFile.exists()) {
+          that._reportErrors(["install.rdf for id " + id +  " was not found " + 
+                              "at location " + installManifestFile.path]);
         }
-      // }
+        
+        var manifestDS = that._getDatasource(installManifestFile);
+        var itemNode = that._RDF.GetResource(ADDON_NS(id));
+        // Copy the install.rdf metadata into the master datasource
+        that._copyManifest(itemNode, manifestDS);
+        // Add the new install.rdf root to the list of extensions
+        container.AppendElement(itemNode);
+      }
     });
   },
 
