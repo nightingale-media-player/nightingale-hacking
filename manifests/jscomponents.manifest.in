@@ -395,7 +395,7 @@ category app-startup SongbirdMediacoreManager service,@songbirdnest.com/Songbird
 category app-startup SongbirdMediaListViewMap service,@songbirdnest.com/Songbird/library/MediaListViewMap;1
 category app-startup SongbirdObsoleteDeviceManagerService service,@songbirdnest.com/Songbird/DeviceManager;1
 category app-startup ParserErrorHandler service,@songbirdnest.com/Songbird/ParserErrorHandler;1
-category app-startup SongbirdPlaybackHistoryService service,@songbirdnest.com/Songbird/PlaybackHistoryService;1
+## Causes a hang right now ## category app-startup SbPlaybackHistoryService service,@songbirdnest.com/Songbird/PlaybackHistoryService;1
 category app-startup sbPlayQueueService service,@songbirdnest.com/Songbird/playqueue/service;1
 category app-startup sbPublicPlaylistCommands service,@songbirdnest.com/Songbird/PublicPlaylistCommands;1
 category app-startup sbScreenSaverSuppressor service,@songbirdnest.com/Songbird/ScreenSaverSuppressor;1
