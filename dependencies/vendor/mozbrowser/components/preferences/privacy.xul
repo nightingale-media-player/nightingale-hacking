@@ -53,8 +53,7 @@
          xmlns:html="http://www.w3.org/1999/xhtml">
 
   <prefpane id="panePrivacy"
-            onpaneload="gPrivacyPane.init();"
-            helpTopic="prefs-privacy">
+            onpaneload="gPrivacyPane.init();">
 
     <preferences id="privacyPreferences">
   
@@ -186,10 +185,12 @@
         </vbox>
         <vbox id="historyCustomPane">
           <separator class="thin"/>
+          <!-- XXX SONGBIRD: we don't support private browsing yet
           <checkbox id="privateBrowsingAutoStart" class="indent"
                     label="&privateBrowsingPermanent2.label;"
                     accesskey="&privateBrowsingPermanent2.accesskey;"
                     preference="browser.privatebrowsing.autostart"/>
+          -->
 
           <vbox class="indent">
             <vbox class="indent">
@@ -262,6 +263,7 @@
     </groupbox>
 
     <!-- Location Bar -->
+    <!-- XXX SONGBIRD: we never show bookmarks as location bar suggestions
     <groupbox id="locationBarGroup">
       <caption label="&locationBar.label;"/>
 
@@ -283,6 +285,7 @@
         <label>&locbar.post.label;</label>
       </hbox>
     </groupbox>
+    -->
 
   </prefpane>
 

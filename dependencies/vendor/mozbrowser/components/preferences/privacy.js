@@ -206,7 +206,10 @@ var gPrivacyPane = {
   {
     if (document.getElementById("historyMode").value == "custom") {
       let disabled = this._autoStartPrivateBrowsing =
+        /* XXX SONGBIRD: we don't support private browsing yet
         document.getElementById("privateBrowsingAutoStart").checked;
+        */
+        false;
       this.dependentControls
           .forEach(function (aElement)
                    document.getElementById(aElement).disabled = disabled);

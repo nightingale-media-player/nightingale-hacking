@@ -53,7 +53,7 @@
 #ifdef XP_WIN
             onpaneload="gTabsPane.init();"
 #endif
-            helpTopic="prefs-tabs">
+  >
 
     <preferences id="tabsPreferences">
       <preference id="browser.link.open_newwindow"     name="browser.link.open_newwindow"     type="int"/>

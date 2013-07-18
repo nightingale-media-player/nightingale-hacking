@@ -133,17 +133,24 @@ var gMainPane = {
       // If we're in instant-apply mode, use the most recent browser window
       var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                          .getService(Components.interfaces.nsIWindowMediator);
-      win = wm.getMostRecentWindow("navigator:browser");
+      win = wm.getMostRecentWindow("Songbird:Main");
     }
     else
       win = window.opener;
 
     if (win) {
       var homePage = document.getElementById("browser.startup.homepage");
+      var browser = win.document.getElementById("content");
+
+	  /* XXX SONGBIRD: we only use the current tab
       var tabs = win.gBrowser.visibleTabs;
       function getTabURI(t) t.linkedBrowser.currentURI.spec;
       // FIXME Bug 244192: using dangerous "|" joiner!
       homePage.value = tabs.map(getTabURI).join("|");
+      */
+      var newVal = browser.currentURI.spec;
+
+      homePage.value = newVal;
     }
   },
 
@@ -179,19 +186,21 @@ var gMainPane = {
       // If we're in instant-apply mode, use the most recent browser window
       var wm = Cc["@mozilla.org/appshell/window-mediator;1"]
                  .getService(Ci.nsIWindowMediator);
-      win = wm.getMostRecentWindow("navigator:browser");
+      win = wm.getMostRecentWindow("Songbird:Main");
     }
     else
       win = window.opener;
 
     if (win && win.document.documentElement
-                  .getAttribute("windowtype") == "navigator:browser") {
+                  .getAttribute("windowtype") == "Songbird:Main") {
       windowIsPresent = true;
 
       var tabbrowser = win.document.getElementById("content");
+      /* SONGBIRD: we only use the current tab 
       if (tabbrowser.browsers.length > 1)
         useCurrent.label = useCurrent.getAttribute("label2");
       else
+        */
         useCurrent.label = useCurrent.getAttribute("label1");
     }
     else {

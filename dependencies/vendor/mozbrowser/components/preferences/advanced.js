@@ -66,9 +66,6 @@ var gAdvancedPane = {
     this.updateModeItems();
 #endif
     this.updateOfflineApps();
-#ifdef MOZ_CRASHREPORTER
-    this.initSubmitCrashes();
-#endif
     this.updateActualCacheSize();
   },
 
@@ -141,47 +138,6 @@ var gAdvancedPane = {
   {
     var checkbox = document.getElementById("checkSpelling");
     return checkbox.checked ? (this._storedSpellCheck == 2 ? 2 : 1) : 0;
-  },
-
-  /**
-   *
-   */
-  initSubmitCrashes: function ()
-  {
-    var checkbox = document.getElementById("submitCrashesBox");
-    try {
-      var cr = Components.classes["@mozilla.org/toolkit/crash-reporter;1"].
-               getService(Components.interfaces.nsICrashReporter);
-      checkbox.checked = cr.submitReports;
-    } catch (e) {
-      checkbox.style.display = "none";
-    }
-  },
-
-  /**
-   *
-   */
-  updateSubmitCrashes: function ()
-  {
-    var checkbox = document.getElementById("submitCrashesBox");
-    try {
-      var cr = Components.classes["@mozilla.org/toolkit/crash-reporter;1"].
-               getService(Components.interfaces.nsICrashReporter);
-      cr.submitReports = checkbox.checked;
-    } catch (e) { }
-  },
-
-  /**
-   * When the user toggles the layers.acceleration.disabled pref,
-   * sync its new value to the gfx.direct2d.disabled pref too.
-   */
-  updateHardwareAcceleration: function()
-  {
-#ifdef XP_WIN
-    var fromPref = document.getElementById("layers.acceleration.disabled");
-    var toPref = document.getElementById("gfx.direct2d.disabled");
-    toPref.value = fromPref.value;
-#endif
   },
 
   // NETWORK TAB
