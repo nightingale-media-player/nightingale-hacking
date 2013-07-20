@@ -79,6 +79,7 @@ function ITEM_NS(id) {
  */
 function AddonMetadata() {
   //debug("\nAddonMetadata: constructed\n");
+  dump("AddonMetadata: constructed\n");
   
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                    .getService(Components.interfaces.nsIRDFService);
@@ -89,6 +90,7 @@ function AddonMetadata() {
     // Otherwise rebuild it by reading the metadata from all addons
     if (!this._loadDatasource() || this._isRebuildRequired()) {
       //debug("AddonMetadata: rebuilding addon metadata datasource\n");
+      dump("AddonMetadata: rebuilding addon metadata datasource\n");
       this._purgeDatasource();
       this._buildDatasource();
     }
@@ -160,6 +162,7 @@ AddonMetadata.prototype = {
    */
   _loadDatasource: function _loadDatasource() {
     //debug("\nAddonMetadata: _loadDatasource \n");
+    dump("AddonMetadata: _loadDatasource \n");
     
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
@@ -184,6 +187,7 @@ AddonMetadata.prototype = {
    */
   _purgeDatasource: function _purgeDatasource() {
     //debug("\nAddonMetadata: _purgeDatasource \n");
+    dump("AddonMetadata: _purgeDatasource \n");
     
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
@@ -230,6 +234,7 @@ AddonMetadata.prototype = {
    */
   _buildDatasource: function _buildDatasource() {
     //debug("\nAddonMetadata: _buildDatasource \n");
+    dump("AddonMetadata: _buildDatasource \n");
 
     // Make a container to list all installed extensions
     var itemRoot = this._RDF.GetResource(RDFURI_ADDON_ROOT);    
@@ -241,6 +246,7 @@ AddonMetadata.prototype = {
   },
 
   _setDatasource: function _setDatasource(container) {
+    dump("AddonMetadata::_setDatasource -- about to save changes in this._datasource\n");
     // Save changes
     this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
                     .Flush();
@@ -250,6 +256,7 @@ AddonMetadata.prototype = {
     var that = this;
     AddonManager.getAllAddons(function(aAddons) {
       aAddons.forEach(function(addon) {
+        dump("in aAddons.forEach, addon.name = "+addon.name+", addon.type = "+addon.type+"\n");
         if (addon.type == "extension") {
           if (!addon.userDisabled && !addon.appDisabled) {
             var file = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file;

@@ -170,6 +170,7 @@ AddonMetadataReader.prototype = {
    */
   loadMetadata: function(manager) {
     //debug("AddonMetadataReader: loadMetadata\n");
+    dump("AddonMetadataReader::loadMetadata\n");
     this._manager = manager;
     
     var addons = RDFHelper.help(
@@ -177,6 +178,8 @@ AddonMetadataReader.prototype = {
       "urn:songbird:addon:root",
       RDFHelper.DEFAULT_RDF_NAMESPACES
     );
+
+    dump("AddonMetadataReader::loadMetadata -- addons.length = "+addons.length+"\n");
 
     for (var i = 0; i < addons.length; i++) {
       dump("AddonMetadataReader::loadMetadata -- in loop: i = "+i+"\n");
