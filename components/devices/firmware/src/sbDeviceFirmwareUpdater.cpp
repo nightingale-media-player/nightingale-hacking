@@ -36,7 +36,7 @@
 #include <sbIDeviceFirmwareHandler.h>
 #include <sbILibraryManager.h>
 
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsAutoPtr.h>
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
@@ -69,7 +69,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceFirmwareUpdater,
                               sbIDeviceEventListener)
 
 sbDeviceFirmwareUpdater::sbDeviceFirmwareUpdater()
-: mMonitor("mMonitor")
+: mMonitor("sbDeviceFirmwareUpdater::mMonitor")
 , mIsShutdown(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -120,7 +120,7 @@ sbDeviceFirmwareUpdater::Init()
         NS_ENSURE_SUCCESS(rv, rv);
 
         {
-          mozilla::MonitorAutoLock mon(mMonitor);
+          mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
           nsCString *element = 
             mFirmwareHandlers.AppendElement(contractId);
           NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
@@ -166,7 +166,7 @@ sbDeviceFirmwareUpdater::Shutdown()
 {
   NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   
   // Even if we fail to shutdown we will report ourselves as shutdown.
   // This is done on purpose to avoid new operations coming into play
@@ -293,7 +293,7 @@ sbDeviceFirmwareUpdater::GetHandlerStatus(sbIDeviceFirmwareHandler *aHandler)
 {
   NS_ENSURE_TRUE(aHandler, nsnull);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   sbDeviceFirmwareHandlerStatus *_retval = nsnull;
 
   if(!mHandlerStatus.Get(aHandler, &_retval)) {
@@ -418,7 +418,7 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
   NS_ENSURE_TRUE(canUpdate, NS_ERROR_NOT_IMPLEMENTED);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
     NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
@@ -480,7 +480,7 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
     NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
@@ -584,7 +584,7 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
     GetRunningHandler(aDevice, 0, 0, aListener, PR_TRUE);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
     NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
@@ -652,7 +652,7 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
                       PR_TRUE);
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
     sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
     NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
@@ -935,7 +935,7 @@ sbDeviceFirmwareUpdater::FinalizeUpdate(sbIDevice *aDevice)
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = GetRunningHandler(aDevice);
   NS_ENSURE_TRUE(handler, NS_OK);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mRunningHandlers.Remove(aDevice);
   mRecoveryModeHandlers.Remove(aDevice);
@@ -981,7 +981,7 @@ sbDeviceFirmwareUpdater::RegisterHandler(sbIDeviceFirmwareHandler *aFirmwareHand
 
   NS_ConvertUTF16toUTF8 contractId8(contractId);
   
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   if (!mFirmwareHandlers.Contains(contractId8)) {
     nsCString *element = mFirmwareHandlers.AppendElement(contractId8);
     NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
@@ -1004,7 +1004,7 @@ sbDeviceFirmwareUpdater::UnregisterHandler(sbIDeviceFirmwareHandler *aFirmwareHa
 
   NS_ConvertUTF16toUTF8 contractId8(contractId);
   
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   firmwarehandlers_t::index_type index = 
     mFirmwareHandlers.IndexOf(contractId8);
 
@@ -1058,7 +1058,7 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
   // rather than operating on it for a long period of time with the
   // monitor held.
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     nsCString *element = firmwareHandlers.AppendElements(mFirmwareHandlers);
     NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
   }
@@ -1118,7 +1118,7 @@ sbDeviceFirmwareUpdater::Cancel(sbIDevice *aDevice)
   NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = GetRunningHandler(aDevice);
 
@@ -1172,7 +1172,7 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
   PRBool removeListener;
 
   {
-    mozilla::MonitorAutoLock mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
     NS_ENSURE_TRUE(handlerStatus, NS_ERROR_UNEXPECTED);
 
@@ -1348,7 +1348,7 @@ sbDeviceFirmwareHandlerStatus::GetOperation(handleroperation_t *aOperation)
 {
   NS_ENSURE_ARG_POINTER(aOperation);
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aOperation = mOperation;
 
   return NS_OK;
@@ -1358,7 +1358,7 @@ nsresult
 sbDeviceFirmwareHandlerStatus::SetOperation(handleroperation_t aOperation)
 {
 
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mOperation = aOperation;
 
   return NS_OK;
@@ -1369,7 +1369,7 @@ sbDeviceFirmwareHandlerStatus::GetStatus(handlerstatus_t *aStatus)
 {
   NS_ENSURE_ARG_POINTER(aStatus);
   
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   *aStatus = mStatus;
 
   return NS_OK;
@@ -1378,7 +1378,7 @@ sbDeviceFirmwareHandlerStatus::GetStatus(handlerstatus_t *aStatus)
 nsresult 
 sbDeviceFirmwareHandlerStatus::SetStatus(handlerstatus_t aStatus)
 {
-  mozilla::MonitorAutoLock mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
   mStatus = aStatus;
 
   return NS_OK;
