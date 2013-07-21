@@ -82,7 +82,7 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbDeviceManager,
 NS_IMPL_THREADSAFE_CI(sbDeviceManager)
 
 sbDeviceManager::sbDeviceManager()
- : mMonitor("mMonitor"),
+ : mMonitor(nsnull),
    mHasAllowedShutdown(PR_FALSE)
 {
 }
@@ -115,12 +115,12 @@ NS_IMETHODIMP sbDeviceManager::GetMarshalls(nsIArray * *aMarshalls)
 
   nsresult rv;
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -148,12 +148,12 @@ NS_IMETHODIMP sbDeviceManager::GetMarshallByID(const nsID * aIDPtr,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(aIDPtr);
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    nsresult rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool succeded = mMarshalls.Get(*aIDPtr, _retval);
   return succeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -256,12 +256,12 @@ NS_IMETHODIMP sbDeviceManager::GetControllers(nsIArray * *aControllers)
 
   nsresult rv;
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -290,12 +290,12 @@ NS_IMETHODIMP sbDeviceManager::RegisterController(sbIDeviceController *aControll
 
   nsresult rv;
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsID* id;
   rv = aController->GetId(&id);
@@ -314,12 +314,12 @@ NS_IMETHODIMP sbDeviceManager::UnregisterController(sbIDeviceController *aContro
 
   nsresult rv;
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsID* id;
   rv = aController->GetId(&id);
@@ -338,12 +338,12 @@ NS_IMETHODIMP sbDeviceManager::GetController(const nsID * aControllerId,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(aControllerId);
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    nsresult rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
 
   PRBool succeded = mControllers.Get(*aControllerId, _retval);
@@ -357,12 +357,12 @@ NS_IMETHODIMP sbDeviceManager::GetDevices(nsIArray * *aDevices)
 
   nsresult rv;
 
-//  if (!mMonitor) {
+  if (!mMonitor) {
     // when EM_NO_RESTART is set, we don't see the appropriate app startup
     // attempt to manually initialize.
-//    rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -387,9 +387,10 @@ NS_IMETHODIMP sbDeviceManager::GetDevices(nsIArray * *aDevices)
 NS_IMETHODIMP sbDeviceManager::RegisterDevice(sbIDevice *aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   // prevent anybody from seeing a half-added device
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
   nsID* id;
@@ -419,12 +420,12 @@ NS_IMETHODIMP sbDeviceManager::UnregisterDevice(sbIDevice *aDevice)
 
   nsresult rv;
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsID* id;
   rv = aDevice->GetId(&id);
@@ -443,12 +444,12 @@ NS_IMETHODIMP sbDeviceManager::GetDevice(const nsID * aDeviceId,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_POINTER(aDeviceId);
 
-//  if (!mMonitor) {
-//    // when EM_NO_RESTART is set, we don't see the appropriate app startup
-//    // attempt to manually initialize.
-//    nsresult rv = Init();
-//    NS_ENSURE_SUCCESS(rv, rv);
-//  }
+  if (!mMonitor) {
+    // when EM_NO_RESTART is set, we don't see the appropriate app startup
+    // attempt to manually initialize.
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool succeeded = mDevices.Get(*aDeviceId, _retval);
   return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -572,7 +573,12 @@ nsresult sbDeviceManager::Init()
 {
   nsresult rv;
 
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
+
+  mMonitor = PR_NewMonitor();
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  PR_EnterMonitor(mMonitor);
 
   // initialize the hashtables
   PRBool succeeded;
@@ -658,7 +664,8 @@ nsresult sbDeviceManager::Init()
 nsresult sbDeviceManager::GetCanDisconnect(PRBool* aCanDisconnect)
 {
   NS_ENSURE_ARG_POINTER(aCanDisconnect);
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
 
@@ -695,7 +702,9 @@ nsresult sbDeviceManager::GetCanDisconnect(PRBool* aCanDisconnect)
 nsresult sbDeviceManager::BeginMarshallMonitoring()
 {
   nsresult rv;
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  PR_EnterMonitor(mMonitor);
 
   // Get the list of marshalls.
   nsCOMPtr<nsIArray> marshalls;
@@ -730,7 +739,8 @@ nsresult sbDeviceManager::BeginMarshallMonitoring()
 
 nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
 {
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
 
@@ -785,7 +795,8 @@ nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
 
 nsresult sbDeviceManager::QuitApplicationGranted()
 {
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  PR_EnterMonitor(mMonitor);
 
   nsresult rv;
 
@@ -829,7 +840,9 @@ nsresult sbDeviceManager::QuitApplicationGranted()
 nsresult sbDeviceManager::PrepareShutdown()
 {
   nsresult rv;
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  PR_EnterMonitor(mMonitor);
 
   // Indicate that the device manager services are no longer ready.
   nsCOMPtr<sbIServiceManager>
@@ -890,7 +903,9 @@ nsresult sbDeviceManager::PrepareShutdown()
 nsresult sbDeviceManager::FinalShutdown()
 {
   nsresult rv;
-  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  PR_EnterMonitor(mMonitor);
 
   // get rid of all our controllers
   // ask the controllers to disconnect all devices

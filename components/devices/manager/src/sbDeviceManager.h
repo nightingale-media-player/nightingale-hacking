@@ -31,11 +31,11 @@
 #include "sbIDeviceEventTarget.h"
 #include "sbBaseDeviceEventTarget.h"
 
+#include <prmon.h>
 #include <nsHashKeys.h>
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
-#include <mozilla/ReentrantMonitor.h>
 
 #include <sbWeakReference.h>
 
@@ -80,7 +80,7 @@ protected:
   nsresult RemoveAllDevices();
 
 protected:
-  mozilla::ReentrantMonitor mMonitor;
+  PRMonitor *mMonitor;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceController> mControllers;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDevice> mDevices;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceMarshall> mMarshalls;
