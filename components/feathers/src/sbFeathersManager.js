@@ -579,7 +579,7 @@ FeathersManager.prototype = {
     // basic layouts and default skin have been disabled too. We need to 
     // check if that's the case, and reenable them if needed
     var defaultFeather = AppPrefs.getValue(PREF_DEFAULT_FEATHER_ID, "");
-    // this._ensureAddOnEnabled(defaultFeather);
+    this._ensureAddOnEnabled(defaultFeather);
 
     // Read in defaults
     this._defaultLayoutURL = AppPrefs.getValue(PREF_DEFAULT_MAIN_LAYOUT, "");
@@ -1376,38 +1376,13 @@ FeathersManager.prototype = {
    * not appDisabled, so addons that have been disabled because
    * of a compatibility or security issue remain disabled.
    */
-  // _ensureAddOnEnabled: function(id) {
-  //   const nsIUpdateItem = Ci.nsIUpdateItem;
-  //   AddonManager.getAddonByID(id, function(addon) {
-  //     if (addon.userDisabled == "false") {
-  //       addon.userDisabled 
-  //     }
-  //   });
-  //   var em = Cc["@mozilla.org/extensions/manager;1"]
-  //              .getService(Ci.nsIExtensionManager);
-  //   var ds = em.datasource; 
-  //   var rdf = Cc["@mozilla.org/rdf/rdf-service;1"]
-  //               .getService(Ci.nsIRDFService);
-
-  //   var resource = rdf.GetResource("urn:mozilla:item:" + id); 
-
-  //   var property = rdf.GetResource("http://www.mozilla.org/2004/em-rdf#userDisabled");
-  //   var target = ds.GetTarget(resource, property, true);
-
-  //   function getData(literalOrResource) {
-  //     if (literalOrResource instanceof Ci.nsIRDFLiteral ||
-  //         literalOrResource instanceof Ci.nsIRDFResource ||
-  //         literalOrResource instanceof Ci.nsIRDFInt)
-  //       return literalOrResource.Value;
-  //     return undefined;
-  //   }
-
-  //   var userDisabled = getData(target);
-      
-  //   if (userDisabled == "true") {
-  //     em.enableItem(id); 
-  //   }
-  // }, 
+  _ensureAddOnEnabled: function(id) {
+    AddonManager.getAddonByID(id, function(addon) {
+      if (addon.userDisabled) {
+        addon.userDisabled = false;
+      }
+    });
+  },
 
   /**
    * See nsISupports.idl
