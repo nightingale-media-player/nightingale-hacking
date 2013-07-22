@@ -80,9 +80,8 @@ function ITEM_NS(id) {
 function AddonMetadata() {
   //debug("\nAddonMetadata: constructed\n");
   dump("AddonMetadata: constructed\n");
-  
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                   .getService(Components.interfaces.nsIRDFService);
+              .getService(Components.interfaces.nsIRDFService);
 
   try {
 
@@ -142,6 +141,7 @@ AddonMetadata.prototype = {
     
     if (!emDataFile.exists()) {      
       //debug("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
+      dump("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
       return true;
     }
 
@@ -157,6 +157,7 @@ AddonMetadata.prototype = {
     
     // If the extensions.rdf hasn't changed, then we don't need to rebuild
     //debug("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
+    dump("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
     if (lastModified == newLastModified) {
       return false;
     }
@@ -165,6 +166,7 @@ AddonMetadata.prototype = {
     prefs.setCharPref(PREF_LASTMODIFIED, newLastModified);
 
     //debug("AddonMetadata._isRebuildRequired: true\n");
+    dump("AddonMetadata._isRebuildRequired: true\n");
 
     // Extensions.rdf has changed, so we will need to rebuild the addons datasource.
     return true;
@@ -178,8 +180,8 @@ AddonMetadata.prototype = {
    */
   _loadDatasource: function _loadDatasource() {
     //debug("\nAddonMetadata: _loadDatasource \n");
-    dump("AddonMetadata: _loadDatasource \n");
-    
+    dump("AddonMetadata::_loadDatasource()\n");
+
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
     try { 
@@ -190,6 +192,7 @@ AddonMetadata.prototype = {
     }
     
     if (!file.exists()) {
+      dump("AddonMetadata::_loadDatasource -- file doesn't exist\n");
       return false;
     }
     
@@ -218,6 +221,8 @@ AddonMetadata.prototype = {
     } catch (e) {
       debug("\nAddonMetadata: _purgeDatasource: Could not remove " 
             + "addon-metadata.rdf. Bad things may happen.\n");
+      dump("\nAddonMetadata: _purgeDatasource: Could not remove " 
+            + "addon-metadata.rdf. Bad things may happen.\n");
     }
 
     // Reload the datasource.  Since the file no longer exists
@@ -237,7 +242,7 @@ AddonMetadata.prototype = {
     var file = Components.classes["@mozilla.org/file/directory_service;1"]
                          .getService(Components.interfaces.nsIProperties)
                          .get("ProfD", Components.interfaces.nsIFile);
-    var localFile = file.QueryInterface(Components.interfaces.nsILocalFile);                         
+    var localFile = file.QueryInterface(Components.interfaces.nsILocalFile);
     localFile.appendRelativePath(filename)
     return file;
   },
@@ -250,7 +255,7 @@ AddonMetadata.prototype = {
    */
   _buildDatasource: function _buildDatasource(callback) {
     //debug("\nAddonMetadata: _buildDatasource \n");
-    dump("AddonMetadata: _buildDatasource \n");
+    dump("AddonMetadata::_buildDatasource()\n");
 
     // Make a container to list all installed extensions
     var itemRoot = this._RDF.GetResource(RDFURI_ADDON_ROOT);    
@@ -260,14 +265,15 @@ AddonMetadata.prototype = {
 
     var that = this;
     AddonManager.getAllAddons(function(aAddons) {
+      dump("AddonMetadata::_buildDatasource() -- got aAddons\n");
       aAddons.forEach(function(addon) {
         dump("in aAddons.forEach, addon.name = "+addon.name+", addon.type = "+addon.type+"\n");
         if (addon.type == "extension") {
           if (!addon.userDisabled && !addon.appDisabled) {
+            dump("\nAddonMetadata::_buildDatasource -- loading install.rdf for id {" + addon.id +  "}\n");
             var file = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file;
             file.append(FILE_INSTALL_MANIFEST);
 
-            // dump("in callback, file = "+file+"\n");
             var installManifestFile = file.clone();
 
             if (!installManifestFile.exists()) {
@@ -290,6 +296,7 @@ AddonMetadata.prototype = {
       callback();
     });
   },
+
 
   /**
    * Copy all nodes and assertions into the main datasource,
@@ -337,14 +344,16 @@ AddonMetadata.prototype = {
    * @returns RDF datasource
    */
   _getDatasource: function _getDatasource(file) {
+    dump("AddonMetadata::_getDatasource(file = "+file+"\n");
     var ioServ = Components.classes["@mozilla.org/network/io-service;1"]
                            .getService(Components.interfaces.nsIIOService);
     var fph = ioServ.getProtocolHandler("file")
                     .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
 
     var fileURL = fph.getURLSpecFromFile(file);
+    dump("AddonMetadata::_getDatasource -- fileURL = "+fileURL+"\n");
     var ds = this._RDF.GetDataSourceBlocking(fileURL);
-
+    dump("AddonMetadata::_getDatasource -- ds = "+ds+"\n");
     return ds;
   },
 

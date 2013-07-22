@@ -143,6 +143,7 @@ sbAppStartupService.prototype =
     // Restart app if required.  Do this after initializing so that
     // shutting down does not cause errors.
     if (this._restartRequired) {
+      dump("AppStartupService::_bootstrap -- restarting\n");
       WindowUtils.restartApp();
       return;
     }
@@ -400,11 +401,13 @@ sbAppStartupService.prototype =
    *        after first-run add-ons have been installed.
    */
   _initRestarter: function () {
+    dump("AppStartupService::_initRestarter\n");
     this._dataRemoteAppRestart = SBNewDataRemote( "restart.restartnow", null );
     this._dataRemoteAppRestart.boolValue = false;
 
     this._dataRemoteAppRestartHandler = {
       observe: function ( aSubject, aTopic, aData ) {
+        dump("AppStartupService::_initRestarter -- restarter\n");
         var appStartup = Components.classes["@mozilla.org/toolkit/app-startup;1"]
                                    .getService(Components.interfaces.nsIAppStartup);
         appStartup.quit(appStartup.eAttemptQuit | appStartup.eRestart);
