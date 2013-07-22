@@ -7,6 +7,7 @@
     <em:type>2</em:type>
     <em:name>Coppery Feather</em:name>
     <em:version>@EXTENSION_VER@</em:version>
+    <em:internalName>coppery</em:internalName>
 
     <em:description>Default feather for Nightingale</em:description>
 
