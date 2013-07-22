@@ -92,16 +92,23 @@ function AddonMetadata() {
       //debug("AddonMetadata: rebuilding addon metadata datasource\n");
       dump("AddonMetadata: rebuilding addon metadata datasource\n");
       this._purgeDatasource();
-      this._buildDatasource();
+
+      var that = this;
+      this._buildDatasource(function() {
+        dump("AddonMetadata: in callback after _buildDatasource\n");
+        var os  = Components.classes["@mozilla.org/observer-service;1"]
+                  .getService(Components.interfaces.nsIObserverService);
+        os.addObserver(that, "xpcom-shutdown", false);
+      });
+    } else {
+      var os  = Components.classes["@mozilla.org/observer-service;1"]
+                .getService(Components.interfaces.nsIObserverService);
+      os.addObserver(this, "xpcom-shutdown", false);
     }
-    
+
   } catch (e) {
     dump("AddonMetadata: Constructor Error: " + e.toString());
   }
-  
-  var os  = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
-  os.addObserver(this, "xpcom-shutdown", false);
 };
 
 AddonMetadata.prototype = {
@@ -114,6 +121,15 @@ AddonMetadata.prototype = {
 
   _RDF: null,
   _datasource: null,
+
+
+  _finishInit: function _finishInit() {
+    dump("AddonMetadata::_finishInit()\n");
+    var os  = Components.classes["@mozilla.org/observer-service;1"]
+                        .getService(Components.interfaces.nsIObserverService);
+    os.addObserver(this, "xpcom-shutdown", false);
+  },
+
 
   
   /**
@@ -232,7 +248,7 @@ AddonMetadata.prototype = {
    * Populate the datasource with the contents of all 
    * addon install.rdf files.
    */
-  _buildDatasource: function _buildDatasource() {
+  _buildDatasource: function _buildDatasource(callback) {
     //debug("\nAddonMetadata: _buildDatasource \n");
     dump("AddonMetadata: _buildDatasource \n");
 
@@ -242,17 +258,6 @@ AddonMetadata.prototype = {
                        .getService(Components.interfaces.nsIRDFContainerUtils);
     var container = cu.MakeSeq(this._datasource, itemRoot);
 
-    this._checkAddons(container);
-  },
-
-  _setDatasource: function _setDatasource(container) {
-    dump("AddonMetadata::_setDatasource -- about to save changes in this._datasource\n");
-    // Save changes
-    this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
-                    .Flush();
-  },
-
-  _checkAddons: function _checkAddons(container) {
     var that = this;
     AddonManager.getAllAddons(function(aAddons) {
       aAddons.forEach(function(addon) {
@@ -279,7 +284,10 @@ AddonMetadata.prototype = {
           }
         }
       })
-      that._setDatasource(container);
+      // Save changes
+      that._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
+                      .Flush();
+      callback();
     });
   },
 
