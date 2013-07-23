@@ -267,10 +267,10 @@ AddonMetadata.prototype = {
     AddonManager.getAllAddons(function(aAddons) {
       dump("AddonMetadata::_buildDatasource() -- got aAddons\n");
       aAddons.forEach(function(addon) {
-        dump("in aAddons.forEach, addon.name = "+addon.name+", addon.type = "+addon.type+"\n");
+        dump("\tin aAddons.forEach, addon.name = "+addon.name+", addon.type = "+addon.type+"\n");
         if (addon.type == "extension") {
           if (!addon.userDisabled && !addon.appDisabled) {
-            dump("\nAddonMetadata::_buildDatasource -- loading install.rdf for id {" + addon.id +  "}\n");
+            dump("AddonMetadata::_buildDatasource -- loading install.rdf for id {" + addon.id +  "}\n");
             var file = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file;
             file.append(FILE_INSTALL_MANIFEST);
 
@@ -303,6 +303,7 @@ AddonMetadata.prototype = {
    * renaming the install manifest to the id of the extension.
    */
   _copyManifest:  function _copyManifest(itemNode, manifestDS) {
+    dump("AddonMetadata::_copyManifest(itemNode, manifestDS)\n");
   
     // Copy all resources from the manifest to the main DS
     var resources = manifestDS.GetAllResources();
@@ -325,7 +326,7 @@ AddonMetadata.prototype = {
           if (resource.Value == RDFURI_INSTALL_MANIFEST_ROOT) {
             newResource = itemNode;
           }
-                    
+
           // Otherwise, assert into the main ds
           this._datasource.Assert(newResource, arc, target, true);
         }
@@ -344,7 +345,8 @@ AddonMetadata.prototype = {
    * @returns RDF datasource
    */
   _getDatasource: function _getDatasource(file) {
-    dump("AddonMetadata::_getDatasource(file = "+file+"\n");
+    dump("AddonMetadata::_getDatasource(file)\n");
+
     var ioServ = Components.classes["@mozilla.org/network/io-service;1"]
                            .getService(Components.interfaces.nsIIOService);
     var fph = ioServ.getProtocolHandler("file")
@@ -353,7 +355,6 @@ AddonMetadata.prototype = {
     var fileURL = fph.getURLSpecFromFile(file);
     dump("AddonMetadata::_getDatasource -- fileURL = "+fileURL+"\n");
     var ds = this._RDF.GetDataSourceBlocking(fileURL);
-    dump("AddonMetadata::_getDatasource -- ds = "+ds+"\n");
     return ds;
   },
 
