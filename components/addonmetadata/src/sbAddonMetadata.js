@@ -137,6 +137,8 @@ AddonMetadata.prototype = {
    * determine if extensions have changed.
    */
   _isRebuildRequired: function _isRebuildRequired() {
+    dump("AddonMetadata::_isRebuildRequired()\n");
+
     var emDataFile = this._getProfileFile(FILE_EXTENSIONS);
     
     if (!emDataFile.exists()) {      
@@ -206,7 +208,7 @@ AddonMetadata.prototype = {
    */
   _purgeDatasource: function _purgeDatasource() {
     //debug("\nAddonMetadata: _purgeDatasource \n");
-    dump("AddonMetadata: _purgeDatasource \n");
+    dump("AddonMetadata::_purgeDatasource()\n");
     
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
@@ -238,6 +240,7 @@ AddonMetadata.prototype = {
    * profile/filename
    */
   _getProfileFile: function _getProfileFile(filename) {
+    dump("AddonMetadata::_getProfileFile(filename = "+filename+")\n");
     // get profile directory
     var file = Components.classes["@mozilla.org/file/directory_service;1"]
                          .getService(Components.interfaces.nsIProperties)
