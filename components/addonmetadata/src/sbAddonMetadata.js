@@ -41,7 +41,7 @@ const CID = Components.ID("{a1edd551-0f29-4ce9-aebc-92fbee77f37e}");
 const IID = Components.interfaces.nsIRDFDataSource;
 
 const FILE_INSTALL_MANIFEST = "install.rdf";
-const FILE_EXTENSIONS       = "extensions.rdf";
+const FILE_EXTENSIONS       = "extensions.sqlite";
 const FILE_ADDONMETADATA    = "addon-metadata.rdf";
 
 const PREF_LASTMODIFIED = "songbird.addonmetadata.lastModifiedTime";
