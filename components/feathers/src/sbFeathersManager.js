@@ -160,25 +160,35 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
  * Responsible for reading addon metadata and performing 
  * registration with FeathersManager
  */
-function AddonMetadataReader() {};
+function AddonMetadataReader() {
+  var os = Cc["@mozilla.org/observer-service;1"]
+             .getService(Ci.nsIObserverService);
+  os.addObserver(this, "AddonMetadataRDF", false);
+};
 
 AddonMetadataReader.prototype = {
   _manager: null,
+  _addons: null,
 
-  /**
-   * Populate FeathersManager using addon metadata
-   */
-  loadMetadata: function(manager) {
-    //debug("AddonMetadataReader: loadMetadata\n");
-    dump("AddonMetadataReader::loadMetadata\n");
+  initMetadata: function(manager) {
+    dump("AddonMetadataReader::initMetadata\n");
     this._manager = manager;
-    
-    var addons = RDFHelper.help(
+
+    this._addons = RDFHelper.help(
       "rdf:addon-metadata",
       "urn:songbird:addon:root",
       RDFHelper.DEFAULT_RDF_NAMESPACES
     );
+  },
 
+  /**
+   * Populate FeathersManager using addon metadata
+   */
+  loadMetadata: function() {
+    //debug("AddonMetadataReader: loadMetadata\n");
+    dump("AddonMetadataReader::loadMetadata\n");
+
+    var addons = this._addons;
     dump("AddonMetadataReader::loadMetadata -- addons.length = "+addons.length+"\n");
 
     for (var i = 0; i < addons.length; i++) {
@@ -221,8 +231,7 @@ AddonMetadataReader.prototype = {
       }
     }
   },
-  
-  
+
   /**
    * Extract skin metadata
    */
@@ -447,6 +456,18 @@ AddonMetadataReader.prototype = {
       Components.utils.reportError("Feathers Metadata Reader: " 
                                        + contextMessage + errorList[i]);
     }
+  },
+
+  observe: function(subject, topic, data) {
+    var os = Cc["@mozilla.org/observer-service;1"]
+               .getService(Ci.nsIObserverService);
+    switch (topic) {
+      case "AddonMetadataRDF":
+        dump("AddonMetadataReader::observe -- observed AddonMetadataRDF topic!\n");
+        this.loadMetadata();
+        os.removeObserver(this, "AddonMetadataRDF");
+        break;
+    }
   }
 }
 
@@ -626,10 +647,10 @@ FeathersManager.prototype = {
     }
     // TODO: Rename accessibility.enabled?
     this._showChromeDataRemote = createDataRemote("accessibility.enabled", null);
-    
+
     // Load the feathers metadata
     var metadataReader = new AddonMetadataReader();
-    metadataReader.loadMetadata(this);
+    metadataReader.initMetadata(this);
     
     // If no layout url has been specified, set to default
     if (this._layoutDataRemote.stringValue == "") {
