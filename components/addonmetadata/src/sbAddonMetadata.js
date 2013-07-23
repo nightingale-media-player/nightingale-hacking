@@ -121,15 +121,6 @@ AddonMetadata.prototype = {
   _RDF: null,
   _datasource: null,
 
-
-  _finishInit: function _finishInit() {
-    dump("AddonMetadata::_finishInit()\n");
-    var os  = Components.classes["@mozilla.org/observer-service;1"]
-                        .getService(Components.interfaces.nsIObserverService);
-    os.addObserver(this, "xpcom-shutdown", false);
-  },
-
-
   
   /**
    * Return true if cached addons metadata datasource is no longer valid.
