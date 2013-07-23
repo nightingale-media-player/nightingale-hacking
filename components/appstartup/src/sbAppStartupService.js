@@ -125,6 +125,7 @@ sbAppStartupService.prototype =
   ///////////////////////////////////////////////////////////////////
 
   _bootstrap: function() {
+    dump("AppStartupService::_bootstrap\n");
     if (this._initialized) {
       Cu.reportError("bootstrap is getting called multiple times");
       return;
@@ -282,6 +283,7 @@ sbAppStartupService.prototype =
       // If restart is required, mark application for restart and return.  Don't
       // restart here, because doing so will lead to errors in shutting down.
       if (addOnBundleUpdateService.restartRequired) {
+        dump("AppStartupService::_mainWindowStart -- restart required\n");
         this._restartRequired = true;
         return;
       }
@@ -303,6 +305,7 @@ sbAppStartupService.prototype =
    * \brief Application First Run
    */
   _firstRun: function () {
+    dump("AppStartupService::_firstRun\n");
     var perfTest = false;
 
     // Skip first-run if we are in test mode (ie. started with -test)
@@ -375,6 +378,7 @@ sbAppStartupService.prototype =
   },
 
   _firstRunComplete: function(aRedo) {
+    dump("AppStartupService::_firstRunComplete\n");
     if (aRedo) {
       this._firstRun();
     }
