@@ -155,6 +155,51 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
 }
 
 
+function AddonMetadataHelper(AMReader) {
+  var os = Cc["@mozilla.org/observer-service;1"]
+             .getService(Ci.nsIObserverService);
+  os.addObserver(this, "AddonMetadataRDF", false);
+
+  this._amreader = AMReader;
+  this._rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
+  this._ds = this._rdf.GetDataSourceBlocking("rdf:addon-metadata");
+  this._res = this._rdf.GetResource("urn:songbird:addon:root");
+};
+
+AddonMetadataHelper.prototype = {
+  _amreader: null,
+  _rdf: null,
+  _ds: null,
+  _res: null,
+
+  _retHelp: function() {
+    dump("AddonMetadataHelper::_retHelp()\n");
+    this._amreader._addons = RDFHelper.AMHelp(
+                                        this._rdf,
+                                        this._ds,
+                                        this._res,
+                                        RDFHelper.DEFAULT_RDF_NAMESPACES
+                                      );
+    var os = Cc["@mozilla.org/observer-service;1"]
+               .getService(Ci.nsIObserverService);
+    os.notifyObservers(null, "amreader-addons-ready", 
+                       "rdf data is ready for addon metadata reader to use");
+  },
+
+  observe: function(subject, topic, data) {
+    var os = Cc["@mozilla.org/observer-service;1"]
+               .getService(Ci.nsIObserverService);
+    switch (topic) {
+      case "AddonMetadataRDF":
+        dump("AddonMetadataHelper::observe -- observed AddonMetadataRDF!\n");
+        this._retHelp();
+        os.removeObserver(this, "AddonMetadataRDF");
+        break;
+    }
+  }
+};
+
+
 /**
  * /class AddonMetadataReader
  * Responsible for reading addon metadata and performing 
@@ -163,7 +208,7 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
 function AddonMetadataReader() {
   var os = Cc["@mozilla.org/observer-service;1"]
              .getService(Ci.nsIObserverService);
-  os.addObserver(this, "AddonMetadataRDF", false);
+  os.addObserver(this, "amreader-addons-ready", false);
 };
 
 AddonMetadataReader.prototype = {
@@ -174,11 +219,10 @@ AddonMetadataReader.prototype = {
     dump("AddonMetadataReader::initMetadata\n");
     this._manager = manager;
 
-    this._addons = RDFHelper.help(
-      "rdf:addon-metadata",
-      "urn:songbird:addon:root",
-      RDFHelper.DEFAULT_RDF_NAMESPACES
-    );
+    var amHelper = new AddonMetadataHelper(this,
+                           "rdf:addon-metadata",
+                           "urn:songbird:addon:root",
+                           RDFHelper.DEFAULT_RDF_NAMESPACES);
   },
 
   /**
@@ -462,10 +506,10 @@ AddonMetadataReader.prototype = {
     var os = Cc["@mozilla.org/observer-service;1"]
                .getService(Ci.nsIObserverService);
     switch (topic) {
-      case "AddonMetadataRDF":
-        dump("AddonMetadataReader::observe -- observed AddonMetadataRDF topic!\n");
+      case "amreader-addons-ready":
+        dump("AddonMetadataReader::observe -- observed amreader-addons-ready topic!\n");
         this.loadMetadata();
-        os.removeObserver(this, "AddonMetadataRDF");
+        os.removeObserver(this, "amreader-addons-ready");
         break;
     }
   }

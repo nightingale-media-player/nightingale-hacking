@@ -181,6 +181,16 @@ RDFHelper.help = function(datasource, resource, namespaces) {
   return helper;
 };
 
+RDFHelper.AMHelp = function(rdf, ds, res, namespaces) {
+  var helper = new RDFHelper(
+    rdf, 
+    ds, 
+    res,
+    namespaces
+  );
+  return helper;
+};
+
 RDFHelper.DEFAULT_RDF_NAMESPACES = {
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "",
   "http://www.mozilla.org/2004/em-rdf#": "",
