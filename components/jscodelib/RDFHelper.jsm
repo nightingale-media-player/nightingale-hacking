@@ -59,8 +59,6 @@ Cc = Components.classes;
 
 // make a constructor
 function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
-  dump("RDFHelper(aRdf, aDatasource, aResource, aNamespaces)\n");
-
   // this is a Crockfordian constructor with private methods.
   // see: http://www.crockford.com/javascript/private.html
   // the actual construction logic takes place after all these method def'ns.
@@ -73,13 +71,13 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
                      .getService(Ci.nsIRDFContainerUtils);
   
   var createProperties = function() {
-    dump("Resource "+that.Value+" is a ")
+    //dump("Resource "+that.Value+" is a ")
     if (_containerUtils.IsContainer(aDatasource, aResource)) {
-      dump("container.\n");
+      //dump("container.\n");
       createContainerProperties(aResource);
     }
     else {
-      dump("normal resource.\n");
+      //dump("normal resource.\n");
       createStandardProperties(aResource);
     }
   };

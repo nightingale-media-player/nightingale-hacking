@@ -79,7 +79,6 @@ function ITEM_NS(id) {
  */
 function AddonMetadata() {
   //debug("\nAddonMetadata: constructed\n");
-  dump("AddonMetadata: constructed\n");
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
               .getService(Components.interfaces.nsIRDFService);
 
@@ -124,13 +123,10 @@ AddonMetadata.prototype = {
    * determine if extensions have changed.
    */
   _isRebuildRequired: function _isRebuildRequired() {
-    dump("AddonMetadata::_isRebuildRequired()\n");
-
     var emDataFile = this._getProfileFile(FILE_EXTENSIONS);
     
     if (!emDataFile.exists()) {      
       //debug("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
-      dump("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
       return true;
     }
 
@@ -146,7 +142,6 @@ AddonMetadata.prototype = {
     
     // If the extensions.rdf hasn't changed, then we don't need to rebuild
     //debug("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
-    dump("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
     if (lastModified == newLastModified) {
       return false;
     }
@@ -155,7 +150,6 @@ AddonMetadata.prototype = {
     prefs.setCharPref(PREF_LASTMODIFIED, newLastModified);
 
     //debug("AddonMetadata._isRebuildRequired: true\n");
-    dump("AddonMetadata._isRebuildRequired: true\n");
 
     // Extensions.rdf has changed, so we will need to rebuild the addons datasource.
     return true;
@@ -195,8 +189,7 @@ AddonMetadata.prototype = {
    */
   _purgeDatasource: function _purgeDatasource() {
     //debug("\nAddonMetadata: _purgeDatasource \n");
-    dump("AddonMetadata::_purgeDatasource()\n");
-    
+
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
     // Make sure the RDF service isn't caching our ds
@@ -209,8 +202,6 @@ AddonMetadata.prototype = {
       }
     } catch (e) {
       debug("\nAddonMetadata: _purgeDatasource: Could not remove " 
-            + "addon-metadata.rdf. Bad things may happen.\n");
-      dump("\nAddonMetadata: _purgeDatasource: Could not remove " 
             + "addon-metadata.rdf. Bad things may happen.\n");
     }
 
@@ -299,16 +290,19 @@ AddonMetadata.prototype = {
     var resources = manifestDS.GetAllResources();
     while (resources.hasMoreElements()) {
       var resource = resources.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
+      // dump("    resource.ValueUTF8 = "+resource.ValueUTF8+"\n");
       
       // Get all arcs out of the resource
       var arcs = manifestDS.ArcLabelsOut(resource);
       while (arcs.hasMoreElements()) {
         var arc = arcs.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-              
+        // dump("        arc.ValueUTF8 = "+arc.ValueUTF8+"\n");
+
         // For each arc, get all targets
         var targets = manifestDS.GetTargets(resource, arc, true);
         while (targets.hasMoreElements()) {
           var target = targets.getNext().QueryInterface(Components.interfaces.nsIRDFNode);
+          // dump("            target.ValueUTF8 = "+target.ValueUTF8+"\n");
           
           // If this resource is the manifest root, replace it
           // with a resource representing the current addon
