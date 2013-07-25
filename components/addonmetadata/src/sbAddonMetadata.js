@@ -247,6 +247,48 @@ AddonMetadata.prototype = {
     var that = this;
     AddonManager.getAllAddons(function(aAddons) {
       dump("AddonMetadata::_buildDatasource() -- got aAddons\n");
+
+      for (var i = 0; i < aAddons.length; i++) {
+        var addon = aAddons[i];
+        dump("AddonMetadata::_buildDatasource() -- id = " + addon.id +  "\n");
+              
+        if (addon.type == "extension") {
+          // If the extension is disabled, do not include it in our datasource 
+          if (addon.userDisabled || addon.appDisabled) {
+            //debug("\nAddonMetadata:  id {" + id +  "} is disabled.\n");
+            continue;
+          }
+
+          //debug("\nAddonMetadata:  loading install.rdf for id {" + id +  "}\n");
+
+          var installManifestFile = addon.getResourceURI(FILE_INSTALL_MANIFEST).QueryInterface(Components.interfaces.nsIFileURL).file;
+
+          if (!installManifestFile.exists()) {
+            that._reportErrors(["install.rdf for id " + addon.id +  " was not found " + 
+                                "at location " + installManifestFile.path]);
+          }
+          
+          var manifestDS = that._getDatasource(installManifestFile);
+          var itemNode = that._RDF.GetResource(ADDON_NS(addon.id));
+          // Copy the install.rdf metadata into the master datasource
+          that._copyManifest(itemNode, manifestDS);
+          
+          // Add the new install.rdf root to the list of extensions
+          container.AppendElement(itemNode);
+        }
+      }
+
+      dump("AddonMetadata::_buildDatasource() -- about to flush RDF\n");
+      // Save changes
+      that._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
+                      .Flush();
+                      // .FlushTo(rdfFileURL);
+      //debug("\nAddonMetadata: _buildDatasource complete \n");
+      dump("AddonMetadata::_buildDatasource() -- complete\n");
+
+      callback();
+
+      /*
       aAddons.forEach(function(addon) {
         dump("\tin aAddons.forEach, addon.name = "+addon.name+", addon.type = "+addon.type+"\n");
         if (addon.type == "extension") {
@@ -275,6 +317,9 @@ AddonMetadata.prototype = {
       that._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
                       .Flush();
       callback();
+      */
+
+
     });
   },
 
