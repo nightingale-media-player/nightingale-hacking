@@ -250,9 +250,8 @@ AddonMetadata.prototype = {
 
       for (var i = 0; i < aAddons.length; i++) {
         var addon = aAddons[i];
-        dump("AddonMetadata::_buildDatasource() -- id = " + addon.id +  "\n");
-              
         if (addon.type == "extension") {
+          dump("AddonMetadata::_buildDatasource() -- id = " + addon.id +  "\n");
           // If the extension is disabled, do not include it in our datasource 
           if (addon.userDisabled || addon.appDisabled) {
             //debug("\nAddonMetadata:  id {" + id +  "} is disabled.\n");
@@ -336,7 +335,7 @@ AddonMetadata.prototype = {
     while (resources.hasMoreElements()) {
       var resource = resources.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
       // dump("    resource.ValueUTF8 = "+resource.ValueUTF8+"\n");
-      
+
       // Get all arcs out of the resource
       var arcs = manifestDS.ArcLabelsOut(resource);
       while (arcs.hasMoreElements()) {
@@ -347,8 +346,7 @@ AddonMetadata.prototype = {
         var targets = manifestDS.GetTargets(resource, arc, true);
         while (targets.hasMoreElements()) {
           var target = targets.getNext().QueryInterface(Components.interfaces.nsIRDFNode);
-          // dump("            target.ValueUTF8 = "+target.ValueUTF8+"\n");
-          
+
           // If this resource is the manifest root, replace it
           // with a resource representing the current addon
           newResource = resource;
