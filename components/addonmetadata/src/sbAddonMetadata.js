@@ -350,7 +350,7 @@ AddonMetadata.prototype = {
           // If this resource is the manifest root, replace it
           // with a resource representing the current addon
           newResource = resource;
-          if (resource.Value == RDFURI_INSTALL_MANIFEST_ROOT) {
+          if (resource.ValueUTF8 == RDFURI_INSTALL_MANIFEST_ROOT) {
             newResource = itemNode;
           }
 
