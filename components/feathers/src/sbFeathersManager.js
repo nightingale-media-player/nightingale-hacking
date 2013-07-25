@@ -163,21 +163,21 @@ function AddonMetadataHelper(AMReader) {
   this._amreader = AMReader;
   this._rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
   this._ds = this._rdf.GetDataSourceBlocking("rdf:addon-metadata");
-  this._res = this._rdf.GetResource("urn:songbird:addon:root");
+  // this._res = this._rdf.GetResource("urn:songbird:addon:root");
 };
 
 AddonMetadataHelper.prototype = {
   _amreader: null,
   _rdf: null,
   _ds: null,
-  _res: null,
+  // _res: null,
 
   _retHelp: function() {
     dump("AddonMetadataHelper::_retHelp()\n");
     this._amreader._addons = RDFHelper.AMHelp(
                                         this._rdf,
                                         this._ds,
-                                        this._res,
+                                        this._rdf.GetResource("urn:songbird:addon:root"),
                                         RDFHelper.DEFAULT_RDF_NAMESPACES
                                       );
     var os = Cc["@mozilla.org/observer-service;1"]
