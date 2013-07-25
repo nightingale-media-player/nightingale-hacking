@@ -85,10 +85,13 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
   var createContainerProperties = function(resource) {
     var container = _containerUtils.MakeSeq(aDatasource, resource);
     var contents = container.GetElements();
-    
+
+    dump("RDFHelper::createContainerProperties(resource)\n");
+
     // urgh, this doesn't actually mean "this" is an array 
     // but at least it's sort of like one.
     var i = 0;
+    dump("RDFHelper::createContainerProperties -- i = "+i+"\n");
     while (contents.hasMoreElements()) {
       var resource = contents.getNext()
       resource.QueryInterface(Ci.nsIRDFResource);
@@ -99,6 +102,7 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
         aNamespaces
       ); 
       i++;
+      dump("RDFHelper::createContainerProperties -- i = "+i+"\n");
     }
     that.length = i;
   };
