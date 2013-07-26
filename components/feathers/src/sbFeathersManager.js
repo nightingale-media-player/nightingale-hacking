@@ -219,10 +219,7 @@ AddonMetadataReader.prototype = {
     dump("AddonMetadataReader::initMetadata\n");
     this._manager = manager;
 
-    var amHelper = new AddonMetadataHelper(this,
-                           "rdf:addon-metadata",
-                           "urn:songbird:addon:root",
-                           RDFHelper.DEFAULT_RDF_NAMESPACES);
+    var amHelper = new AddonMetadataHelper(this);
   },
 
   /**
