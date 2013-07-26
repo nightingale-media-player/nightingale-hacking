@@ -1365,11 +1365,11 @@ fi
 AC_SUBST(NIGHTINGALE_UNITY)
 
 #
-#  Check for --with-libnotify
+#  Check for --enable-libnotify
 #
 
 AC_ARG_ENABLE(libnotify-notifs,
-            [  --with-libnotify  enable libnotify extension (default=no)])
+            [  --enable-libnotify  enable libnotify extension (default=no)])
 if test "$SB_PLATFORM" = "linux" -a "$with_libnotify" = "yes"; then
   PKG_CHECK_MODULES(LNTFY, libnotify)
   AC_SUBST(LNTFY_CFLAGS)
