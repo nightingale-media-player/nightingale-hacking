@@ -414,8 +414,8 @@ AddonMetadata.prototype = {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
          getService(Components.interfaces.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
-      consoleService.logStringMessage("Addon Metadata Reader: " + errorList[i]);
-      debug("AddonMetadataReader: " + errorList[i] + "\n");
+      consoleService.logStringMessage("Addon Metadata: " + errorList[i]);
+      debug("AddonMetadata: " + errorList[i] + "\n");
     }
   },
 
