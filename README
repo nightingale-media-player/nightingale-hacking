@@ -83,6 +83,7 @@ Configure Options:
   --enable-breakpad                     whether or not to enable breakpad
   --enable-static                       single-component static build
   --enable-compiler-environment-checks  only allow supported compilers
+  --enable-libnotify                    Optionally enable libnotify
   --enable-unity-integration            Optional support for Unity's 
                                         sound menu and notifications
 
