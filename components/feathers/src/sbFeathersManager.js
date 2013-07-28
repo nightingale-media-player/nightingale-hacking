@@ -205,11 +205,7 @@ AddonMetadataHelper.prototype = {
  * Responsible for reading addon metadata and performing 
  * registration with FeathersManager
  */
-function AddonMetadataReader() {
-  var os = Cc["@mozilla.org/observer-service;1"]
-             .getService(Ci.nsIObserverService);
-  os.addObserver(this, "amreader-addons-ready", false);
-};
+function AddonMetadataReader() {};
 
 AddonMetadataReader.prototype = {
   _manager: null,
@@ -496,18 +492,6 @@ AddonMetadataReader.prototype = {
     for (var i = 0; i  < errorList.length; i++) {
       Components.utils.reportError("Feathers Metadata Reader: " 
                                        + contextMessage + errorList[i]);
-    }
-  },
-
-  observe: function(subject, topic, data) {
-    var os = Cc["@mozilla.org/observer-service;1"]
-               .getService(Ci.nsIObserverService);
-    switch (topic) {
-      case "amreader-addons-ready":
-        dump("AddonMetadataReader::observe -- observed amreader-addons-ready topic!\n");
-        this.loadMetadata();
-        os.removeObserver(this, "amreader-addons-ready");
-        break;
     }
   }
 }

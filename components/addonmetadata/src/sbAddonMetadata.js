@@ -82,9 +82,6 @@ function AddonMetadata() {
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
               .getService(Components.interfaces.nsIRDFService);
 
-  var os  = Components.classes["@mozilla.org/observer-service;1"]
-            .getService(Components.interfaces.nsIObserverService);
-
   try {
     // If possible, load the cached datasource from disk. 
     // Otherwise rebuild it by reading the metadata from all addons
@@ -96,12 +93,14 @@ function AddonMetadata() {
       var that = this;
       this._buildDatasource(function() {
         dump("AddonMetadata: in callback after _buildDatasource\n");
-        os.notifyObservers(null, "AddonMetadataRDF", "wrote rdf!");
       });
     }
   } catch (e) {
     dump("AddonMetadata: Constructor Error: " + e.toString());
   }
+
+  var os  = Components.classes["@mozilla.org/observer-service;1"]
+            .getService(Components.interfaces.nsIObserverService);
   os.addObserver(this, "xpcom-shutdown", false);
 };
 
