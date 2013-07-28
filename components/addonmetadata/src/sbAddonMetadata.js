@@ -90,10 +90,21 @@ function AddonMetadata() {
       dump("AddonMetadata: rebuilding addon metadata datasource\n");
       this._purgeDatasource();
 
-      var that = this;
+      // XXX XUL9 - BAD! This is terrible! But it's the only
+      // thing that works right now :(
+      var done = false;
+      var thread = Components.classes["@mozilla.org/thread-manager;1"]
+                             .getService(Components.interfaces.nsIThreadManager)
+                             .currentThread;
+
       this._buildDatasource(function() {
         dump("AddonMetadata: in callback after _buildDatasource\n");
+        done = true;
       });
+      while (!done) {
+        dump("AddonMetadata: processNextEvent\n");
+        thread.processNextEvent(true);
+      }
     }
   } catch (e) {
     dump("AddonMetadata: Constructor Error: " + e.toString());
