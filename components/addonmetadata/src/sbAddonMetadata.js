@@ -140,7 +140,7 @@ AddonMetadata.prototype = {
       lastModified = prefs.getCharPref(PREF_LASTMODIFIED);
     } catch (e) {}    
     
-    // If the extensions.rdf hasn't changed, then we don't need to rebuild
+    // If the extensions.sqlite hasn't changed, then we don't need to rebuild
     //debug("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
     if (lastModified == newLastModified) {
       return false;
@@ -151,7 +151,7 @@ AddonMetadata.prototype = {
 
     //debug("AddonMetadata._isRebuildRequired: true\n");
 
-    // Extensions.rdf has changed, so we will need to rebuild the addons datasource.
+    // extensions.sqlite has changed, so we will need to rebuild the addons datasource.
     return true;
   },
   
@@ -281,7 +281,6 @@ AddonMetadata.prototype = {
       // Save changes
       that._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
                       .Flush();
-                      // .FlushTo(rdfFileURL);
       //debug("\nAddonMetadata: _buildDatasource complete \n");
       dump("AddonMetadata::_buildDatasource() -- complete\n");
 
@@ -354,6 +353,7 @@ AddonMetadata.prototype = {
             newResource = itemNode;
           }
 
+          // dump("    Asserting nR = "+newResource.ValueUTF8+", arc = "+arc.ValueUTF8+"\n");
           // Otherwise, assert into the main ds
           this._datasource.Assert(newResource, arc, target, true);
         }
