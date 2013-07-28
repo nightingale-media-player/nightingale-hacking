@@ -83,10 +83,11 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
   };
   
   var createContainerProperties = function(resource) {
-    dump("RDFHelper::createContainerProperties(resource)\n");
+    // dump("RDFHelper::createContainerProperties(resource)\n");
     var container = _containerUtils.MakeSeq(aDatasource, resource);
     var contents = container.GetElements();
 
+    /*
     dump("RDFHelper::createContainerProperties -- aDatasource.URI = "+aDatasource.URI+"\n");
     dump("RDFHelper::createContainerProperties -- resource.ValueUTF8 = "+resource.ValueUTF8+"\n");
 
@@ -101,8 +102,8 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
       dump("true\n");
     else 
       dump("false\n");
-
     dump("RDFHelper::createContainerProperties -- container count = "+container.GetCount()+"\n");
+    */
 
     // urgh, this doesn't actually mean "this" is an array 
     // but at least it's sort of like one.
@@ -117,7 +118,6 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
         aNamespaces
       ); 
       i++;
-      dump("RDFHelper::createContainerProperties -- i = "+i+"\n");
     }
     that.length = i;
   };

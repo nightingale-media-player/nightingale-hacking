@@ -170,17 +170,14 @@ AddonMetadataReader.prototype = {
    */
   loadMetadata: function(manager) {
     //debug("AddonMetadataReader: loadMetadata\n");
-    dump("AddonMetadataReader::loadMetadata\n");
 
     this._manager = manager;
 
     var addons = RDFHelper.help("rdf:addon-metadata",
                                 "urn:songbird:addon:root",
                                 RDFHelper.DEFAULT_RDF_NAMESPACES);
-    dump("AddonMetadataReader::loadMetadata -- addons.length = "+addons.length+"\n");
 
     for (var i = 0; i < addons.length; i++) {
-      dump("AddonMetadataReader::loadMetadata -- in loop: i = "+i+"\n");
       // first a little workaround to for backwards compatibility 
       // with the now obsolete <feathers> element
       // TODO: remove this when we stop supporting 0.4 feathers
@@ -191,7 +188,6 @@ AddonMetadataReader.prototype = {
         feathersHub = feathersHub.feathers[0];
       }
 
-      dump("AddonMetadataReader::loadMetadata -- about to check feathersHub.skin\n");
       if (feathersHub.skin) {
         var skins = feathersHub.skin;
         for (var j = 0; j < skins.length; j++) {
@@ -224,7 +220,6 @@ AddonMetadataReader.prototype = {
    * Extract skin metadata
    */
   _registerSkin: function _registerSkin(addon, skin) {
-    dump("AddonMetadataReader::_registerSkin(addon = "+addon+", skin = "+skin+")\n");
     var description = new SkinDescription();
     
     // Array of error messages
