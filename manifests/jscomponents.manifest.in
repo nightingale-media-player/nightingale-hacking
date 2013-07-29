@@ -389,14 +389,14 @@ category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Son
 # DEL ? # category profile-after-change SongbirdGlobalHotkeyService service,@songbirdnest.com/Songbird/HotkeyService;1
 category app-startup sbLibraryDiffingService service,@songbirdnest.com/Songbird/Library/DiffingService;1
 category app-startup sbLibraryImporterManagerService service,@songbirdnest.com/Songbird/LibraryImporterManager;1
-category app-startup sbLibraryManager service,@songbirdnest.com/Songbird/library/Manager;1
+category profile-after-change sbLibraryManager service,@songbirdnest.com/Songbird/library/Manager;1
 category app-startup SongbirdMediaExportAgentService service,@songbirdnest.com/media-export-service;1
 category app-startup SongbirdMediacoreManager service,@songbirdnest.com/Songbird/Mediacore/Manager;1
 category app-startup SongbirdMediaListViewMap service,@songbirdnest.com/Songbird/library/MediaListViewMap;1
 category app-startup SongbirdObsoleteDeviceManagerService service,@songbirdnest.com/Songbird/DeviceManager;1
 category app-startup ParserErrorHandler service,@songbirdnest.com/Songbird/ParserErrorHandler;1
 ## Causes a hang right now ## category app-startup SbPlaybackHistoryService service,@songbirdnest.com/Songbird/PlaybackHistoryService;1
-category app-startup sbPlayQueueService service,@songbirdnest.com/Songbird/playqueue/service;1
+category profile-after-change sbPlayQueueService service,@songbirdnest.com/Songbird/playqueue/service;1
 category app-startup sbPublicPlaylistCommands service,@songbirdnest.com/Songbird/PublicPlaylistCommands;1
 category app-startup sbScreenSaverSuppressor service,@songbirdnest.com/Songbird/ScreenSaverSuppressor;1
 category app-startup sbShutdownService service,@songbirdnest.com/shutdown-service;1
@@ -437,7 +437,7 @@ category songbird-album-art-fetcher sbFileAlbumArtFetcher @songbirdnest.com/Song
 category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
 category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
 category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
-## Causes a hang right now ## category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
+category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
 category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
 category songbird-library-manager-before-shutdown LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
 category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
