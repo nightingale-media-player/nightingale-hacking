@@ -272,7 +272,7 @@ sbGStreamerService::Init()
 
     // 3. Add our bundled gst-plugins directory
     nsCOMPtr<nsIFile> pluginDir;
-    rv = directorySvc->Get("resource:app",
+    rv = directorySvc->Get("CurProcD",
                            NS_GET_IID(nsIFile),
                            getter_AddRefs(pluginDir));
     NS_ENSURE_SUCCESS(rv, rv);
