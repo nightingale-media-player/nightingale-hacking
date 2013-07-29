@@ -61,6 +61,8 @@
 
 #define SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION                   \
   "Songbird Local Database Library Loader"
+#define SB_LOCALDATABASE_LIBRARYLOADER_NAME                          \
+  "SongbirdLocalDatabaseLibraryLoader"
 #define SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID                    \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1"
 #define SB_LOCALDATABASE_LIBRARYLOADER_CID                           \

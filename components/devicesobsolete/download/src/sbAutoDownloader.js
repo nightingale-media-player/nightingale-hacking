@@ -101,6 +101,8 @@ sbAutoDownloader.prototype._timer = null;
 ///////////
 sbAutoDownloader.prototype.classDescription =
     'Songbird Auto Downloader Service';
+sbAutoDownloader.prototype.className =
+    'SongbirdAutoDownloaderService';
 sbAutoDownloader.prototype.classID =
     Components.ID("{a3d7426b-0b22-4f07-b72c-e44bab0759f7}");
 sbAutoDownloader.prototype.contractID = '@songbirdnest.com/autodownloader;1';
@@ -268,13 +270,3 @@ function sbAutoDownloader__clearTimer() {
 
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbAutoDownloader]);
-
-//   function(aCompMgr, aFileSpec, aLocation) {
-//     XPCOMUtils.categoryManager.addCategoryEntry(
-//       "app-startup",
-//       sbAutoDownloader.prototype.classDescription,
-//       "service," + sbAutoDownloader.prototype.contractID,
-//       true,
-//       true);
-//   }
-// );

@@ -56,9 +56,6 @@ NS_DEFINE_NAMED_CID(SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseMediaListViewState);
 NS_DEFINE_NAMED_CID(SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID);
 
-// SB_LIBRARY_LOADER_REGISTRATION(sbLocalDatabaseLibraryLoader,
-//                                SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION);
-
 
 static const mozilla::Module::CIDEntry kSongbirdLocalDatabaseLibraryCIDs[] = {
   { &kSB_LOCALDATABASE_GUIDARRAY_CID, false, NULL, sbLocalDatabaseGUIDArrayConstructor },
@@ -86,6 +83,7 @@ static const mozilla::Module::ContractIDEntry kSongbirdLocalDatabaseLibraryContr
 };
 
 static const mozilla::Module::CategoryEntry kSongbirdLocalDatabaseLibraryCategories[] = {
+  { SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID, "songbird-library-loader", SB_LOCALDATABASE_LIBRARYLOADER_NAME },
   { NULL }
 };
 

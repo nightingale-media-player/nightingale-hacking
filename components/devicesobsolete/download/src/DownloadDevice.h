@@ -52,7 +52,8 @@
 
 #define SONGBIRD_DownloadDevice_CONTRACTID                                     \
                     "@songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1"
-#define SONGBIRD_DownloadDevice_CLASSNAME "Songbird Download Device"
+#define SONGBIRD_DownloadDevice_CLASSDESCRIPTION "Songbird Download Device"
+#define SONGBIRD_DownloadDevice_CLASSNAME "SongbirdDownloadDevice"
 #define SONGBIRD_DownloadDevice_CID                                            \
 {                                                                              \
     0x961DA3F4,                                                                \

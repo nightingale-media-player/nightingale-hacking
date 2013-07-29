@@ -193,20 +193,6 @@ function sbDownloadDeviceServicePaneModule_onStateChanged()
   }
 }
 
-// function NSGetModule(compMgr, fileSpec) {
-//   var module = XPCOMUtils.generateModule(
-//     [sbDownloadDeviceServicePaneModule],
-//       function(aCompMgr, aFileSpec, aLocation) {
-//       XPCOMUtils.categoryManager.addCategoryEntry(
-//         "service-pane",
-//         "z-download-device-service-pane-module",
-//         sbDownloadDeviceServicePaneModule.prototype.contractID,
-//         true,
-//         true);
-//       }
-//     );
-//   return module;
-// }
 
 var NSGetFactory = 
   XPCOMUtils.generateNSGetFactory([sbDownloadDeviceServicePaneModule]);
