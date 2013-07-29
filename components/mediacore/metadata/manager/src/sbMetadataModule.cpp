@@ -36,7 +36,6 @@
 #include "prlog.h"
 
 
-// XXX Anything special needed in the category entry array for singleton?
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataManager, sbMetadataManager::GetSingleton);
 NS_DEFINE_NAMED_CID(SONGBIRD_METADATAMANAGER_CID);
 

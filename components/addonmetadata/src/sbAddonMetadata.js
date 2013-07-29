@@ -87,7 +87,6 @@ function AddonMetadata() {
     // Otherwise rebuild it by reading the metadata from all addons
     if (!this._loadDatasource() || this._isRebuildRequired()) {
       //debug("AddonMetadata: rebuilding addon metadata datasource\n");
-      // dump("AddonMetadata: rebuilding addon metadata datasource\n");
       this._purgeDatasource();
 
       // XXX XUL9 - BAD! This is terrible! But it's the only
