@@ -63,8 +63,8 @@ addEventListener("load", function() {
   // hide the CDRip prefpane if no cd-rip engines are installed
   var catMan = Cc["@mozilla.org/categorymanager;1"]
                  .getService(Ci.nsICategoryManager);
-  var enum = catMan.enumerateCategory("cdrip-engine");
-  if (!enum.hasMoreElements()) {
+  var cdenum = catMan.enumerateCategory("cdrip-engine");
+  if (!cdenum.hasMoreElements()) {
     var radio = document.getAnonymousElementByAttribute(browserPreferences,
                                                         'pane', 'paneCDRip');
     radio.hidden = true;
