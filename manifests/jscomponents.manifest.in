@@ -294,11 +294,11 @@ contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4
 # contract @songbirdnest.com/Songbird/Playback/GStreamer/RTPStreamer;1 {fa712427-ac13-449f-ac5c-c2e8fefebc48}
 contract @songbirdnest.com/Songbird/PlaybackHistoryEntry;1 {64abdd62-3481-4ce9-89c6-e02398a4aa5c}
 contract @songbirdnest.com/Songbird/PlaybackHistoryService;1 {e4f7838e-9672-453e-818d-a0da84e64365}
-# contract @songbirdnest.com/Songbird/Playlist/Reader/ASX;1 {e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}
-# contract @songbirdnest.com/Songbird/Playlist/Reader/Feed;1 {fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}
-# contract @songbirdnest.com/Songbird/Playlist/Reader/HTML;1 {75c8f646-e75a-4743-89cd-412fa083ce07}
-# contract @songbirdnest.com/Songbird/Playlist/Reader/M3U;1 {ba32eac9-6732-4d5d-be50-156f52b5368b}
-# contract @songbirdnest.com/Songbird/Playlist/Reader/PLS;1 {a6937260-0d7f-4721-8f31-4b8455cf72c9}
+contract @songbirdnest.com/Songbird/Playlist/Reader/ASX;1 {e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}
+contract @songbirdnest.com/Songbird/Playlist/Reader/Feed;1 {fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}
+contract @songbirdnest.com/Songbird/Playlist/Reader/HTML;1 {75c8f646-e75a-4743-89cd-412fa083ce07}
+contract @songbirdnest.com/Songbird/Playlist/Reader/M3U;1 {ba32eac9-6732-4d5d-be50-156f52b5368b}
+contract @songbirdnest.com/Songbird/Playlist/Reader/PLS;1 {a6937260-0d7f-4721-8f31-4b8455cf72c9}
 contract @songbirdnest.com/Songbird/PlaylistCommandsBuilder;1 {18c4b63c-d5b4-4aa2-918f-a31304d254ec}
 contract @songbirdnest.com/Songbird/PlaylistCommandsHelper;1 {ada0a2ac-1dd1-11b2-bb58-cefeff884ed4}
 contract @songbirdnest.com/Songbird/PlaylistCommandsManager;1 {f89d8c28-406d-4d4b-9130-ecabe66a71e2}
@@ -382,10 +382,10 @@ category app-startup smartplaylist-property-registrar service,@songbirdnest.com/
 category app-startup smartplaylists-updater service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1
 category app-startup SongbirdAdd-onBundleUpdateService service,@songbirdnest.com/AddOnBundleUpdateService;1
 category app-startup sbAppStartupService service,@songbirdnest.com/app-startup-service;1
-### category app-startup SongbirdAutoDownloaderService service,@songbirdnest.com/autodownloader;1
-### category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate service,@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
-### category app-startup SongbirdDeviceFirmwareUpdater service,@songbirdnest.com/Songbird/Device/Firmware/Updater;1
-### category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Songbird/DeviceManager;2
+category app-startup SongbirdAutoDownloaderService service,@songbirdnest.com/autodownloader;1
+category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate service,@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
+category app-startup SongbirdDeviceFirmwareUpdater service,@songbirdnest.com/Songbird/Device/Firmware/Updater;1
+category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Songbird/DeviceManager;2
 # DEL ? # category profile-after-change SongbirdGlobalHotkeyService service,@songbirdnest.com/Songbird/HotkeyService;1
 category app-startup sbLibraryDiffingService service,@songbirdnest.com/Songbird/Library/DiffingService;1
 category app-startup sbLibraryImporterManagerService service,@songbirdnest.com/Songbird/LibraryImporterManager;1
