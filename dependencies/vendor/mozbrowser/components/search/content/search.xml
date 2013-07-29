@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!--
 # -*- Mode: HTML -*-
 # ***** BEGIN LICENSE BLOCK *****
 # Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,6 +42,7 @@
 # the terms of any one of the MPL, the GPL or the LGPL.
 #
 # ***** END LICENSE BLOCK *****
+-->
 
 <!DOCTYPE bindings [
 <!ENTITY % searchBarDTD SYSTEM "chrome://browser/locale/searchbar.dtd" >
@@ -57,7 +59,7 @@
   <binding id="searchbar">
     <resources>
       <stylesheet src="chrome://browser/content/search/searchbarBindings.css"/>
-      <stylesheet src="chrome://browser/skin/searchbar.css"/>
+      <!-- <stylesheet src="chrome://browser/skin/searchbar.css"/> -->
     </resources>
     <content>
       <xul:stringbundle src="chrome://browser/locale/search.properties"
@@ -782,11 +784,12 @@
                phase="capturing"
                action="return this.openSearch();"/>
 
-#ifndef XP_MACOSX
+<!-- XXX Songbird: enable F4 on mac too -->
+<!-- #ifndef XP_MACOSX -->
       <handler event="keypress" keycode="VK_F4"
                phase="capturing"
                action="return this.openSearch();"/>
-#endif
+<!-- #endif -->
 
       <handler event="dragover">
       <![CDATA[
