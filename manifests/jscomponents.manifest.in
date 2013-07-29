@@ -432,7 +432,6 @@ category service-pane device @songbirdnest.com/servicepane/device;1
 category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
 category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
 category service-pane DeviceServicePaneService service,@songbirdnest.com/servicepane/device;1
-category service-pane LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
 category service-pane ServicePaneService service,@songbirdnest.com/servicepane/service;1
 category songbird-album-art-fetcher sbFileAlbumArtFetcher @songbirdnest.com/Songbird/album-art/file-fetcher;1
 category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
@@ -441,7 +440,7 @@ category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDevic
 ## Causes a hang right now ## category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
 category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
 category songbird-library-manager-before-shutdown LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
-category songbird-media-item-downloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1 @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
+category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
 category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
 category xpcom-category-entry-added ServicePaneService service,@songbirdnest.com/servicepane/service;1
 category xpcom-category-entry-removed ServicePaneService service,@songbirdnest.com/servicepane/service;1
