@@ -445,4 +445,3 @@ category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdn
 category xpcom-category-entry-added ServicePaneService service,@songbirdnest.com/servicepane/service;1
 category xpcom-category-entry-removed ServicePaneService service,@songbirdnest.com/servicepane/service;1
 # category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
-# category xpcom-shutdown AddonMetadata @mozilla.org/rdf/datasource;1?name=addon-metadata
