@@ -50,7 +50,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreCapabilities,
                               sbIMediacoreCapabilities)
 
 sbMediacoreCapabilities::sbMediacoreCapabilities()
-: mLock(nsnull)
+: mLock("sbMediacoreCapabilities::mLock")
 , mSupportsAudioPlayback(PR_FALSE)
 , mSupportsVideoPlayback(PR_FALSE)
 , mSupportsImagePlayback(PR_FALSE)
