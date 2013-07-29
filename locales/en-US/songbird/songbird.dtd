@@ -85,7 +85,7 @@
 <!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
-<!ENTITY menu.help.homepage "Songbird Website" >
+<!ENTITY menu.help.homepage "&brandShortName; Website" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
 <!ENTITY menu.help.topics   "Help Topics" >
 <!ENTITY menu.help.keyboard "Keyboard Shortcuts">
