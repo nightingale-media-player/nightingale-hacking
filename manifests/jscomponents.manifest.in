@@ -439,6 +439,7 @@ category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceControlle
 category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
 category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
 category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
+category app-startup SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
 category songbird-library-manager-before-shutdown LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
 category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
 category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
