@@ -94,10 +94,10 @@ SmartPlaylistPropertyRegistrar.prototype = {
   classID         : Components.ID("{4b6a6c23-e247-419e-b629-3c2ef5f5876d}"),
   contractID      : "@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1",
  
-//  _xpcom_categories: [{
-//	    category: "app-startup",
-//	    service: true
-//  }],
+ _xpcom_categories: [{
+    category: "app-startup",
+    service: true
+ }],
 
   /**
    * Returns an enumerator to all properties for a particular smart
@@ -135,15 +135,6 @@ SmartPlaylistPropertyRegistrar.prototype = {
     XPCOMUtils.generateQI([Ci.sbISmartPlaylistPropertyRegistrar])
 }; // SmartPlaylistPropertyRegistrar.prototype
 
-//function postRegister(aCompMgr, aFileSpec, aLocation) {
-//  XPCOMUtils.categoryManager
-//            .addCategoryEntry('app-startup',
-//                              'smartplaylist-property-registrar', 
-//                              'service,@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1',
-//                              true, 
-//                              true);
-//}
 
 var NSGetFactory = 
   XPCOMUtils.generateNSGetFactory([SmartPlaylistPropertyRegistrar]);
-
