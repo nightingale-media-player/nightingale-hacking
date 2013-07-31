@@ -368,7 +368,7 @@ category app-startup AddonBundleUpdateService service,@songbirdnest.com/AddOnBun
 category app-startup DynamicPlaylistService service,@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
 category app-startup faceplate-pane-manager service,@songbirdnest.com/faceplate/manager;1
 category app-startup feathers-manager service,@songbirdnest.com/songbird/feathersmanager;1
-category app-startup LocalDatabaseLibraryFactory service,@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
+# REGISTERED IN MODULE # category app-startup LocalDatabaseLibraryFactory service,@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
 category app-startup sbAlbumArtService service,@songbirdnest.com/Songbird/album-art-service;1
 category app-startup sbDistHelperEnvWriter @songbirdnest.com/tools/disthelper/update/env;1
 category app-startup sbMediaItemControllerCleanup service,@songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1
@@ -438,8 +438,7 @@ category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/
 category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
 category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
 category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
-category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
-category app-startup SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
+# REGISTERED IN MODULE # category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
 category songbird-library-manager-before-shutdown LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
 category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
 category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
