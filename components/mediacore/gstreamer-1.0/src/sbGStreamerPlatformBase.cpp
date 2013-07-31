@@ -188,27 +188,25 @@ void
 BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
   GstElement *element = NULL;
-  GstXOverlay *xoverlay = NULL;
+  GstVideoOverlay *videoOverlay = NULL;
 
-  if (GST_IS_BIN (mVideoSink)) {
+  if (GST_IS_BIN(mVideoSink)) {
     /* Get the actual implementing object from the bin */
-    element = gst_bin_get_by_interface(GST_BIN (mVideoSink),
-            GST_TYPE_X_OVERLAY);
-  }
-  else {
+    element = gst_bin_get_by_interface(GST_BIN(mVideoSink),
+                                       GST_TYPE_VIDEO_OVERLAY);
+  } else {
     element = mVideoSink;
   }
 
-  if (GST_IS_X_OVERLAY (element)) {
-    xoverlay = GST_X_OVERLAY (element);
-    LOG(("xoverlay interface found, setting video window"));
-  }
-  else {
-    LOG(("No xoverlay interface found, cannot set video window"));
+  if (GST_IS_VIDEO_OVERLAY(element)) {
+    videoOverlay = GST_VIDEO_OVERLAY(element);
+    LOG(("video overlay interface found, setting video window"));
+  } else {
+    LOG(("No video overlay interface found, cannot set video window"));
     return;
   }
 
-  SetXOverlayWindowID(xoverlay);
+  SetVideoOverlayWindowID(videoOverlay);
 
   ResizeToWindow();
 }

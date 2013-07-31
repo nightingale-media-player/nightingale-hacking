@@ -28,7 +28,7 @@
 #define _SB_GSTREAMER_PLATFORM_GDK_H_
 
 #include <gst/gst.h>
-#include <gst/interfaces/xoverlay.h>
+#include <gst/video/videooverlay.h>
 
 #include <gtk/gtkwindow.h>
 #include <gdk/gdkx.h>
@@ -51,7 +51,7 @@ public:
 protected:
   // Implement virtual methods in BasePlatformInterface
   void MoveVideoWindow (int x, int y, int width, int height);
-  void SetXOverlayWindowID (GstXOverlay *aXOverlay);
+  void SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay);
   void FullScreen();
   void UnFullScreen();
   nsresult SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget);

@@ -28,6 +28,7 @@
 #define _SB_GSTREAMER_PLATFORM_OSX_H_
 
 #include <gst/gst.h>
+#include <gst/video/videooverlay.h>
 
 #include "sbIGstPlatformInterface.h"
 #include "sbGStreamerPlatformBase.h"
@@ -59,7 +60,7 @@ public:
 protected:
   // Implement virtual methods in BasePlatformInterface
   void MoveVideoWindow (int x, int y, int width, int height);
-  void SetXOverlayWindowID (GstXOverlay *aXOverlay) {}
+  void SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay) {}
   void FullScreen() {}
   void UnFullScreen() {}
 
