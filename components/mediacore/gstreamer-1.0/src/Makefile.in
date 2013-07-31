@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale Media Player.
 #
-# Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# Copyright(c) 2013
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH  = ../../../..
@@ -86,8 +86,8 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(topsrcdir)/components/mediacore/base/src \
-                     $(DEPTH)/components/mediacore/gstreamer/public \
-                     $(topsrcdir)/components/mediacore/gstreamer/src \
+                     $(DEPTH)/components/mediacore/gstreamer-1.0/public \
+                     $(topsrcdir)/components/mediacore/gstreamer-1.0/src \
                      $(DEPTH)/components/mediacore/metadata/manager/public \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(topsrcdir)/components/mediacore/transcode/src \
