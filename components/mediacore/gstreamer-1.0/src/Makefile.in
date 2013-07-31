@@ -153,7 +153,6 @@ endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-                            gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
