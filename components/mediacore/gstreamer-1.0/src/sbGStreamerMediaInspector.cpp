@@ -868,7 +868,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
                                         &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    sbGstCaps caps = gst_pad_get_negotiated_caps (mDemuxerSink);
+    sbGstCaps caps = gst_pad_get_current_caps (mDemuxerSink);
     GstStructure *structure = gst_caps_get_structure (caps, 0);
 
     nsCString mimeType;
@@ -1094,7 +1094,7 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 
   // mVideoSrc is the decoded video pad from decodebin. We can process this for
   // information about the output video: resolution, framerate, etc.
-  sbGstCaps caps = gst_pad_get_negotiated_caps (mVideoSrc);
+  sbGstCaps caps = gst_pad_get_current_caps(mVideoSrc);
   rv = ProcessVideoCaps(format, caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
@@ -1107,7 +1107,7 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw video from the demuxer. Alternatively, it means we screwed up
     // somehow.
-    sbGstCaps videoCaps = gst_pad_get_negotiated_caps (mVideoDecoderSink);
+    sbGstCaps videoCaps = gst_pad_get_current_caps(mVideoDecoderSink);
     GstStructure *structure = gst_caps_get_structure (videoCaps, 0);
 
     nsCString mimeType;
@@ -1247,7 +1247,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
 
   // mAudioSrc is the decoded audio pad from decodebin. We can process this for
   // information about the output audio: sample rate, number of channels, etc.
-  sbGstCaps caps = gst_pad_get_negotiated_caps (mAudioSrc);
+  sbGstCaps caps = gst_pad_get_current_caps(mAudioSrc);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
 
   gint rate, channels;
@@ -1267,7 +1267,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw audio from the demuxer. Alternatively, it means we screwed up
     // somehow.
-    sbGstCaps audioCaps = gst_pad_get_negotiated_caps (mAudioDecoderSink);
+    sbGstCaps audioCaps = gst_pad_get_current_caps(mAudioDecoderSink);
     structure = gst_caps_get_structure (audioCaps, 0);
 
     nsCString mimeType;

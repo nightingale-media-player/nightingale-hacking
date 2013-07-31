@@ -841,7 +841,7 @@ sbGStreamerAudioProcessor::DetermineFormat()
 {
   GstPad *appsinkSinkPad = gst_element_get_static_pad (GST_ELEMENT (mAppSink),
                                                        "sink");
-  GstCaps *caps = gst_pad_get_negotiated_caps(appsinkSinkPad);
+  GstCaps *caps = gst_pad_get_current_caps(appsinkSinkPad);
   if (!caps)
     return NS_ERROR_FAILURE;
 

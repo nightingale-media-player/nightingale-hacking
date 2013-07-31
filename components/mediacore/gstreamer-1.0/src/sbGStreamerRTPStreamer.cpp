@@ -171,7 +171,7 @@ sbGStreamerRTPStreamer::capsNotifyHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerRTPStreamer *streamer)
 {
   GstPad *pad = GST_PAD(obj);
-  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+  GstCaps *caps = gst_pad_get_current_caps(pad);
 
   if (caps) {
     streamer->OnCapsSet(caps);

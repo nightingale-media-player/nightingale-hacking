@@ -553,7 +553,7 @@ sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
 
   if (pad) {
     GstCaps *caps;
-    caps = gst_pad_get_negotiated_caps(pad);
+    caps = gst_pad_get_current_caps(pad);
     if (caps) {
       core->OnAudioCapsSet(caps);
       gst_caps_unref(caps);
@@ -571,7 +571,7 @@ sbGStreamerMediacore::audioCapsSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
   GstPad *pad = GST_PAD(obj);
-  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+  GstCaps *caps = gst_pad_get_current_caps(pad);
 
   if (caps) {
     core->OnAudioCapsSet(caps);
@@ -598,7 +598,7 @@ sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
 
   if (pad) {
     GstCaps *caps;
-    caps = gst_pad_get_negotiated_caps(pad);
+    caps = gst_pad_get_current_caps(pad);
     if (caps) {
       core->OnVideoCapsSet(caps);
       gst_caps_unref(caps);
@@ -616,7 +616,7 @@ sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
   GstPad *pad = GST_PAD(obj);
-  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+  GstCaps *caps = gst_pad_get_current_caps(pad);
 
   if (caps) {
     core->OnVideoCapsSet(caps);
