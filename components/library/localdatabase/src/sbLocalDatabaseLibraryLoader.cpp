@@ -40,7 +40,6 @@
 #include <nsISupportsPrimitives.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
-#include <nsIClassInfoImpl.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMetrics.h>
