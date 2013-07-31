@@ -846,8 +846,8 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
     case GST_MESSAGE_ELEMENT: {
       // Win32 and GDK use prepare-xwindow-id, OSX has its own private thing,
       // have-ns-view
-      if (gst_structure_has_name(aMessage->structure, "prepare-xwindow-id") ||
-          gst_structure_has_name(aMessage->structure, "have-ns-view"))
+      if (gst_structure_has_name(gst_message_get_structure(aMessage), "prepare-xwindow-id") ||
+          gst_structure_has_name(gst_message_get_structure(aMessage), "have-ns-view"))
       {
         if(mPlatformInterface)
         {
@@ -1100,7 +1100,8 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
   nsresult rv;
   nsCString uriString;
 
-  location = gst_structure_get_string (message->structure, "new-location");
+  location = gst_structure_get_string(gst_message_get_structure(message),
+                                      "new-location");
 
   if (location && *location) {
     if (strstr (location, "://") != NULL) {
@@ -1473,7 +1474,7 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
     case GST_MESSAGE_BUFFERING:
       HandleBufferingMessage(message);
     case GST_MESSAGE_ELEMENT: {
-      if (gst_structure_has_name (message->structure, "redirect")) {
+      if (gst_structure_has_name(gst_message_get_structure(message), "redirect")) {
         HandleRedirectMessage(message);
       } else if (gst_is_missing_plugin_message(message)) {
         HandleMissingPluginMessage(message);
