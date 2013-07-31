@@ -132,7 +132,7 @@ private:
 class sbLibraryLoaderInfo
 {
 public:
-  sbLibraryLoaderInfo() { }
+  sbLibraryLoaderInfo();
 
   nsresult Init(const nsACString& aPrefKey);
 

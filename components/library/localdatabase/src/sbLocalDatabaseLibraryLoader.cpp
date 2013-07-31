@@ -40,6 +40,7 @@
 #include <nsISupportsPrimitives.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
+#include <nsIClassInfoImpl.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMetrics.h>
@@ -67,11 +68,6 @@
 #include <sbStringBundle.h>
 
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
-
-/**
- * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbLocalDatabaseLibraryLoader:5
- */
 
 #define NS_APPSTARTUP_CATEGORY         "app-startup"
 #define NS_FINAL_UI_STARTUP_CATEGORY   "final-ui-startup"
@@ -121,11 +117,18 @@
 
 
 NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibraryLoader, sbILibraryLoader, nsIObserver)
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=LocalDatabaseLibraryLoader:5
+ */
+
+
 sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
 : m_DetectedCorruptLibrary(PR_FALSE)
 , m_DeleteLibrariesAtShutdown(PR_FALSE)
 {
-  SB_PRLOG_SETUP(sbLocalDatabaseLibraryLoader);
+  SB_PRLOG_SETUP(LocalDatabaseLibraryLoader);
 
   TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Created", this);
 }
@@ -223,6 +226,8 @@ sbLocalDatabaseLibraryLoader::Init()
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 {
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - EnsureDefaultLibraries", this);
+
   PRBool databasesOkay = PR_TRUE;
   nsresult retval = NS_OK;
   
@@ -286,6 +291,8 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
                                                    const nsAString& aCustomType,
                                                    const nsAString& aDefaultColumnSpec)
 {
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - EnsureDefaultLibrary", this);
+
   nsCAutoString resourceGUIDPrefKey(aLibraryGUIDPref);
 
   // Figure out the GUID for this library.
@@ -431,6 +438,23 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
                                                        nsILocalFile* aDatabaseFile,
                                                        const nsAString& aLibraryNameKey)
 {
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - CreateDefaultLibraryInfo", this);
+
+  const char *arg1;
+  NS_CStringGetData(aPrefKey, &arg1);
+  LOG("    [0x%x] - aPrefKey = %s", this, arg1);
+
+  const PRUnichar *arg2;
+  NS_StringGetData(aDatabaseGUID, &arg2);
+  NS_LossyConvertUTF16toASCII arg2utf(aDatabaseGUID);
+  LOG("    [0x%x] - aDatabaseGUID = %s", this, arg2utf.get());
+
+  const PRUnichar *arg4;
+  NS_StringGetData(aLibraryNameKey, &arg4);
+  NS_LossyConvertUTF16toASCII arg4utf(aLibraryNameKey);
+  LOG("    [0x%x] - aLibraryNameKey = %s", this, arg4utf.get());
+
+
   nsAutoPtr<sbLibraryLoaderInfo> newLibraryInfo(new sbLibraryLoaderInfo());
   NS_ENSURE_TRUE(newLibraryInfo, nsnull);
 
@@ -521,6 +545,8 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
 NS_METHOD
 sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries() 
 {
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - PromptToDeleteLibraries", this);
+
   nsresult rv;
 
   nsCOMPtr<nsIPromptService> promptService =
@@ -994,6 +1020,11 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
 }
 
 
+sbLibraryLoaderInfo::sbLibraryLoaderInfo()
+{
+  SB_PRLOG_SETUP(LibraryLoaderInfo);
+  TRACE("sbLibraryLoaderInfo[0x%x] - Created", this);
+}
 
 /**
  * sbLibraryLoaderInfo implementation
@@ -1001,6 +1032,12 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
 nsresult
 sbLibraryLoaderInfo::Init(const nsACString& aPrefKey)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - Init", this);
+
+  const char *arg1;
+  NS_CStringGetData(aPrefKey, &arg1);
+  LOG("    [0x%x] - aPrefKey = %s", this, arg1);
+
   nsresult rv;
   nsCOMPtr<nsIPrefService> prefService =
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
@@ -1032,6 +1069,13 @@ sbLibraryLoaderInfo::Init(const nsACString& aPrefKey)
 nsresult
 sbLibraryLoaderInfo::SetDatabaseGUID(const nsAString& aGUID)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - SetDatabaseGUID", this);
+
+  const PRUnichar *arg;
+  NS_StringGetData(aGUID, &arg);
+  NS_LossyConvertUTF16toASCII argutf(aGUID);
+  LOG("    [0x%x] - aGUID = %s", this, argutf.get());
+
   NS_ENSURE_FALSE(aGUID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
@@ -1052,6 +1096,8 @@ sbLibraryLoaderInfo::SetDatabaseGUID(const nsAString& aGUID)
 void
 sbLibraryLoaderInfo::GetDatabaseGUID(nsAString& _retval)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - GetDatabaseGUID", this);
+
   _retval.Truncate();
 
   nsCOMPtr<nsISupportsString> supportsString;
@@ -1067,6 +1113,8 @@ sbLibraryLoaderInfo::GetDatabaseGUID(nsAString& _retval)
 nsresult
 sbLibraryLoaderInfo::SetDatabaseLocation(nsILocalFile* aLocation)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - SetDatabaseLocation", this);
+
   NS_ENSURE_ARG_POINTER(aLocation);
 
   nsresult rv;
@@ -1086,6 +1134,8 @@ sbLibraryLoaderInfo::SetDatabaseLocation(nsILocalFile* aLocation)
 already_AddRefed<nsILocalFile>
 sbLibraryLoaderInfo::GetDatabaseLocation()
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - GetDatabaseLocation", this);
+
   nsresult rv;
   nsCOMPtr<nsILocalFile> location = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, nsnull);
@@ -1105,6 +1155,8 @@ sbLibraryLoaderInfo::GetDatabaseLocation()
 nsresult
 sbLibraryLoaderInfo::SetLoadAtStartup(PRBool aLoadAtStartup)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - SetLoadAtStartup", this);
+
   nsresult rv = mPrefBranch->SetBoolPref(mStartupKey.get(), aLoadAtStartup);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1114,6 +1166,8 @@ sbLibraryLoaderInfo::SetLoadAtStartup(PRBool aLoadAtStartup)
 PRBool
 sbLibraryLoaderInfo::GetLoadAtStartup()
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - GetLoadAtStartup", this);
+
   PRBool loadAtStartup;
   nsresult rv = mPrefBranch->GetBoolPref(mStartupKey.get(), &loadAtStartup);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
@@ -1124,6 +1178,13 @@ sbLibraryLoaderInfo::GetLoadAtStartup()
 nsresult
 sbLibraryLoaderInfo::SetResourceGUID(const nsAString& aGUID)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - SetResourceGUID", this);
+
+  const PRUnichar *arg;
+  NS_StringGetData(aGUID, &arg);
+  NS_LossyConvertUTF16toASCII argutf(aGUID);
+  LOG("    [0x%x] - aGUID = %s", this, argutf.get());
+
   NS_ENSURE_FALSE(aGUID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
@@ -1144,6 +1205,8 @@ sbLibraryLoaderInfo::SetResourceGUID(const nsAString& aGUID)
 void
 sbLibraryLoaderInfo::GetResourceGUID(nsAString& _retval)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - GetResourceGUID", this);
+
   _retval.Truncate();
 
   nsCOMPtr<nsISupportsString> supportsString;
@@ -1159,6 +1222,8 @@ sbLibraryLoaderInfo::GetResourceGUID(nsAString& _retval)
 void
 sbLibraryLoaderInfo::GetPrefBranch(nsACString& _retval)
 {
+  TRACE("sbLibraryLoaderInfo[0x%x] - GetPrefBranch", this);
+
   _retval.Truncate();
 
   nsCAutoString prefBranch;
