@@ -91,7 +91,7 @@ component {9d66cb86-951e-49f4-bef8-26a578891275} sbPlaylistWriterManager.js
 component {e0d6e860-1dd1-11b2-8663-a4d535a29859} sbPlayQueueContentInfo.js
 component {1126ee77-2d85-4f79-a07a-b014da404e53} sbPublicPlaylistCommands.js
 component {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4} sbRemoveHelper.js
-# component {0be64502-ee00-11db-8314-0800200c9a66} sbSearchSuggester.js
+component {0be64502-ee00-11db-8314-0800200c9a66} sbSearchSuggester.js
 component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
 component {594137ed-db4a-4530-8635-2573c018b4fb} sbShutdownService.js
 component {35af253e-c7b0-40d6-a1a2-c747de924639} sbSmartMediaListsUpdater.js
