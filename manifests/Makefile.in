@@ -30,16 +30,12 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 # manifests
-SONGBIRD_PP_RESOURCES += $(srcdir)/chrome.manifest.in \
-                         $(srcdir)/components.manifest.in \
-                         $(srcdir)/interfaces.manifest.in \
-                         $(srcdir)/jscomponents.manifest.in \
-                         $(srcdir)/libs.manifest.in \
-                         $(srcdir)/vendor.manifest.in \
-                         $(NULL)
-
-SONGBIRD_DIST = $(CURDIR)/chrome.manifest \
-                $(NULL)
+SONGBIRD_PP_RESOURCES = $(srcdir)/components.manifest.in \
+                        $(srcdir)/interfaces.manifest.in \
+                        $(srcdir)/jscomponents.manifest.in \
+                        $(srcdir)/vendor.manifest.in \
+                        $(srcdir)/libs.manifest.in \
+                        $(NULL)
 
 SONGBIRD_COMPONENTS = $(CURDIR)/components.manifest \
                       $(CURDIR)/interfaces.manifest \
@@ -51,3 +47,10 @@ SONGBIRD_LIB = $(CURDIR)/libs.manifest \
                $(NULL)
 
 include $(topsrcdir)/build/rules.mk
+
+export::
+	@echo "manifest components/components.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
+	@echo "manifest components/interfaces.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
+	@echo "manifest components/jscomponents.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
+	@echo "manifest components/vendor.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
+	@echo "manifest lib/libs.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
