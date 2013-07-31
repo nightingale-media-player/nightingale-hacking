@@ -96,28 +96,6 @@ sbLibraryManager::~sbLibraryManager()
   MOZ_COUNT_DTOR(sbLibraryManager);
 }
 
-/* static */ NS_METHOD
-sbLibraryManager::RegisterSelf(nsIComponentManager* aCompMgr,
-                               nsIFile* aPath,
-                               const char* aLoaderStr,
-                               const char* aType,
-                               const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
-                                         SONGBIRD_LIBRARYMANAGER_DESCRIPTION,
-                                         "service,"
-                                         SONGBIRD_LIBRARYMANAGER_CONTRACTID,
-                                         PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return rv;
-}
-
 /**
  * \brief Register with the Observer Service.
  */
