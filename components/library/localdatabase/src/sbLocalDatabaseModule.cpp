@@ -83,7 +83,8 @@ static const mozilla::Module::ContractIDEntry kSongbirdLocalDatabaseLibraryContr
 };
 
 static const mozilla::Module::CategoryEntry kSongbirdLocalDatabaseLibraryCategories[] = {
-  { SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID, "songbird-library-loader", SB_LOCALDATABASE_LIBRARYLOADER_NAME },
+  { "app-startup", SB_LOCALDATABASE_LIBRARYFACTORY_NAME, "service," SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID },
+  { "songbird-library-loader", SB_LOCALDATABASE_LIBRARYLOADER_NAME, SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID },
   { NULL }
 };
 
