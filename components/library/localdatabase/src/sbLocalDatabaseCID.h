@@ -49,6 +49,8 @@
 
 #define SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION                   \
   "Local Database Library Factory"
+#define SB_LOCALDATABASE_LIBRARYFACTORY_NAME                          \
+  "LocalDatabaseLibraryFactory"
 #define SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID                    \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"
 #define SB_LOCALDATABASE_LIBRARYFACTORY_CID                           \
@@ -62,7 +64,7 @@
 #define SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION                   \
   "Songbird Local Database Library Loader"
 #define SB_LOCALDATABASE_LIBRARYLOADER_NAME                          \
-  "SongbirdLocalDatabaseLibraryLoader"
+  "sbLocalDatabaseLibraryLoader"
 #define SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID                    \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1"
 #define SB_LOCALDATABASE_LIBRARYLOADER_CID                           \
