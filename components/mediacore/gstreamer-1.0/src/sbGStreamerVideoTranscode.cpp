@@ -2125,7 +2125,7 @@ sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
     gst_caps_unref (caps);
   }
 
-  caps = GST_PAD_CAPS (realPad);
+  caps = gst_pad_get_current_caps(realPad);
   if (caps) {
     gst_caps_ref (caps);
     g_object_unref(realPad);
