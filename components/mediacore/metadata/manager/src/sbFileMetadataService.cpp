@@ -109,8 +109,6 @@ nsresult sbFileMetadataService::Init()
   // WARNING: Init may be called off of the main thread. //
   /////////////////////////////////////////////////////////
 
-  mozilla::MutexAutoLock lock(mJobLock);
-
   // Get the mediacore manager.
   mMediacoreManager = do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

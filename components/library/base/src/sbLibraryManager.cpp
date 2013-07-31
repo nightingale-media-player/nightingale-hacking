@@ -135,9 +135,6 @@ sbLibraryManager::Init()
   success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  mozilla::MutexAutoLock lock(mMutex);
-  //NS_ENSURE_TRUE(mMutex, NS_ERROR_OUT_OF_MEMORY);
-
   // Get the thread manager.  This is used so that main thread checks work
   // during XPCOM shutdown.
   mThreadManager = do_GetService("@mozilla.org/thread-manager;1", &rv);
