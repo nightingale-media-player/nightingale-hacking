@@ -163,7 +163,7 @@ private:
 
   nsCOMPtr<sbILibraryLoader> mCurrentLoader;
 
-  mozilla::Mutex mMutex;
+  mozilla::Mutex mLock;
 
   nsCOMPtr<nsIThreadManager> mThreadManager;
 };

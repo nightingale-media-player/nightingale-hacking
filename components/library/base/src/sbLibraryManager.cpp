@@ -78,7 +78,7 @@ static nsString sString;
 
 sbLibraryManager::sbLibraryManager()
 : mLoaderCache(SB_LIBRARY_LOADER_CATEGORY),
-  mMutex("sbLibraryManager::mMutex")
+  mLock("sbLibraryManager::mLock")
 {
   MOZ_COUNT_CTOR(sbLibraryManager);
   NS_ASSERTION(SB_IsMainThread(), "Wrong thread!");
@@ -344,7 +344,7 @@ sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
   
   nsCOMArray<sbILibraryManagerListener> listeners;
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
     mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);
   }
 
@@ -373,7 +373,7 @@ sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
   
   nsCOMArray<sbILibraryManagerListener> listeners;
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
     mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);
   }
 
@@ -431,7 +431,7 @@ sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
     rv = aLibrary->GetGuid(libraryGUID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     sbLibraryInfo* tableLibraryInfo;
     if (!mLibraryTable.Get(libraryGUID, &tableLibraryInfo)) {
@@ -457,7 +457,7 @@ sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
     PRInt32 loaderCount;
     nsCOMArray<sbILibraryLoader> loaders;
     {
-      mozilla::MutexAutoLock lock(mMutex);
+      mozilla::MutexAutoLock lock(mLock);
       nsCOMArray<sbILibraryLoader> cachedLoaders = mLoaderCache.GetEntries();
 
       loaderCount = cachedLoaders.Count();
@@ -526,7 +526,7 @@ sbLibraryManager::GetDataSource(nsIRDFDataSource** aDataSource)
   TRACE("sbLibraryManager[0x%x] - GetDataSource", this);
   NS_ENSURE_ARG_POINTER(aDataSource);
 
-  mozilla::MutexAutoLock lock(mMutex);
+  mozilla::MutexAutoLock lock(mLock);
 
   if (!mDataSource) {
     nsresult rv = GenerateDataSource();
@@ -550,7 +550,7 @@ sbLibraryManager::GetLibrary(const nsAString& aGuid,
   nsCOMPtr<sbILibrary> library;
 
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     sbLibraryInfo* libraryInfo;
     PRBool exists = mLibraryTable.Get(aGuid, &libraryInfo);
@@ -576,7 +576,7 @@ sbLibraryManager::GetLibraries(nsISimpleEnumerator** _retval)
   nsCOMArray<sbILibrary> libraryArray;
 
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     PRUint32 libraryCount = mLibraryTable.Count();
     if (!libraryCount) {
@@ -606,7 +606,7 @@ sbLibraryManager::GetStartupLibraries(nsISimpleEnumerator** _retval)
   nsCOMArray<sbILibrary> libraryArray;
 
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     PRUint32 libraryCount = mLibraryTable.Count();
     if (!libraryCount) {
@@ -639,7 +639,7 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     if (mLibraryTable.Get(libraryGUID, nsnull)) {
       NS_WARNING("Registering a library that has already been registered!");
@@ -669,7 +669,7 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
   }
 
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     PRBool success = mLibraryTable.Put(libraryGUID, newLibraryInfo);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
@@ -707,7 +707,7 @@ sbLibraryManager::UnregisterLibrary(sbILibrary* aLibrary)
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    mozilla::MutexAutoLock lock (mMutex);
+    mozilla::MutexAutoLock lock (mLock);
 
     sbLibraryInfo* libInfo;
     if (!mLibraryTable.Get(libraryGUID, &libInfo)) {
@@ -765,7 +765,7 @@ sbLibraryManager::SetLibraryLoadsAtStartup(sbILibrary* aLibrary,
   rv = aLibrary->GetGuid(libraryGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MutexAutoLock lock(mMutex);
+  mozilla::MutexAutoLock lock(mLock);
 
   if (!mLibraryTable.Get(libraryGUID, nsnull)) {
     NS_WARNING("Another thread unregistered the library you're trying to modify!");
@@ -794,7 +794,7 @@ sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
   nsresult rv = aLibrary->GetGuid(libraryGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MutexAutoLock lock(mMutex);
+  mozilla::MutexAutoLock lock(mLock);
 
   sbLibraryInfo* libraryInfo;
   if (!mLibraryTable.Get(libraryGUID, &libraryInfo)) {
@@ -821,7 +821,7 @@ sbLibraryManager::HasLibrary(sbILibrary* aLibrary,
   nsresult rv = aLibrary->GetGuid(libraryGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MutexAutoLock lock(mMutex);
+  mozilla::MutexAutoLock lock(mLock);
   *_retval = mLibraryTable.Get(libraryGUID, nsnull);
   return NS_OK;
 }
@@ -836,7 +836,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
   NS_ENSURE_ARG_POINTER(aListener);
 
   {
-    mozilla::MutexAutoLock lock(mMutex);
+    mozilla::MutexAutoLock lock(mLock);
 
     if (mListeners.Get(aListener, nsnull)) {
       NS_WARNING("Trying to add a listener twice!");
@@ -854,7 +854,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
                                      getter_AddRefs(proxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::MutexAutoLock lock(mMutex);
+  mozilla::MutexAutoLock lock(mLock);
 
   // Add the proxy to the hash table, using the listener as the key.
   PRBool success = mListeners.Put(aListener, proxy);
@@ -872,7 +872,7 @@ sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
   TRACE("sbLibraryManager[0x%x] - RemoveListener", this);
   NS_ENSURE_ARG_POINTER(aListener);
 
-  mozilla::MutexAutoLock lock(mMutex);
+  mozilla::MutexAutoLock lock(mLock);
 
 #ifdef DEBUG
   if (!mListeners.Get(aListener, nsnull)) {
