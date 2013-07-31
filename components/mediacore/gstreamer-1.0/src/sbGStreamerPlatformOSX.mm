@@ -290,8 +290,8 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   /* This message has an 'nsview' element containing a pointer to
      the NSView that the video is drawn into. Grab the NSView */
   NSView *view;
-  const GValue *value = gst_structure_get_value (
-          aMessage->structure, "nsview");
+  const GValue *value = gst_structure_get_value(
+                          gst_message_get_structure(aMessage), "nsview");
 
   if (!value || !G_VALUE_HOLDS_POINTER(value))
     return;

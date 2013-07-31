@@ -528,10 +528,10 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
       if (gst_is_missing_plugin_message(message)) {
         /* If we got a missing plugin message about a missing video decoder,
            we should still mark it as a video file */
-        const gchar *type = gst_structure_get_string(message->structure, "type");
+        const gchar *type = gst_structure_get_string(gst_message_get_structure(message), "type");
         if (type && !strcmp(type, "decoder")) {
           /* Missing decoder: see if it's video */
-          const GValue *val = gst_structure_get_value (message->structure, "detail");
+          const GValue *val = gst_structure_get_value(gst_message_get_structure(message), "detail");
           const GstCaps *caps = gst_value_get_caps (val);
           GstStructure *structure = gst_caps_get_structure (caps, 0);
           const gchar *capsname = gst_structure_get_name (structure);
