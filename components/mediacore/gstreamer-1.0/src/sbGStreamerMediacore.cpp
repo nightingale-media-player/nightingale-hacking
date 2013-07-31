@@ -364,6 +364,7 @@ sbGStreamerMediacore::ReadPreferences()
 
       // Ref and sink the object to take ownership; we'll keep track of it
       // from here on.
+      gst_object_ref(mReplaygainElement);
       gst_object_ref_sink(mReplaygainElement);
 
       rv = AddAudioFilter(mReplaygainElement);
@@ -1701,6 +1702,7 @@ sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
   if (mEqualizerElement) {
     // Ref and sink the object to take ownership; we'll keep track of it
     // from here on.
+    gst_object_ref(mEqualizerElement);
     gst_object_ref_sink(mEqualizerElement);
 
     // Set the bands to the frequencies we want

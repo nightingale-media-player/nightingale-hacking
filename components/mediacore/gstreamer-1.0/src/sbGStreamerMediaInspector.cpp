@@ -621,6 +621,7 @@ sbGStreamerMediaInspector::BuildPipeline()
 
   mDecodeBin = gst_element_factory_make ("decodebin2", NULL);
   // Take ownership of mDecodeBin via ref/sink
+  gst_object_ref(mDecodeBin);
   gst_object_ref_sink(mDecodeBin);
 
   // TODO: Connect up autoplug-sort signal to handle some special cases
