@@ -1,0 +1,18 @@
+<profile>
+  <type>audio</type>
+  <id>dca5af47-1670-4d97-b4aa-30da20ac3d93</id>
+  <priority>1000</priority> <!-- Low priority; WMA isn't great -->
+  <description>Windows Media Audio (WMA version 2)</description>
+  <mimetype>audio/x-ms-wma</mimetype>
+  <extension>wma</extension>
+
+  <container>
+    <type>video/x-ms-asf</type>
+  </container>
+
+  <audio>
+    <type>audio/x-ms-wma</type>
+    <property name="bitrate" type="int" min="32000" max="320000" default="160000"/>
+  </audio>
+</profile>
+
