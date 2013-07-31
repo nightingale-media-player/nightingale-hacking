@@ -30,7 +30,7 @@
 #include <windows.h>
 
 #include <gst/gst.h>
-#include <gst/interfaces/xoverlay.h>
+#include <gst/video/videooverlay.h>
 
 #include "sbIGstPlatformInterface.h"
 #include "sbGStreamerPlatformBase.h"
@@ -49,7 +49,7 @@ public:
 protected:
   // Implement virtual methods in BasePlatformInterface
   void MoveVideoWindow(int x, int y, int width, int height);
-  void SetXOverlayWindowID(GstXOverlay *aXOverlay);
+  void SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay);
   void FullScreen();
   void UnFullScreen();
 

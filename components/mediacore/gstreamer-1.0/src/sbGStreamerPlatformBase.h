@@ -32,7 +32,7 @@
 #include <nsIWidget.h>
 
 #include <gst/gst.h>
-#include <gst/interfaces/xoverlay.h>
+#include <gst/video/videooverlay.h>
 
 #include "sbIGstPlatformInterface.h"
 
@@ -76,8 +76,8 @@ protected:
   virtual void MoveVideoWindow(int x, int y, int width, int height) = 0;
 
   // Set the window ID (as appropriate to the particular platform) on this
-  // XOverlay object.
-  virtual void SetXOverlayWindowID(GstXOverlay *aXOverlay) = 0;
+  // VideoOverlay object.
+  virtual void SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay) {}
 
   // Switch from windowed mode to full screen mode.
   virtual void FullScreen() = 0;

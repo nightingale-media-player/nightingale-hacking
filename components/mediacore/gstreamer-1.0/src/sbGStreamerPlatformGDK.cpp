@@ -304,7 +304,7 @@ GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
   return NS_OK;
 }
 
-void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
+void GDKPlatformInterface::SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay)
 {
   nsresult rv;
 
@@ -316,7 +316,7 @@ void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
     rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    nsCOMPtr<nsIRunnable> runnable = 
+    nsCOMPtr<nsIRunnable> runnable =
         NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
                                 mCore,
                                 RequestVideoWindow);
@@ -326,9 +326,9 @@ void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
   }
 
   if (mWindowXID) {
-    gst_x_overlay_set_xwindow_id(aXOverlay, mWindowXID);
+    gst_video_overlay_set_window_handle(aVideoOverlay, mWindowXID);
 
-    LOG(("Set xoverlay %d to windowid %x\n", aXOverlay, mWindowXID));
+    LOG(("Set video overlay %d to windowid %x\n", aVideoOverlay, mWindowXID));
   }
 }
 

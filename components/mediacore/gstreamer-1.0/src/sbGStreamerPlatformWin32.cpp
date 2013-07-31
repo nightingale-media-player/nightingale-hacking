@@ -550,7 +550,7 @@ Win32PlatformInterface::SetAudioSink(GstElement *aAudioSink)
 }
 
 void
-Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
+Win32PlatformInterface::SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay)
 {
   /* GstXOverlay is confusingly named - it's actually generic enough for windows
    * too, so the windows videosink implements it too.
@@ -566,7 +566,7 @@ Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
     rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    nsCOMPtr<nsIRunnable> runnable = 
+    nsCOMPtr<nsIRunnable> runnable =
         NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
                                 mCore,
                                 RequestVideoWindow);
@@ -576,9 +576,9 @@ Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
   }
 
   if (mWindow) {
-    gst_x_overlay_set_xwindow_id(aXOverlay, (glong)mWindow);
+    gst_video_overlay_set_window_handle(aVideoOverlay, (glong)mWindow);
 
-    LOG(("Set xoverlay %p to HWND %x\n", aXOverlay, mWindow));
+    LOG(("Set video overlay %p to HWND %x\n", aVideoOverlay, mWindow));
   }
 }
 
