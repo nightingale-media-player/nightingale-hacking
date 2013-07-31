@@ -51,6 +51,8 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYFACTORY
 
+  sbLocalDatabaseLibraryFactory();
+
   already_AddRefed<nsILocalFile> GetFileForGUID(const nsAString& aGUID);
   void GetGUIDFromFile(nsILocalFile* aFile,
                        nsAString& aGUID);

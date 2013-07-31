@@ -44,6 +44,8 @@
 #include <sbILibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbISQLBuilder.h>
+#include <prlog.h>
+#include <sbDebugUtils.h>
 
 #include <DatabaseQuery.h>
 #include <nsAutoPtr.h>
@@ -55,6 +57,11 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
 #include <sbSQLBuilderCID.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=LocalDatabaseLibraryFactory:5
+ */
 
 #define DEFAULT_LIBRARY_NAME NS_LITERAL_STRING("defaultlibrary.db")
 #define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
@@ -141,10 +148,17 @@ GetDBFolder()
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory, sbILibraryFactory)
 
+sbLocalDatabaseLibraryFactory::sbLocalDatabaseLibraryFactory()
+{
+  SB_PRLOG_SETUP(LocalDatabaseLibraryFactory);
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - Created", this);
+}
 
 nsresult
 sbLocalDatabaseLibraryFactory::Init()
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - Init", this);
+
   PRBool success = mCreatedLibraries.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
@@ -154,6 +168,8 @@ sbLocalDatabaseLibraryFactory::Init()
 NS_IMETHODIMP
 sbLocalDatabaseLibraryFactory::GetType(nsAString& aType)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - GetType", this);
+
   aType.AssignLiteral(SB_LOCALDATABASE_LIBRARYFACTORY_TYPE);
   return NS_OK;
 }
@@ -161,6 +177,8 @@ sbLocalDatabaseLibraryFactory::GetType(nsAString& aType)
 NS_IMETHODIMP
 sbLocalDatabaseLibraryFactory::GetContractID(nsACString& aContractID)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - GetContractID", this);
+
   aContractID.AssignLiteral(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID);
   return NS_OK;
 }
@@ -169,6 +187,8 @@ NS_IMETHODIMP
 sbLocalDatabaseLibraryFactory::CreateLibrary(nsIPropertyBag2* aCreationParameters,
                                              sbILibrary** _retval)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - CreateLibrary", this);
+
   NS_ENSURE_ARG_POINTER(aCreationParameters);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -203,6 +223,8 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
                                                          nsIPropertyBag2* aCreationParameters,
                                                          nsString aResourceGUID /* = EmptyString() */)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - CreateLibraryFromDatabase", this);
+
   NS_ENSURE_ARG_POINTER(aDatabase);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -318,6 +340,8 @@ nsresult
 sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
                                                 const nsAString &aResourceGUID)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - InitalizeLibrary", this);
+
   nsresult rv;
   PRInt32 dbOk;
 
@@ -364,7 +388,7 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
                              "UTF-8",
                              CONVERTER_BUFFER_SIZE,
                              nsIConverterInputStream::
-                               DEFAULT_REPLACEMENT_CHARACTER);
+                             DEFAULT_REPLACEMENT_CHARACTER);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIUnicharInputStream> unichar =
@@ -524,6 +548,8 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
 nsresult
 sbLocalDatabaseLibraryFactory::UpdateLibrary(nsIFile* aDatabaseFile)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - UpdateLibrary", this);
+
   nsresult rv;
   PRInt32 dbOk;
 
@@ -573,6 +599,8 @@ sbLocalDatabaseLibraryFactory::UpdateLibrary(nsIFile* aDatabaseFile)
 already_AddRefed<nsILocalFile>
 sbLocalDatabaseLibraryFactory::GetFileForGUID(const nsAString& aGUID)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - GetFileForGUID", this);
+
   nsCOMPtr<nsILocalFile> file = GetDBFolder();
   NS_ENSURE_TRUE(file, nsnull);
 
@@ -592,6 +620,8 @@ void
 sbLocalDatabaseLibraryFactory::GetGUIDFromFile(nsILocalFile* aFile,
                                                nsAString& aGUID)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - GetGUIDFromFile", this);
+
   nsAutoString filename;
   nsresult rv = aFile->GetLeafName(filename);
   NS_ENSURE_SUCCESS(rv,);
@@ -600,10 +630,11 @@ sbLocalDatabaseLibraryFactory::GetGUIDFromFile(nsILocalFile* aFile,
 }
 
 nsresult
-sbLocalDatabaseLibraryFactory::SetQueryDatabaseFile
-                                 (sbIDatabaseQuery* aQuery,
-                                  nsIFile*          aDatabaseFile)
+sbLocalDatabaseLibraryFactory::SetQueryDatabaseFile(sbIDatabaseQuery* aQuery,
+                                                    nsIFile* aDatabaseFile)
 {
+  TRACE("sbLocalDatabaseLibraryFactory[0x%x] - SetQueryDatabaseFile", this);
+
   NS_ENSURE_ARG_POINTER(aQuery);
   NS_ENSURE_ARG_POINTER(aDatabaseFile);
 
