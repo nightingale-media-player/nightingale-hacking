@@ -841,7 +841,7 @@ sbGStreamerVideoTranscoder::SetMetadataOnTagSetters()
 
   if (mImageStream) {
     if (!tags) {
-      tags = gst_tag_list_new();
+      tags = gst_tag_list_new_empty();
     }
 
     // Ignore return value here, failure is not critical.
