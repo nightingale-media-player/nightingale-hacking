@@ -2104,6 +2104,7 @@ sbGStreamerVideoTranscoder::PadNotifyCaps (GstPad *pad)
 GstCaps *
 sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
 {
+  // TODO: Check if this is still relevant when using gst_pad_get_current_caps
   // We want to get the caps from the decoder associated with this pad (but this
   // pad might be a ghost pad, or a queue pad linked to the ghost pad, etc)
   // gst_pad_get_negotiated_caps() is needed. gst_pad_get_caps would fail in 
@@ -2115,7 +2116,7 @@ sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
   // is doing the same thing as the transcoder, getting caps for the stream.
 
   GstPad * realPad = GetRealPad(pad);
-  GstCaps *caps = gst_pad_get_negotiated_caps (realPad);
+  GstCaps *caps = gst_pad_get_current_caps(realPad);
   if (caps) {
     if (gst_caps_is_fixed (caps)) {
       g_object_unref(realPad);

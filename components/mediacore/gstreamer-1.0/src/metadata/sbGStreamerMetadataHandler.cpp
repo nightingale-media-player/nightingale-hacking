@@ -686,7 +686,7 @@ sbGStreamerMetadataHandler::on_pad_caps_changed(GstPad *pad,
     return;
   }
   GstStructure* capStruct = NULL;
-  sbGstCaps caps = gst_pad_get_negotiated_caps(pad);
+  sbGstCaps caps = gst_pad_get_current_caps(pad);
   if (!caps) {
     // no negotiated caps yet, keep waiting
     TRACE(("%s: no caps yet", __FUNCTION__));
