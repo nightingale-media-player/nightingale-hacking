@@ -558,8 +558,8 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
             G_OBJECT_GET_CLASS (message->src));
         GstElementFactory *factory = elementclass->elementfactory;
 
-        if (strstr (factory->details.klass, "Video") &&
-            strstr (factory->details.klass, "Decoder"))
+        if (gst_element_factory_get_metadata(factory, "Video") &&
+            gst_element_factory_get_metadata(factory, "Decoder"))
         {
           mHasVideo = PR_TRUE;
         }
