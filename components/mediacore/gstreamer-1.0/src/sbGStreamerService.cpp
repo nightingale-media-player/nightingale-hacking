@@ -473,13 +473,13 @@ sbGStreamerService::InspectFactory(GstElementFactory* aFactory,
   element = gst_element_factory_create(aFactory, NULL);
   NS_ENSURE_TRUE(element, NS_ERROR_UNEXPECTED);
 
-  gint rank = GST_PLUGIN_FEATURE(factory)->rank;
+  gint rank = gst_plugin_feature_get_rank(GST_PLUGIN_FEATURE(factory));
 
-  rv = aHandler->BeginFactoryInfo(nsDependentCString(GST_PLUGIN_FEATURE(factory)->name),
-                                  nsDependentCString(factory->details.longname),
-                                  nsDependentCString(factory->details.klass),
-                                  nsDependentCString(factory->details.description),
-                                  nsDependentCString(factory->details.author),
+  rv = aHandler->BeginFactoryInfo(nsDependentCString(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory))),
+                                  nsDependentCString(gst_element_factory_get_longname(factory)),
+                                  nsDependentCString(gst_element_factory_get_klass(factory)),
+                                  nsDependentCString(gst_element_factory_get_description(factory)),
+                                  nsDependentCString(gst_element_factory_get_author(factory)),
                                   nsDependentCString(get_rank_name(rank)),
                                   rank);
   NS_ENSURE_SUCCESS(rv, rv);
