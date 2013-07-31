@@ -200,7 +200,7 @@ ConvertPropertyArrayToTagList(sbIPropertyArray *properties)
   if (properties == nsnull)
     return NULL;
 
-  tags = gst_tag_list_new();
+  tags = gst_tag_list_new_empty();
   rv = properties->Enumerate(getter_AddRefs(propertyEnum));
   NS_ENSURE_SUCCESS(rv, NULL);
 
