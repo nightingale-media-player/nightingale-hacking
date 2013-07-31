@@ -407,27 +407,27 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
     plugins = g_list_next (plugins);
 
     nsCString filename;
-    if (plugin->filename) {
-      filename = plugin->filename;
+    if (gst_plugin_get_filename(plugin)) {
+      filename = gst_plugin_get_filename(plugin);
     }
     else {
       filename.SetIsVoid(PR_TRUE);
     }
 
-    rv = aHandler->BeginPluginInfo(nsDependentCString(plugin->desc.name),
-                                   nsDependentCString(plugin->desc.description),
+    rv = aHandler->BeginPluginInfo(nsDependentCString(gst_plugin_get_name(plugin)),
+                                   nsDependentCString(gst_plugin_get_description(plugin)),
                                    filename,
-                                   nsDependentCString(plugin->desc.version),
-                                   nsDependentCString(plugin->desc.license),
-                                   nsDependentCString(plugin->desc.source),
-                                   nsDependentCString(plugin->desc.package),
-                                   nsDependentCString(plugin->desc.origin));
+                                   nsDependentCString(gst_plugin_get_version(plugin)),
+                                   nsDependentCString(gst_plugin_get_license(plugin)),
+                                   nsDependentCString(gst_plugin_get_source(plugin)),
+                                   nsDependentCString(gst_plugin_get_package(plugin)),
+                                   nsDependentCString(gst_plugin_get_origin(plugin)));
     NS_ENSURE_SUCCESS(rv, rv);
 
     GList *features, *orig_features;
     orig_features = features =
       gst_registry_get_feature_list_by_plugin(gst_registry_get_default(),
-                                              plugin->desc.name);
+                                              gst_plugin_get_name(plugin));
     while (features) {
       GstPluginFeature *feature;
       feature = GST_PLUGIN_FEATURE(features->data);
