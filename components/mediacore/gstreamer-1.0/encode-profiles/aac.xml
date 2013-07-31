@@ -1,0 +1,21 @@
+<profile>
+  <type>audio</type>
+  <id>ff32f7c8-20fe-4e40-b1b0-1aea585c9368</id>
+  <priority>2000</priority> <!-- Medium priority. Lower priority than mp3 to
+                                 keep mp3 the default. -->
+  <description>AAC</description>
+  <mimetype>audio/aac</mimetype>
+  <extension>m4a</extension>
+
+  <container>
+    <type>video/mp4</type>
+    <attribute name="variant" type="string" value="iso" />
+  </container>
+
+  <audio>
+    <type>audio/aac</type>
+    <attribute name="mpegversion" type="int" value="4" />
+
+    <property name="bitrate" type="int" min="32000" max="256000" default="128000" />
+  </audio>
+</profile>
