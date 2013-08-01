@@ -611,8 +611,8 @@ sbGStreamerMediaInspector::BuildPipeline()
   mPipeline = gst_pipeline_new ("media-inspector-pipeline");
 
   nsCString uri = NS_ConvertUTF16toUTF8 (mSourceURI);
-  GstElement *src = gst_element_make_from_uri (GST_URI_SRC,
-          uri.BeginReading(), "uri-source");
+  GstElement *src = gst_element_make_from_uri(GST_URI_SRC, uri.BeginReading(),
+                                              "uri-source", NULL);
 
   if (!src) {
     // TODO: Signal failure somehow with more info?
