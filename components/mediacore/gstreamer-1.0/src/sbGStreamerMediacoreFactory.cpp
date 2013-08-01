@@ -275,7 +275,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 #endif
 
       // Check for the 'qtvideowrapper' plugin to add mp4/m4v extensions.
-      GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
+      GstPlugin *plugin = gst_registry_find_plugin(gst_registry_get(),
+                                                   ("qtvideowrapper"));
       if (plugin) {
         videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("m4v"));
