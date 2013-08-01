@@ -701,7 +701,7 @@ sbGStreamerAudioProcessor::GetDurationFromBuffer(GstBuffer *buf)
   else
     size = sizeof(short);
 
-  return GST_BUFFER_SIZE (buf) / size;
+  return gst_buffer_get_size(buf) / size;
 }
 
 void
