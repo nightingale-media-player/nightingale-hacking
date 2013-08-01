@@ -832,7 +832,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
 
     if (strstr (klass, "Decoder")) {
       // Ok, it really is a decoder! Grab the sink pad to poke at in a bit.
-      mAudioDecoderSink = gst_element_get_pad (audioDecoder, "sink");
+      mAudioDecoderSink = gst_element_get_static_pad(audioDecoder, "sink");
     }
 
     g_object_unref (audioSrcPad);
@@ -847,7 +847,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
 
     if (strstr (klass, "Decoder")) {
       // Ok, it really is a decoder! Grab the sink pad to poke at in a bit.
-      mVideoDecoderSink = gst_element_get_pad (videoDecoder, "sink");
+      mVideoDecoderSink = gst_element_get_static_pad(videoDecoder, "sink");
     }
 
     g_object_unref (videoSrcPad);
@@ -1316,7 +1316,7 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
       mTooComplexForCurrentImplementation = PR_TRUE;
     }
     else {
-      mDemuxerSink = gst_element_get_pad (element, "sink");
+      mDemuxerSink = gst_element_get_static_pad(element, "sink");
     }
   }
 

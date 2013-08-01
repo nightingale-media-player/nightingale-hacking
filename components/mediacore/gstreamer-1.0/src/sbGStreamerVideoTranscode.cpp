@@ -2076,7 +2076,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
     gst_pad_link (mAudioSrc, queueSink);
     g_object_unref (queueSink);
 
-    GstPad *queueSrc = gst_element_get_pad (queue, "src");
+    GstPad *queueSrc = gst_element_get_static_pad(queue, "src");
     mAudioQueueSrc = queueSrc;
 
     gst_pad_add_probe(queueSrc, GST_PAD_PROBE_TYPE_BLOCK,
@@ -2096,7 +2096,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
     gst_pad_link (mVideoSrc, queueSink);
     g_object_unref (queueSink);
 
-    GstPad *queueSrc = gst_element_get_pad (queue, "src");
+    GstPad *queueSrc = gst_element_get_static_pad(queue, "src");
     mVideoQueueSrc = queueSrc;
 
     gst_pad_add_probe(queueSrc, GST_PAD_PROBE_TYPE_BLOCK,
