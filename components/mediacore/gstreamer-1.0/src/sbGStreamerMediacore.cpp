@@ -813,7 +813,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
   gst_bus_set_sync_handler (bus, SyncToAsyncDispatcher,
-                            static_cast<sbGStreamerMessageHandler*>(this));
+                            static_cast<sbGStreamerMessageHandler*>(this), NULL);
 
   g_object_unref ((GObject *)bus);
 
