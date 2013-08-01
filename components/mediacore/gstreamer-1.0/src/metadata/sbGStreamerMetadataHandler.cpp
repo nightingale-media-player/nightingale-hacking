@@ -361,7 +361,7 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
   gst_bus_set_sync_handler(bus.get(), SyncToAsyncDispatcher,
-                           static_cast<sbGStreamerMessageHandler*>(this));
+                           static_cast<sbGStreamerMessageHandler*>(this), NULL);
   
   TRACE(("%s: Setting URI to [%s]", __FUNCTION__, mSpec.get()));
   g_object_set(G_OBJECT(decodeBin.get()), "uri", mSpec.get(), NULL);

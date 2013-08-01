@@ -136,8 +136,8 @@ sbGStreamerPipeline::SetupPipeline()
 
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
-  gst_bus_set_sync_handler (bus, SyncToAsyncDispatcher,
-          static_cast<sbGStreamerMessageHandler*>(this));
+  gst_bus_set_sync_handler(bus, SyncToAsyncDispatcher,
+          static_cast<sbGStreamerMessageHandler*>(this), NULL);
 
   gst_object_unref(bus);
 
