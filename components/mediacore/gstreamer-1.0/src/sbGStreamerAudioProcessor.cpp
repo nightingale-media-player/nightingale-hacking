@@ -901,7 +901,7 @@ void
 sbGStreamerAudioProcessor::SendDataToListener()
 {
   nsresult rv;
-  const gsize *data;
+  const void *data;
   gsize bytesRead = 0;
 
   nsAutoMonitor mon(mMonitor);
