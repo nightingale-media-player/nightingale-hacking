@@ -48,10 +48,11 @@ SONGBIRD_LIB = $(CURDIR)/libs.manifest \
 
 include $(topsrcdir)/build/rules.mk
 
+CR_MANIFEST = $(SONGBIRD_DISTDIR)/chrome.manifest
+
 export::
-  # XXX Need to grep to check if the lines have already been appended
-	@echo "manifest components/components.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
-	@echo "manifest components/interfaces.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
-	@echo "manifest components/jscomponents.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
-	@echo "manifest components/vendor.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
-	@echo "manifest lib/libs.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
+	@$(GREP) -q -E 'components.manifest' $(CR_MANIFEST) || echo "manifest components/components.manifest" >> $(CR_MANIFEST)
+	@$(GREP) -q -E 'interfaces.manifest' $(CR_MANIFEST) || echo "manifest components/interfaces.manifest" >> $(CR_MANIFEST)
+	@$(GREP) -q -E 'jscomponents.manifest' $(CR_MANIFEST) || echo "manifest components/jscomponents.manifest" >> $(CR_MANIFEST)
+	@$(GREP) -q -E 'vendor.manifest' $(CR_MANIFEST) || echo "manifest components/vendor.manifest" >> $(CR_MANIFEST)
+	@$(GREP) -q -E 'libs.manifest' $(CR_MANIFEST) || echo "manifest lib/libs.manifest" >> $(CR_MANIFEST)
