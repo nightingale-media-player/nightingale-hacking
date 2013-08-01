@@ -977,23 +977,33 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
         const GstBuffer * asGstBuffer = gst_value_get_buffer(aValue);
         NS_ENSURE_TRUE(asGstBuffer, NS_ERROR_UNEXPECTED);
 
-        // Create a variant to hold the buffer data as an array of VTYPE_UINT8s
-        nsCOMPtr<nsIWritableVariant> asVariant =
-          do_CreateInstance("@mozilla.org/variant;1", &rv);
-        NS_ENSURE_SUCCESS (rv, rv);
-        rv = asVariant->SetAsArray(nsIDataType::VTYPE_UINT8,
-                                   nsnull,
-                                   GST_BUFFER_SIZE(asGstBuffer),
-                                   GST_BUFFER_DATA(asGstBuffer));
-        NS_ENSURE_SUCCESS (rv, rv);
+        GstMapInfo asGstMapInfo;
+        if (gst_buffer_map(asGstBuffer, &asGstMapInfo, GST_MAP_READ)) {        
+          // Create a variant to hold the buffer data as an array of VTYPE_UINT8s
+          nsCOMPtr<nsIWritableVariant> asVariant =
+            do_CreateInstance("@mozilla.org/variant;1", &rv);
+          NS_ENSURE_SUCCESS (rv, rv);
+          rv = asVariant->SetAsArray(nsIDataType::VTYPE_UINT8,
+                                     nsnull,
+                                     asGstMapInfo.size,
+                                     asGstMapInfo.data);
+          NS_ENSURE_SUCCESS (rv, rv);
 
-        // QI to an nsIWritablePropertyBag to access the generic SetProperty()
-        // method
-        nsCOMPtr<nsIWritablePropertyBag> bagV1 =
-          do_QueryInterface(aPropertyBag, &rv);
-        NS_ENSURE_SUCCESS (rv, rv);
-        rv = bagV1->SetProperty(aProperty, asVariant);
-        NS_ENSURE_SUCCESS (rv, rv);
+          // QI to an nsIWritablePropertyBag to access the generic SetProperty()
+          // method
+          nsCOMPtr<nsIWritablePropertyBag> bagV1 =
+            do_QueryInterface(aPropertyBag, &rv);
+          NS_ENSURE_SUCCESS (rv, rv);
+          rv = bagV1->SetProperty(aProperty, asVariant);
+          NS_ENSURE_SUCCESS (rv, rv);
+
+          gst_buffer_unmap(asGstBuffer, asGstMapInfo);
+        } else {
+#ifdef PR_LOGGING
+          LOG(("gst_buffer_map failed"));
+#endif
+          NS_ENSURE_TRUE(PR_FALSE, NS_ERROR_ILLEGAL_VALUE);
+        }
       }
       else {
         // Unexpected data type
