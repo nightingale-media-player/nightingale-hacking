@@ -857,7 +857,7 @@ sbGStreamerVideoTranscoder::SetMetadataOnTagSetters()
             (GstBin *)mPipeline, GST_TYPE_TAG_SETTER);
     GstElement *element;
 
-    while (gst_iterator_next (it, (void **)&element) == GST_ITERATOR_OK) {
+    while (gst_iterator_next(it, (GValue*) &element) == GST_ITERATOR_OK) {
       GstTagSetter *setter = GST_TAG_SETTER (element);
 
       /* Use MERGE_REPLACE: preserves existing tag where we don't have one

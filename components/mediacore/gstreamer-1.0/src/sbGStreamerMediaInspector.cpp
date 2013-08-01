@@ -791,9 +791,9 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
   gboolean done = FALSE;
 
   while (!done) {
-    gpointer element;
+    GValue element;
 
-    switch (gst_iterator_next (it, &element)) {
+    switch (gst_iterator_next (it, (GValue*) &element)) {
       case GST_ITERATOR_OK:
         rv = InspectorateElement (GST_ELEMENT (element));
         gst_object_unref (element);
