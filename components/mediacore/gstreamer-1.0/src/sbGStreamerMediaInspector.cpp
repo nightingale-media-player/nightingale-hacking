@@ -1319,10 +1319,9 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
 
 /* static */ void
 sbGStreamerMediaInspector::fakesink_audio_event_cb(GstPad *pad,
-        GstPadProbeInfo *info, gpointer *user_data)
+        GstPadProbeInfo *info, sbGStreamerMediaInspector *inspector)
 {
-  sbGstreamerMediaInspector *inspector = (sbGstreamerMediaInspector *) user_data;
-  GstEvent *event = gst_pad_probe_info_get_type(info);
+  GstEvent *event = gst_pad_probe_info_get_event(info);
 
   nsresult rv = inspector->FakesinkEvent(pad, event, PR_TRUE);
   NS_ENSURE_SUCCESS (rv, /* void */);
@@ -1330,10 +1329,9 @@ sbGStreamerMediaInspector::fakesink_audio_event_cb(GstPad *pad,
 
 /* static */ void
 sbGStreamerMediaInspector::fakesink_video_event_cb(GstPad * pad,
-        GstPadProbeInfo *info, gpointer *user_data)
+        GstPadProbeInfo *info, sbGStreamerMediaInspector *inspector)
 {
-  sbGstreamerMediaInspector *inspector = (sbGstreamerMediaInspector *) user_data;
-  GstEvent *event = gst_pad_probe_info_get_type(info);
+  GstEvent *event = gst_pad_probe_info_get_event(info);
 
   nsresult rv = inspector->FakesinkEvent(pad, event, PR_FALSE);
   NS_ENSURE_SUCCESS (rv, /* void */);
