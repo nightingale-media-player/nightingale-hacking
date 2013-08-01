@@ -980,7 +980,7 @@ sbGStreamerVideoTranscoder::DecoderPadAdded (GstElement *uridecodebin,
     return NS_ERROR_FAILURE;
   }
 
-  GstCaps *caps = gst_pad_get_caps (pad);
+  GstCaps *caps = gst_pad_query_caps(pad, NULL);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);
   bool isVideo = g_str_has_prefix (name, "video/");
@@ -1666,7 +1666,7 @@ sbGStreamerVideoTranscoder::GetCompatiblePad (GstElement *element,
     // Check that pad's direction is opposite this template's direction.
     // Then check that they have potentially-compatible caps.
     if (GST_PAD_DIRECTION (pad) != padtempl->direction) {
-      GstCaps *caps = gst_pad_get_caps (pad);
+      GstCaps *caps = gst_pad_query_caps(pad, NULL);
 
       gboolean compatible = gst_caps_can_intersect (
           caps, GST_PAD_TEMPLATE_CAPS (padtempl));
