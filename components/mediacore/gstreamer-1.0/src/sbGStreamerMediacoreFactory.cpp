@@ -294,7 +294,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       const gchar* factoryName = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory));
       gboolean isAudioFactory = g_str_has_prefix(factoryName, "audio/");
 
-      gchar **factoryexts = gst_type_find_factory_get_extensions (factory);
+      const gchar * const * factoryexts = gst_type_find_factory_get_extensions (factory);
+
       if (factoryexts) {
         while (*factoryexts) {
           gboolean isAudioExtension = isAudioFactory;
