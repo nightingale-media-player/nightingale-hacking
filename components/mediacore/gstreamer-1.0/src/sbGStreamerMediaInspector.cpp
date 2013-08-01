@@ -676,9 +676,9 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 
     gst_element_link (queue, fakesink);
 
-    GstPad *fakesinkpad = gst_element_get_pad (fakesink, "sink");
-    gst_pad_add_event_probe (fakesinkpad,
-        G_CALLBACK (fakesink_audio_event_cb), this);
+    GstPad *fakesinkpad = gst_element_get_request_pad(fakesink, "sink");
+    gst_pad_add_probe(fakesinkpad, GST_PAD_PROBE_TYPE_EVENT_BOTH,
+                      GstPadProbeCallback(fakesink_audio_event_cb), this, NULL);
 
     g_object_unref (fakesinkpad);
 
@@ -699,9 +699,9 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 
     gst_element_link (queue, fakesink);
 
-    GstPad *fakesinkpad = gst_element_get_pad (fakesink, "sink");
-    gst_pad_add_event_probe (fakesinkpad,
-        G_CALLBACK (fakesink_video_event_cb), this);
+    GstPad *fakesinkpad = gst_element_get_static_pad(fakesink, "sink");
+    gst_pad_add_probe(fakesinkpad, GST_PAD_PROBE_TYPE_EVENT_BOTH,
+                      GstPadProbeCallback(fakesink_video_event_cb), this, NULL);
 
     g_object_unref (fakesinkpad);
 
@@ -1318,17 +1318,23 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
 }
 
 /* static */ void
-sbGStreamerMediaInspector::fakesink_audio_event_cb (GstPad * pad,
-        GstEvent * event, sbGStreamerMediaInspector *inspector)
+sbGStreamerMediaInspector::fakesink_audio_event_cb(GstPad *pad,
+        GstPadProbeInfo *info, gpointer *user_data)
 {
+  sbGstreamerMediaInspector *inspector = (sbGstreamerMediaInspector *) user_data;
+  GstEvent *event = gst_pad_probe_info_get_type(info);
+
   nsresult rv = inspector->FakesinkEvent(pad, event, PR_TRUE);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
 /* static */ void
-sbGStreamerMediaInspector::fakesink_video_event_cb (GstPad * pad,
-        GstEvent * event, sbGStreamerMediaInspector *inspector)
+sbGStreamerMediaInspector::fakesink_video_event_cb(GstPad * pad,
+        GstPadProbeInfo *info, gpointer *user_data)
 {
+  sbGstreamerMediaInspector *inspector = (sbGstreamerMediaInspector *) user_data;
+  GstEvent *event = gst_pad_probe_info_get_type(info);
+
   nsresult rv = inspector->FakesinkEvent(pad, event, PR_FALSE);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
