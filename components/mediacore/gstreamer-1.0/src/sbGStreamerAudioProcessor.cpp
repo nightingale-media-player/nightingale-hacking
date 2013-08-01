@@ -941,7 +941,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
   else
     NS_NOTREACHED("not enough data here");
 
-  data = gst_adapter_peek(mAdapter, bytesRead);
+  data = gst_adapter_map(mAdapter, bytesRead);
 
   PRUint32 sampleNumber = mSampleNumber;
   PRUint32 numSamples;
@@ -983,7 +983,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
 
   mSampleNumber += numSamples;
 
-  gst_adapter_flush(mAdapter, bytesRead);
+  gst_adapter_unmap(mAdapter);
   
   // Listener might have paused or stopped us; in that case we don't want to
   // schedule another send.
