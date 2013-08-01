@@ -235,14 +235,14 @@ sbGStreamerTranscode::AddImageToTagList(GstTagList *aTags,
 
   sbAutoNSMemPtr imageDataDestroy(imageData);
 
-  GstBuffer *imagebuf = gst_tag_image_data_to_image_buffer (
-          imageData, imageDataLen, GST_TAG_IMAGE_TYPE_FRONT_COVER);
-  if (!imagebuf)
+  GstSample *imgsamp = gst_tag_image_data_to_image_sample(imageData,
+                         imageDataLen, GST_TAG_IMAGE_TYPE_FRONT_COVER);
+  if (!imgsamp)
     return NS_ERROR_FAILURE;
 
-  gst_tag_list_add (aTags, GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE,
-          imagebuf, NULL);
-  gst_buffer_unref (imagebuf);
+  gst_tag_list_add(aTags, GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE,
+                   imgsamp, NULL);
+  gst_sample_unref(imgsamp);
 
   return NS_OK;
 }
