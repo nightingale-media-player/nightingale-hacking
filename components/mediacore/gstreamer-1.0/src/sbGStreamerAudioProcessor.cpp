@@ -730,7 +730,8 @@ sbGStreamerAudioProcessor::GetMoreData()
     mIsEndOfSection = PR_FALSE;
   }
   else {
-    GstBuffer *buf = gst_app_sink_pull_buffer(mAppSink);
+    GstSample *samp = gst_app_sink_pull_sample(mAppSink);
+    GstBuffer *buf = gst_sample_get_buffer(samp);
     NS_ASSERTION(buf, "pulled buffer when asked to get more but got no buffer");
 
     // Consider this a discontinuity if the sample numbers are discontinuous,
