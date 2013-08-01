@@ -1791,7 +1791,8 @@ sbGStreamerVideoTranscoder::CreateSink (GstElement **aSink)
     nsCString uri = NS_ConvertUTF16toUTF8 (mDestURI);
     sink = gst_element_make_from_uri (GST_URI_SINK,
                                       uri.BeginReading(),
-                                      "sink");
+                                      "sink",
+                                      NULL);
   }
 
   if (!sink) {
