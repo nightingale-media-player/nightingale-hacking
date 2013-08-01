@@ -654,7 +654,7 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
   // to identify audio vs. video vs. other, and the template caps returned by
   // this will be sufficient.
   // We don't look at the caps in detail until we are in the PAUSED state, at
-  sbGstCaps caps = gst_pad_get_caps (srcpad);
+  sbGstCaps caps = gst_pad_query_caps(srcpad, NULL);
   // which point we explicitly look at the current caps.
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);

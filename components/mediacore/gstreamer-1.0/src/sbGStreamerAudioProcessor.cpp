@@ -424,7 +424,7 @@ sbGStreamerAudioProcessor::DecoderPadAdded (GstElement *uridecodebin,
 
   // A new decoded pad has been added from the decodebin. If it's the first
   // audio stream, we use it. Otherwise, we ignore it.
-  GstCaps *caps = gst_pad_get_caps (pad);
+  GstCaps *caps = gst_pad_query_caps(pad, NULL);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);
   bool isAudio = g_str_has_prefix (name, "audio/");
