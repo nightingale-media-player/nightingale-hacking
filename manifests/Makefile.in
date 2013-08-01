@@ -49,6 +49,7 @@ SONGBIRD_LIB = $(CURDIR)/libs.manifest \
 include $(topsrcdir)/build/rules.mk
 
 export::
+  # XXX Need to grep to check if the lines have already been appended
 	@echo "manifest components/components.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
 	@echo "manifest components/interfaces.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
 	@echo "manifest components/jscomponents.manifest" >> $(SONGBIRD_DISTDIR)/chrome.manifest
