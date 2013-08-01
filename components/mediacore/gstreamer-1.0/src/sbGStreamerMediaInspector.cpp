@@ -715,10 +715,12 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 }
 
 nsresult
-sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
+sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstPadProbeInfo *info,
                                          PRBool isAudio)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
+
+  GstEvent *event = gst_pad_probe_info_get_event(info);
 
   // Bit rate is already available.
   if ((isAudio && mAudioBitRate) || (!isAudio && mVideoBitRate))
@@ -747,6 +749,10 @@ sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
       mAudioBitRate = bitrate;
     else
       mVideoBitRate = bitrate;
+  }
+
+  if (info != NULL) {
+    gst_pad_remove_probe(srcpad, info);
   }
 
   return NS_OK;
@@ -1321,9 +1327,7 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
 sbGStreamerMediaInspector::fakesink_audio_event_cb(GstPad *pad,
         GstPadProbeInfo *info, sbGStreamerMediaInspector *inspector)
 {
-  GstEvent *event = gst_pad_probe_info_get_event(info);
-
-  nsresult rv = inspector->FakesinkEvent(pad, event, PR_TRUE);
+  nsresult rv = inspector->FakesinkEvent(pad, info, PR_TRUE);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
@@ -1331,9 +1335,7 @@ sbGStreamerMediaInspector::fakesink_audio_event_cb(GstPad *pad,
 sbGStreamerMediaInspector::fakesink_video_event_cb(GstPad * pad,
         GstPadProbeInfo *info, sbGStreamerMediaInspector *inspector)
 {
-  GstEvent *event = gst_pad_probe_info_get_event(info);
-
-  nsresult rv = inspector->FakesinkEvent(pad, event, PR_FALSE);
+  nsresult rv = inspector->FakesinkEvent(pad, info, PR_FALSE);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
