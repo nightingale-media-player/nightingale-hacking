@@ -382,10 +382,10 @@ category app-startup smartplaylist-property-registrar service,@songbirdnest.com/
 category app-startup smartplaylists-updater service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1
 category app-startup SongbirdAdd-onBundleUpdateService service,@songbirdnest.com/AddOnBundleUpdateService;1
 category app-startup sbAppStartupService service,@songbirdnest.com/app-startup-service;1
-category app-startup SongbirdAutoDownloaderService service,@songbirdnest.com/autodownloader;1
-category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate service,@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
-category app-startup SongbirdDeviceFirmwareUpdater service,@songbirdnest.com/Songbird/Device/Firmware/Updater;1
-category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Songbird/DeviceManager;2
+# category app-startup SongbirdAutoDownloaderService service,@songbirdnest.com/autodownloader;1
+# category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate service,@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
+# category app-startup SongbirdDeviceFirmwareUpdater service,@songbirdnest.com/Songbird/Device/Firmware/Updater;1
+# category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Songbird/DeviceManager;2
 # DEL ? # category profile-after-change SongbirdGlobalHotkeyService service,@songbirdnest.com/Songbird/HotkeyService;1
 category app-startup sbLibraryDiffingService service,@songbirdnest.com/Songbird/Library/DiffingService;1
 category app-startup sbLibraryImporterManagerService service,@songbirdnest.com/Songbird/LibraryImporterManager;1
@@ -393,7 +393,7 @@ category profile-after-change sbLibraryManager service,@songbirdnest.com/Songbir
 category app-startup SongbirdMediaExportAgentService service,@songbirdnest.com/media-export-service;1
 category app-startup SongbirdMediacoreManager service,@songbirdnest.com/Songbird/Mediacore/Manager;1
 category app-startup SongbirdMediaListViewMap service,@songbirdnest.com/Songbird/library/MediaListViewMap;1
-category app-startup SongbirdObsoleteDeviceManagerService service,@songbirdnest.com/Songbird/DeviceManager;1
+# category app-startup SongbirdObsoleteDeviceManagerService service,@songbirdnest.com/Songbird/DeviceManager;1
 category app-startup ParserErrorHandler service,@songbirdnest.com/Songbird/ParserErrorHandler;1
 ## Causes a hang right now ## category app-startup SbPlaybackHistoryService service,@songbirdnest.com/Songbird/PlaybackHistoryService;1
 category profile-after-change sbPlayQueueService service,@songbirdnest.com/Songbird/playqueue/service;1
@@ -427,17 +427,17 @@ category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActio
 category quit-application sbServicePaneService @songbirdnest.com/servicepane/service;1
 category quit-application feathers-manager @songbirdnest.com/songbird/feathersmanager;1
 category service-pane 0library @songbirdnest.com/servicepane/library;1
-category service-pane cdrip-device @songbirdnest.com/servicepane/cdDevice;1
-category service-pane device @songbirdnest.com/servicepane/device;1
+# category service-pane cdrip-device @songbirdnest.com/servicepane/cdDevice;1
+# category service-pane device @songbirdnest.com/servicepane/device;1
 category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
-category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
+# category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
 category service-pane DeviceServicePaneService service,@songbirdnest.com/servicepane/device;1
 category service-pane ServicePaneService service,@songbirdnest.com/servicepane/service;1
 category songbird-album-art-fetcher sbFileAlbumArtFetcher @songbirdnest.com/Songbird/album-art/file-fetcher;1
 category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
-category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
-category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
-category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
+# category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
+# category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
+# category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
 # REGISTERED IN MODULE # category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
 category songbird-library-manager-before-shutdown LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
 category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
