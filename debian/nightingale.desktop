@@ -1,13 +1,13 @@
 [Desktop Entry]
 Name=Nightingale
 GenericName=Nightingale
-Comment=Nightingale Media Player
-Exec=nightingale
+Comment=Playback, organize and manage digital media
+Exec=nightingale %s
 Encoding=UTF-8
 Terminal=false
 StartupNotify=true
 Type=Application
 Categories=AudioVideo;Audio;Player;
 Icon=nightingale
-MimeType=application/ogg;application/x-ogg;application/x-ogm-audio;audio/aac;audio/mp4;audio/mpeg;audio/mpegurl;audio/ogg;audio/vnd.rn-realaudio;audio/vorbis;audio/x-flac;audio/x-mp3;audio/x-mpeg;audio/x-mpegurl;audio/x-ms-wma;audio/x-musepack;audio/x-oggflac;audio/x-pn-realaudio;audio/x-scpls;audio/x-speex;audio/x-vorbis;audio/x-vorbis+ogg;audio/x-wav;video/x-ms-asf;x-content/audio-player;
+MimeType=application/ogg;application/x-ogg;application/x-ogm-audio;audio/aac;audio/mp4;audio/mpeg;audio/mpegurl;audio/ogg;audio/vnd.rn-realaudio;audio/vorbis;audio/x-flac;audio/x-mp3;audio/x-mpeg;audio/x-mpegurl;audio/x-ms-wma;audio/x-musepack;audio/x-oggflac;audio/x-pn-realaudio;audio/x-scpls;audio/x-speex;audio/x-vorbis;audio/x-vorbis+ogg;audio/x-wav;video/x-ms-asf;x-content/audio-player;x-scheme-handler/ngale;
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Previous;Next;

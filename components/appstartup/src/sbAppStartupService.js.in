@@ -222,7 +222,7 @@ sbAppStartupService.prototype =
     }
 
     try {
-      // On Windows and Linux, register the songbird:// protocol.
+      // On Windows and Linux, register the ngale:// protocol.
       // (Mac is in the info.plist)
       var platform = Cc["@mozilla.org/system-info;1"]
                        .getService(Ci.nsIPropertyBag2)
@@ -528,7 +528,7 @@ sbAppStartupService.prototype =
   },
 
   /**
-   * \brief Register the songbird:// protocol handler on Windows
+   * \brief Register the ngale:// protocol handler on Windows
    */
   _registerProtocolHandlerWindows: function () {
     if (!("@mozilla.org/windows-registry-key;1" in Components.classes)) {
@@ -543,15 +543,15 @@ sbAppStartupService.prototype =
     // It'd be nice if there were a way to look this up.
     // (mook suggests) ::GetModuleFileNameW().
     // http://mxr.mozilla.org/seamonkey/source/browser/components/shell/src/nsWindowsShellService.cpp#264
-    file.append("songbird.exe");
+    file.append("nightingale.exe");
 
     var wrk = Cc["@mozilla.org/windows-registry-key;1"]
                 .createInstance(Ci.nsIWindowsRegKey);
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-               "Software\\Classes\\songbird",
+               "Software\\Classes\\ngale",
                wrk.ACCESS_WRITE);
-    wrk.writeStringValue("", "URL:Songbird protocol");
+    wrk.writeStringValue("", "URL:Nightingale protocol");
     wrk.writeStringValue("URL Protocol", "");
 
     // The EditFlags key will make the protocol show up in the File Types
@@ -559,19 +559,19 @@ sbAppStartupService.prototype =
     wrk.writeBinaryValue("EditFlags", '\002\000\000\000');
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-               "Software\\Classes\\songbird\\DefaultIcon",
+               "Software\\Classes\\ngale\\DefaultIcon",
                wrk.ACCESS_WRITE);
     wrk.writeStringValue("", '"' + file.path + '"');
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-               "Software\\Classes\\songbird\\shell\\open\\command",
+               "Software\\Classes\\ngale\\shell\\open\\command",
                wrk.ACCESS_WRITE);
     wrk.writeStringValue("", '"' + file.path + '" "%1"');
     wrk.close();
   },
 
   /**
-   * \brief Register the songbird:// protocol handler on Gnome/Linux
+   * \brief Register the ngale:// protocol handler on Gnome/Linux
    */
   _registerProtocolHandlerGConf: function () {
     if (!("@mozilla.org/gnome-gconf-service;1" in Components.classes)) {
@@ -582,13 +582,13 @@ sbAppStartupService.prototype =
                  .getService(Ci.nsIProperties)
                  .get("CurProcD", Ci.nsIFile);
     var file = path.clone();
-    file.append("songbird");
+    file.append("nightingale");
 
     var gconf = Cc["@mozilla.org/gnome-gconf-service;1"]
                   .getService(Ci.nsIGConfService);
-    gconf.setString("/desktop/gnome/url-handlers/songbird/command", '"' + file.path + '" "%s"');
-    gconf.setBool("/desktop/gnome/url-handlers/songbird/enabled", true);
-    gconf.setBool("/desktop/gnome/url-handlers/songbird/needs_terminal", false);
+    gconf.setString("/desktop/gnome/url-handlers/ngale/command", '"' + file.path + '" "%s"');
+    gconf.setBool("/desktop/gnome/url-handlers/ngale/enabled", true);
+    gconf.setBool("/desktop/gnome/url-handlers/ngale/needs_terminal", false);
   },
 
 #ifdef METRICS_ENABLED
