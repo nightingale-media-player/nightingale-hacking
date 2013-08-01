@@ -130,11 +130,12 @@ private:
   /* Static helpers that simply forward to the relevant instance methods */
   static void decodebin_pad_added_cb (GstElement *element, GstPad *pad,
                                       sbGStreamerVideoTranscoder *transcoder);
-  static void decodebin_no_more_pads_cb (
-          GstElement *element,
-          sbGStreamerVideoTranscoder *transcoder);
-  static void pad_blocked_cb (GstPad *pad, gboolean blocked, 
-                              sbGStreamerVideoTranscoder *transcoder);
+  static void decodebin_no_more_pads_cb (GstElement *element,
+                                         sbGStreamerVideoTranscoder *transcoder);
+  static void pad_blocked_audio_cb(GstPad *pad, GstPadProbeInfo *info, 
+                                   sbGStreamerVideoTranscoder *transcoder);
+  static void pad_blocked_video_cb(GstPad *pad, GstPadProbeInfo *info, 
+                                   sbGStreamerVideoTranscoder *transcoder);
   static void pad_notify_caps_cb (GObject *obj, GParamSpec *pspec,
                                   sbGStreamerVideoTranscoder *transcoder);
 
@@ -151,7 +152,7 @@ private:
   nsresult DecoderNoMorePads(GstElement *uridecodebin);
 
   /* Called when pad block has fired. */
-  nsresult PadBlocked (GstPad *pad, gboolean blocked);
+  nsresult PadBlocked (GstPad *pad);
 
   /* Called when we're notified that a pad's caps have been set */
   nsresult PadNotifyCaps (GstPad *pad);
