@@ -997,7 +997,7 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
           rv = bagV1->SetProperty(aProperty, asVariant);
           NS_ENSURE_SUCCESS (rv, rv);
 
-          gst_buffer_unmap(asGstBuffer, asGstMapInfo);
+          gst_buffer_unmap(asGstBuffer, &asGstMapInfo);
         } else {
 #ifdef PR_LOGGING
           LOG(("gst_buffer_map failed"));
