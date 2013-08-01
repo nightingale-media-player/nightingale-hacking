@@ -974,7 +974,7 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
       // used as case labels because they aren't constant expressions
 
       if (type == GST_TYPE_BUFFER) {
-        const GstBuffer * asGstBuffer = gst_value_get_buffer(aValue);
+        GstBuffer * asGstBuffer = gst_value_get_buffer(aValue);
         NS_ENSURE_TRUE(asGstBuffer, NS_ERROR_UNEXPECTED);
 
         GstMapInfo asGstMapInfo;
