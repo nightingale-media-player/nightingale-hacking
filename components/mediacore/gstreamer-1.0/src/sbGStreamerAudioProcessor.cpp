@@ -663,7 +663,7 @@ sbGStreamerAudioProcessor::HasEnoughData()
 
   nsAutoMonitor mon(mMonitor);
 
-  guint available = gst_adapter_available (mAdapter);
+  gsize available = gst_adapter_available (mAdapter);
 
   // We have to have at least one byte of data to have enough in all cases.
   // Then, we need:
@@ -900,8 +900,8 @@ void
 sbGStreamerAudioProcessor::SendDataToListener()
 {
   nsresult rv;
-  const guint8 *data;
-  guint bytesRead = 0;
+  const gsize *data;
+  gsize bytesRead = 0;
 
   nsAutoMonitor mon(mMonitor);
 
@@ -931,7 +931,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
     }
   }
 
-  guint available = gst_adapter_available (mAdapter);
+  gsize available = gst_adapter_available (mAdapter);
   if (mConstraintBlockSize == 0)
     bytesRead = available;
   else if (available >= mConstraintBlockSizeBytes)
