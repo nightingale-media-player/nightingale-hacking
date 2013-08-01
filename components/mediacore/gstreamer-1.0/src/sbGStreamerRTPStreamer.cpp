@@ -156,7 +156,7 @@ sbGStreamerRTPStreamer::BuildPipeline()
   gst_object_unref (sink);
 
   payloader = gst_bin_get_by_name (GST_BIN (mPipeline), "payloader");
-  srcpad = gst_element_get_pad (payloader, "src");
+  srcpad = gst_element_get_request_pad(payloader, "src");
   g_signal_connect (srcpad, "notify::caps", (GCallback) capsNotifyHelper, this);
   gst_object_unref (srcpad);
   gst_object_unref (payloader);

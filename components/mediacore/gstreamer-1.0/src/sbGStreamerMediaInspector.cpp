@@ -632,8 +632,8 @@ sbGStreamerMediaInspector::BuildPipeline()
 
   gst_bin_add_many (GST_BIN (mPipeline), src, mDecodeBin, NULL);
 
-  GstPad *srcpad = gst_element_get_pad (src, "src");
-  GstPad *sinkpad = gst_element_get_pad (mDecodeBin, "sink");
+  GstPad *srcpad = gst_element_get_request_pad(src, "src");
+  GstPad *sinkpad = gst_element_get_request_pad(mDecodeBin, "sink");
 
   gst_pad_link (srcpad, sinkpad);
 
@@ -669,7 +669,7 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
     gst_element_sync_state_with_parent (queue);
     gst_element_sync_state_with_parent (fakesink);
 
-    GstPad *sinkpad = gst_element_get_pad (queue, "sink");
+    GstPad *sinkpad = gst_element_get_request_pad(queue, "sink");
 
     gst_pad_link (srcpad, sinkpad);
     g_object_unref (sinkpad);
@@ -692,7 +692,7 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
     gst_element_sync_state_with_parent (queue);
     gst_element_sync_state_with_parent (fakesink);
 
-    GstPad *sinkpad = gst_element_get_pad (queue, "sink");
+    GstPad *sinkpad = gst_element_get_static_pad(queue, "sink");
 
     gst_pad_link (srcpad, sinkpad);
     g_object_unref (sinkpad);
