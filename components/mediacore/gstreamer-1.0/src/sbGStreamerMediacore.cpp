@@ -728,9 +728,9 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
     GstIterator *it = gst_bin_iterate_sorted ((GstBin *)aElement);
 
     while (!done) {
-      gpointer data;
+      GValue data;
       GstElement *child;
-      switch (gst_iterator_next (it, &data)) {
+      switch (gst_iterator_next (it, (GValue*) &data)) {
         case GST_ITERATOR_OK:
           child = GST_ELEMENT_CAST (data);
           if (SetPropertyOnChild(child,
