@@ -90,6 +90,9 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerVideoTranscoder,
 NS_DECL_CLASSINFO(sbGStreamerVideoTranscoder);
 NS_IMPL_THREADSAFE_CI(sbGStreamerVideoTranscoder);
 
+static GstPadProbeInfo *mAudioQueueSrcInfo;
+static GstPadProbeInfo *mVideoQueueSrcInfo;
+
 sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
   sbGStreamerPipeline(),
   mStatus(sbIJobProgress::STATUS_RUNNING), // There is no NOT_STARTED
@@ -933,10 +936,20 @@ sbGStreamerVideoTranscoder::decodebin_no_more_pads_cb (
 }
 
 /* static */ void
-sbGStreamerVideoTranscoder::pad_blocked_cb (GstPad * pad, gboolean blocked,
+sbGStreamerVideoTranscoder::pad_blocked_audio_cb(GstPad * pad, GstPadProbeInfo *info,
         sbGStreamerVideoTranscoder *transcoder)
 {
-  nsresult rv = transcoder->PadBlocked(pad, blocked);
+  mAudioQueueSrcInfo = info;
+  nsresult rv = transcoder->PadBlocked(pad);
+  NS_ENSURE_SUCCESS (rv, /* void */);
+}
+
+/* static */ void
+sbGStreamerVideoTranscoder::pad_blocked_video_cb(GstPad * pad, GstPadProbeInfo *info,
+        sbGStreamerVideoTranscoder *transcoder)
+{
+  mVideoQueueSrcInfo = info;
+  nsresult rv = transcoder->PadBlocked(pad);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
@@ -2065,8 +2078,8 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
     GstPad *queueSrc = gst_element_get_pad (queue, "src");
     mAudioQueueSrc = queueSrc;
 
-    gst_pad_set_blocked_async (queueSrc, TRUE,
-                               (GstPadBlockCallback)pad_blocked_cb, this);
+    gst_pad_add_probe(queueSrc, GST_PAD_PROBE_TYPE_BLOCK,
+                      (GstPadProbeCallback) pad_blocked_audio_cb, this, NULL);
   }
 
   if (mVideoSrc) {
@@ -2085,10 +2098,9 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
     GstPad *queueSrc = gst_element_get_pad (queue, "src");
     mVideoQueueSrc = queueSrc;
 
-    gst_pad_set_blocked_async (queueSrc, TRUE,
-                               (GstPadBlockCallback)pad_blocked_cb, this);
+    gst_pad_add_probe(queueSrc, GST_PAD_PROBE_TYPE_BLOCK,
+                      (GstPadProbeCallback) pad_blocked_video_cb, this, NULL);
   }
-
   mWaitingForCaps = PR_TRUE;
 
   return NS_OK;
@@ -2173,12 +2185,14 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
 
     if (NS_SUCCEEDED (rv)) {
       if (mAudioQueueSrc) {
-        gst_pad_set_blocked_async (mAudioQueueSrc, FALSE,
-                                   (GstPadBlockCallback)pad_blocked_cb, this);
+        if (gst_pad_is_blocked(mAudioQueueSrc)) {
+          gst_pad_remove_probe(mAudioQueueSrc, mAudioQueueSrcInfo->id);
+        }
       }
       if (mVideoQueueSrc) {
-        gst_pad_set_blocked_async (mVideoQueueSrc, FALSE,
-                                   (GstPadBlockCallback)pad_blocked_cb, this);
+        if (gst_pad_is_blocked(mVideoQueueSrc)) {
+          gst_pad_remove_probe(mVideoQueueSrc, mVideoQueueSrcInfo->id);
+        }
       }
     } else {
       // handle NS_FAILED(rv)
@@ -2199,9 +2213,9 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
 }
 
 nsresult
-sbGStreamerVideoTranscoder::PadBlocked (GstPad *pad, gboolean blocked)
+sbGStreamerVideoTranscoder::PadBlocked (GstPad *pad)
 {
-  if (blocked ) {
+  if (gst_pad_is_blocked(pad)) {
     LOG(("Pad blocked, checking if we have full caps yet"));
     return CheckForAllCaps();
   }
