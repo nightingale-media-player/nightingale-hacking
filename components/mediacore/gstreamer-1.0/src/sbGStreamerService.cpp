@@ -400,7 +400,7 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
   rv = aHandler->BeginInspect();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  orig_plugins = plugins = gst_default_registry_get_plugin_list();
+  orig_plugins = plugins = gst_registry_get_plugin_list(gst_registry_get());
   while (plugins) {
     GstPlugin *plugin;
     plugin = (GstPlugin *) (plugins->data);
@@ -426,7 +426,7 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
 
     GList *features, *orig_features;
     orig_features = features =
-      gst_registry_get_feature_list_by_plugin(gst_registry_get_default(),
+      gst_registry_get_feature_list_by_plugin(gst_registry_get(),
                                               gst_plugin_get_name(plugin));
     while (features) {
       GstPluginFeature *feature;

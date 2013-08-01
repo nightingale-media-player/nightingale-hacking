@@ -596,7 +596,7 @@ FindMatchingElementName(GstCaps *srcCaps, const char *typeName)
   data.srccaps = srcCaps;
   data.type = typeName;
 
-  list = gst_default_registry_feature_filter (
+  list = gst_registry_feature_filter(gst_registry_get(),
           (GstPluginFeatureFilter)match_element_filter, FALSE, &data);
 
   for (walk = list; walk; walk = g_list_next (walk)) {
