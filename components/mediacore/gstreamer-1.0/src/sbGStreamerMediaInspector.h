@@ -71,7 +71,7 @@ private:
   nsresult CompleteInspection();
 
   nsresult PadAdded(GstPad *srcPad);
-  nsresult FakesinkEvent(GstPad *srcPad, GstEvent *event, PRBool isAudio);
+  nsresult FakesinkEvent(GstPad *srcPad, GstPadProbeInfo *info, PRBool isAudio);
   nsresult ProcessPipelineForInfo();
   nsresult ProcessContainerProperties(
              sbIMediaFormatContainerMutable *aContainerFormat,
