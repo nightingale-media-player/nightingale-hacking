@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#ifdef WITH_GST_1
+ifdef WITH_GST_1
 SUBDIRS = base \
           gstreamer-1.0 \
           metadata \
@@ -37,7 +37,7 @@ SUBDIRS = base \
           playback \
           transcode \
           $(NULL)
-#else
+else
 SUBDIRS = base \
           gstreamer \
           metadata \
@@ -45,6 +45,6 @@ SUBDIRS = base \
           playback \
           transcode \
           $(NULL)
-#endif
+endif
 
 include $(topsrcdir)/build/rules.mk
