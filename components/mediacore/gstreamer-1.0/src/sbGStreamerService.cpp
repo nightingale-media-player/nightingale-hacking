@@ -503,7 +503,7 @@ sbGStreamerService::InspectFactoryPads(GstElement* aElement,
   nsresult rv;
 
   const GList *pads;
-  pads = aFactory->staticpadtemplates;
+  pads = gst_element_factory_get_static_pad_templates(aFactory);
   while (pads) {
     GstStaticPadTemplate *padtemplate;
     padtemplate = (GstStaticPadTemplate *) (pads->data);
