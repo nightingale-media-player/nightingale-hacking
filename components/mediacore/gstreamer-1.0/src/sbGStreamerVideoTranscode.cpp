@@ -1552,8 +1552,8 @@ sbGStreamerVideoTranscoder::AddAudioBin(GstPad *inputAudioSrcPad,
   gst_caps_unref (caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  GstPad *audioBinSinkPad = gst_element_get_pad (audioBin, "sink");
-  GstPad *audioBinSrcPad = gst_element_get_pad (audioBin, "src");
+  GstPad *audioBinSinkPad = gst_element_get_request_pad(audioBin, "sink");
+  GstPad *audioBinSrcPad = gst_element_get_request_pad(audioBin, "src");
 
   gst_bin_add (GST_BIN (mPipeline), audioBin);
   gst_element_sync_state_with_parent (audioBin);
@@ -1601,8 +1601,8 @@ sbGStreamerVideoTranscoder::AddVideoBin(GstPad *inputVideoSrcPad,
   gst_caps_unref (caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  GstPad *videoBinSinkPad = gst_element_get_pad (videoBin, "sink");
-  GstPad *videoBinSrcPad = gst_element_get_pad (videoBin, "src");
+  GstPad *videoBinSinkPad = gst_element_get_request_pad(videoBin, "sink");
+  GstPad *videoBinSrcPad = gst_element_get_request_pad(videoBin, "src");
 
   gst_bin_add (GST_BIN (mPipeline), videoBin);
   gst_element_sync_state_with_parent (videoBin);
@@ -2068,7 +2068,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
             G_CALLBACK (pad_notify_caps_cb), this);
 
     GstElement *queue = gst_element_factory_make ("queue", "audio-queue");
-    GstPad *queueSink = gst_element_get_pad (queue, "sink");
+    GstPad *queueSink = gst_element_get_request_pad(queue, "sink");
 
     gst_bin_add (GST_BIN (mPipeline), queue);
     gst_element_sync_state_with_parent (queue);
@@ -2088,7 +2088,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
             G_CALLBACK (pad_notify_caps_cb), this);
 
     GstElement *queue = gst_element_factory_make ("queue", "video-queue");
-    GstPad *queueSink = gst_element_get_pad (queue, "sink");
+    GstPad *queueSink = gst_element_get_request_pad(queue, "sink");
 
     gst_bin_add (GST_BIN (mPipeline), queue);
     gst_element_sync_state_with_parent (queue);

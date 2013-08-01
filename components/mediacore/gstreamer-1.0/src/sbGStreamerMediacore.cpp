@@ -493,7 +493,7 @@ sbGStreamerMediacore::CreateAudioSink()
 
   gst_bin_add ((GstBin *)sinkbin, audiosink);
 
-  targetpad = gst_element_get_pad (audiosink, "sink");
+  targetpad = gst_element_get_request_pad(audiosink, "sink");
 
   /* Add each filter, followed by an audioconvert. The first-added filter ends
    * last in the pipeline, so we iterate in reverse.
@@ -508,18 +508,18 @@ sbGStreamerMediacore::CreateAudioSink()
 
     gst_bin_add_many ((GstBin *)sinkbin, filter, audioconvert, NULL);
 
-    srcpad = gst_element_get_pad (filter, "src");
-    sinkpad = gst_element_get_pad (audioconvert, "sink");
+    srcpad = gst_element_get_request_pad(filter, "src");
+    sinkpad = gst_element_get_request_pad(audioconvert, "sink");
     gst_pad_link (srcpad, sinkpad);
     gst_object_unref (srcpad);
     gst_object_unref (sinkpad);
 
-    srcpad = gst_element_get_pad (audioconvert, "src");
+    srcpad = gst_element_get_request_pad(audioconvert, "src");
     gst_pad_link (srcpad, targetpad);
     gst_object_unref (targetpad);
     gst_object_unref (srcpad);
 
-    targetpad = gst_element_get_pad (filter, "sink");
+    targetpad = gst_element_get_request_pad(filter, "sink");
   }
 
   // Now, targetpad is the left-most real pad in our bin. Ghost it to provide
