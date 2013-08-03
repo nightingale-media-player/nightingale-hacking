@@ -1714,7 +1714,7 @@ sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
     for(PRUint32 i = 0; i < EQUALIZER_DEFAULT_BAND_COUNT; ++i) {
       PR_snprintf (band, 16, "band%i::freq", i);
       g_value_set_double (&freqVal, EQUALIZER_BANDS[i]);
-      gst_child_proxy_set_property (GST_OBJECT (mEqualizerElement),
+      gst_child_proxy_set_property (GST_CHILD_PROXY(mEqualizerElement),
                                     band,
                                     &freqVal);
     }
