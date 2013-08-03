@@ -732,7 +732,7 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
       GstElement *child;
       switch (gst_iterator_next (it, (GValue*) &data)) {
         case GST_ITERATOR_OK:
-          child = GST_ELEMENT_CAST (data);
+          child = GST_ELEMENT_CAST (&data);
           if (SetPropertyOnChild(child,
                   aPropertyName, aPropertyValue))
           {
