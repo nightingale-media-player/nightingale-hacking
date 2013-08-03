@@ -801,8 +801,8 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
 
     switch (gst_iterator_next (it, (GValue*) &element)) {
       case GST_ITERATOR_OK:
-        rv = InspectorateElement (GST_ELEMENT (element));
-        gst_object_unref (element);
+        rv = InspectorateElement (GST_ELEMENT_CAST (&element));
+        gst_object_unref (GST_ELEMENT_CAST (&element));
         if (NS_FAILED (rv)) {
           done = TRUE;
         }
