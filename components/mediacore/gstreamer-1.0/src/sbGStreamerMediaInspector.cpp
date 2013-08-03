@@ -752,7 +752,7 @@ sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstPadProbeInfo *info,
   }
 
   if (info != NULL) {
-    gst_pad_remove_probe(srcpad, info);
+    gst_pad_remove_probe(srcpad, info->id);
   }
 
   return NS_OK;
