@@ -198,7 +198,7 @@ sbGStreamerService::Init()
     //   3. Our bundled gst-plugins directory
     //
     // Plus the system plugin path on linux:
-    //   4. $HOME/.gstreamer-0.10/plugins or $HOME/.gstreamer-1.0/plugins
+    //   4. $HOME/.gstreamer-1.0/plugins
     //   5. /usr/lib/gstreamer-1.0, /usr/lib64/gstreamer-1.0,
     //      or /usr/lib/x86_64-linux-gnu/gstreamer-1.0
 
@@ -642,7 +642,7 @@ sbGStreamerService::GetGStreamerRegistryFile(nsIFile **aOutRegistryFile)
                          getter_AddRefs(registryPath));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-0.10"));
+  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-1.0"));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
   NS_ENSURE_SUCCESS(rv, rv);
