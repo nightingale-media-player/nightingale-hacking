@@ -1324,7 +1324,7 @@ AC_SUBST(WITH_GST_1)
 #
 
 if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
-  if test "$USE_GST_1" = "1" ; then 
+  if test "$WITH_GST_1" = "1" ; then 
     GST_MAJORMINOR=1.0
     GST_REQS=1.0.6
     GSTPLUG_REQS=1.0.6
