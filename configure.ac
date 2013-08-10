@@ -1309,16 +1309,15 @@ AC_SUBST(FORCE_MEDIA_CORE_QT)
 #  Check for --with-gstreamer-1.0
 #
 
-USE_GST_1=
+WITH_GST_1=
 AC_ARG_WITH(gstreamer-1.0,
             [ AS_HELP_STRING([--with-gstreamer-1.0], [ use gstreamer-1.0 (default=no)]) ],
             [],
             [with_gstreamer_1_0=no])
 if test "$with_gstreamer_1_0" = "yes"; then
-  USE_GST_1=1
-  AC_DEFINE(WITH_GST_1)
+  WITH_GST_1=1
 fi
-AC_SUBST(USE_GST_1)
+AC_SUBST(WITH_GST_1)
 
 #
 # If we're building with MEDIA_CORE_GST_SYSTEM, find our required packages
