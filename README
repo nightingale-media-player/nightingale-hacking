@@ -54,7 +54,6 @@ Configure Options:
 ========================================================================
 
   ac_add_options (option here)
-  
   --enable-debug                        whether or not to compile debug
   --enable-jars                         whether or not to create jars
   --enable-installer                    whether or not to make installer
@@ -65,6 +64,7 @@ Configure Options:
   --enable-breakpad                     whether or not to enable breakpad
   --enable-static                       single-component static build
   --enable-compiler-environment-checks  only allow supported compilers
+  --with-gstreamer-1.0                  Optionally use GStreamer-1.0
 
 ========================================================================
 Contributions:
@@ -89,6 +89,10 @@ Contributors:
 * Dirk Steinmetz - rsjtdrjgfuzkfg
 * Antoine Turmel - GeekShadow
 * Mark Yen - Mook
+* Akil Krishnan - LIB53
+* Alexander Korenev - LookingMan
+* John Murray - johnmurrayvi
+* David Rogers - Ezekial1000
 
 ========================================================================
 REMINDER!!!!
