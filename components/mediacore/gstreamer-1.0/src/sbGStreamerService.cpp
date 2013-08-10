@@ -315,6 +315,8 @@ sbGStreamerService::Init()
 
       nsString sysLibDir;
 
+      // XXX There must be a better way to set the plugin paths at runtime
+      // e.g. setting the env var in the launcher script
 #ifdef HAVE_64BIT_OS
       // Ubuntu lib paths...
       nsString ubuntuLibPath = 
