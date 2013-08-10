@@ -55,13 +55,7 @@ ac_add_options --enable-unity-integration
 
 to your nightingale.config file.
 
-More information can be gleaned from the Songbird wiki:
-
-Windows: http://tinyurl.com/3jfo6lv
-Mac: http://tinyurl.com/3bwg8e3
-Linux: http://tinyurl.com/3kh3gk8
-
-and also on the Nightingale wiki:
+More information can be gleaned from the Nightingale wiki:
 
 Windows: http://tinyurl.com/ce3anjo
 Mac: http://tinyurl.com/ckca4no
