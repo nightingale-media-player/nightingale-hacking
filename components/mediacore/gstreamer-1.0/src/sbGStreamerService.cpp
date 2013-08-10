@@ -316,13 +316,28 @@ sbGStreamerService::Init()
       nsString sysLibDir;
 
 #ifdef HAVE_64BIT_OS
-  #if 0 // Ubuntu lib paths...
-    sysLibDir = NS_LITERAL_STRING("/usr/lib/x86_64-linux-gnu/gstreamer-1.0");
-  #else
-    sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-1.0");
-  #endif
+      // Ubuntu lib paths...
+      nsString ubuntuLibPath = 
+              NS_LITERAL_STRING("/usr/lib/x86_64-linux-gnu/gstreamer-1.0");
+      nsCOMPtr<nsILocalFile> ubuntuLibFile = 
+              do_CreateInstance("@mozilla.org/file/local;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = ubuntuLibFile->InitWithPath(ubuntuLibPath);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool ubuntuLibPathExists;
+      rv = ubuntuLibFile->Exists(&ubuntuLibPathExists);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      sysLibDir = (ubuntuLibFile) ? ubuntuLibPath : 
+      if (ubuntuLibFile) {
+        sysLibDir = ubuntuLibPath;
+      } else {
+        sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-1.0");
+      }
 #else
-    sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-1.0");
+      sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-1.0");
 #endif // HAVE_64BIT_OS
 
       nsString badFilePath = sysLibDir;
