@@ -322,7 +322,7 @@ sbGStreamerService::Init()
     sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-1.0");
   #endif
 #else
-  sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-1.0");
+    sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-1.0");
 #endif // HAVE_64BIT_OS
 
       nsString badFilePath = sysLibDir;

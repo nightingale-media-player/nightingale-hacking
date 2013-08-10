@@ -476,7 +476,7 @@ sbGStreamerMediacore::CreateAudioSink()
 
   nsAutoMonitor lock(mMonitor);
 
-  GstElement *sinkbin = gst_bin_new ("audiosink-bin");
+  GstElement *sinkbin = gst_bin_new("audiosink-bin");
   GstElement *audiosink = CreateSinkFromPrefs(mAudioSinkDescription.get());
   GstPad *targetpad, *ghostpad;
 
@@ -498,7 +498,7 @@ sbGStreamerMediacore::CreateAudioSink()
    *
    */
 
-  gst_bin_add ((GstBin *)sinkbin, audiosink);
+  gst_bin_add((GstBin *)sinkbin, audiosink);
 
   targetpad = gst_element_get_static_pad(audiosink, "sink");
 
@@ -513,31 +513,31 @@ sbGStreamerMediacore::CreateAudioSink()
     GstElement *filter = *it;
     GstPad *srcpad, *sinkpad;
 
-    gst_bin_add_many ((GstBin *)sinkbin, filter, audioconvert, NULL);
+    gst_bin_add_many((GstBin *)sinkbin, filter, audioconvert, NULL);
 
-    gst_pad_link (srcpad, sinkpad);
-    gst_object_unref (srcpad);
-    gst_object_unref (sinkpad);
     srcpad = gst_element_get_static_pad(filter, "src");
     sinkpad = gst_element_get_static_pad(audioconvert, "sink");
+    gst_pad_link(srcpad, sinkpad);
+    gst_object_unref(srcpad);
+    gst_object_unref(sinkpad);
 
-    gst_pad_link (srcpad, targetpad);
-    gst_object_unref (targetpad);
-    gst_object_unref (srcpad);
     srcpad = gst_element_get_static_pad(audioconvert, "src");
+    gst_pad_link(srcpad, targetpad);
     TRACE(("CreateAudioSink -- Linked srcpad to targetpad"));
+    gst_object_unref(targetpad);
+    gst_object_unref(srcpad);
 
     targetpad = gst_element_get_static_pad(filter, "sink");
   }
 
   // Now, targetpad is the left-most real pad in our bin. Ghost it to provide
   // a sinkpad on our bin.
-  ghostpad = gst_ghost_pad_new ("sink", targetpad);
-  gst_element_add_pad (sinkbin, ghostpad);
+  ghostpad = gst_ghost_pad_new("sink", targetpad);
+  gst_element_add_pad(sinkbin, ghostpad);
 
-  mAudioBinGhostPad = GST_GHOST_PAD (gst_object_ref (ghostpad));
+  mAudioBinGhostPad = GST_GHOST_PAD(gst_object_ref(ghostpad));
 
-  gst_object_unref (targetpad);
+  gst_object_unref(targetpad);
 
   return sinkbin;
 }
@@ -733,29 +733,28 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
     return true;
   }
 
-  if (GST_IS_BIN (aElement)) {
+  if (GST_IS_BIN(aElement)) {
     // Iterate in sorted order, so we look at sinks first
-    GstIterator *it = gst_bin_iterate_sorted ((GstBin *)aElement);
+    GstIterator *it = gst_bin_iterate_sorted((GstBin *)aElement);
 
     while (!done) {
-      GValue data;
+      GValue data = G_VALUE_INIT;
       GstElement *child;
-      switch (gst_iterator_next (it, (GValue*) &data)) {
+      switch (gst_iterator_next(it, (GValue*) &data)) {
         case GST_ITERATOR_OK:
-          child = GST_ELEMENT_CAST (&data);
-          if (SetPropertyOnChild(child,
-                  aPropertyName, aPropertyValue))
-          {
+          child = GST_ELEMENT_CAST(&data);
+          if (SetPropertyOnChild(child, aPropertyName, aPropertyValue)) {
             ret = true;
             done = true;
           }
-          gst_object_unref (child);
+          g_value_reset(&data);
+          // gst_object_unref(child);
           break;
         case GST_ITERATOR_DONE:
           done = TRUE;
           break;
         case GST_ITERATOR_RESYNC:
-          gst_iterator_resync (it);
+          gst_iterator_resync(it);
           break;
         case GST_ITERATOR_ERROR:
           done = true;
@@ -915,7 +914,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
   mon.Exit();
 
-  if(!sequencer) {
+  if (!sequencer) {
     return;
   }
 
@@ -929,7 +928,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
           contentURL);
   NS_ENSURE_SUCCESS(rv, /*void*/ );
 
-  if(StringBeginsWith(contentURL, NS_LITERAL_STRING("file:"))) {
+  if (StringBeginsWith(contentURL, NS_LITERAL_STRING("file:"))) {
     rv = sequencer->RequestHandleNextItem(this);
     NS_ENSURE_SUCCESS(rv, /*void*/ );
 
