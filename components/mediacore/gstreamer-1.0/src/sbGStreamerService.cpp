@@ -330,7 +330,6 @@ sbGStreamerService::Init()
       rv = ubuntuLibFile->Exists(&ubuntuLibPathExists);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      sysLibDir = (ubuntuLibFile) ? ubuntuLibPath : 
       if (ubuntuLibFile) {
         sysLibDir = ubuntuLibPath;
       } else {
