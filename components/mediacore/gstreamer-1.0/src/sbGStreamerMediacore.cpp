@@ -781,8 +781,8 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   NS_ENSURE_SUCCESS (rv, rv);
 
   nsAutoMonitor lock(mMonitor);
-  mPipeline = gst_element_factory_make ("playbin2", "player");
   TRACE(("  CreatePlaybackPipeline -- locked monitor"));
+  mPipeline = gst_element_factory_make ("playbin", "player");
 
   if (!mPipeline)
     return NS_ERROR_FAILURE;
