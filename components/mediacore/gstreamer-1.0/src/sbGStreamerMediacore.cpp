@@ -415,6 +415,9 @@ sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
 GstElement *
 sbGStreamerMediacore::CreateSinkFromPrefs(const char *aSinkDescription)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateSinkFromPrefs", this));
+  TRACE(("    aSinkDescription = %s", aSinkDescription));
+
   // Only try to create it if we have a non-null, non-zero-length description
   if (aSinkDescription && *aSinkDescription)
   {
@@ -454,6 +457,8 @@ sbGStreamerMediacore::GetFileSize(nsIURI *aURI, PRInt64 *aFileSize)
 GstElement *
 sbGStreamerMediacore::CreateVideoSink()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateVideoSink", this));
+
   nsAutoMonitor lock(mMonitor);
 
   GstElement *videosink = CreateSinkFromPrefs(mVideoSinkDescription.get());
@@ -467,6 +472,8 @@ sbGStreamerMediacore::CreateVideoSink()
 GstElement *
 sbGStreamerMediacore::CreateAudioSink()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateAudioSink", this));
+
   nsAutoMonitor lock(mMonitor);
 
   GstElement *sinkbin = gst_bin_new ("audiosink-bin");
@@ -518,6 +525,7 @@ sbGStreamerMediacore::CreateAudioSink()
     gst_object_unref (targetpad);
     gst_object_unref (srcpad);
     srcpad = gst_element_get_static_pad(audioconvert, "src");
+    TRACE(("CreateAudioSink -- Linked srcpad to targetpad"));
 
     targetpad = gst_element_get_static_pad(filter, "sink");
   }
@@ -713,6 +721,8 @@ bool
 sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
         const char *aPropertyName, gint64 aPropertyValue)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- SetPropertyOnChild", this));
+
   bool done = false;
   bool ret = false;
 
@@ -762,6 +772,8 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
 nsresult
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreatePlaybackPipeline", this));
+
   nsresult rv;
   gint flags;
 
@@ -771,11 +783,13 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
 
   nsAutoMonitor lock(mMonitor);
   mPipeline = gst_element_factory_make ("playbin2", "player");
+  TRACE(("  CreatePlaybackPipeline -- locked monitor"));
 
   if (!mPipeline)
     return NS_ERROR_FAILURE;
 
   if (mPlatformInterface) {
+    TRACE(("    CreatePlaybackPipeline -- have mPlatformInterface"));
     GstElement *audiosink = CreateAudioSink();
 
     // Set audio sink
@@ -786,6 +800,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
             (gint64)mAudioSinkBufferTime);
 
     if (!mVideoDisabled) {
+      TRACE(("      CreatePlaybackPipeline -- !mVideoDisabled"));
       GstElement *videosink = CreateVideoSink();
       g_object_set(mPipeline, "video-sink", videosink, NULL);
     }
@@ -810,12 +825,15 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   rv = SetBufferingProperties(mPipeline);
   NS_ENSURE_SUCCESS (rv, rv);
 
+  TRACE(("    CreatePlaybackPipeline -- Set buffering props"));
+
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
   gst_bus_set_sync_handler (bus, SyncToAsyncDispatcher,
                             static_cast<sbGStreamerMessageHandler*>(this), NULL);
 
   g_object_unref ((GObject *)bus);
+  TRACE(("    CreatePlaybackPipeline -- Set bus sync handler"));
 
   // Handle about-to-finish signal emitted by playbin2
   g_signal_connect (mPipeline, "about-to-finish",
