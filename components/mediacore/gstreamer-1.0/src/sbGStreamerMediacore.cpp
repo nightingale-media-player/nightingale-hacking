@@ -832,7 +832,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   g_object_unref ((GObject *)bus);
   TRACE(("    CreatePlaybackPipeline -- Set bus sync handler"));
 
-  // Handle about-to-finish signal emitted by playbin2
+  // Handle about-to-finish signal emitted by playbin
   g_signal_connect (mPipeline, "about-to-finish",
           G_CALLBACK (aboutToFinishHandler), this);
   // Get notified when the current audio/video stream changes.
@@ -859,7 +859,7 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 
   switch (msg_type) {
     case GST_MESSAGE_ELEMENT: {
-      // Win32 and GDK use prepare-xwindow-id, OSX has its own private thing,
+      // Win32 and GDK use prepare-window-handle, OSX has its own private thing,
       // have-ns-view
       if (gst_structure_has_name(gst_message_get_structure(aMessage), "prepare-window-handle") ||
           gst_structure_has_name(gst_message_get_structure(aMessage), "have-ns-view"))
