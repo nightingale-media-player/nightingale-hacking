@@ -56,19 +56,32 @@
 #include "sbMetadataCrashTracker.h"
 
 
-// DEFINES ====================================================================
-#include "prlog.h"
+/**
+ * To log this class, set the following environment variable in a debug build:
+ *
+ *  NSPR_LOG_MODULES=sbFileMetadataService:5 (or :3 for LOG messages only)
+ *
+ */
 #ifdef PR_LOGGING
-extern PRLogModuleInfo* gMetadataLog;
-#define TRACE(args) PR_LOG(gMetadataLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMetadataLog, PR_LOG_WARN, args)
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif
-#else
-#define TRACE(args) /* nothing */
+
+static PRLogModuleInfo* gFileMetadataService =
+  PR_NewLogModule("sbFileMetadataService");
+
+#define LOG(args)                                          \
+  if (gFileMetadataService)                             \
+    PR_LOG(gFileMetadataService, PR_LOG_WARNING, args)
+
+#define TRACE(args)                                        \
+  if (gFileMetadataService)                             \
+    PR_LOG(gFileMetadataService, PR_LOG_DEBUG, args)
+
+#else /* PR_LOGGING */
+
 #define LOG(args)   /* nothing */
-#endif
+#define TRACE(args) /* nothing */
+
+#endif /* PR_LOGGING */
+
 
 // Controls how often we send sbIJobProgress notifications
 #define TIMER_PERIOD  33
