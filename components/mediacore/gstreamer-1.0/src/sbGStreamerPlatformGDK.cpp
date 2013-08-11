@@ -87,11 +87,14 @@ GDKPlatformInterface::GDKPlatformInterface(sbGStreamerMediacore *aCore) :
     mParentWindow(NULL),
     mFullscreenWindow(NULL)
 {
+  TRACE(("GDKPlatformInterface -- constructed"));
 }
 
 void
 GDKPlatformInterface::FullScreen()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- FullScreen", this));
+
   NS_ASSERTION (mFullscreenWindow == NULL, "Fullscreen window is non-null");
 
   GdkScreen *screen = NULL;
@@ -146,6 +149,8 @@ GDKPlatformInterface::FullScreen()
 void 
 GDKPlatformInterface::UnFullScreen()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- UnFullScreen", this));
+
   NS_ASSERTION (mFullscreenWindow, "Fullscreen window is null");
 
   gdk_window_remove_filter(mWindow, gdk_event_filter, this);
@@ -162,6 +167,8 @@ GDKPlatformInterface::UnFullScreen()
 void 
 GDKPlatformInterface::SetInvisibleCursor()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetInvisibleCursor", this));
+
   guint32 data = 0;
   GdkPixmap* pixmap = gdk_bitmap_create_from_data(NULL, (gchar*)&data, 1, 1);
 
@@ -182,6 +189,8 @@ GDKPlatformInterface::SetInvisibleCursor()
 void
 GDKPlatformInterface::SetDefaultCursor()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetDefaultCursor", this));
+
   gdk_window_set_cursor(mWindow, NULL);
   if (mFullscreenWindow)
     gdk_window_set_cursor(mFullscreenWindow, NULL);
@@ -190,6 +199,9 @@ GDKPlatformInterface::SetDefaultCursor()
 void 
 GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- MoveVideoWindow(%d, %d, %d, %d)",
+                                               this, x, y, width, height));
+
   if (mWindow) {
     LOG(("Moving video window to %d,%d, size %d,%d", x, y, width, height));
     gdk_window_move_resize(mWindow, x, y, width, height);
@@ -199,6 +211,8 @@ GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 GstElement *
 GDKPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetVideoSink", this));
+
   if (mVideoSink) {
     gst_object_unref(mVideoSink);
     mVideoSink = NULL;
@@ -224,6 +238,8 @@ GDKPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 GstElement *
 GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetAudioSink", this));
+
   if (mAudioSink) {
     gst_object_unref(mAudioSink);
     mAudioSink = NULL;
@@ -257,6 +273,8 @@ GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
 nsresult
 GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetVideoBox", this));
+
   // First let the superclass do its thing.
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -304,6 +322,8 @@ GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
 
 void GDKPlatformInterface::SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetVideoOverlayWindowID", this));
+
   nsresult rv;
 
   if (!mWindow) {
