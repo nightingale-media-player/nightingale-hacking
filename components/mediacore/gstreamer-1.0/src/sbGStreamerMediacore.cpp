@@ -414,7 +414,6 @@ GstElement *
 sbGStreamerMediacore::CreateSinkFromPrefs(const char *aSinkDescription)
 {
   TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateSinkFromPrefs", this));
-  TRACE(("    aSinkDescription = %s", aSinkDescription));
 
   // Only try to create it if we have a non-null, non-zero-length description
   if (aSinkDescription && *aSinkDescription)
@@ -761,8 +760,7 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
           break;
       }
     }
-
-    gst_iterator_free (it);
+    gst_iterator_free(it);
   }
 
   return ret;
