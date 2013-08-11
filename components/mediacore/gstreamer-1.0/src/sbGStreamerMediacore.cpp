@@ -861,7 +861,7 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
     case GST_MESSAGE_ELEMENT: {
       // Win32 and GDK use prepare-xwindow-id, OSX has its own private thing,
       // have-ns-view
-      if (gst_structure_has_name(gst_message_get_structure(aMessage), "prepare-xwindow-id") ||
+      if (gst_structure_has_name(gst_message_get_structure(aMessage), "prepare-window-handle") ||
           gst_structure_has_name(gst_message_get_structure(aMessage), "have-ns-view"))
       {
         if(mPlatformInterface)
