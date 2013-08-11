@@ -724,10 +724,12 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
   bool done = false;
   bool ret = false;
 
-  if (g_object_class_find_property(
-      G_OBJECT_GET_CLASS (aElement), aPropertyName))
+  GObjectClass *aGObjClass = G_OBJECT_GET_CLASS(aElement);
+
+  if (G_IS_OBJECT_CLASS(aGObjClass) &&
+      g_object_class_find_property(aGObjClass, aPropertyName))
   {
-    g_object_set (aElement, aPropertyName, aPropertyValue, NULL);
+    g_object_set(aElement, aPropertyName, aPropertyValue, NULL);
     return true;
   }
 
