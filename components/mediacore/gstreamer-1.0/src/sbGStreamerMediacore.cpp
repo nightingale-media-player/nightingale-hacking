@@ -405,6 +405,8 @@ sbGStreamerMediacore::ReadPreferences()
 /* static */ void
 sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
 {
+  TRACE(("sbGStreamerMediacore -- aboutToFinishHandler"));
+
   sbGStreamerMediacore *core = static_cast<sbGStreamerMediacore*>(data);
   core->HandleAboutToFinishSignal();
   return;
@@ -543,6 +545,8 @@ sbGStreamerMediacore::CreateAudioSink()
 sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- currentAudioSetHelper"));
+
   int current_audio;
   GstPad *pad;
 
@@ -575,6 +579,8 @@ sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
 sbGStreamerMediacore::audioCapsSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- audioCapsSetHelper"));
+
   GstPad *pad = GST_PAD(obj);
   GstCaps *caps = gst_pad_get_current_caps(pad);
 
@@ -588,6 +594,8 @@ sbGStreamerMediacore::audioCapsSetHelper(GObject* obj, GParamSpec* pspec,
 sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- currentVideoSetHelper"));
+
   int current_video;
   GstPad *pad;
 
@@ -620,6 +628,8 @@ sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
 sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- videoCapsSetHelper"));
+
   GstPad *pad = GST_PAD(obj);
   GstCaps *caps = gst_pad_get_current_caps(pad);
 
@@ -632,6 +642,8 @@ sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
 nsresult
 sbGStreamerMediacore::DestroyPipeline()
 {
+  TRACE(("sbGStreamerMediacore -- DestroyPipeline"));
+
   GstElement *pipeline = NULL;
   nsAutoMonitor lock(mMonitor);
   if (mPipeline)
@@ -883,6 +895,8 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type,
         nsIVariant *aData, sbIMediacoreError *aError)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- DispatchMediacoreEvent", this));
+
   nsresult rv;
   nsCOMPtr<sbIMediacoreEvent> event;
   rv = sbMediacoreEvent::CreateEvent(type,
@@ -1313,6 +1327,8 @@ void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
 
 void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- HandleErrorMessage", this));
+
   GError *gerror = NULL;
   nsString errormessage;
   nsCOMPtr<sbIMediacoreError> error;
@@ -1505,6 +1521,8 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 /* Main-thread only! */
 void sbGStreamerMediacore::RequestVideoWindow()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- RequestVideoWindow", this));
+
   nsresult rv;
   PRUint32 videoWidth = 0;
   PRUint32 videoHeight = 0;
@@ -1553,6 +1571,8 @@ void sbGStreamerMediacore::RequestVideoWindow()
 void
 sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- OnVideoCapsSet", this));
+
   GstStructure *s;
   gint pixelAspectRatioN, pixelAspectRatioD;
   gint videoWidth, videoHeight;
@@ -2228,6 +2248,8 @@ sbGStreamerMediacore::VoteWithChannel(nsIChannel *aChannel, PRUint32 *_retval)
 NS_IMETHODIMP
 sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- GetFullscreen", this));
+
   NS_ENSURE_ARG_POINTER(aFullscreen);
 
   if (mPlatformInterface) {
@@ -2243,6 +2265,8 @@ sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
 NS_IMETHODIMP
 sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- SetFullscreen", this));
+
   if (mPlatformInterface) {
     mPlatformInterface->SetFullscreen(aFullscreen);
     return NS_OK;
@@ -2256,6 +2280,8 @@ sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 NS_IMETHODIMP
 sbGStreamerMediacore::GetVideoWindow(nsIDOMXULElement **aVideoWindow)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- GetVideoWindow", this));
+
   nsAutoMonitor mon(mMonitor);
   NS_IF_ADDREF(*aVideoWindow = mVideoWindow);
 
@@ -2265,6 +2291,8 @@ sbGStreamerMediacore::GetVideoWindow(nsIDOMXULElement **aVideoWindow)
 NS_IMETHODIMP
 sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- SetVideoWindow", this));
+
   NS_ENSURE_ARG_POINTER(aVideoWindow);
 
   nsAutoMonitor mon(mMonitor);
@@ -2384,6 +2412,8 @@ sbGStreamerMediacore::RemoveListener(sbIMediacoreEventListener *aListener)
 NS_IMETHODIMP
 sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- HandleEvent", this));
+
   nsAutoString eventType;
   aEvent->GetType(eventType);
 

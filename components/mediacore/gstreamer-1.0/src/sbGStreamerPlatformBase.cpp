@@ -71,6 +71,7 @@ BasePlatformInterface::BasePlatformInterface(sbGStreamerMediacore *aCore)
 ,  mAudioSink(NULL)
 ,  mCore(aCore)
 {
+  TRACE(("BasePlatformInterface -- constructed"));
 }
 
 BasePlatformInterface::~BasePlatformInterface()
@@ -84,12 +85,16 @@ BasePlatformInterface::~BasePlatformInterface()
 bool
 BasePlatformInterface::GetFullscreen()
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- GetFullscreen", this));
+
   return mFullscreen;
 }
 
 void
 BasePlatformInterface::SetFullscreen(bool aFullscreen)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetFullscreen", this));
+
   if (aFullscreen && !mFullscreen) {
     mFullscreen = true;
     FullScreen();
@@ -108,6 +113,8 @@ BasePlatformInterface::SetFullscreen(bool aFullscreen)
 void
 BasePlatformInterface::ResizeToWindow()
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- ResizeToWindow", this));
+
   // Only resize based on our XUL element if we're not in fullscreen mode.
   if (!mFullscreen) {
     LOG(("Resizing video to fit window in non-fullscreen mode"));
@@ -134,6 +141,9 @@ BasePlatformInterface::ResizeToWindow()
 void
 BasePlatformInterface::SetDisplayArea(int x, int y, int width, int height)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetDisplayArea(%d, %d, %d, %d)", 
+                                               this, x, y, width, height));
+
   LOG(("Display area set to %d,%d %d,%d", x, y, width, height));
   mDisplayX = x;
   mDisplayY = y;
@@ -176,6 +186,9 @@ BasePlatformInterface::ResizeVideo()
 void
 BasePlatformInterface::SetDisplayAspectRatio(int aNumerator, int aDenominator)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetDisplayAspectRatio(%d, %d)", 
+                                         this, aNumerator, aDenominator));
+
   mDARNum = aNumerator;
   mDARDenom = aDenominator;
 
@@ -185,6 +198,8 @@ BasePlatformInterface::SetDisplayAspectRatio(int aNumerator, int aDenominator)
 void
 BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- PrepareVideoWindow", this));
+
   GstElement *element = NULL;
   GstVideoOverlay *videoOverlay = NULL;
 
@@ -212,6 +227,8 @@ BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 nsresult
 BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetVideoBox", this));
+
   mVideoBox = aVideoBox;
   mWidget = aWidget;
 
@@ -221,6 +238,8 @@ BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 /*virtual*/ nsresult 
 BasePlatformInterface::SetDocument(nsIDOMDocument *aDocument)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetDocument", this));
+
   NS_ENSURE_ARG_POINTER(aDocument);
   mDocument = aDocument;
   return NS_OK;
