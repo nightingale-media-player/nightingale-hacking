@@ -59,11 +59,11 @@ NS_DEFINE_NAMED_CID(SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID);
 
 static const mozilla::Module::CIDEntry kSongbirdLocalDatabaseLibraryCIDs[] = {
   { &kSB_LOCALDATABASE_GUIDARRAY_CID, false, NULL, sbLocalDatabaseGUIDArrayConstructor },
-  { &kSB_LOCALDATABASE_LIBRARYFACTORY_CID, false, NULL, sbLocalDatabaseAsyncGUIDArrayConstructor },
-  { &kSB_LOCALDATABASE_DIFFINGSERVICE_CID, false, NULL, sbLocalDatabaseLibraryFactoryConstructor },
+  { &kSB_LOCALDATABASE_LIBRARYFACTORY_CID, false, NULL, sbLocalDatabaseLibraryFactoryConstructor },
+  { &kSB_LOCALDATABASE_DIFFINGSERVICE_CID, false, NULL, sbLocalDatabaseDiffingServiceConstructor },
   { &kSB_LOCALDATABASE_LIBRARYLOADER_CID, false, NULL, sbLocalDatabaseLibraryLoaderConstructor },
-  { &kSB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID, false, NULL, sbLocalDatabaseDiffingServiceConstructor },
-  { &kSB_LOCALDATABASE_ASYNCGUIDARRAY_CID, false, NULL, sbLocalDatabaseSimpleMediaListFactoryConstructor },
+  { &kSB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID, false, NULL, sbLocalDatabaseSimpleMediaListFactoryConstructor },
+  { &kSB_LOCALDATABASE_ASYNCGUIDARRAY_CID, false, NULL, sbLocalDatabaseAsyncGUIDArrayConstructor },
   { &kSB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID, false, NULL, sbLocalDatabaseSmartMediaListFactoryConstructor },
   { &kSB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID, false, NULL, sbLocalDatabaseDynamicMediaListFactoryConstructor },
   { &kSB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID, false, NULL, sbLocalDatabaseMediaListViewStateConstructor },
