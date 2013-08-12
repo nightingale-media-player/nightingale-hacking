@@ -234,7 +234,7 @@ sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(c
                                                                                const nsAString& aLeftValue,
                                                                                const nsAString& aRightValue,
                                                                                const nsAString& aDisplayUnit)
-: mLock(nsnull)
+: mLock("sbLocalDatabaseSmartMediaListCondition::mLock")
 , mPropertyID(aPropertyID)
 , mOperatorString(aOperatorString)
 , mLeftValue(aLeftValue)
