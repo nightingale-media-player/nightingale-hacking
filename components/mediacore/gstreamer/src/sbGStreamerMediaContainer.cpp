@@ -1,15 +1,25 @@
 /*
+ * BEGIN NIGHTINGALE GPL
  *
- *=BEGIN SONGBIRD LICENSE
+ * This file is part of the Nightingale Media Player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://getnightingale.com
  *
- * For information about the licensing and copyright of this Add-On please
- * contact POTI, Inc. at customer@songbirdnest.com.
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
  *
- *=END SONGBIRD LICENSE
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
  *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerMediaContainer.h"

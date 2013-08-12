@@ -1,16 +1,16 @@
 /*
- *=BEGIN SONGBIRD GPL
+ * BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale Media Player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://getnightingale.com
  *
  * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
+ * GNU General Public License Version 2 (the "GPL").
  *
  * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
  * express or implied. See the GPL for the specific language
  * governing rights and limitations.
  *
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ * END NIGHTINGALE GPL
  */
 
 #ifndef _SB_GSTREAMER_VIDEO_TRANSCODE_H_
@@ -130,11 +130,12 @@ private:
   /* Static helpers that simply forward to the relevant instance methods */
   static void decodebin_pad_added_cb (GstElement *element, GstPad *pad,
                                       sbGStreamerVideoTranscoder *transcoder);
-  static void decodebin_no_more_pads_cb (
-          GstElement *element,
-          sbGStreamerVideoTranscoder *transcoder);
-  static void pad_blocked_cb (GstPad *pad, gboolean blocked, 
-                              sbGStreamerVideoTranscoder *transcoder);
+  static void decodebin_no_more_pads_cb (GstElement *element,
+                                         sbGStreamerVideoTranscoder *transcoder);
+  static void pad_blocked_audio_cb(GstPad *pad, GstPadProbeInfo *info, 
+                                   sbGStreamerVideoTranscoder *transcoder);
+  static void pad_blocked_video_cb(GstPad *pad, GstPadProbeInfo *info, 
+                                   sbGStreamerVideoTranscoder *transcoder);
   static void pad_notify_caps_cb (GObject *obj, GParamSpec *pspec,
                                   sbGStreamerVideoTranscoder *transcoder);
 
@@ -151,7 +152,7 @@ private:
   nsresult DecoderNoMorePads(GstElement *uridecodebin);
 
   /* Called when pad block has fired. */
-  nsresult PadBlocked (GstPad *pad, gboolean blocked);
+  nsresult PadBlocked (GstPad *pad);
 
   /* Called when we're notified that a pad's caps have been set */
   nsresult PadNotifyCaps (GstPad *pad);

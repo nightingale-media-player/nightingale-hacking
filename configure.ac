@@ -1026,11 +1026,11 @@ case "$SB_PLATFORM" in
     AC_SUBST(PTHREAD_LIBS, $LIBS)
     LIBS=$_SAVE_LIBS
 
-    GST_MAJORMINOR=0.10
-    GST_REQS=0.10.1
-    GSTPLUG_REQS=0.10.7
+	GST_MAJORMINOR=1.0
+	GST_REQS=1.0.6
+	GSTPLUG_REQS=1.0.6
 
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS)
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
     GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
@@ -1306,47 +1306,19 @@ AC_SUBST(FORCE_MEDIA_CORE_WMP)
 AC_SUBST(FORCE_MEDIA_CORE_QT)
 
 #
-#  Check for --with-gstreamer-1.0
-#
-
-WITH_GST_1=
-AC_ARG_WITH(gstreamer-1.0,
-            [ AS_HELP_STRING([--with-gstreamer-1.0], [ use gstreamer-1.0 (default=no)]) ],
-            [],
-            [with_gstreamer_1_0=no])
-if test "$with_gstreamer_1_0" = "yes"; then
-  WITH_GST_1=1
-fi
-AC_SUBST(WITH_GST_1)
-
-#
 # If we're building with MEDIA_CORE_GST_SYSTEM, find our required packages
 #
 
 if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
-  if test "$WITH_GST_1" = "1" ; then 
-    GST_MAJORMINOR=1.0
-    GST_REQS=1.0.6
-    GSTPLUG_REQS=1.0.6
+	GST_MAJORMINOR=1.0
+	GST_REQS=1.0.6
+	GSTPLUG_REQS=1.0.6
 
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
-    AC_SUBST(GSTREAMER_CFLAGS)
+	PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
+	AC_SUBST(GSTREAMER_CFLAGS)
 
-    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-    AC_SUBST(GSTREAMER_LIBS)
-
-  else 
-
-    GST_MAJORMINOR=0.10
-    GST_REQS=0.10.1
-    GSTPLUG_REQS=0.10.7
-
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS)
-    AC_SUBST(GSTREAMER_CFLAGS)
-
-    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-    AC_SUBST(GSTREAMER_LIBS)
-  fi
+	GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
+	AC_SUBST(GSTREAMER_LIBS)
 fi
 
 #

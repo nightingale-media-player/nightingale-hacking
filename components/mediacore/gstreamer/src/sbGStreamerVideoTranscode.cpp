@@ -1,16 +1,16 @@
 /*
- *=BEGIN SONGBIRD GPL
+ * BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale Media Player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://getnightingale.com
  *
  * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
+ * GNU General Public License Version 2 (the "GPL").
  *
  * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
  * express or implied. See the GPL for the specific language
  * governing rights and limitations.
  *
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ * END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerVideoTranscode.h"
@@ -89,6 +89,9 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerVideoTranscoder,
 
 NS_DECL_CLASSINFO(sbGStreamerVideoTranscoder);
 NS_IMPL_THREADSAFE_CI(sbGStreamerVideoTranscoder);
+
+static GstPadProbeInfo *mAudioQueueSrcInfo;
+static GstPadProbeInfo *mVideoQueueSrcInfo;
 
 sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
   sbGStreamerPipeline(),
@@ -819,14 +822,14 @@ sbGStreamerVideoTranscoder::AddImageToTagList(GstTagList *aTags,
 
   sbAutoNSMemPtr imageDataDestroy(imageData);
 
-  GstBuffer *imagebuf = gst_tag_image_data_to_image_buffer (
-          imageData, imageDataLen, GST_TAG_IMAGE_TYPE_FRONT_COVER);
-  if (!imagebuf)
+  GstSample *imgsamp = gst_tag_image_data_to_image_sample(imageData,
+                         imageDataLen, GST_TAG_IMAGE_TYPE_FRONT_COVER);
+  if (!imgsamp)
     return NS_ERROR_FAILURE;
 
-  gst_tag_list_add (aTags, GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE,
-          imagebuf, NULL);
-  gst_buffer_unref (imagebuf);
+  gst_tag_list_add(aTags, GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE,
+                   imgsamp, NULL);
+  gst_sample_unref(imgsamp);
 
   return NS_OK;
 }
@@ -841,7 +844,7 @@ sbGStreamerVideoTranscoder::SetMetadataOnTagSetters()
 
   if (mImageStream) {
     if (!tags) {
-      tags = gst_tag_list_new();
+      tags = gst_tag_list_new_empty();
     }
 
     // Ignore return value here, failure is not critical.
@@ -854,7 +857,7 @@ sbGStreamerVideoTranscoder::SetMetadataOnTagSetters()
             (GstBin *)mPipeline, GST_TYPE_TAG_SETTER);
     GstElement *element;
 
-    while (gst_iterator_next (it, (void **)&element) == GST_ITERATOR_OK) {
+    while (gst_iterator_next(it, (GValue*) &element) == GST_ITERATOR_OK) {
       GstTagSetter *setter = GST_TAG_SETTER (element);
 
       /* Use MERGE_REPLACE: preserves existing tag where we don't have one
@@ -933,10 +936,20 @@ sbGStreamerVideoTranscoder::decodebin_no_more_pads_cb (
 }
 
 /* static */ void
-sbGStreamerVideoTranscoder::pad_blocked_cb (GstPad * pad, gboolean blocked,
+sbGStreamerVideoTranscoder::pad_blocked_audio_cb(GstPad * pad, GstPadProbeInfo *info,
         sbGStreamerVideoTranscoder *transcoder)
 {
-  nsresult rv = transcoder->PadBlocked(pad, blocked);
+  mAudioQueueSrcInfo = info;
+  nsresult rv = transcoder->PadBlocked(pad);
+  NS_ENSURE_SUCCESS (rv, /* void */);
+}
+
+/* static */ void
+sbGStreamerVideoTranscoder::pad_blocked_video_cb(GstPad * pad, GstPadProbeInfo *info,
+        sbGStreamerVideoTranscoder *transcoder)
+{
+  mVideoQueueSrcInfo = info;
+  nsresult rv = transcoder->PadBlocked(pad);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
@@ -967,7 +980,7 @@ sbGStreamerVideoTranscoder::DecoderPadAdded (GstElement *uridecodebin,
     return NS_ERROR_FAILURE;
   }
 
-  GstCaps *caps = gst_pad_get_caps (pad);
+  GstCaps *caps = gst_pad_query_caps(pad, NULL);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);
   bool isVideo = g_str_has_prefix (name, "video/");
@@ -1539,8 +1552,8 @@ sbGStreamerVideoTranscoder::AddAudioBin(GstPad *inputAudioSrcPad,
   gst_caps_unref (caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  GstPad *audioBinSinkPad = gst_element_get_pad (audioBin, "sink");
-  GstPad *audioBinSrcPad = gst_element_get_pad (audioBin, "src");
+  GstPad *audioBinSinkPad = gst_element_get_request_pad(audioBin, "sink");
+  GstPad *audioBinSrcPad = gst_element_get_request_pad(audioBin, "src");
 
   gst_bin_add (GST_BIN (mPipeline), audioBin);
   gst_element_sync_state_with_parent (audioBin);
@@ -1588,8 +1601,8 @@ sbGStreamerVideoTranscoder::AddVideoBin(GstPad *inputVideoSrcPad,
   gst_caps_unref (caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  GstPad *videoBinSinkPad = gst_element_get_pad (videoBin, "sink");
-  GstPad *videoBinSrcPad = gst_element_get_pad (videoBin, "src");
+  GstPad *videoBinSinkPad = gst_element_get_request_pad(videoBin, "sink");
+  GstPad *videoBinSrcPad = gst_element_get_request_pad(videoBin, "src");
 
   gst_bin_add (GST_BIN (mPipeline), videoBin);
   gst_element_sync_state_with_parent (videoBin);
@@ -1653,7 +1666,7 @@ sbGStreamerVideoTranscoder::GetCompatiblePad (GstElement *element,
     // Check that pad's direction is opposite this template's direction.
     // Then check that they have potentially-compatible caps.
     if (GST_PAD_DIRECTION (pad) != padtempl->direction) {
-      GstCaps *caps = gst_pad_get_caps (pad);
+      GstCaps *caps = gst_pad_query_caps(pad, NULL);
 
       gboolean compatible = gst_caps_can_intersect (
           caps, GST_PAD_TEMPLATE_CAPS (padtempl));
@@ -1778,7 +1791,8 @@ sbGStreamerVideoTranscoder::CreateSink (GstElement **aSink)
     nsCString uri = NS_ConvertUTF16toUTF8 (mDestURI);
     sink = gst_element_make_from_uri (GST_URI_SINK,
                                       uri.BeginReading(),
-                                      "sink");
+                                      "sink",
+                                      NULL);
   }
 
   if (!sink) {
@@ -2054,7 +2068,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
             G_CALLBACK (pad_notify_caps_cb), this);
 
     GstElement *queue = gst_element_factory_make ("queue", "audio-queue");
-    GstPad *queueSink = gst_element_get_pad (queue, "sink");
+    GstPad *queueSink = gst_element_get_request_pad(queue, "sink");
 
     gst_bin_add (GST_BIN (mPipeline), queue);
     gst_element_sync_state_with_parent (queue);
@@ -2062,11 +2076,11 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
     gst_pad_link (mAudioSrc, queueSink);
     g_object_unref (queueSink);
 
-    GstPad *queueSrc = gst_element_get_pad (queue, "src");
+    GstPad *queueSrc = gst_element_get_static_pad(queue, "src");
     mAudioQueueSrc = queueSrc;
 
-    gst_pad_set_blocked_async (queueSrc, TRUE,
-                               (GstPadBlockCallback)pad_blocked_cb, this);
+    gst_pad_add_probe(queueSrc, GST_PAD_PROBE_TYPE_BLOCK,
+                      (GstPadProbeCallback) pad_blocked_audio_cb, this, NULL);
   }
 
   if (mVideoSrc) {
@@ -2074,7 +2088,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
             G_CALLBACK (pad_notify_caps_cb), this);
 
     GstElement *queue = gst_element_factory_make ("queue", "video-queue");
-    GstPad *queueSink = gst_element_get_pad (queue, "sink");
+    GstPad *queueSink = gst_element_get_request_pad(queue, "sink");
 
     gst_bin_add (GST_BIN (mPipeline), queue);
     gst_element_sync_state_with_parent (queue);
@@ -2082,13 +2096,12 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
     gst_pad_link (mVideoSrc, queueSink);
     g_object_unref (queueSink);
 
-    GstPad *queueSrc = gst_element_get_pad (queue, "src");
+    GstPad *queueSrc = gst_element_get_static_pad(queue, "src");
     mVideoQueueSrc = queueSrc;
 
-    gst_pad_set_blocked_async (queueSrc, TRUE,
-                               (GstPadBlockCallback)pad_blocked_cb, this);
+    gst_pad_add_probe(queueSrc, GST_PAD_PROBE_TYPE_BLOCK,
+                      (GstPadProbeCallback) pad_blocked_video_cb, this, NULL);
   }
-
   mWaitingForCaps = PR_TRUE;
 
   return NS_OK;
@@ -2104,6 +2117,7 @@ sbGStreamerVideoTranscoder::PadNotifyCaps (GstPad *pad)
 GstCaps *
 sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
 {
+  // TODO: Check if this is still relevant when using gst_pad_get_current_caps
   // We want to get the caps from the decoder associated with this pad (but this
   // pad might be a ghost pad, or a queue pad linked to the ghost pad, etc)
   // gst_pad_get_negotiated_caps() is needed. gst_pad_get_caps would fail in 
@@ -2115,7 +2129,7 @@ sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
   // is doing the same thing as the transcoder, getting caps for the stream.
 
   GstPad * realPad = GetRealPad(pad);
-  GstCaps *caps = gst_pad_get_negotiated_caps (realPad);
+  GstCaps *caps = gst_pad_get_current_caps(realPad);
   if (caps) {
     if (gst_caps_is_fixed (caps)) {
       g_object_unref(realPad);
@@ -2124,7 +2138,7 @@ sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
     gst_caps_unref (caps);
   }
 
-  caps = GST_PAD_CAPS (realPad);
+  caps = gst_pad_get_current_caps(realPad);
   if (caps) {
     gst_caps_ref (caps);
     g_object_unref(realPad);
@@ -2172,12 +2186,14 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
 
     if (NS_SUCCEEDED (rv)) {
       if (mAudioQueueSrc) {
-        gst_pad_set_blocked_async (mAudioQueueSrc, FALSE,
-                                   (GstPadBlockCallback)pad_blocked_cb, this);
+        if (gst_pad_is_blocked(mAudioQueueSrc)) {
+          gst_pad_remove_probe(mAudioQueueSrc, mAudioQueueSrcInfo->id);
+        }
       }
       if (mVideoQueueSrc) {
-        gst_pad_set_blocked_async (mVideoQueueSrc, FALSE,
-                                   (GstPadBlockCallback)pad_blocked_cb, this);
+        if (gst_pad_is_blocked(mVideoQueueSrc)) {
+          gst_pad_remove_probe(mVideoQueueSrc, mVideoQueueSrcInfo->id);
+        }
       }
     } else {
       // handle NS_FAILED(rv)
@@ -2198,9 +2214,9 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
 }
 
 nsresult
-sbGStreamerVideoTranscoder::PadBlocked (GstPad *pad, gboolean blocked)
+sbGStreamerVideoTranscoder::PadBlocked (GstPad *pad)
 {
-  if (blocked ) {
+  if (gst_pad_is_blocked(pad)) {
     LOG(("Pad blocked, checking if we have full caps yet"));
     return CheckForAllCaps();
   }

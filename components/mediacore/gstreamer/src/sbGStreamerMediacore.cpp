@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ */
 
 #include "sbGStreamerMediacore.h"
 #include "sbGStreamerMediacoreUtils.h"
@@ -364,8 +362,8 @@ sbGStreamerMediacore::ReadPreferences()
 
       // Ref and sink the object to take ownership; we'll keep track of it
       // from here on.
-      gst_object_ref (mReplaygainElement);
-      gst_object_sink (mReplaygainElement);
+      gst_object_ref(mReplaygainElement);
+      gst_object_ref_sink(mReplaygainElement);
 
       rv = AddAudioFilter(mReplaygainElement);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -407,6 +405,8 @@ sbGStreamerMediacore::ReadPreferences()
 /* static */ void
 sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
 {
+  TRACE(("sbGStreamerMediacore -- aboutToFinishHandler"));
+
   sbGStreamerMediacore *core = static_cast<sbGStreamerMediacore*>(data);
   core->HandleAboutToFinishSignal();
   return;
@@ -415,6 +415,8 @@ sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
 GstElement *
 sbGStreamerMediacore::CreateSinkFromPrefs(const char *aSinkDescription)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateSinkFromPrefs", this));
+
   // Only try to create it if we have a non-null, non-zero-length description
   if (aSinkDescription && *aSinkDescription)
   {
@@ -454,6 +456,8 @@ sbGStreamerMediacore::GetFileSize(nsIURI *aURI, PRInt64 *aFileSize)
 GstElement *
 sbGStreamerMediacore::CreateVideoSink()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateVideoSink", this));
+
   nsAutoMonitor lock(mMonitor);
 
   GstElement *videosink = CreateSinkFromPrefs(mVideoSinkDescription.get());
@@ -467,9 +471,11 @@ sbGStreamerMediacore::CreateVideoSink()
 GstElement *
 sbGStreamerMediacore::CreateAudioSink()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreateAudioSink", this));
+
   nsAutoMonitor lock(mMonitor);
 
-  GstElement *sinkbin = gst_bin_new ("audiosink-bin");
+  GstElement *sinkbin = gst_bin_new("audiosink-bin");
   GstElement *audiosink = CreateSinkFromPrefs(mAudioSinkDescription.get());
   GstPad *targetpad, *ghostpad;
 
@@ -491,9 +497,9 @@ sbGStreamerMediacore::CreateAudioSink()
    *
    */
 
-  gst_bin_add ((GstBin *)sinkbin, audiosink);
+  gst_bin_add((GstBin *)sinkbin, audiosink);
 
-  targetpad = gst_element_get_pad (audiosink, "sink");
+  targetpad = gst_element_get_static_pad(audiosink, "sink");
 
   /* Add each filter, followed by an audioconvert. The first-added filter ends
    * last in the pipeline, so we iterate in reverse.
@@ -506,30 +512,31 @@ sbGStreamerMediacore::CreateAudioSink()
     GstElement *filter = *it;
     GstPad *srcpad, *sinkpad;
 
-    gst_bin_add_many ((GstBin *)sinkbin, filter, audioconvert, NULL);
+    gst_bin_add_many((GstBin *)sinkbin, filter, audioconvert, NULL);
 
-    srcpad = gst_element_get_pad (filter, "src");
-    sinkpad = gst_element_get_pad (audioconvert, "sink");
-    gst_pad_link (srcpad, sinkpad);
-    gst_object_unref (srcpad);
-    gst_object_unref (sinkpad);
+    srcpad = gst_element_get_static_pad(filter, "src");
+    sinkpad = gst_element_get_static_pad(audioconvert, "sink");
+    gst_pad_link(srcpad, sinkpad);
+    gst_object_unref(srcpad);
+    gst_object_unref(sinkpad);
 
-    srcpad = gst_element_get_pad (audioconvert, "src");
-    gst_pad_link (srcpad, targetpad);
-    gst_object_unref (targetpad);
-    gst_object_unref (srcpad);
+    srcpad = gst_element_get_static_pad(audioconvert, "src");
+    gst_pad_link(srcpad, targetpad);
+    TRACE(("CreateAudioSink -- Linked srcpad to targetpad"));
+    gst_object_unref(targetpad);
+    gst_object_unref(srcpad);
 
-    targetpad = gst_element_get_pad (filter, "sink");
+    targetpad = gst_element_get_static_pad(filter, "sink");
   }
 
   // Now, targetpad is the left-most real pad in our bin. Ghost it to provide
   // a sinkpad on our bin.
-  ghostpad = gst_ghost_pad_new ("sink", targetpad);
-  gst_element_add_pad (sinkbin, ghostpad);
+  ghostpad = gst_ghost_pad_new("sink", targetpad);
+  gst_element_add_pad(sinkbin, ghostpad);
 
-  mAudioBinGhostPad = GST_GHOST_PAD (gst_object_ref (ghostpad));
+  mAudioBinGhostPad = GST_GHOST_PAD(gst_object_ref(ghostpad));
 
-  gst_object_unref (targetpad);
+  gst_object_unref(targetpad);
 
   return sinkbin;
 }
@@ -538,6 +545,8 @@ sbGStreamerMediacore::CreateAudioSink()
 sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- currentAudioSetHelper"));
+
   int current_audio;
   GstPad *pad;
 
@@ -553,7 +562,7 @@ sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
 
   if (pad) {
     GstCaps *caps;
-    caps = gst_pad_get_negotiated_caps(pad);
+    caps = gst_pad_get_current_caps(pad);
     if (caps) {
       core->OnAudioCapsSet(caps);
       gst_caps_unref(caps);
@@ -570,8 +579,10 @@ sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
 sbGStreamerMediacore::audioCapsSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- audioCapsSetHelper"));
+
   GstPad *pad = GST_PAD(obj);
-  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+  GstCaps *caps = gst_pad_get_current_caps(pad);
 
   if (caps) {
     core->OnAudioCapsSet(caps);
@@ -583,6 +594,8 @@ sbGStreamerMediacore::audioCapsSetHelper(GObject* obj, GParamSpec* pspec,
 sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- currentVideoSetHelper"));
+
   int current_video;
   GstPad *pad;
 
@@ -598,7 +611,7 @@ sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
 
   if (pad) {
     GstCaps *caps;
-    caps = gst_pad_get_negotiated_caps(pad);
+    caps = gst_pad_get_current_caps(pad);
     if (caps) {
       core->OnVideoCapsSet(caps);
       gst_caps_unref(caps);
@@ -615,8 +628,10 @@ sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
 sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
+  TRACE(("sbGStreamerMediacore -- videoCapsSetHelper"));
+
   GstPad *pad = GST_PAD(obj);
-  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+  GstCaps *caps = gst_pad_get_current_caps(pad);
 
   if (caps) {
     core->OnVideoCapsSet(caps);
@@ -627,6 +642,8 @@ sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
 nsresult
 sbGStreamerMediacore::DestroyPipeline()
 {
+  TRACE(("sbGStreamerMediacore -- DestroyPipeline"));
+
   GstElement *pipeline = NULL;
   nsAutoMonitor lock(mMonitor);
   if (mPipeline)
@@ -713,47 +730,49 @@ bool
 sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
         const char *aPropertyName, gint64 aPropertyValue)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- SetPropertyOnChild", this));
+
   bool done = false;
   bool ret = false;
 
-  if (g_object_class_find_property(
-      G_OBJECT_GET_CLASS (aElement), aPropertyName))
+  GObjectClass *aGObjClass = G_OBJECT_GET_CLASS(aElement);
+
+  if (G_IS_OBJECT_CLASS(aGObjClass) &&
+      g_object_class_find_property(aGObjClass, aPropertyName))
   {
-    g_object_set (aElement, aPropertyName, aPropertyValue, NULL);
+    g_object_set(aElement, aPropertyName, aPropertyValue, NULL);
     return true;
   }
 
-  if (GST_IS_BIN (aElement)) {
+  if (GST_IS_BIN(aElement)) {
     // Iterate in sorted order, so we look at sinks first
-    GstIterator *it = gst_bin_iterate_sorted ((GstBin *)aElement);
+    GstIterator *it = gst_bin_iterate_sorted((GstBin *)aElement);
 
     while (!done) {
-      gpointer data;
+      GValue data = G_VALUE_INIT;
       GstElement *child;
-      switch (gst_iterator_next (it, &data)) {
+      switch (gst_iterator_next(it, (GValue*) &data)) {
         case GST_ITERATOR_OK:
-          child = GST_ELEMENT_CAST (data);
-          if (SetPropertyOnChild(child,
-                  aPropertyName, aPropertyValue))
-          {
+          child = GST_ELEMENT_CAST(&data);
+          if (SetPropertyOnChild(child, aPropertyName, aPropertyValue)) {
             ret = true;
             done = true;
           }
-          gst_object_unref (child);
+          g_value_reset(&data);
+          // gst_object_unref(child);
           break;
         case GST_ITERATOR_DONE:
           done = TRUE;
           break;
         case GST_ITERATOR_RESYNC:
-          gst_iterator_resync (it);
+          gst_iterator_resync(it);
           break;
         case GST_ITERATOR_ERROR:
           done = true;
           break;
       }
     }
-
-    gst_iterator_free (it);
+    gst_iterator_free(it);
   }
 
   return ret;
@@ -762,6 +781,8 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
 nsresult
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- CreatePlaybackPipeline", this));
+
   nsresult rv;
   gint flags;
 
@@ -770,12 +791,14 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   NS_ENSURE_SUCCESS (rv, rv);
 
   nsAutoMonitor lock(mMonitor);
-  mPipeline = gst_element_factory_make ("playbin2", "player");
+  TRACE(("  CreatePlaybackPipeline -- locked monitor"));
+  mPipeline = gst_element_factory_make ("playbin", "player");
 
   if (!mPipeline)
     return NS_ERROR_FAILURE;
 
   if (mPlatformInterface) {
+    TRACE(("    CreatePlaybackPipeline -- have mPlatformInterface"));
     GstElement *audiosink = CreateAudioSink();
 
     // Set audio sink
@@ -786,6 +809,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
             (gint64)mAudioSinkBufferTime);
 
     if (!mVideoDisabled) {
+      TRACE(("      CreatePlaybackPipeline -- !mVideoDisabled"));
       GstElement *videosink = CreateVideoSink();
       g_object_set(mPipeline, "video-sink", videosink, NULL);
     }
@@ -810,14 +834,17 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   rv = SetBufferingProperties(mPipeline);
   NS_ENSURE_SUCCESS (rv, rv);
 
+  TRACE(("    CreatePlaybackPipeline -- Set buffering props"));
+
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
   gst_bus_set_sync_handler (bus, SyncToAsyncDispatcher,
-                            static_cast<sbGStreamerMessageHandler*>(this));
+                            static_cast<sbGStreamerMessageHandler*>(this), NULL);
 
   g_object_unref ((GObject *)bus);
+  TRACE(("    CreatePlaybackPipeline -- Set bus sync handler"));
 
-  // Handle about-to-finish signal emitted by playbin2
+  // Handle about-to-finish signal emitted by playbin
   g_signal_connect (mPipeline, "about-to-finish",
           G_CALLBACK (aboutToFinishHandler), this);
   // Get notified when the current audio/video stream changes.
@@ -844,10 +871,10 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 
   switch (msg_type) {
     case GST_MESSAGE_ELEMENT: {
-      // Win32 and GDK use prepare-xwindow-id, OSX has its own private thing,
+      // Win32 and GDK use prepare-window-handle, OSX has its own private thing,
       // have-ns-view
-      if (gst_structure_has_name(aMessage->structure, "prepare-xwindow-id") ||
-          gst_structure_has_name(aMessage->structure, "have-ns-view"))
+      if (gst_structure_has_name(gst_message_get_structure(aMessage), "prepare-window-handle") ||
+          gst_structure_has_name(gst_message_get_structure(aMessage), "have-ns-view"))
       {
         if(mPlatformInterface)
         {
@@ -868,6 +895,8 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type,
         nsIVariant *aData, sbIMediacoreError *aError)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- DispatchMediacoreEvent", this));
+
   nsresult rv;
   nsCOMPtr<sbIMediacoreEvent> event;
   rv = sbMediacoreEvent::CreateEvent(type,
@@ -897,7 +926,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
   mon.Exit();
 
-  if(!sequencer) {
+  if (!sequencer) {
     return;
   }
 
@@ -911,7 +940,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
           contentURL);
   NS_ENSURE_SUCCESS(rv, /*void*/ );
 
-  if(StringBeginsWith(contentURL, NS_LITERAL_STRING("file:"))) {
+  if (StringBeginsWith(contentURL, NS_LITERAL_STRING("file:"))) {
     rv = sequencer->RequestHandleNextItem(this);
     NS_ENSURE_SUCCESS(rv, /*void*/ );
 
@@ -1100,7 +1129,8 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
   nsresult rv;
   nsCString uriString;
 
-  location = gst_structure_get_string (message->structure, "new-location");
+  location = gst_structure_get_string(gst_message_get_structure(message),
+                                      "new-location");
 
   if (location && *location) {
     if (strstr (location, "://") != NULL) {
@@ -1297,6 +1327,8 @@ void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
 
 void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- HandleErrorMessage", this));
+
   GError *gerror = NULL;
   nsString errormessage;
   nsCOMPtr<sbIMediacoreError> error;
@@ -1473,7 +1505,7 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
     case GST_MESSAGE_BUFFERING:
       HandleBufferingMessage(message);
     case GST_MESSAGE_ELEMENT: {
-      if (gst_structure_has_name (message->structure, "redirect")) {
+      if (gst_structure_has_name(gst_message_get_structure(message), "redirect")) {
         HandleRedirectMessage(message);
       } else if (gst_is_missing_plugin_message(message)) {
         HandleMissingPluginMessage(message);
@@ -1489,6 +1521,8 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 /* Main-thread only! */
 void sbGStreamerMediacore::RequestVideoWindow()
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- RequestVideoWindow", this));
+
   nsresult rv;
   PRUint32 videoWidth = 0;
   PRUint32 videoHeight = 0;
@@ -1537,6 +1571,8 @@ void sbGStreamerMediacore::RequestVideoWindow()
 void
 sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- OnVideoCapsSet", this));
+
   GstStructure *s;
   gint pixelAspectRatioN, pixelAspectRatioD;
   gint videoWidth, videoHeight;
@@ -1701,8 +1737,8 @@ sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
   if (mEqualizerElement) {
     // Ref and sink the object to take ownership; we'll keep track of it
     // from here on.
-    gst_object_ref (mEqualizerElement);
-    gst_object_sink (mEqualizerElement);
+    gst_object_ref(mEqualizerElement);
+    gst_object_ref_sink(mEqualizerElement);
 
     // Set the bands to the frequencies we want
     char band[16] = {0};
@@ -1713,7 +1749,7 @@ sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
     for(PRUint32 i = 0; i < EQUALIZER_DEFAULT_BAND_COUNT; ++i) {
       PR_snprintf (band, 16, "band%i::freq", i);
       g_value_set_double (&freqVal, EQUALIZER_BANDS[i]);
-      gst_child_proxy_set_property (GST_OBJECT (mEqualizerElement),
+      gst_child_proxy_set_property (GST_CHILD_PROXY(mEqualizerElement),
                                     band,
                                     &freqVal);
     }
@@ -2212,6 +2248,8 @@ sbGStreamerMediacore::VoteWithChannel(nsIChannel *aChannel, PRUint32 *_retval)
 NS_IMETHODIMP
 sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- GetFullscreen", this));
+
   NS_ENSURE_ARG_POINTER(aFullscreen);
 
   if (mPlatformInterface) {
@@ -2227,6 +2265,8 @@ sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
 NS_IMETHODIMP
 sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- SetFullscreen", this));
+
   if (mPlatformInterface) {
     mPlatformInterface->SetFullscreen(aFullscreen);
     return NS_OK;
@@ -2240,6 +2280,8 @@ sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 NS_IMETHODIMP
 sbGStreamerMediacore::GetVideoWindow(nsIDOMXULElement **aVideoWindow)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- GetVideoWindow", this));
+
   nsAutoMonitor mon(mMonitor);
   NS_IF_ADDREF(*aVideoWindow = mVideoWindow);
 
@@ -2249,6 +2291,8 @@ sbGStreamerMediacore::GetVideoWindow(nsIDOMXULElement **aVideoWindow)
 NS_IMETHODIMP
 sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- SetVideoWindow", this));
+
   NS_ENSURE_ARG_POINTER(aVideoWindow);
 
   nsAutoMonitor mon(mMonitor);
@@ -2368,6 +2412,8 @@ sbGStreamerMediacore::RemoveListener(sbIMediacoreEventListener *aListener)
 NS_IMETHODIMP
 sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
 {
+  TRACE(("sbGStreamerMediacore[0x%.8x] -- HandleEvent", this));
+
   nsAutoString eventType;
   aEvent->GetType(eventType);
 
