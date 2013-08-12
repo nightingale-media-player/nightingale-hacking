@@ -1211,7 +1211,7 @@ sbLocalDatabaseMediaListView::NotifyListenersInternal(ListenerFunc aListenerFunc
     // Take a snapshot of the listener array. This will return only strong
     // references, so any weak refs that have died will not be included in this
     // list.
-	mozilla::MutexAutoLock lock(mListenerTableLock);
+    mozilla::MutexAutoLock lock(mListenerTableLock);
     mListenerTable.EnumerateEntries(AddListenersToCOMArray, &listeners);
   }
 

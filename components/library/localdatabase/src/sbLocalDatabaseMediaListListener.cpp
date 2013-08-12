@@ -567,7 +567,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 
   // Tell all of our listener infos that we have started a batch
   {
-	mozilla::MutexAutoLock lock(mListenerArrayLock);
+    mozilla::MutexAutoLock lock(mListenerArrayLock);
     mBatchDepth++;
     PRUint32 length = mListenerArray.Length();
     for (PRUint32 i = 0; i < length; i++) {
@@ -590,7 +590,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(sbIMediaList* aList)
 
   // Tell all of our listener infos that we have ended a batch
   {
-	mozilla::MutexAutoLock lock(mListenerArrayLock);
+    mozilla::MutexAutoLock lock(mListenerArrayLock);
     
     if (mBatchDepth == 0) {
       NS_ERROR("Batch begin/end imbalance");

@@ -36,7 +36,6 @@
 #include <nsIChannel.h>
 #include <nsITimer.h>
 
-#include <prlock.h>
 #include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
