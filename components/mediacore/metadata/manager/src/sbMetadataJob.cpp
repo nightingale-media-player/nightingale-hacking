@@ -94,18 +94,36 @@ const PRUint32 NUM_ITEMS_PROCESSED_THRESHOLD = 1000;
 
 typedef sbStringSet::iterator sbStringSetIter;
 
+/**
+ * To log this class, set the following environment variable in a debug build:
+ *
+ *  NSPR_LOG_MODULES=sbMetadataJob:5 (or :3 for LOG messages only)
+ *
+ */
 #include "prlog.h"
 #ifdef PR_LOGGING
-extern PRLogModuleInfo* gMetadataLog;
-#define TRACE(args) PR_LOG(gMetadataLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMetadataLog, PR_LOG_WARN, args)
+static PRLogModuleInfo* gMetadataJobLog =
+  PR_NewLogModule("sbMetadataJob");
+
+#define LOG(args)                                  \
+  if (gMetadataJobLog)                             \
+    PR_LOG(gMetadataJobLog, PR_LOG_WARNING, args)
+
+#define TRACE(args)                                \
+  if (gMetadataJobLog)                             \
+    PR_LOG(gMetadataJobLog, PR_LOG_DEBUG, args)
+
 #ifdef __GNUC__
 #define __FUNCTION__ __PRETTY_FUNCTION__
 #endif
-#else
+
+#else /* PR_LOGGING */
+
+#define LOG(args) /* nothing */
 #define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif
+
+#endif /* PR_LOGGING */
+
 
 // CLASSES ====================================================================
 

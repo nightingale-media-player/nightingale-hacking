@@ -38,14 +38,36 @@
 #include "sbMetadataJobItem.h"
 
 // DEFINES ====================================================================
+
+/**
+ * To log this class, set the following environment variable in a debug build:
+ *
+ *  NSPR_LOG_MODULES=sbMetadataJobItem:5 (or :3 for LOG messages only)
+ *
+ */
 #ifdef PR_LOGGING
-extern PRLogModuleInfo* gMetadataLog;
-#define TRACE(args) PR_LOG(gMetadataLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMetadataLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
+static PRLogModuleInfo* gMetadataJobItemLog =
+  PR_NewLogModule("sbMetadataJobItem");
+
+#define LOG(args)                                  \
+  if (gMetadataJobItemLog)                             \
+    PR_LOG(gMetadataJobItemLog, PR_LOG_WARNING, args)
+
+#define TRACE(args)                                \
+  if (gMetadataJobItemLog)                             \
+    PR_LOG(gMetadataJobItemLog, PR_LOG_DEBUG, args)
+
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
 #endif
+
+#else /* PR_LOGGING */
+
+#define LOG(args) /* nothing */
+#define TRACE(args) /* nothing */
+
+#endif /* PR_LOGGING */
+
 
 #define SB_MUTABLEPROPERTYARRAY_CONTRACTID "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"
 
