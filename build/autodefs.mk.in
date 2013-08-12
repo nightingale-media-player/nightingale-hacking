@@ -323,11 +323,7 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 
 # Version numbers for various packages
-ifdef WITH_GST_1
-    GST_VERSION = 1.0
-else
-    GST_VERSION = 0.10
-endif
+GST_VERSION = 1.0
 GLIB_VERSION = 2.0
 
 -include $(topsrcdir)/local.mk
