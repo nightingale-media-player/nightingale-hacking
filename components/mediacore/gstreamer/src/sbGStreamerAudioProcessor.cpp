@@ -1,16 +1,16 @@
 /*
- *=BEGIN SONGBIRD GPL
+ * BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale Media Player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://getnightingale.com
  *
  * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
+ * GNU General Public License Version 2 (the "GPL").
  *
  * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
  * express or implied. See the GPL for the specific language
  * governing rights and limitations.
  *
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ * END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerAudioProcessor.h"
@@ -423,7 +423,7 @@ sbGStreamerAudioProcessor::DecoderPadAdded (GstElement *uridecodebin,
 
   // A new decoded pad has been added from the decodebin. If it's the first
   // audio stream, we use it. Otherwise, we ignore it.
-  GstCaps *caps = gst_pad_get_caps (pad);
+  GstCaps *caps = gst_pad_query_caps(pad, NULL);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);
   bool isAudio = g_str_has_prefix (name, "audio/");
@@ -662,7 +662,7 @@ sbGStreamerAudioProcessor::HasEnoughData()
 
   mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-  guint available = gst_adapter_available (mAdapter);
+  gsize available = gst_adapter_available (mAdapter);
 
   // We have to have at least one byte of data to have enough in all cases.
   // Then, we need:
@@ -700,7 +700,7 @@ sbGStreamerAudioProcessor::GetDurationFromBuffer(GstBuffer *buf)
   else
     size = sizeof(short);
 
-  return GST_BUFFER_SIZE (buf) / size;
+  return gst_buffer_get_size(buf) / size;
 }
 
 void
@@ -729,7 +729,8 @@ sbGStreamerAudioProcessor::GetMoreData()
     mIsEndOfSection = PR_FALSE;
   }
   else {
-    GstBuffer *buf = gst_app_sink_pull_buffer(mAppSink);
+    GstSample *samp = gst_app_sink_pull_sample(mAppSink);
+    GstBuffer *buf = gst_sample_get_buffer(samp);
     NS_ASSERTION(buf, "pulled buffer when asked to get more but got no buffer");
 
     // Consider this a discontinuity if the sample numbers are discontinuous,
@@ -839,7 +840,7 @@ sbGStreamerAudioProcessor::DetermineFormat()
 {
   GstPad *appsinkSinkPad = gst_element_get_static_pad (GST_ELEMENT (mAppSink),
                                                        "sink");
-  GstCaps *caps = gst_pad_get_negotiated_caps(appsinkSinkPad);
+  GstCaps *caps = gst_pad_get_current_caps(appsinkSinkPad);
   if (!caps)
     return NS_ERROR_FAILURE;
 
@@ -898,8 +899,8 @@ void
 sbGStreamerAudioProcessor::SendDataToListener()
 {
   nsresult rv;
-  const guint8 *data;
-  guint bytesRead = 0;
+  const void *data;
+  gsize bytesRead = 0;
 
   mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
@@ -930,7 +931,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
     }
   }
 
-  guint available = gst_adapter_available (mAdapter);
+  gsize available = gst_adapter_available (mAdapter);
   if (mConstraintBlockSize == 0)
     bytesRead = available;
   else if (available >= mConstraintBlockSizeBytes)
@@ -940,7 +941,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
   else
     NS_NOTREACHED("not enough data here");
 
-  data = gst_adapter_peek(mAdapter, bytesRead);
+  data = gst_adapter_map(mAdapter, bytesRead);
 
   PRUint32 sampleNumber = mSampleNumber;
   PRUint32 numSamples;
@@ -982,7 +983,7 @@ sbGStreamerAudioProcessor::SendDataToListener()
 
   mSampleNumber += numSamples;
 
-  gst_adapter_flush(mAdapter, bytesRead);
+  gst_adapter_unmap(mAdapter);
   
   // Listener might have paused or stopped us; in that case we don't want to
   // schedule another send.

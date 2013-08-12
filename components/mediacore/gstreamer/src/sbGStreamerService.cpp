@@ -1,16 +1,16 @@
 /*
- *=BEGIN SONGBIRD GPL
+ * BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale Media Player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://getnightingale.com
  *
  * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
+ * GNU General Public License Version 2 (the "GPL").
  *
  * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
  * express or implied. See the GPL for the specific language
  * governing rights and limitations.
  *
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ * END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerService.h"
@@ -198,8 +198,9 @@ sbGStreamerService::Init()
     //   3. Our bundled gst-plugins directory
     //
     // Plus the system plugin path on linux:
-    //   4. $HOME/.gstreamer-0.10/plugins
-    //   5. /usr/lib/gstreamer-0.10 or /usr/lib64/gstreamer-0.10
+    //   4. $HOME/.gstreamer/plugins
+    //   5. /usr/lib/gstreamer, /usr/lib64/gstreamer,
+    //      or /usr/lib/x86_64-linux-gnu/gstreamer
 
 #if defined(XP_MACOSX) || defined(XP_WIN)
     pluginPaths = EmptyString();
@@ -292,14 +293,16 @@ sbGStreamerService::Init()
 #if !defined(XP_MACOSX) && !defined(XP_WIN)
 
     if (!noSystemPlugins) {
-      // 4. Add $HOME/.gstreamer-0.10/plugins to system plugin path
+
+
+      // 4. Add $HOME/.gstreamer/plugins to system plugin path
       // Use the same code as gstreamer for this to ensure it's the
       // same path...
       char *homeDirPlugins = g_build_filename (g_get_home_dir (), 
-              ".gstreamer-0.10", "plugins", NULL);
+              ".gstreamer", "plugins", NULL);
       systemPluginPaths = NS_ConvertUTF8toUTF16(homeDirPlugins);
 
-      // 5. Add /usr/lib/gstreamer-0.10 to system plugin path
+      // 5. Add /usr/lib/gstreamer to system plugin path
 
       // There's a bug in GStreamer which can cause registry problems with
       // renamed plugins. Older versions of decodebin2 were in 
@@ -309,13 +312,52 @@ sbGStreamerService::Init()
       nsCOMPtr<nsILocalFile> badFile = do_CreateInstance(
               "@mozilla.org/file/local;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-  
+
       nsString sysLibDir;
+
+      // XXX There must be a better way to set the plugin paths at runtime
+      // e.g. setting the env var in the launcher script
 #ifdef HAVE_64BIT_OS
-      sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-0.10");
+      // Ubuntu lib paths...
+      nsString ubuntuLibPath = 
+              NS_LITERAL_STRING("/usr/lib/x86_64-linux-gnu/gstreamer");
+      nsCOMPtr<nsILocalFile> ubuntuLibFile = 
+              do_CreateInstance("@mozilla.org/file/local;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = ubuntuLibFile->InitWithPath(ubuntuLibPath);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool ubuntuLibPathExists;
+      rv = ubuntuLibFile->Exists(&ubuntuLibPathExists);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (ubuntuLibFile) {
+        sysLibDir = ubuntuLibPath;
+      } else {
+        sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer");
+      }
 #else
-      sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-0.10");
-#endif
+      // Ubuntu lib paths...
+      nsString ubuntuLibPath = 
+              NS_LITERAL_STRING("/usr/lib/i386-linux-gnu/gstreamer");
+      nsCOMPtr<nsILocalFile> ubuntuLibFile = 
+              do_CreateInstance("@mozilla.org/file/local;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = ubuntuLibFile->InitWithPath(ubuntuLibPath);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool ubuntuLibPathExists;
+      rv = ubuntuLibFile->Exists(&ubuntuLibPathExists);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (ubuntuLibFile) {
+        sysLibDir = ubuntuLibPath;
+      } else {
+        sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer");
+      }
+#endif // HAVE_64BIT_OS
 
       nsString badFilePath = sysLibDir;
       badFilePath.AppendLiteral("/libgsturidecodebin.so");
@@ -392,34 +434,34 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
   rv = aHandler->BeginInspect();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  orig_plugins = plugins = gst_default_registry_get_plugin_list();
+  orig_plugins = plugins = gst_registry_get_plugin_list(gst_registry_get());
   while (plugins) {
     GstPlugin *plugin;
     plugin = (GstPlugin *) (plugins->data);
     plugins = g_list_next (plugins);
 
     nsCString filename;
-    if (plugin->filename) {
-      filename = plugin->filename;
+    if (gst_plugin_get_filename(plugin)) {
+      filename = gst_plugin_get_filename(plugin);
     }
     else {
       filename.SetIsVoid(PR_TRUE);
     }
 
-    rv = aHandler->BeginPluginInfo(nsDependentCString(plugin->desc.name),
-                                   nsDependentCString(plugin->desc.description),
+    rv = aHandler->BeginPluginInfo(nsDependentCString(gst_plugin_get_name(plugin)),
+                                   nsDependentCString(gst_plugin_get_description(plugin)),
                                    filename,
-                                   nsDependentCString(plugin->desc.version),
-                                   nsDependentCString(plugin->desc.license),
-                                   nsDependentCString(plugin->desc.source),
-                                   nsDependentCString(plugin->desc.package),
-                                   nsDependentCString(plugin->desc.origin));
+                                   nsDependentCString(gst_plugin_get_version(plugin)),
+                                   nsDependentCString(gst_plugin_get_license(plugin)),
+                                   nsDependentCString(gst_plugin_get_source(plugin)),
+                                   nsDependentCString(gst_plugin_get_package(plugin)),
+                                   nsDependentCString(gst_plugin_get_origin(plugin)));
     NS_ENSURE_SUCCESS(rv, rv);
 
     GList *features, *orig_features;
     orig_features = features =
-      gst_registry_get_feature_list_by_plugin(gst_registry_get_default(),
-                                              plugin->desc.name);
+      gst_registry_get_feature_list_by_plugin(gst_registry_get(),
+                                              gst_plugin_get_name(plugin));
     while (features) {
       GstPluginFeature *feature;
       feature = GST_PLUGIN_FEATURE(features->data);
@@ -465,13 +507,13 @@ sbGStreamerService::InspectFactory(GstElementFactory* aFactory,
   element = gst_element_factory_create(aFactory, NULL);
   NS_ENSURE_TRUE(element, NS_ERROR_UNEXPECTED);
 
-  gint rank = GST_PLUGIN_FEATURE(factory)->rank;
+  gint rank = gst_plugin_feature_get_rank(GST_PLUGIN_FEATURE(factory));
 
-  rv = aHandler->BeginFactoryInfo(nsDependentCString(GST_PLUGIN_FEATURE(factory)->name),
-                                  nsDependentCString(factory->details.longname),
-                                  nsDependentCString(factory->details.klass),
-                                  nsDependentCString(factory->details.description),
-                                  nsDependentCString(factory->details.author),
+  rv = aHandler->BeginFactoryInfo(nsDependentCString(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory))),
+                                  nsDependentCString(gst_element_factory_get_longname(factory)),
+                                  nsDependentCString(gst_element_factory_get_klass(factory)),
+                                  nsDependentCString(gst_element_factory_get_description(factory)),
+                                  nsDependentCString(gst_element_factory_get_author(factory)),
                                   nsDependentCString(get_rank_name(rank)),
                                   rank);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -495,7 +537,7 @@ sbGStreamerService::InspectFactoryPads(GstElement* aElement,
   nsresult rv;
 
   const GList *pads;
-  pads = aFactory->staticpadtemplates;
+  pads = gst_element_factory_get_static_pad_templates(aFactory);
   while (pads) {
     GstStaticPadTemplate *padtemplate;
     padtemplate = (GstStaticPadTemplate *) (pads->data);
@@ -634,7 +676,7 @@ sbGStreamerService::GetGStreamerRegistryFile(nsIFile **aOutRegistryFile)
                          getter_AddRefs(registryPath));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-0.10"));
+  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer"));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
   NS_ENSURE_SUCCESS(rv, rv);

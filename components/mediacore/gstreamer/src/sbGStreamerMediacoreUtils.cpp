@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ */
 
 #include "sbGStreamerMediacoreUtils.h"
 
@@ -200,7 +198,7 @@ ConvertPropertyArrayToTagList(sbIPropertyArray *properties)
   if (properties == nsnull)
     return NULL;
 
-  tags = gst_tag_list_new();
+  tags = gst_tag_list_new_empty();
   rv = properties->Enumerate(getter_AddRefs(propertyEnum));
   NS_ENSURE_SUCCESS(rv, NULL);
 
@@ -596,7 +594,7 @@ FindMatchingElementName(GstCaps *srcCaps, const char *typeName)
   data.srccaps = srcCaps;
   data.type = typeName;
 
-  list = gst_default_registry_feature_filter (
+  list = gst_registry_feature_filter(gst_registry_get(),
           (GstPluginFeatureFilter)match_element_filter, FALSE, &data);
 
   for (walk = list; walk; walk = g_list_next (walk)) {
@@ -969,26 +967,36 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
       // used as case labels because they aren't constant expressions
 
       if (type == GST_TYPE_BUFFER) {
-        const GstBuffer * asGstBuffer = gst_value_get_buffer(aValue);
+        GstBuffer * asGstBuffer = gst_value_get_buffer(aValue);
         NS_ENSURE_TRUE(asGstBuffer, NS_ERROR_UNEXPECTED);
 
-        // Create a variant to hold the buffer data as an array of VTYPE_UINT8s
-        nsCOMPtr<nsIWritableVariant> asVariant =
-          do_CreateInstance("@mozilla.org/variant;1", &rv);
-        NS_ENSURE_SUCCESS (rv, rv);
-        rv = asVariant->SetAsArray(nsIDataType::VTYPE_UINT8,
-                                   nsnull,
-                                   GST_BUFFER_SIZE(asGstBuffer),
-                                   GST_BUFFER_DATA(asGstBuffer));
-        NS_ENSURE_SUCCESS (rv, rv);
+        GstMapInfo asGstMapInfo;
+        if (gst_buffer_map(asGstBuffer, &asGstMapInfo, GST_MAP_READ)) {        
+          // Create a variant to hold the buffer data as an array of VTYPE_UINT8s
+          nsCOMPtr<nsIWritableVariant> asVariant =
+            do_CreateInstance("@mozilla.org/variant;1", &rv);
+          NS_ENSURE_SUCCESS (rv, rv);
+          rv = asVariant->SetAsArray(nsIDataType::VTYPE_UINT8,
+                                     nsnull,
+                                     asGstMapInfo.size,
+                                     asGstMapInfo.data);
+          NS_ENSURE_SUCCESS (rv, rv);
 
-        // QI to an nsIWritablePropertyBag to access the generic SetProperty()
-        // method
-        nsCOMPtr<nsIWritablePropertyBag> bagV1 =
-          do_QueryInterface(aPropertyBag, &rv);
-        NS_ENSURE_SUCCESS (rv, rv);
-        rv = bagV1->SetProperty(aProperty, asVariant);
-        NS_ENSURE_SUCCESS (rv, rv);
+          // QI to an nsIWritablePropertyBag to access the generic SetProperty()
+          // method
+          nsCOMPtr<nsIWritablePropertyBag> bagV1 =
+            do_QueryInterface(aPropertyBag, &rv);
+          NS_ENSURE_SUCCESS (rv, rv);
+          rv = bagV1->SetProperty(aProperty, asVariant);
+          NS_ENSURE_SUCCESS (rv, rv);
+
+          gst_buffer_unmap(asGstBuffer, &asGstMapInfo);
+        } else {
+#ifdef PR_LOGGING
+          LOG(("gst_buffer_map failed"));
+#endif
+          NS_ENSURE_TRUE(PR_FALSE, NS_ERROR_ILLEGAL_VALUE);
+        }
       }
       else {
         // Unexpected data type
