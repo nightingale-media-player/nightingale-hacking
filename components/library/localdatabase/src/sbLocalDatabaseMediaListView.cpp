@@ -275,8 +275,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   PRBool success = mListenerTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  mozilla::MutexAutoLock lock(mListenerTableLock);
-
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
