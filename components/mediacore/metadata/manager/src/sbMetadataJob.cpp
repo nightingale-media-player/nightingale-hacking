@@ -127,28 +127,28 @@ static PRLogModuleInfo* gMetadataJobLog =
 
 // CLASSES ====================================================================
 
-//NS_IMPL_THREADSAFE_ISUPPORTS5(sbMetadataJob,
-//							  nsIClassInfo,
-//							  sbIJobProgress,
-//							  sbIJobProgressUI,
-//							  sbIJobCancelable,
-//							  sbIAlbumArtListener);
-//
-//NS_IMPL_CI_INTERFACE_GETTER5(sbMetadataJob,
-//                             nsIClassInfo,
-//                             sbIJobProgress,
-//                             sbIJobProgressUI,
-//                             sbIJobCancelable,
-//                             sbIAlbumArtListener)
+NS_IMPL_THREADSAFE_ISUPPORTS5(sbMetadataJob,
+							  nsIClassInfo,
+							  sbIJobProgress,
+							  sbIJobProgressUI,
+							  sbIJobCancelable,
+							  sbIAlbumArtListener);
 
-NS_IMPL_CLASSINFO(sbMetadataJob, NULL, nsIClassInfo::THREADSAFE, SB_METADATAJOB_CID);
+NS_IMPL_CI_INTERFACE_GETTER5(sbMetadataJob,
+                            nsIClassInfo,
+                            sbIJobProgress,
+                            sbIJobProgressUI,
+                            sbIJobCancelable,
+                            sbIAlbumArtListener)
 
-NS_IMPL_ISUPPORTS5_CI(sbMetadataJob,
-					  nsIClassInfo,
-					  sbIJobProgress,
-					  sbIJobProgressUI,
-					  sbIJobCancelable,
-					  sbIAlbumArtListener);
+// NS_IMPL_CLASSINFO(sbMetadataJob, NULL, nsIClassInfo::THREADSAFE, SB_METADATAJOB_CID);
+
+// NS_IMPL_THREADSAFE_ISUPPORTS5_CI(sbMetadataJob,
+//                                  nsIClassInfo,
+//                                  sbIJobProgress,
+//                                  sbIJobProgressUI,
+//                                  sbIJobCancelable,
+//                                  sbIAlbumArtListener);
 
 NS_IMPL_THREADSAFE_CI(sbMetadataJob)
 
