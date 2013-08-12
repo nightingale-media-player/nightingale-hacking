@@ -44,7 +44,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPlaybackHistoryEntry,
                               sbIPlaybackHistoryEntry)
 
 sbPlaybackHistoryEntry::sbPlaybackHistoryEntry()
-: mLock(nsnull)
+: mLock("sbPlaybackHistoryEntry::mLock")
 , mEntryId(-1)
 , mTimestamp(0)
 , mDuration(0)

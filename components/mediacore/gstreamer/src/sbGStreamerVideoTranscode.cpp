@@ -107,7 +107,7 @@ sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
   mUseAudio(PR_FALSE),
   mUseVideo(PR_FALSE),
   mUseMuxer(PR_FALSE),
-  mBuildLock(nsnull)
+  mBuildLock("sbGStreamerVideoTranscoder::mBuildLock")
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 

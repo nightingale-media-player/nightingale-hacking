@@ -93,7 +93,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbGStreamerMetadataHandler,
                               nsITimerCallback)
 
 sbGStreamerMetadataHandler::sbGStreamerMetadataHandler()
-  : mLock(nsnull),
+  : mLock("sbGStreamerMetadataHandler::mLock"),
     mPipeline(nsnull),
     mTags(nsnull),
     mHasAudio(PR_FALSE),

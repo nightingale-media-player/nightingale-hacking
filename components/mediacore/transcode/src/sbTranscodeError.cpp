@@ -48,7 +48,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS5(sbTranscodeError,
                               nsISupportsPrimitive)
 
 sbTranscodeError::sbTranscodeError()
-  :mLock(nsnull)
+  :mLock("sbTranscodeError::mLock")
 {
   /* member initializers and constructor code */
 }

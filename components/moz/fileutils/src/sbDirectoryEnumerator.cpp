@@ -544,7 +544,7 @@ sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 
 sbDirectoryEnumerator::sbDirectoryEnumerator() :
   mIsInitialized(PR_FALSE),
-  mEnumeratorLock(nsnull),
+  mEnumeratorLock("sbDirectoryEnumerator::mEnumeratorLock"),
   mMaxDepth(0),
   mDirectoriesOnly(PR_FALSE),
   mFilesOnly(PR_FALSE)

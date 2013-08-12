@@ -144,9 +144,9 @@ sbMetadataJob::sbMetadataJob() :
   mRequiredProperties(nsnull),
   mNextMainThreadIndex(0),
   mNextBackgroundThreadIndex(0),
-  mBackgroundItemsLock(nsnull),
+  mBackgroundItemsLock("sbMetadataJob::mBackgroundItemsLock"),
   mProcessedBackgroundThreadItems(nsnull),
-  mProcessedBackgroundItemsLock(nsnull),
+  mProcessedBackgroundItemsLock("sbMetadataJob::mProcessedBackgroundItemsLock"),
   mInLibraryBatch(PR_FALSE),
   mStringBundle(nsnull)
 {

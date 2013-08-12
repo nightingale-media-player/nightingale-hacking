@@ -74,7 +74,7 @@ sbMetadataCrashTracker::sbMetadataCrashTracker() :
   mCounter(0),
   mLogFile(nsnull),
   mOutputStream(nsnull),
-  mLock(nsnull)
+  mLock("sbMetadataCrashTracker::mLock")
 {
   TRACE(("sbMetadataCrashTracker[0x%.8x] - ctor", this));
   MOZ_COUNT_CTOR(sbMetadataCrashTracker);

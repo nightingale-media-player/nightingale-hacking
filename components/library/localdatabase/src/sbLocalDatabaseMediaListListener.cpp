@@ -69,7 +69,7 @@ static PRLogModuleInfo* gMediaListListenerLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener()
-: mListenerArrayLock(nsnull),
+: mListenerArrayLock("sbLocalDatabaseMediaListListener::mListenerArrayLock"),
   mBatchDepth(0)
 {
   MOZ_COUNT_CTOR(sbLocalDatabaseMediaListListener);

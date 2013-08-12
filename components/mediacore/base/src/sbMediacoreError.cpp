@@ -47,7 +47,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreError,
                               sbIMediacoreError)
 
 sbMediacoreError::sbMediacoreError()
-: mLock(nsnull)
+: mLock("sbMediacoreError::mLock")
 , mCode(sbIMediacoreError::UNINITIALIZED)
 {
   MOZ_COUNT_CTOR(sbMediacoreError);

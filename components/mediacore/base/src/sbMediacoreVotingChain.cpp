@@ -52,7 +52,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreVotingChain,
                               sbIMediacoreVotingChain)
 
 sbMediacoreVotingChain::sbMediacoreVotingChain()
-: mLock(nsnull)
+: mLock("sbMediacoreVotingChain::mLock")
 {
   MOZ_COUNT_CTOR(sbMediacoreVotingChain);
 

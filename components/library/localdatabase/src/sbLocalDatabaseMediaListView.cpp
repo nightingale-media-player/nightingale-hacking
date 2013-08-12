@@ -210,7 +210,7 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrar
   mMediaList(aMediaList),
   mDefaultSortProperty(aDefaultSortProperty),
   mMediaListId(aMediaListId),
-  mListenerTableLock(nsnull),
+  mListenerTableLock("sbLocalDatabaseMediaListView::mListenerTableLock"),
   mInvalidatePending(PR_FALSE)
 {
   NS_ASSERTION(aLibrary, "aLibrary is null");

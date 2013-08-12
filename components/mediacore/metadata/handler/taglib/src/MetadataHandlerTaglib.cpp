@@ -1917,7 +1917,7 @@ sbMetadataHandlerTaglib::sbMetadataHandlerTaglib()
     mpURL(nsnull),
     mMetadataChannelRestart(PR_FALSE),
     mCompleted(PR_FALSE),
-    sTaglibLock(nsnull)
+    sTaglibLock("sbMetadataHandlerTaglib::sTaglibLock")
 {
 }
 
