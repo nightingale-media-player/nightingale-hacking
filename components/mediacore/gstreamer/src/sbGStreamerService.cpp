@@ -198,9 +198,10 @@ sbGStreamerService::Init()
     //   3. Our bundled gst-plugins directory
     //
     // Plus the system plugin path on linux:
-    //   4. $HOME/.gstreamer/plugins
-    //   5. /usr/lib/gstreamer, /usr/lib64/gstreamer,
-    //      or /usr/lib/x86_64-linux-gnu/gstreamer
+    //   4. $HOME/.gstreamer-1.0/plugins
+    //   5. /usr/lib/gstreamer-1.0, /usr/lib64/gstreamer-1.0, 
+    //      /usr/lib/i386-linux-gnu/gstreamer-1.0, or
+    //      /usr/lib/x86_64-linux-gnu/gstreamer
 
 #if defined(XP_MACOSX) || defined(XP_WIN)
     pluginPaths = EmptyString();
@@ -295,14 +296,14 @@ sbGStreamerService::Init()
     if (!noSystemPlugins) {
 
 
-      // 4. Add $HOME/.gstreamer/plugins to system plugin path
+      // 4. Add $HOME/.gstreamer-1.0/plugins to system plugin path
       // Use the same code as gstreamer for this to ensure it's the
       // same path...
       char *homeDirPlugins = g_build_filename (g_get_home_dir (), 
-              ".gstreamer", "plugins", NULL);
+              ".gstreamer-1.0", "plugins", NULL);
       systemPluginPaths = NS_ConvertUTF8toUTF16(homeDirPlugins);
 
-      // 5. Add /usr/lib/gstreamer to system plugin path
+      // 5. Add /usr/lib/gstreamer-1.0 to system plugin path
 
       // There's a bug in GStreamer which can cause registry problems with
       // renamed plugins. Older versions of decodebin2 were in 
@@ -320,7 +321,7 @@ sbGStreamerService::Init()
 #ifdef HAVE_64BIT_OS
       // Ubuntu lib paths...
       nsString ubuntuLibPath = 
-              NS_LITERAL_STRING("/usr/lib/x86_64-linux-gnu/gstreamer");
+              NS_LITERAL_STRING("/usr/lib/x86_64-linux-gnu/gstreamer-1.0");
       nsCOMPtr<nsILocalFile> ubuntuLibFile = 
               do_CreateInstance("@mozilla.org/file/local;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -335,12 +336,12 @@ sbGStreamerService::Init()
       if (ubuntuLibFile) {
         sysLibDir = ubuntuLibPath;
       } else {
-        sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer");
+        sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-1.0");
       }
 #else
       // Ubuntu lib paths...
       nsString ubuntuLibPath = 
-              NS_LITERAL_STRING("/usr/lib/i386-linux-gnu/gstreamer");
+              NS_LITERAL_STRING("/usr/lib/i386-linux-gnu/gstreamer-1.0");
       nsCOMPtr<nsILocalFile> ubuntuLibFile = 
               do_CreateInstance("@mozilla.org/file/local;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -355,7 +356,7 @@ sbGStreamerService::Init()
       if (ubuntuLibFile) {
         sysLibDir = ubuntuLibPath;
       } else {
-        sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer");
+        sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-1.0");
       }
 #endif // HAVE_64BIT_OS
 
