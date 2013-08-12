@@ -41,7 +41,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(topsrcdir)/components/property/src \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/gstreamer/public \
-                     $(topsrcdir)/components/mediacore/gstreamers/src \
+                     $(topsrcdir)/components/mediacore/gstreamer/src \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(MOZSDK_INCLUDE_DIR)/necko \
