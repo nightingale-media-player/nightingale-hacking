@@ -677,7 +677,7 @@ sbGStreamerService::GetGStreamerRegistryFile(nsIFile **aOutRegistryFile)
                          getter_AddRefs(registryPath));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer"));
+  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-1.0"));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
   NS_ENSURE_SUCCESS(rv, rv);
