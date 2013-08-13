@@ -201,7 +201,7 @@ sbGStreamerService::Init()
     //   4. $HOME/.gstreamer-1.0/plugins
     //   5. /usr/lib/gstreamer-1.0, /usr/lib64/gstreamer-1.0, 
     //      /usr/lib/i386-linux-gnu/gstreamer-1.0, or
-    //      /usr/lib/x86_64-linux-gnu/gstreamer
+    //      /usr/lib/x86_64-linux-gnu/gstreamer-1.0
 
 #if defined(XP_MACOSX) || defined(XP_WIN)
     pluginPaths = EmptyString();
