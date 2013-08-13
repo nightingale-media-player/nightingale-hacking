@@ -44,17 +44,6 @@ ac_add_options --with-taglib-source=packaged
 
 option to your nightingale.config
 
-To build the Unity integration extension, the following are needed:
-libunity-dev
-libnotify-dev
-libgtk2.0-dev
-
-To enable building the extension, add
-
-ac_add_options --enable-unity-integration
-
-to your nightingale.config file.
-
 More information can be gleaned from the Nightingale wiki:
 
 Windows: http://tinyurl.com/ce3anjo
@@ -79,7 +68,20 @@ Configure Options:
   --enable-compiler-environment-checks  only allow supported compilers
   --enable-libnotify                    Optionally enable libnotify
   --enable-unity-integration            Optional support for Unity's 
-                                        sound menu and notifications
+                                        sound menu
+
+========================================================================
+Notes for Configurable Options:
+========================================================================
+
+  libnotify support
+    dependencies: libnotify-dev
+                  libgtk2.0-dev
+
+  Unity sound menu integration
+    dependencies: libunity-dev
+                  libnotify-dev
+                  libgtk2.0-dev
 
 ========================================================================
 Contributions:
