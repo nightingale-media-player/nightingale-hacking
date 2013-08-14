@@ -37,7 +37,7 @@ NS_DEFINE_NAMED_CID(SB_PLAYBACKHISTORYSERVICE_CID);
 
 static const mozilla::Module::CIDEntry kPlaybackHistoryComponentCIDs[] = {
   { &kSB_PLAYBACKHISTORYENTRY_CID, false, NULL, sbPlaybackHistoryEntryConstructor },
-  { &kSB_PLAYBACKHISTORYSERVICE_CID, false, NULL, sbPlaybackHistoryServiceConstructor },
+  { &kSB_PLAYBACKHISTORYSERVICE_CID, true, NULL, sbPlaybackHistoryServiceConstructor },
   { NULL }
 };
 

@@ -71,11 +71,11 @@ NS_DEFINE_NAMED_CID(SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CID);
 static const mozilla::Module::CIDEntry kSongbirdLibraryManagerCIDs[] = {
   { &kSONGBIRD_LIBRARY_CONSTRAINT_CID, false, NULL, sbLibraryConstraintConstructor },
   { &kSONGBIRD_LIBRARY_CONSTRAINTBUILDER_CID, false, NULL, sbLibraryConstraintBuilderConstructor },
-  { &kSONGBIRD_LIBRARYMANAGER_CID, false, NULL, sbLibraryManagerConstructor },
+  { &kSONGBIRD_LIBRARYMANAGER_CID, true, NULL, sbLibraryManagerConstructor },
   { &kSONGBIRD_LIBRARYSORT_CID, false, NULL, sbLibrarySortConstructor },
   { &kSONGBIRD_MEDIALISTDUPLICATEFILTER_CID, false, NULL, sbMediaListDuplicateFilterConstructor },
   { &kSONGBIRD_MEDIALISTENUMERATORWRAPPER_CID, false, NULL, sbMediaListEnumeratorWrapperConstructor },
-  { &kSONGBIRD_MEDIALISTVIEWMAP_CID, false, NULL, sbMediaListViewMapConstructor },
+  { &kSONGBIRD_MEDIALISTVIEWMAP_CID, true, NULL, sbMediaListViewMapConstructor },
   { &kSONGBIRD_MEDIAITEMWATCHER_CID, false, NULL, sbMediaItemWatcherConstructor },
   { &kSONGBIRD_TEMPORARYMEDIAITEM_CID, false, NULL, sbTemporaryMediaItemConstructor },
   { &kSONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CID, false, NULL, sbMediaItemControllerCleanupConstructor },

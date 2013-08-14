@@ -44,9 +44,9 @@ NS_DEFINE_NAMED_CID(SB_PROPERTYBAG_CID);
 NS_DEFINE_NAMED_CID(SB_SERVICE_MANAGER_CID);
 
 static const mozilla::Module::CIDEntry kSongbirdXPCOMLibCIDs[] = {
-  { &kSB_THREADSAFE_ARRAY_CID, false, NULL, sbArrayConstructor },
-  { &kSB_PROPERTYBAG_CID, false, NULL, sbPropertyBagConstructor },
-  { &kSB_SERVICE_MANAGER_CID, false, NULL, sbServiceManagerConstructor },
+  { &kSB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
+  { &kSB_PROPERTYBAG_CID, true, NULL, sbPropertyBagConstructor },
+  { &kSB_SERVICE_MANAGER_CID, true, NULL, sbServiceManagerConstructor },
   { NULL }
 };
 

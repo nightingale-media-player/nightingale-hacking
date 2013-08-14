@@ -45,7 +45,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbThreadPoolService, Init);
 NS_DEFINE_NAMED_CID(SB_THREADPOOLSERVICE_CID);
  
 static const mozilla::Module::CIDEntry kThreadPoolServiceCIDs[] = {
-  { &kSB_THREADPOOLSERVICE_CID, false, NULL, sbThreadPoolServiceConstructor },
+  { &kSB_THREADPOOLSERVICE_CID, true, NULL, sbThreadPoolServiceConstructor },
   { NULL }
 };
  

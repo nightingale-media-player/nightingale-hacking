@@ -167,7 +167,7 @@ NS_DEFINE_NAMED_CID(SB_BASE_SCREEN_SAVER_SUPPRESSOR_CID);
   static const mozilla::Module::CIDEntry kIntegrationCIDs[] = {
     { &kSONGBIRD_WINDOWCLOAK_CID, false, NULL, sbWindowCloakConstructor },
     { &kSONGBIRD_NATIVEWINDOWMANAGER_CID, false, NULL, sbNativeWindowManagerConstructor },
-    { &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID, false, NULL, sbScreenSaverSuppressorConstructor },
+    { &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID, true, NULL, sbScreenSaverSuppressorConstructor },
     { &kSB_WINDOWMOVE_SERVICE_CID, false, NULL, sbGtkWindowMoveServiceConstructor },
     { NULL }
   };

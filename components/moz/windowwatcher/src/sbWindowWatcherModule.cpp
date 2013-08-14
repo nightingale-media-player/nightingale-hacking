@@ -53,11 +53,11 @@
 //------------------------------------------------------------------------------
 
 // Construct the sbWindowWatcher object and call its Init method.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowWatcher, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowWatcher, Init);
 NS_DEFINE_NAMED_CID(SB_WINDOWWATCHER_CID);
 
 static const mozilla::Module::CIDEntry kWindowWatcherCIDs[] = {
-  { &kSB_WINDOWWATCHER_CID, false, NULL, sbWindowWatcherConstructor },
+  { &kSB_WINDOWWATCHER_CID, true, NULL, sbWindowWatcherConstructor },
   { NULL }
 };
 
@@ -67,7 +67,7 @@ static const mozilla::Module::ContractIDEntry kWindowWatcherContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kWindowWatcherCategories[] = {
-  { "xpcom-startup", SB_WINDOWWATCHER_CLASSNAME, SB_WINDOWWATCHER_CONTRACTID },
+  { "app-startup", SB_WINDOWWATCHER_CLASSNAME, SB_WINDOWWATCHER_CONTRACTID },
   { NULL }
 };
 

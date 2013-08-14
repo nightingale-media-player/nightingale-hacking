@@ -48,7 +48,7 @@ SB_MEDIA_ITEM_DOWNLOADER_REGISTERSELF(sbHTTPMediaItemDownloader);
 
 static const mozilla::Module::CIDEntry kMediaItemDownloadCIDs[] = {
   { &kSB_HTTP_MEDIA_ITEM_DOWNLOADER_CID, false, NULL, sbHTTPMediaItemDownloaderConstructor },
-  { &kSB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID, false, NULL, sbMediaItemDownloadServiceConstructor },
+  { &kSB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID, true, NULL, sbMediaItemDownloadServiceConstructor },
   { NULL }
 };
 

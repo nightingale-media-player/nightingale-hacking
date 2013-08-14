@@ -39,7 +39,7 @@ NS_DEFINE_NAMED_CID(SONGBIRD_WATCHFOLDERSERVICE_CID);
 
 static const mozilla::Module::CIDEntry kWatchFolderCIDs[] = {
   { &kSB_WATCHFOLDER_CID, false, NULL, sbWatchFolderConstructor },
-  { &kSONGBIRD_WATCHFOLDERSERVICE_CID, false, NULL, sbWatchFolderServiceConstructor },
+  { &kSONGBIRD_WATCHFOLDERSERVICE_CID, true, NULL, sbWatchFolderServiceConstructor },
   { NULL }
 };
 

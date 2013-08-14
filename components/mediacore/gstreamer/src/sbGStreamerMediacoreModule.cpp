@@ -73,7 +73,7 @@ NS_DEFINE_NAMED_CID(SB_GSTREAMER_AUDIO_PROCESSOR_CID);
 
 
 static const mozilla::Module::CIDEntry kGstreamerMediacoreCIDs[] = {
-  { &kSBGSTREAMERSERVICE_CID, false, NULL, sbGStreamerServiceConstructor },
+  { &kSBGSTREAMERSERVICE_CID, true, NULL, sbGStreamerServiceConstructor },
   { &kSB_GSTREAMERMEDIACOREFACTORY_CID, false, NULL, sbGStreamerMediacoreFactoryConstructor, },
   { &kSB_GSTREAMER_MEDIAINSPECTOR_CID, false, NULL, sbGStreamerMediaInspectorConstructor },
   { &kSB_GSTREAMER_MEDIACONTAINER_CID, false, NULL, sbGStreamerMediaContainerConstructor },

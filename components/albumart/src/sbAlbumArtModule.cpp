@@ -121,7 +121,7 @@ NS_DEFINE_NAMED_CID(SB_METADATAALBUMARTFETCHER_CID);
 
 
 static const mozilla::Module::CIDEntry kAlbumArtCIDs[] = {
-  { &kSB_ALBUMARTSERVICE_CID, false, NULL, sbAlbumArtServiceConstructor },
+  { &kSB_ALBUMARTSERVICE_CID, true, NULL, sbAlbumArtServiceConstructor },
   { &kSB_ALBUMARTSCANNER_CID, false, NULL, sbAlbumArtScannerConstructor },
   { &kSB_ALBUMARTFETCHERSET_CID, false, NULL, sbAlbumArtFetcherSetConstructor },
   { &kSB_FILEALBUMARTFETCHER_CID, false, NULL, sbFileAlbumArtFetcherConstructor },

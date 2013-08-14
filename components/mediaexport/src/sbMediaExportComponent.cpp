@@ -33,7 +33,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaExportService, Init);
 NS_DEFINE_NAMED_CID(SONGBIRD_MEDIAEXPORTSERVICE_CID);
 
 static const mozilla::Module::CIDEntry kMediaExportServiceCIDs[] = {
-  { &kSONGBIRD_MEDIAEXPORTSERVICE_CID, false, NULL, sbMediaExportServiceConstructor },
+  { &kSONGBIRD_MEDIAEXPORTSERVICE_CID, true, NULL, sbMediaExportServiceConstructor },
   { NULL }
 };
 

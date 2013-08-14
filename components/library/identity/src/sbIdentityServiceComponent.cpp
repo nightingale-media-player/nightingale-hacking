@@ -36,7 +36,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbIdentityService);
 NS_DEFINE_NAMED_CID(SONGBIRD_IDENTITY_SERVICE_CID);
 
 static const mozilla::Module::CIDEntry kIdentityServiceComponentCIDs[] = {
-  { &kSONGBIRD_IDENTITY_SERVICE_CID, false, NULL, sbIdentityServiceConstructor },
+  { &kSONGBIRD_IDENTITY_SERVICE_CID, true, NULL, sbIdentityServiceConstructor },
   { NULL }
 };
 
