@@ -24,29 +24,38 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbMediaExportITunesAgentService.h"
 #include "sbIMediaExportAgentService.h"
-
-
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaExportITunesAgentService)
-
 
 #define SB_MEDIAEXPORTAGENTSERVICE_CID                    \
 { 0x625f3a7c, 0x9f5c, 0x4d43, { 0x82, 0xc5, 0xdb, 0x30, 0xe6, 0x7b, 0x60, 0x25 } }
 
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaExportITunesAgentService);
+NS_DEFINE_NAMED_CID(SB_MEDIAEXPORTAGENTSERVICE_CID);
 
-static nsModuleComponentInfo sbMediaExportITunesAgent[] =
-{
-  {
-    SB_MEDIAEXPORTAGENTSERVICE_CLASSNAME,
-    SB_MEDIAEXPORTAGENTSERVICE_CID,
-    SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID,
-    sbMediaExportITunesAgentServiceConstructor
-  },
+
+static const mozilla::Module::CIDEntry kMediaExportITunesAgentCIDs[] = {
+  { &kSB_MEDIAEXPORTAGENTSERVICE_CID, false, NULL, sbMediaExportITunesAgentServiceConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdMediaExportITunesAgentComponent, 
-                    sbMediaExportITunesAgent)
+static const mozilla::Module::ContractIDEntry kMediaExportITunesAgentContracts[] = {
+  { SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &kSB_MEDIAEXPORTAGENTSERVICE_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kMediaExportITunesAgentCategories[] = {
+  // { "app-startup", SB_MEDIAEXPORTAGENTSERVICE_CLASSNAME, SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kMediaExportITunesAgentModule = {
+  mozilla::Module::kVersion,
+  kMediaExportITunesAgentCIDs,
+  kMediaExportITunesAgentContracts,
+  kMediaExportITunesAgentCategories
+};
+
+NSMODULE_DEFN(sbMediaExportITunesAgent) = &kMediaExportITunesAgentModule;
 

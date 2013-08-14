@@ -28,7 +28,6 @@
 #define sbMediaExportITunesAgentService_h_
 
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
