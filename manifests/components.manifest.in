@@ -14,7 +14,7 @@ binary-component sbDeviceManager_d.so
 binary-component sbDownloadDevice_d.so
 binary-component sbFileScan_d.so
 binary-component sbFileUtils_d.so
-# binary-component sbGStreamerStub_d.so 
+# binary-component sbGStreamerStub_d.so
 binary-component sbIdentityServiceComponent_d.so
 binary-component sbImageParser_d.so
 binary-component sbIntegration_d.so
