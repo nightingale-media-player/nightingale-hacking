@@ -1,5 +1,5 @@
 #ifdef DEBUG
-binary-component sbAlbumArt_d.so
+# binary-component sbAlbumArt_d.so
 binary-component sbBrowserAPI_d.so
 binary-component sbCDDevice_d.so
 binary-component sbClipboardHelper_d.so
