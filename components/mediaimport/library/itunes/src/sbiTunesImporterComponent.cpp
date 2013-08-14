@@ -59,6 +59,7 @@ static const mozilla::Module::ContractIDEntry kiTunesImporterContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kiTunesImporterCategories[] = {
+  { SB_LIBRARY_IMPORTER_CATEGORY, SBITUNESIMPORTER_CLASSNAME, SBITUNESIMPORTER_CONTRACTID },
   { NULL }
 };
 
