@@ -80,8 +80,8 @@ sbFileSystemTree::sbFileSystemTree()
   : mListener(nsnull)
   , mShouldLoadSession(PR_FALSE)
   , mIsIntialized(PR_FALSE)
-  , mRootNodeLock(nsnull)
-  , mListenerLock(nsnull)
+  , mRootNodeLock("sbFileSystemTree::mRootNodeLock")
+  , mListenerLock("sbFileSystemTree::mListenerLock")
 {
 #ifdef PR_LOGGING
   if (!gFSTreeLog) {
