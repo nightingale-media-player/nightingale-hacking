@@ -594,7 +594,7 @@ sbWindowWatcher::Shutdown()
   }
 
   // Remove quit-application-granted observer.
-//  mObserverService->RemoveObserver(this, "quit-application-granted");
+  mObserverService->RemoveObserver(this, "quit-application-granted");
 
   // Invoke all call with window callbacks.
   InvokeCallWithWindowCallbacks(nsnull);
@@ -631,7 +631,8 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   windowInfo->window = aWindow;
 
   // Get the window event target.
-  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(aWindow);
+  nsCOMPtr<nsIDOMWindow> window = do_QueryInterface(aWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIDOMEventTarget> windowEventTarget;
   rv = window->GetWindowRoot(getter_AddRefs(windowEventTarget));
   NS_ENSURE_SUCCESS(rv, rv);

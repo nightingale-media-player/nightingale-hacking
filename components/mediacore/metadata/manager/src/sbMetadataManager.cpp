@@ -81,6 +81,7 @@ sbMetadataManager::sbMetadataManager()
 : m_pContractListLock(nsnull)
 {
   m_pContractListLock = PR_NewLock();
+  NS_ASSERTION(m_pContractListLock, "Failed to create sbMetadataManager::m_pContractListLock! Object *not* threadsafe!");
 
   // Find the list of handlers for this object.
   nsresult rv;

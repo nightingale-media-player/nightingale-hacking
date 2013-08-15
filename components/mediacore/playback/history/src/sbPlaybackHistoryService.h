@@ -34,7 +34,6 @@
 #include <nsIComponentManager.h>
 #include <nsIFile.h>
 #include <mozilla/ReentrantMonitor.h>
-#include <mozilla/ModuleUtils.h>
 #include <nsIObserver.h>
 #include <nsIWeakReference.h>
 
