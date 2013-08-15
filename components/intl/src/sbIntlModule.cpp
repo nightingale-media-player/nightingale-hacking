@@ -35,7 +35,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStringTransform, Init);
 NS_DEFINE_NAMED_CID(SB_STRINGTRANSFORM_CID);
 
 static const mozilla::Module::CIDEntry kStringTransformCIDs[] = {
-  { &kSB_STRINGTRANSFORM_CID, false, NULL, sbStringTransformConstructor },
+  { &kSB_STRINGTRANSFORM_CID, true, NULL, sbStringTransformConstructor },
   { NULL }
 };
 

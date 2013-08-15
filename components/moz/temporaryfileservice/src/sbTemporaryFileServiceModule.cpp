@@ -68,7 +68,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbTemporaryFileFactory);
 NS_DEFINE_NAMED_CID(SB_TEMPORARYFILEFACTORY_CID);
 
 static const mozilla::Module::CIDEntry kTemporaryFileServiceCIDs[] = {
-  { &kSB_TEMPORARYFILESERVICE_CID, false, NULL, sbTemporaryFileServiceConstructor },
+  { &kSB_TEMPORARYFILESERVICE_CID, true, NULL, sbTemporaryFileServiceConstructor },
   { &kSB_TEMPORARYFILEFACTORY_CID, false, NULL, sbTemporaryFileFactoryConstructor },
   { NULL }
 };
@@ -80,7 +80,7 @@ static const mozilla::Module::ContractIDEntry kTemporaryFileServiceContracts[] =
 };
 
 static const mozilla::Module::CategoryEntry kTemporaryFileServiceCategories[] = {
-  { "xpcom-startup", SB_TEMPORARYFILESERVICE_CLASSNAME, SB_TEMPORARYFILESERVICE_CONTRACTID },
+  { "app-startup", SB_TEMPORARYFILESERVICE_CLASSNAME, SB_TEMPORARYFILESERVICE_CONTRACTID },
   { NULL }
 };
 
