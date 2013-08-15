@@ -69,7 +69,7 @@ protected:
   /**
    * Initializes the lock and ignore listener count
    */
-  sbBaseIgnore() : mLock(nsnull),
+  sbBaseIgnore() : mLock("sbBaseIgnoer::mLock"),
                    mIgnoreListenerCounter(0) {
     mIgnored.Init();
   }

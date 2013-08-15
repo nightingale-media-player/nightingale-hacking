@@ -34,7 +34,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceEventBeforeAddedData,
                               sbIDeviceEventBeforeAddedData)
 
 sbDeviceEventBeforeAddedData::sbDeviceEventBeforeAddedData()
-: mLock(nsnull)
+: mLock("sbDeviceEventBeforeAddedData::mLock")
 , mContinueAddingDevice(PR_TRUE)
 {
 }

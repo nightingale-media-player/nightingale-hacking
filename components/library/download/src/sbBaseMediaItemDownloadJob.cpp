@@ -775,7 +775,7 @@ sbBaseMediaItemDownloadJob::sbBaseMediaItemDownloadJob
   mMediaItem(aMediaItem),
   mTargetLibrary(aTargetLibrary),
   mStatus(sbIJobProgress::STATUS_RUNNING),
-  mLock(nsnull)
+  mLock("sbBaseMediaItemDownloadJob::mLock")
 {
   // Initialize logging.
 #ifdef PR_LOGGING

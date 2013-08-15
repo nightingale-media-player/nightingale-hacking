@@ -209,7 +209,8 @@ private:
 
 
   // Prevent derivation.
-  sbDeviceStatistics(sbDeviceStatistics const &) : mStatLock(nsnull) {}
+  sbDeviceStatistics(sbDeviceStatistics const &) : 
+      mStatLock("sbDeviceStatistics::mStatLock") {}
 };
 
 #endif /* SBDEVICESTATISTICS_H_ */
