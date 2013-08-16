@@ -39,7 +39,6 @@
 #include <nsTHashtable.h>
 #include <prmon.h>
 #include <mozilla/ReentrantMonitor.h>
-
 #include <sbIDataRemote.h>
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediacoreManager.h>
@@ -187,8 +186,7 @@ protected:
    * Helper function to cleanly stop the playback. The monitor must be locked
    * when this function is called.
    */
-//  nsresult StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor);
-  nsresult StopPlaybackHelper();
+  nsresult StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor);
 
   /**
    * Checks for a mediaitemcontroller for the current item, and

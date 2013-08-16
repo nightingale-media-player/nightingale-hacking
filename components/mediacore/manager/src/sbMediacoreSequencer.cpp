@@ -162,13 +162,13 @@ EmitMillisecondsToTimeString(PRUint64 aValue,
 NS_IMPL_CLASSINFO(sbMediacoreSequencer, NULL, nsIClassInfo::THREADSAFE, SB_MEDIACORE_SEQUENCER_CID);
 
 NS_IMPL_ISUPPORTS7_CI(sbMediacoreSequencer,
-											sbIMediacoreSequencer,
-											sbIMediacoreStatus,
-											sbIMediaListListener,
-											sbIMediaListViewListener,
-											sbIMediaItemControllerListener,
-											nsIClassInfo,
-											nsITimerCallback);
+                      sbIMediacoreSequencer,
+                      sbIMediacoreStatus,
+                      sbIMediaListListener,
+                      sbIMediaListViewListener,
+                      sbIMediaItemControllerListener,
+                      nsIClassInfo,
+                      nsITimerCallback);
 
 NS_IMPL_THREADSAFE_CI(sbMediacoreSequencer)
 
@@ -1282,7 +1282,6 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
   return NS_OK;
 }
 
-/*
 nsresult
 sbMediacoreSequencer::StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor)
 {
@@ -1295,7 +1294,7 @@ sbMediacoreSequencer::StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor)
     nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
 //    aMonitor.Exit();
     {
-    	mozilla::ReentrantMonitorAutoExit mon(aMonitor);
+      mozilla::ReentrantMonitorAutoExit mon(aMonitor);
       rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
     }
@@ -1319,44 +1318,6 @@ sbMediacoreSequencer::StopPlaybackHelper(mozilla::ReentrantMonitor& aMonitor)
 
   return NS_OK;
 }
-*/
-
-nsresult sbMediacoreSequencer::StopPlaybackHelper()
-{
-	nsresult rv;
-
-	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
-	if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
-		 mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
-		 mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
-		// Grip.
-		nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-//    aMonitor.Exit();
-		{
-			mozilla::ReentrantMonitorAutoExit mon(mMonitor);
-			rv = playbackControl->Stop();
-			NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
-		}
-//    aMonitor.Enter();
-	}
-
-	mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-
-	rv = StopSequenceProcessor();
-	NS_ENSURE_SUCCESS(rv, rv);
-
-	rv = UpdatePlayStateDataRemotes();
-	NS_ENSURE_SUCCESS(rv, rv);
-
-	if(mSeenPlaying) {
-		mSeenPlaying = PR_FALSE;
-
-		rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
-		NS_ENSURE_SUCCESS(rv, rv);
-	}
-
-	return NS_OK;
-}
 
 nsresult
 sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
@@ -1374,7 +1335,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 
     if(mErrorCount >= MEDIACORE_MAX_SUBSEQUENT_ERRORS) {
       // Too many subsequent errors, stop
-      rv = StopPlaybackHelper();
+      rv = StopPlaybackHelper(mMonitor);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -1410,7 +1371,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
-        rv = StopPlaybackHelper();
+        rv = StopPlaybackHelper(mMonitor);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
@@ -1651,19 +1612,19 @@ sbMediacoreSequencer::ProcessNewPosition()
       rv = UpdatePlayStateDataRemotes();
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // mon.Exit();
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
       rv = StartPlayback();
     }
     else if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
-      // mon.Exit();
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
       rv = mPlaybackControl->Pause();
     }
   }
 
   if(NS_FAILED(rv)) {
-    // mon.Enter();
     {
+      // mon.Enter();
       mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
       mStatus = sbIMediacoreStatus::STATUS_STOPPED;
       mIsWaitingForPlayback = PR_FALSE;
@@ -1683,215 +1644,212 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 {
   nsCOMPtr<nsIURI> uri;
   nsCOMPtr<sbIMediaItem> item;
-  nsCOMPtr<sbIMediaItem> lastItem;
+  nsCOMPtr<sbIMediaItem> lastItem = mCurrentItem;
   nsCOMPtr<sbIMediacoreVoting> voting;
   nsresult rv;
-  
-  {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-    lastItem = mCurrentItem;
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-    rv = NS_ERROR_UNEXPECTED;
+  rv = NS_ERROR_UNEXPECTED;
 
-    if(!aURI) {
-      rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mCurrentItemIndex = mSequence[mPosition];
-
-      rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mCurrentItem = item;
-
-      rv = item->GetContentSrc(getter_AddRefs(uri));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      uri = aURI;
-
-      mCurrentItem = nsnull;
-      mCurrentItemIndex = 0;
-    }
-
-    voting = do_QueryReferent(mMediacoreManager, &rv);
+  if(!aURI) {
+    rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ENSURE_TRUE(voting, NS_ERROR_UNEXPECTED);
+    mCurrentItemIndex = mSequence[mPosition];
 
-    // Voting calls into mediacores; we don't want to hold the monitor while we
-    // do that.
-    // mon.Exit();
+    rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mCurrentItem = item;
+
+    rv = item->GetContentSrc(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    uri = aURI;
+
+    mCurrentItem = nsnull;
+    mCurrentItemIndex = 0;
   }
 
-  nsCOMPtr<sbIMediacoreVotingChain> votingChain;
-  rv = voting->VoteWithURI(uri, getter_AddRefs(votingChain));
+  voting = do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool validChain = PR_FALSE;
-  rv = votingChain->GetValid(&validChain);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(voting, NS_ERROR_UNEXPECTED);
 
-  // Not a valid chain, we'll have to skip this item.
-  if(!validChain) {
-    // XXXAus: Skip item later, for now fail.
-    return NS_ERROR_UNEXPECTED;
-  }
 
+  // declare chain in this scope
   nsCOMPtr<nsIArray> chain;
-  rv = votingChain->GetMediacoreChain(getter_AddRefs(chain));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Voting calls into mediacores; we don't want to hold the monitor while we
+  // do that.
+  // mon.Exit();
+  {
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+
+    nsCOMPtr<sbIMediacoreVotingChain> votingChain;
+    rv = voting->VoteWithURI(uri, getter_AddRefs(votingChain));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool validChain = PR_FALSE;
+    rv = votingChain->GetValid(&validChain);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Not a valid chain, we'll have to skip this item.
+    if(!validChain) {
+      // XXXAus: Skip item later, for now fail.
+      return NS_ERROR_UNEXPECTED;
+    }
+
+    rv = votingChain->GetMediacoreChain(getter_AddRefs(chain));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Reacquire the monitor now that we're done with voting.
   // mon.Enter();
-  {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mChain = chain;
+  mChainIndex = 0;
 
-    mChain = chain;
-    mChainIndex = 0;
-
-    // Remove listener from old core.
-    if(mCore) {
-      // But only remove it if we're not going to use the same core
-      // to play again.
-      nsCOMPtr<sbIMediacore> nextCore =
-        do_QueryElementAt(chain, mChainIndex, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if(mCore != nextCore) {
-        nsCOMPtr<sbIMediacoreEventTarget> eventTarget =
-          do_QueryInterface(mCore, &rv);
-
-        rv = eventTarget->RemoveListener(this);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING ||
-         mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
-         mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
-
-        if(mCore == nextCore) {
-          // Remember the fact that we called stop so we ignore the stop
-          // event coming from the core.
-          mStopTriggeredBySequencer = PR_TRUE;
-        }
-
-        // Grip.
-        nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-        
-        // mon.Exit();
-        {
-          mozilla::ReentrantMonitorAutoExit mon(mMonitor);
-
-        // If we played an Item, update it. If we played an url (no Item in Library), we skip this part.
-        if (lastItem){
-          rv = UpdateLastPositionProperty(lastItem, nsnull);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-        rv = playbackControl->Stop();
-        NS_ASSERTION(NS_SUCCEEDED(rv),
-          "Stop returned failure. Attempting to recover.");
-
-        }
-        // mon.Enter();
-      }
-    }
-
-    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl =
+  // Remove listener from old core.
+  if(mCore) {
+    // But only remove it if we're not going to use the same core
+    // to play again.
+    nsCOMPtr<sbIMediacore> nextCore =
       do_QueryElementAt(chain, mChainIndex, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    mPlaybackControl = playbackControl;
 
-    mCore = do_QueryElementAt(chain, mChainIndex, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(mCore != nextCore) {
+      nsCOMPtr<sbIMediacoreEventTarget> eventTarget =
+        do_QueryInterface(mCore, &rv);
 
-    // Fire before track change event
-    if(item) {
-      nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
-      NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
-
-      nsCOMPtr<sbIMediacoreEvent> event;
-      rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE,
-                                         nsnull,
-                                         variant,
-                                         mCore,
-                                         getter_AddRefs(event));
+      rv = eventTarget->RemoveListener(this);
       NS_ENSURE_SUCCESS(rv, rv);
+    }
 
-      sbScopedBoolToggle canAbort(&mCanAbort);
+    if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING ||
+       mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+       mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
 
-      rv = DispatchMediacoreEvent(event);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if(mCore == nextCore) {
+        // Remember the fact that we called stop so we ignore the stop
+        // event coming from the core.
+        mStopTriggeredBySequencer = PR_TRUE;
+      }
 
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      
       // mon.Exit();
       {
         mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
-        // Process any pending abort requests
-        if(HandleAbort()) {
-          return NS_ERROR_ABORT;
-        }
+      // If we played an Item, update it. If we played an url (no Item in Library), we skip this part.
+      if (lastItem){
+        rv = UpdateLastPositionProperty(lastItem, nsnull);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      rv = playbackControl->Stop();
+      NS_ASSERTION(NS_SUCCEEDED(rv),
+        "Stop returned failure. Attempting to recover.");
+
       }
       // mon.Enter();
     }
+  }
 
-    // Add listener to new core.
-    nsCOMPtr<sbIMediacoreEventTarget> eventTarget =
-      do_QueryInterface(mCore, &rv);
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl =
+    do_QueryElementAt(chain, mChainIndex, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mPlaybackControl = playbackControl;
+
+  mCore = do_QueryElementAt(chain, mChainIndex, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Fire before track change event
+  if(item) {
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
+    NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE,
+                                       nsnull,
+                                       variant,
+                                       mCore,
+                                       getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = eventTarget->AddListener(this);
+    sbScopedBoolToggle canAbort(&mCanAbort);
+
+    rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mPlaybackControl->SetUri(uri);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-  #ifdef PR_LOGGING
+    // mon.Exit();
     {
-      nsCString spec;
-      rv = uri->GetSpec(spec);
-      LOG(("[sbMediacoreSequencer] -- Attempting to play %s",
-            spec.BeginReading()));
+      mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+
+      // Process any pending abort requests
+      if(HandleAbort()) {
+        return NS_ERROR_ABORT;
+      }
     }
-  #endif
+    // mon.Enter();
+  }
 
-    nsCOMPtr<sbPIMediacoreManager> privateMediacoreManager =
-      do_QueryReferent(mMediacoreManager, &rv);
+  // Add listener to new core.
+  nsCOMPtr<sbIMediacoreEventTarget> eventTarget =
+    do_QueryInterface(mCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = eventTarget->AddListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPlaybackControl->SetUri(uri);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef PR_LOGGING
+  {
+    nsCString spec;
+    rv = uri->GetSpec(spec);
+    LOG(("[sbMediacoreSequencer] -- Attempting to play %s",
+          spec.BeginReading()));
+  }
+#endif
+
+  nsCOMPtr<sbPIMediacoreManager> privateMediacoreManager =
+    do_QueryReferent(mMediacoreManager, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = privateMediacoreManager->SetPrimaryCore(mCore);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mCore->SetSequencer(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = StartSequenceProcessor();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateURLDataRemotes(uri);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(item) {
+    rv = SetMetadataDataRemotesFromItem(item);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = privateMediacoreManager->SetPrimaryCore(mCore);
+    // Fire track change event
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
+    NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE,
+                                       nsnull,
+                                       variant,
+                                       mCore,
+                                       getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mCore->SetSequencer(this);
+    rv = DispatchMediacoreEvent(event, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = StartSequenceProcessor();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = UpdateURLDataRemotes(uri);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if(item) {
-      rv = SetMetadataDataRemotesFromItem(item);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Fire track change event
-      nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
-      NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
-
-      nsCOMPtr<sbIMediacoreEvent> event;
-      rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE,
-                                         nsnull,
-                                         variant,
-                                         mCore,
-                                         getter_AddRefs(event));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = DispatchMediacoreEvent(event, PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
   }
 
   return NS_OK;
@@ -1981,19 +1939,17 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 PRBool
 sbMediacoreSequencer::HandleAbort()
 {
-  {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-    if(mShouldAbort) {
-      mShouldAbort = PR_FALSE;
+  if(mShouldAbort) {
+    mShouldAbort = PR_FALSE;
 
-      // mon.Exit();
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
-      nsresult rv = Stop(PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, PR_FALSE);
+    nsresult rv = Stop(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-      return PR_TRUE;
-    }
+    return PR_TRUE;
   }
 
   return PR_FALSE;
@@ -2832,68 +2788,66 @@ sbMediacoreSequencer::Play()
 {
   nsresult rv;
 
-  {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-    // No sequence, no error, but return right away.
-    if(!mSequence.size()) {
-      return NS_OK;
-    }
-
-    mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
-    mErrorCount = 0;
-    mIsWaitingForPlayback = PR_TRUE;
-
-    // Always reset this data remote, otherwise the video window may get into
-    // an unexpected state and not get shown ever again.
-    rv = ResetPlayingVideoDataRemote();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = ResetMetadataDataRemotes();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // never call setup holding the monitor!
-    // mon.Exit();
-  }
-
-  rv = Setup();
-  if(rv == NS_ERROR_ABORT) {
-    NS_WARNING("Someone aborted playback of the next track.");
+  // No sequence, no error, but return right away.
+  if(!mSequence.size()) {
     return NS_OK;
   }
+
+  mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
+  mErrorCount = 0;
+  mIsWaitingForPlayback = PR_TRUE;
+
+  // Always reset this data remote, otherwise the video window may get into
+  // an unexpected state and not get shown ever again.
+  rv = ResetPlayingVideoDataRemote();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // mon.Enter();
+  rv = ResetMetadataDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // never call setup holding the monitor!
   {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
-
-    rv = UpdatePlayStateDataRemotes();
+    // mon.Exit();
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+    rv = Setup();
+    if(rv == NS_ERROR_ABORT) {
+      NS_WARNING("Someone aborted playback of the next track.");
+      return NS_OK;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
-
   }
-  // mon.Exit();
 
-  rv = StartPlayback();
+  // mon.Enter();
+  rv = UpdatePlayStateDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if(NS_FAILED(rv)) {
-    // mon.Enter();
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  {
+    mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+    // mon.Exit();
+    rv = StartPlayback();
 
-    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-    mIsWaitingForPlayback = PR_FALSE;
+    if(NS_FAILED(rv)) {
+      // mon.Enter();
+      mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-    rv = UpdatePlayStateDataRemotes();
-    NS_ENSURE_SUCCESS(rv, rv);
+      mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+      mIsWaitingForPlayback = PR_FALSE;
 
-    return rv;
+      rv = UpdatePlayStateDataRemotes();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return rv;
+    }
   }
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::Stop(PRBool aNotFromUserAction) {
-
+sbMediacoreSequencer::Stop(PRBool aNotFromUserAction)
+{
   mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
   mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -2951,8 +2905,8 @@ sbMediacoreSequencer::Stop(PRBool aNotFromUserAction) {
 
 NS_IMETHODIMP
 sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
-                                                 PRInt32 aResult) {
-
+                                                 PRInt32 aResult)
+{
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
@@ -3065,7 +3019,6 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
 NS_IMETHODIMP
 sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
 {
-
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   PRBool disableNext;
@@ -3501,272 +3454,277 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         NS_ConvertUTF16toUTF8(coreName).BeginReading(), eventType));
 #endif
 
-  {
-    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
-    if(mCore != core) {
-      return NS_OK;
-    }
 
-    if(!(eventType == sbIMediacoreEvent::STREAM_STOP &&
-         mStopTriggeredBySequencer)) {
-      nsCOMPtr<sbIMediacoreEventTarget> target =
-        do_QueryReferent(mMediacoreManager, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool dispatched;
-      rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+  mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  if(mCore != core) {
+    return NS_OK;
   }
-  // mon.Exit();
- 
-  switch(eventType) {
 
-    // Stream Events
-    case sbIMediacoreEvent::STREAM_START: {
-      // mon.Enter();
-      {
-        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  if(!(eventType == sbIMediacoreEvent::STREAM_STOP &&
+       mStopTriggeredBySequencer)) {
+    nsCOMPtr<sbIMediacoreEventTarget> target =
+      do_QueryReferent(mMediacoreManager, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-        if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING &&
-           mIsWaitingForPlayback) {
-          mErrorCount = 0;
-          mIsWaitingForPlayback = PR_FALSE;
+    PRBool dispatched;
+    rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  {
+    mozilla::ReentrantMonitorAutoExit exmon(mMonitor);
+    // mon.Exit(); 
+    switch(eventType) {
+
+      // Stream Events
+      case sbIMediacoreEvent::STREAM_START: {
+        // mon.Enter();
+        {
+          mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+          if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING &&
+             mIsWaitingForPlayback) {
+            mErrorCount = 0;
+            mIsWaitingForPlayback = PR_FALSE;
+            mStopTriggeredBySequencer = PR_FALSE;
+            mStatus = sbIMediacoreStatus::STATUS_PLAYING;
+
+            LOG(("[sbMediacoreSequencer] - Was waiting for playback, playback now started."));
+          }
+
+          if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
+             mStatus = sbIMediacoreStatus::STATUS_PLAYING;
+          }
+
+          if(mCoreWillHandleNext) {
+            sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
+            nsresult rv = Next(PR_TRUE);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+        }
+        // mon.Exit();
+
+        rv = UpdatePlayStateDataRemotes();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if(!mSeenPlaying) {
+          mSeenPlaying = PR_TRUE;
+
+          rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_TRUE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        // we may wish to restore the video position
+        if (mResumePlaybackPosition) {
+          NS_ENSURE_STATE(mCurrentItem);
+          NS_NAMED_LITERAL_STRING(PROPERTY_LAST_POSITION,
+                                  SB_PROPERTY_LASTPLAYPOSITION);
+          nsString lastPositionStr;
+          rv = mCurrentItem->GetProperty(PROPERTY_LAST_POSITION, lastPositionStr);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = mCurrentItem->SetProperty(PROPERTY_LAST_POSITION, SBVoidString());
+          NS_ENSURE_SUCCESS(rv, rv);
+          PRUint64 lastPosition = nsString_ToUint64(lastPositionStr);
+          if (lastPosition > 0) {
+            TRACE(("%s[%p] - seeking to %llu (%s)",
+                   __FUNCTION__, this, lastPosition,
+                   NS_LossyConvertUTF16toASCII(lastPositionStr).get()));
+            nsRefPtr<sbRunnableMethod1<sbMediacoreSequencer, nsresult, PRUint64> > runnable;
+            rv = sbRunnableMethod1<sbMediacoreSequencer, nsresult, PRUint64>
+                                  ::New(getter_AddRefs(runnable),
+                                        this,
+                                        &sbMediacoreSequencer::SeekCallback,
+                                        NS_ERROR_FAILURE,
+                                        lastPosition);
+            NS_ENSURE_SUCCESS(rv, rv);
+            rv = NS_DispatchToCurrentThread(runnable);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+        }
+      }
+      break;
+
+      case sbIMediacoreEvent::STREAM_PAUSE: {
+
+        // mon.Enter();
+        {
+          mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+          mStatus = sbIMediacoreStatus::STATUS_PAUSED;
           mStopTriggeredBySequencer = PR_FALSE;
-          mStatus = sbIMediacoreStatus::STATUS_PLAYING;
-
-          LOG(("[sbMediacoreSequencer] - Was waiting for playback, playback now started."));
         }
+        // mon.Exit();
 
-        if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
-           mStatus = sbIMediacoreStatus::STATUS_PLAYING;
-        }
+        rv = UpdatePlayStateDataRemotes();
+        NS_ENSURE_SUCCESS(rv, rv);
 
-        if(mCoreWillHandleNext) {
-          sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
-          nsresult rv = Next(PR_TRUE);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-      // mon.Exit();
-
-      rv = UpdatePlayStateDataRemotes();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if(!mSeenPlaying) {
-        mSeenPlaying = PR_TRUE;
-
-        rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_TRUE);
+        rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
+      break;
 
-      // we may wish to restore the video position
-      if (mResumePlaybackPosition) {
-        NS_ENSURE_STATE(mCurrentItem);
-        NS_NAMED_LITERAL_STRING(PROPERTY_LAST_POSITION,
-                                SB_PROPERTY_LASTPLAYPOSITION);
-        nsString lastPositionStr;
-        rv = mCurrentItem->GetProperty(PROPERTY_LAST_POSITION, lastPositionStr);
+      case sbIMediacoreEvent::STREAM_END: {
+        rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
-        rv = mCurrentItem->SetProperty(PROPERTY_LAST_POSITION, SBVoidString());
-        NS_ENSURE_SUCCESS(rv, rv);
-        PRUint64 lastPosition = nsString_ToUint64(lastPositionStr);
-        if (lastPosition > 0) {
-          TRACE(("%s[%p] - seeking to %llu (%s)",
-                 __FUNCTION__, this, lastPosition,
-                 NS_LossyConvertUTF16toASCII(lastPositionStr).get()));
-          nsRefPtr<sbRunnableMethod1<sbMediacoreSequencer, nsresult, PRUint64> > runnable;
-          rv = sbRunnableMethod1<sbMediacoreSequencer, nsresult, PRUint64>
-                                ::New(getter_AddRefs(runnable),
-                                      this,
-                                      &sbMediacoreSequencer::SeekCallback,
-                                      NS_ERROR_FAILURE,
-                                      lastPosition);
-          NS_ENSURE_SUCCESS(rv, rv);
-          rv = NS_DispatchToCurrentThread(runnable);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
 
-    }
-    break;
+        // mon.Enter();
+        {
+          mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+          /* Track done, continue on to the next, if possible. */
+          if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
+             !mIsWaitingForPlayback) {
 
-    case sbIMediacoreEvent::STREAM_PAUSE: {
+            mCoreWillHandleNext = PR_FALSE;
 
-      // mon.Enter();
-      {
-        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
-        mStatus = sbIMediacoreStatus::STATUS_PAUSED;
-        mStopTriggeredBySequencer = PR_FALSE;
-      }
-      // mon.Exit();
+            sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
+            rv = Next(PR_TRUE);
 
-      rv = UpdatePlayStateDataRemotes();
-      NS_ENSURE_SUCCESS(rv, rv);
+            if(NS_FAILED(rv) ||
+               mSequence.empty()) {
+                // mon.Exit();
+                {
+                  mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+                  Stop(PR_TRUE);
+                }
+                // mon.Enter();
+            }
 
-      rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    break;
-
-    case sbIMediacoreEvent::STREAM_END: {
-      rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // mon.Enter();
-      {
-        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
-        /* Track done, continue on to the next, if possible. */
-        if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
-           !mIsWaitingForPlayback) {
-
-          mCoreWillHandleNext = PR_FALSE;
-
-          sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
-          rv = Next(PR_TRUE);
-
-          if(NS_FAILED(rv) ||
-             mSequence.empty()) {
-              // mon.Exit();
-              {
-                mozilla::ReentrantMonitorAutoExit mon(mMonitor);
-                Stop(PR_TRUE);
-              }
-              // mon.Enter();
+            LOG(("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence."));
           }
-
-          LOG(("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence."));
         }
+        // mon.Exit();
       }
-      // mon.Exit();
-    }
-    break;
+      break;
 
-    case sbIMediacoreEvent::STREAM_BEFORE_STOP: {
-      nsCOMPtr<nsIVariant> data;
-      rv = aEvent->GetData(getter_AddRefs(data));
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_STATE(data);
-      rv = UpdateLastPositionProperty(mCurrentItem, data);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    break;
+      case sbIMediacoreEvent::STREAM_BEFORE_STOP: {
+        nsCOMPtr<nsIVariant> data;
+        rv = aEvent->GetData(getter_AddRefs(data));
+        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_STATE(data);
+        rv = UpdateLastPositionProperty(mCurrentItem, data);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      break;
 
-    case sbIMediacoreEvent::STREAM_STOP: {
-      // mon.Enter();
-      {
-        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+      case sbIMediacoreEvent::STREAM_STOP: {
+        // mon.Enter();
+        {
+          mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
 
-        if(!mStopTriggeredBySequencer) {
-          LOG(("[sbMediacoreSequencer] - Hard stop requested."));
-          /* If we're explicitly stopped, don't continue to the next track,
-          * just clean up... */
-          mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-          // mon.Exit();
-          {
-            mozilla::ReentrantMonitorAutoExit mon(mMonitor);
-
-            rv = StopSequenceProcessor();
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = UpdatePlayStateDataRemotes();
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = ResetMetadataDataRemotes();
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-          // mon.Enter();
-          
-          if(mSeenPlaying) {
-            mSeenPlaying = PR_FALSE;
+          if(!mStopTriggeredBySequencer) {
+            LOG(("[sbMediacoreSequencer] - Hard stop requested."));
+            /* If we're explicitly stopped, don't continue to the next track,
+            * just clean up... */
+            mStatus = sbIMediacoreStatus::STATUS_STOPPED;
             // mon.Exit();
             {
               mozilla::ReentrantMonitorAutoExit mon(mMonitor);
 
-              rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+              rv = StopSequenceProcessor();
+              NS_ENSURE_SUCCESS(rv, rv);
+
+              rv = UpdatePlayStateDataRemotes();
+              NS_ENSURE_SUCCESS(rv, rv);
+
+              rv = ResetMetadataDataRemotes();
+              NS_ENSURE_SUCCESS(rv, rv);
+
+              rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
               NS_ENSURE_SUCCESS(rv, rv);
             }
             // mon.Enter();
+            
+            if(mSeenPlaying) {
+              mSeenPlaying = PR_FALSE;
+              // mon.Exit();
+              {
+                mozilla::ReentrantMonitorAutoExit mon(mMonitor);
+
+                rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+                NS_ENSURE_SUCCESS(rv, rv);
+              }
+              // mon.Enter();
+            }
+          }
+          else {
+            mStopTriggeredBySequencer = PR_FALSE;
           }
         }
-        else {
-          mStopTriggeredBySequencer = PR_FALSE;
+        // mon.Exit();
+      }
+      break;
+
+      case sbIMediacoreEvent::STREAM_HAS_VIDEO: {
+        rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      break;
+
+      case sbIMediacoreEvent::BUFFERING: {
+        PRBool buffering = PR_FALSE;
+
+        rv = mDataRemoteFaceplateBuffering->GetBoolValue(&buffering);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if(!buffering) {
+          rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_TRUE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        if(!mSeenPlaying) {
+          mSeenPlaying = PR_TRUE;
+
+          rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_TRUE);
+          NS_ENSURE_SUCCESS(rv, rv);
         }
       }
-      // mon.Exit();
-    }
-    break;
+      break;
 
-    case sbIMediacoreEvent::STREAM_HAS_VIDEO: {
-      rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    break;
+      // Error Events
+      case sbIMediacoreEvent::ERROR_EVENT: {
+        // mon.Enter();
+        {
+          mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+          mStopTriggeredBySequencer = PR_FALSE;
+        }
+        // mon.Exit();
 
-    case sbIMediacoreEvent::BUFFERING: {
-      PRBool buffering = PR_FALSE;
-
-      rv = mDataRemoteFaceplateBuffering->GetBoolValue(&buffering);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if(!buffering) {
-        rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_TRUE);
+        rv = HandleErrorEvent(aEvent);
         NS_ENSURE_SUCCESS(rv, rv);
       }
+      break;
 
-      if(!mSeenPlaying) {
-        mSeenPlaying = PR_TRUE;
+      // Misc events
+      case sbIMediacoreEvent::DURATION_CHANGE: {
+      }
+      break;
 
-        rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_TRUE);
+      case sbIMediacoreEvent::METADATA_CHANGE: {
+        rv = HandleMetadataEvent(aEvent);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-    }
-    break;
+      break;
 
-    // Error Events
-    case sbIMediacoreEvent::ERROR_EVENT: {
-      // mon.Enter();
-      {
-        mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
-        mStopTriggeredBySequencer = PR_FALSE;
+      case sbIMediacoreEvent::MUTE_CHANGE: {
+        rv = HandleMuteChangeEvent(aEvent);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
-      // mon.Exit();
+      break;
 
-      rv = HandleErrorEvent(aEvent);
-      NS_ENSURE_SUCCESS(rv, rv);
+      case sbIMediacoreEvent::VOLUME_CHANGE: {
+        rv = HandleVolumeChangeEvent(aEvent);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      break;
+
+      case sbIMediacoreEvent::STREAM_BEFORE_START: {
+        LOG(("[sbMediacoreSequencer] - Got STREAM_BEFORE_START event from mediacore"));
+      }
+      break;
+      default:;
     }
-    break;
-
-    // Misc events
-    case sbIMediacoreEvent::DURATION_CHANGE: {
-    }
-    break;
-
-    case sbIMediacoreEvent::METADATA_CHANGE: {
-      rv = HandleMetadataEvent(aEvent);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    break;
-
-    case sbIMediacoreEvent::MUTE_CHANGE: {
-      rv = HandleMuteChangeEvent(aEvent);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    break;
-
-    case sbIMediacoreEvent::VOLUME_CHANGE: {
-      rv = HandleVolumeChangeEvent(aEvent);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    break;
-
-    default:;
   }
 
   return NS_OK;
