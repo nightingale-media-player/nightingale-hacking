@@ -78,8 +78,6 @@ sbMediacoreEvent::Init(PRUint32 aType,
 {
   TRACE(("sbMediacoreEvent[0x%x] - Init", this));
 
-  mozilla::MutexAutoLock lock(mLock);
-
   mType = aType;
   mError = aError;
   mData = aData;
