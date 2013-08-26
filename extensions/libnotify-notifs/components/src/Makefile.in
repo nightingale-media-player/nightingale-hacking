@@ -50,7 +50,7 @@ CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/libnotify-notifs/components/public \
                       $(NULL)
 
 CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
-                    $(UNITY_CFLAGS) \
+                    $(LNTFY_CFLAGS) \
                     $(NULL)
 
 # Build a component (ie: a dynamically loadable module)
