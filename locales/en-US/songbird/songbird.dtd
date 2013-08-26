@@ -11,7 +11,7 @@
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
 <!ENTITY menu.mac.exit.key              "Q">
 <!ENTITY menu.mac.exit.modifiers        "accel">
-<!ENTITY menu.mac.preferences           "Preferences…">
+<!ENTITY menu.mac.preferences           "Preferences">
 <!ENTITY menu.mac.preferences.key       ",">
 <!ENTITY menu.mac.preferences.modifiers "accel">
 <!ENTITY menu.mac.services              "Services">
@@ -25,7 +25,7 @@
 <!ENTITY menu.mac.minimize.key          "M">
 
 <!ENTITY menu.file              "File" >
-<!ENTITY menu.file.new          "New Playlist" >
+<!ENTITY menu.file.new          "New Playlist…" >
 <!ENTITY menu.file.smart        "New Smart Playlist…" >
 <!ENTITY menu.file.remote       "New Subscription…" >
 <!ENTITY menu.file.podcast      "New Podcast…" >
@@ -35,7 +35,7 @@
 <!ENTITY menu.file.library      "Import a Library…" >
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
-<!ENTITY menu.file.metadata     "View Metadata…">
+<!ENTITY menu.file.metadata     "View Metadata">
 <!ENTITY menu.file.scan         "Import Media…" >
 <!ENTITY menu.file.exit         "Exit" >
 
@@ -51,7 +51,7 @@
 <!ENTITY menu.edit.findagain   "Find Again" >
 
 <!-- Linux edit menu -->
-<!ENTITY menu.linux.preferences           "Preferences…">
+<!ENTITY menu.linux.preferences           "Preferences">
 <!ENTITY menu.linux.preferences.accesskey "N">
 
 <!ENTITY menu.controls      "Controls" >
@@ -85,18 +85,18 @@
 <!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
-<!ENTITY menu.help.homepage "Songbird Website" >
-<!ENTITY menu.help.bugz     "Report a Bug" >
+<!ENTITY menu.help.homepage "&brandShortName; Website" >
+<!ENTITY menu.help.bugz     "Report a Bug…" >
 <!ENTITY menu.help.topics   "Help Topics" >
 <!ENTITY menu.help.keyboard "Keyboard Shortcuts">
-<!ENTITY menu.help.about    "About &brandShortName;…" >
+<!ENTITY menu.help.about    "About &brandShortName;" >
 
 <!ENTITY menu.equalizer     "Equalizer…" >
-<!ENTITY menu.preferences   "Options…" >
-<!ENTITY menu.extensions    "Add-ons…" >
+<!ENTITY menu.preferences   "Options" >
+<!ENTITY menu.extensions    "Add-ons" >
 <!ENTITY menu.clearprivatedata "Clear Private Data…">
 <!ENTITY menu.errorconsole "Error Console">
-<!ENTITY menu.downloadmgr   "File Downloads…" >
+<!ENTITY menu.downloadmgr   "File Downloads" >
 <!ENTITY menu.switchplayercontrols  "Player Controls" >
 <!ENTITY menu.controllerontop       "Display at Top">
 <!ENTITY menu.controlleronbottom    "Display at Bottom">
@@ -212,6 +212,7 @@
 <!ENTITY equalizer.band8.label    "8K" >
 <!ENTITY equalizer.band9.label    "16K" >
 <!ENTITY equalizer.preset.custom      "Custom" >
+<!ENTITY equalizer.preset.flat        "Flat" >
 <!ENTITY equalizer.preset.rock        "Rock" >
 <!ENTITY equalizer.preset.soft_rock   "Soft Rock" >
 <!ENTITY equalizer.preset.techno      "Techno" >
@@ -545,11 +546,11 @@
 <!ENTITY device.tools.update_firmware.current_firmware.title "Current firmware version:">
 
 <!ENTITY device.tools.restore_device.title "Restore Device">
-<!ENTITY device.tools.restore_device.description 'Restoring your device to factory settings will erase all media on the device, as well as restoring the factory firmware and settings.'>
+<!ENTITY device.tools.restore_device.description "Restoring your device to factory settings will erase all media on the device, as well as restoring the factory firmware and settings.">
 <!ENTITY device.tools.restore_device.label "Restore device to factory settings">
 
 <!ENTITY device.tools.format_device.title "Format Device">
-<!ENTITY device.tools.format_device.description 'Formatting your device will erase all media on the device.'>
+<!ENTITY device.tools.format_device.description "Formatting your device will erase all media on the device.">
 <!ENTITY device.tools.format_device.label "Format device">
 <!ENTITY device.tools.format_volume.button.label "Format">
 
@@ -654,12 +655,6 @@
 <!ENTITY first_run.import_media.radio.dont_import.label      "Do not import media">
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
 <!ENTITY first_run.import_media.scan_directories.watch.label "Watch this directory for changes">
-
-<!-- DLNA How To page terms -->
-<!ENTITY first_run.DLNA.name "Songbird Media Server">
-<!ENTITY first_run.DLNA.header.label "Media Sharing Add-on">
-<!ENTITY first_run.DLNA.description "The &first_run.DLNA.name; allows you to share your &brandShortName; library (music and videos) with selected devices in your home network.">
-<!ENTITY first_run.DLNA.point "To turn Media Sharing on or off, open the dialog by clicking on the Media Sharing icon (circled) in the &brandShortName; statusbar.">
 
 <!-- First-run install add-ons entities. -->
 <!ENTITY first_run.install_add_ons.title "Downloading Add-ons">
@@ -802,14 +797,14 @@
 <!ENTITY cdrip.lookup.track_name "Title">
 
 <!-- CD Rip Pref Pane entities -->
-<!ENTITY cdrip.prefpane.label                 "CD Rip">
-<!ENTITY cdrip.prefpane.format                "Format">
-<!ENTITY cdrip.prefpane.quality               "Quality">
-<!ENTITY cdrip.prefpane.quality.units.kbps    "kbps">
-<!ENTITY cdrip.prefpane.eject_after_rip       "When CD Rip is completed eject CD">
-<!ENTITY cdrip.prefpane.soundalert_after_rip  "When CD Rip is completed play system alert sound">
-<!ENTITY cdrip.prefpane.providers.title       "CD Lookup Provider">
-<!ENTITY cdrip.prefpane.quality_desc          "A higher kbps quality setting will result in higher quality audio and a larger file size.">
+<!ENTITY cdrip.prefpane.label "CD Rip">
+<!ENTITY cdrip.prefpane.format "Format">
+<!ENTITY cdrip.prefpane.quality "Quality">
+<!ENTITY cdrip.prefpane.quality.units.kbps "kbps">
+<!ENTITY cdrip.prefpane.eject_after_rip "When CD Rip is completed eject CD">
+<!ENTITY cdrip.prefpane.soundalert_after_rip "When CD Rip is completed play system alert sound">
+<!ENTITY cdrip.prefpane.providers.title "CD Lookup Provider">
+<!ENTITY cdrip.prefpane.quality_desc "A higher kbps quality setting will result in higher quality audio and a larger file size.">
 
 <!-- CD Rip Media View entities -->
 <!ENTITY cdrip.mediaview.cd_rip_settings_label     "CD Rip Settings">
@@ -857,6 +852,5 @@
 <!ENTITY playqueue.inprogress "Adding tracks">
 
 <!ENTITY mediamanagement.removed.dialog.title "Media Management Notice">
-<!ENTITY mediamanagement.removed.dialog.text.line1 "Media Management has been removed from Songbird as of version 1.10." >
+<!ENTITY mediamanagement.removed.dialog.text.line1 "Media Management has been removed from &brandShortName; as of version 1.10." >
 <!ENTITY mediamanagement.removed.dialog.text.line2 "This change is part of an effort to simplify our product and provide an easier-to-use experience." >
-
