@@ -69,9 +69,7 @@ lnNotifs = {
         this.mmService.addListener({
             onMediacoreEvent: function(event) {
                 // Get mediacore event
-                var item = event.data;
                 if (that.mmService.sequencer.view == null) return;
-                var list = that.mmService.sequencer.view.mediaList;
 
                 switch (event.type) {
                     case Ci.sbIMediacoreEvent.TRACK_CHANGE:
