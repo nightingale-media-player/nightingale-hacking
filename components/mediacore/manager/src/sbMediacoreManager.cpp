@@ -1454,6 +1454,11 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+  if (mFactories.IsInitialized()) {
+    LOG(("sbMediacoreManager[0x%x] --- mFactories is initialized", this));
+  } else {
+    LOG(("sbMediacoreManager[0x%x] --- mFactories is NOT initialized", this));
+  }
   mFactories.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayISupportsKey,
                            mutableArray.get());
 

@@ -73,7 +73,7 @@ public:
 protected:
   virtual ~sbMediacoreEvent();
 
-  mozilla::Mutex  mLock;
+  mozilla::Mutex mLock;
   PRUint32 mType;
 
   nsCOMPtr<sbIMediacoreError> mError;
