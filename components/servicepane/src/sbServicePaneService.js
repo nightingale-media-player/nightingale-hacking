@@ -646,6 +646,24 @@ ServicePaneService.prototype = {
   className: "ServicePaneService",
   contractID: "@songbirdnest.com/servicepane/service;1",
 
+  _xpcom_categories: [
+    {
+      category: "quit-application"
+    },
+    {
+      category: "service-pane",
+      service: true
+    },
+    {
+      category: "xpcom-category-entry-added",
+      service: true
+    },
+    {
+      category: "xpcom-category-entry-removed",
+      service: true
+    }
+  ],
+
   _modules: null,
   _modulesByContractId: null,
   _categoryEntriesCache: null,
@@ -688,7 +706,7 @@ ServicePaneService.prototype = {
     if (contractId in this._modulesByContractId)
       return;
 
-    LOG("Trying to load service pane module: " + contractId);
+    LOG("Trying to load service pane module: " + contractId + ", " + entry);
     try {
       let module = Cc[contractId].getService(Ci.sbIServicePaneModule);
       module.servicePaneInit(this);

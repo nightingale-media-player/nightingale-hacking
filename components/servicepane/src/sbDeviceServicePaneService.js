@@ -99,8 +99,9 @@ sbDeviceServicePane.prototype.contractID =
 sbDeviceServicePane.prototype._xpcom_categories = [
   {
     category: 'service-pane',
-    entry: 'device', // we want this to load first
-    value: CONTRACTID
+    entry: 'DeviceServicePaneService', // we want this to load first
+    value: CONTRACTID,
+    service: true
   }];
 
 //////////////////////////

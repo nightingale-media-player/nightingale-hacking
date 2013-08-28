@@ -439,9 +439,9 @@ category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/
 # category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
 # category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
 # REGISTERED IN MODULE # category songbird-library-loader SongbirdLocalDatabaseLibraryLoader @songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1
-category songbird-library-manager-before-shutdown LibraryServicePaneService service,@songbirdnest.com/servicepane/library;1
+category songbird-library-manager-before-shutdown LibraryServicePaneService @songbirdnest.com/servicepane/library;1
 category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
 category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
-category xpcom-category-entry-added ServicePaneService service,@songbirdnest.com/servicepane/service;1
-category xpcom-category-entry-removed ServicePaneService service,@songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
 # category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
