@@ -176,10 +176,10 @@
        label="&saveImageCmd.label;"
        accesskey="&saveImageCmd.accesskey;"
        oncommand="gContextMenu.saveImage();"/>
-    <menuitem id="context-blockimage"
+<!--     <menuitem id="context-blockimage"
        type="checkbox"
        accesskey="&blockImageCmd.accesskey;"
-       oncommand="gContextMenu.toggleImageBlocking(this.getAttribute('checked') == 'true');"/>
+       oncommand="gContextMenu.toggleImageBlocking(this.getAttribute('checked') == 'true');"/> -->
     <menuitem id="context-undo"
        label="&undoCmd.label;"
        accesskey="&undoCmd.accesskey;"
