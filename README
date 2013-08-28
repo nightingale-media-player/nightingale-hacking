@@ -37,13 +37,14 @@ Ubuntu and Debian users should note you'll need:
 libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
-More information can be gleaned from the Songbird wiki:
+Also note that because of Ubuntu and Debian's incompatible taglib,
+you'll want to use 
 
-Windows: http://tinyurl.com/3jfo6lv
-Mac: http://tinyurl.com/3bwg8e3
-Linux: http://tinyurl.com/3kh3gk8
+ac_add_options --with-taglib-source=packaged
 
-and also on the Nightingale wiki:
+option to your nightingale.config
+
+More information can be gleaned from the Nightingale wiki:
 
 Windows: http://tinyurl.com/ce3anjo
 Mac: http://tinyurl.com/ckca4no
@@ -54,7 +55,7 @@ Configure Options:
 ========================================================================
 
   ac_add_options (option here)
-  
+  --with-taglib-source=[system,packaged] use system taglib or not
   --enable-debug                        whether or not to compile debug
   --enable-jars                         whether or not to create jars
   --enable-installer                    whether or not to make installer
@@ -65,6 +66,22 @@ Configure Options:
   --enable-breakpad                     whether or not to enable breakpad
   --enable-static                       single-component static build
   --enable-compiler-environment-checks  only allow supported compilers
+  --enable-libnotify                    Optionally enable libnotify
+  --enable-unity-integration            Optional support for Unity's 
+                                        sound menu
+
+========================================================================
+Notes for Configurable Options:
+========================================================================
+
+  libnotify support
+    dependencies: libnotify-dev
+                  libgtk2.0-dev
+
+  Unity sound menu integration
+    dependencies: libunity-dev
+                  libnotify-dev
+                  libgtk2.0-dev
 
 ========================================================================
 Contributions:
@@ -89,6 +106,10 @@ Contributors:
 * Dirk Steinmetz - rsjtdrjgfuzkfg
 * Antoine Turmel - GeekShadow
 * Mark Yen - Mook
+* Akil Krishnan - LIB53
+* Alexander Korenev - LookingMan
+* John Murray - johnmurrayvi
+* David Rogers - Ezekial1000
 
 ========================================================================
 REMINDER!!!!

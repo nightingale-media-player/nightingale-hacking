@@ -1,3 +1,5 @@
+*~
+*.anjuta*
 dependencies/linux-*
 .DS_Store
 dependencies/vendor
@@ -27,3 +29,4 @@ config.log
 conftest.o
 confdefs.h
 thumbs.db
+.directory

@@ -51,8 +51,6 @@
   <implementation>
 
     <constructor>
-        /* outside CDATA to get localized entity */
-        this.setAttribute("tooltiptext", "&tooltip.control.volume;");
       <![CDATA[
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
         this.className += " sb-player-volume-slider";
@@ -90,15 +88,17 @@
         // The slider value cannot be set correctly until the boxObject
         // dimensions are set. This waits until the window is loaded
         var self = this;
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function playerControls__initVolume() {
             self.value = parseFloat(self.remote_volume.stringValue) * self.sliderScale;
             // initialize lastValue if it wasn't set
             if (self.remote_lastVolume.stringValue == "") {
                 self.lastValue = self.value;
             }
-            window.removeEventListener('load', this, false);
+            window.removeEventListener('load', playerControls__initVolume, false);
         }, false);
       ]]>
+        /* outside CDATA to get localized entity */
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;: " + Math.round(this.value/100));
     </constructor>
     <destructor>
       <![CDATA[
@@ -155,6 +155,8 @@
           this.trackingVolume = false;
           this.mm.volumeControl.volume = this.value / this.sliderScale;
         ]]>
+        /* outside CDATA to get localized entity */
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;: " + Math.round(this.value/100));
       </body>
     </method>
 
@@ -169,6 +171,8 @@
             dump("playerControls.xml - onRemoteVolumeChange - " + err + "\n");
           }
         ]]>
+        /* outside CDATA to get localized entity */
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;: " + Math.round(this.value/100));
       </body>
     </method>
 

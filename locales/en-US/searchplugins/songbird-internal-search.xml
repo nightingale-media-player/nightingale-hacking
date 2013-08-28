@@ -16,15 +16,7 @@
      the Firefox search system to meet Songbird's needs. 
      This is guaranteed to change at some point in the future. 
      
-     Note that engines with songbird:internal are hidden on startup, and need to 
-     be programmatically shown.     
-     
      See searchHandler.js and sbSearch.xml for more information.
   -->
 <Url type="text/html" method="GET" template="http://0/this_URL_is_not_used"/>
-<!-- Engines tagged with songbird:internal are not sent to the web browser. -->
-<!-- live search is on by default. -->
-<Tags>songbird:internal songbird:livesearch</Tags>
-<!-- This alias allows gSearchHandler to indentify the Songbird engine -->
-<Alias>songbird-internal-search</Alias>
 </SearchPlugin>

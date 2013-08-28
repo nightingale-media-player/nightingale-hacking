@@ -42,7 +42,6 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(DEPTH)/components/moz/prompter/public \
-                     $(DEPTH)/components/metrics/public \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/intl/src \
                      $(topsrcdir)/components/moz/strings/src \
@@ -59,6 +58,11 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(MOZSDK_INCLUDE_DIR)/xpcom \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
+
+ifdef METRICS_ENABLED
+CPP_EXTRA_INCLUDES += $(DEPTH)/components/metrics/public \
+                      $(NULL)
+endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)

@@ -3,3 +3,12 @@ songbird.jar:
 % # Help out FF extension developers by exposing browser utilities at the familiar URL
 % override chrome://browser/content/utilityOverlay.js chrome://songbird/content/scripts/browserUtilities.js
 @include_all_to content/songbird/scripts/
+# metrics preprocessing
+* content/songbird/scripts/firstRun/firstRunImportMedia.js  (firstRun/firstRunImportMedia.js)
+* content/songbird/scripts/firstRun/firstRuniTunes.js  (firstRun/firstRuniTunes.js)
+* content/songbird/scripts/feedbackDelegate.js  (feedbackDelegate.js)
+* content/songbird/scripts/mainPlayerWindow.js  (mainPlayerWindow.js)
+* content/songbird/scripts/playerOpen.js    (playerOpen.js)
+#ifdef METRICS_ENABLED
+* content/songbird/scripts/metrics.js   (metrics.js)
+#endif

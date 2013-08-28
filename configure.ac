@@ -412,7 +412,7 @@ SB_MACOSX_SDK_DEFAULT=
 
 case $SB_PLATFORM in
   macosx)
-    SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_DEV_ROOT/SDKs/MacOSX10.4u.sdk
+    SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_DEV_ROOT/SDKs/MacOSX10.5.sdk
   ;;
 esac
 
@@ -421,7 +421,7 @@ esac
 #
 
 AC_ARG_WITH(macosx-sdk,
-            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=<dev-tools>/SDKs/MacOSX10.4u.sdk) ],
+            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=<dev-tools>/SDKs/MacOSX10.5.sdk) ],
             [ SB_MACOSX_SDK=$withval ],
             [ SB_MACOSX_SDK=$SB_MACOSX_SDK_DEFAULT])
 
@@ -492,7 +492,7 @@ _SAVE_CFLAGS=$CFLAGS
 _SAVE_CXXFLAGS=$CXXFLAGS
 
 #
-# Must use gcc 4.0 on Mac OS X with the 10.4u SDK.
+# Must use gcc 4.x on Mac OS X with the 10.5 SDK.
 # NOTE: gcc4.0 is the default compiler on 10.5 but not on 10.6 and we still
 #       support back to 10.4. See bug 17752 for juicy details.
 #
@@ -647,8 +647,8 @@ case "$SB_PLATFORM" in
     _SAVE_LIBS=$LIBS
     LIBS="$LIBS wmvcore.lib"
     AC_MSG_CHECKING([wmvcore.lib])
-    AC_LINK_IFELSE([#include <wmsdk.h>
-                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }],
+    AC_LINK_IFELSE([AC_LANG_SOURCE([#include <wmsdk.h>
+                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }])],
                     AC_MSG_RESULT([yes]),
                     AC_MSG_ERROR([Missing wmvcore.lib; install the Windows SDK]))
     LIBS=$_SAVE_LIBS
@@ -983,7 +983,6 @@ case "$SB_PLATFORM" in
 	AC_SUBST(SQLITE_CFLAGS)
 		
     # Breakpad needs stabs debugging data, so always explicitly request it with
-    # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
@@ -1179,6 +1178,55 @@ if test -z "$SB_DEPENDENCIES_DIR"; then
 fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
 
+
+#
+# Are we going to use system or packaged taglib?
+#
+
+SB_SYSTEM_TAGLIB=
+AC_ARG_WITH(taglib-source,
+			[  --with-taglib-source=system,packaged,default  Taglib to use],
+			[ SB_TAGLIB=$withval ],
+			[ SB_TAGLIB=default ])
+for option in `echo $SB_TAGLIB | sed 's/,/ /g'`; do
+	if test "$option" = "default"; then
+		case "$SB_PLATFORM" in
+		windows)
+			SB_TAGLIB=packaged
+		;;
+		macosx)
+			SB_TAGLIB=packaged
+		;;
+		solaris)
+			SB_TAGLIB=packaged
+		;;
+		linux)
+			SB_TAGLIB=system
+		;;
+		*)
+			AC_MSG_ERROR([No platform default taglib found; please manually specify --with-taglib-source=])
+		;;
+		esac
+	elif test "$option" = "system"; then
+		SB_TAGLIB=system
+	elif test "$option" = "packaged"; then
+		SB_TAGLIB=packaged
+	else
+		AC_MSG_ERROR([Unknown --with-taglib-source option $option])
+	fi
+done
+AC_SUBST(SB_TAGLIB)
+
+#	
+# If we're building with SYSTEM_TAGLIB, find it
+#
+
+if test "$SB_TAGLIB" = "system"; then
+	PKG_CHECK_MODULES(TAGLIB, taglib >= 1.8.0)
+	AC_SUBST(TAGLIB_LIBS)
+	AC_SUBST(TAGLIB_CFLAGS)
+fi
+
 #
 # Check for media cores to enable
 #
@@ -1304,6 +1352,54 @@ if test "$MEDIA_CORE_GST" = "1" -a "$SB_PLATFORM" = "linux"; then
   )
 fi
 AC_SUBST(HAVE_FLUENDO_MP3)
+
+#
+#  Check for --enable-unity-integration
+#
+
+AC_ARG_ENABLE(unity-integration,
+            [  --enable-unity-integration  integration with unity (default=no)])
+if test "$SB_PLATFORM" = "linux" -a "$enable_unity_integration" = "yes"; then
+  PKG_CHECK_MODULES(LNTFY, libnotify)
+  AC_SUBST(LNTFY_CFLAGS)
+  AC_SUBST(LNTFY_LIBS)
+
+  PKG_CHECK_MODULES(UNITY, unity)
+  AC_SUBST(UNITY_CFLAGS)
+  AC_SUBST(UNITY_LIBS)
+
+  NIGHTINGALE_UNITY=1
+fi
+AC_SUBST(NIGHTINGALE_UNITY)
+
+#
+#  Check for --enable-libnotify
+#
+
+AC_ARG_ENABLE(libnotify-notifs,
+            [  --enable-libnotify  enable libnotify extension (default=no)])
+if test "$SB_PLATFORM" = "linux" -a "$with_libnotify" = "yes"; then
+  PKG_CHECK_MODULES(LNTFY, libnotify)
+  AC_SUBST(LNTFY_CFLAGS)
+  AC_SUBST(LNTFY_LIBS)
+
+  NIGHTINGALE_LIBNOTIFY=1
+fi
+AC_SUBST(NIGHTINGALE_LIBNOTIFY)
+
+#
+# Check for --enable-metrics
+#
+
+AC_ARG_ENABLE(metrics,
+              [ --enable-metrics  enabling of metrics system (default=no)])
+if test "$enable_metrics" = "yes"; then
+  METRICS_ENABLED=1
+  AC_DEFINE(METRICS_ENABLED)
+else
+  METRICS_ENABLED=
+fi
+AC_SUBST(METRICS_ENABLED)
 
 #
 # Checks for libraries.

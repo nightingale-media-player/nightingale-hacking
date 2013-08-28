@@ -49,6 +49,7 @@ tier_base_dirs = \
    tools \
    $(NULL)
 
+ifdef METRICS_ENABLED
 tier_componentsbase_dirs = \
    components/moz \
    components/intl \
@@ -71,7 +72,34 @@ tier_componentsbase_dirs = \
    components/mediamanager \
    components/feathers \
    components/playqueue \
+   components/internalsearch \
    $(NULL)
+else
+tier_componentsbase_dirs = \
+   components/moz \
+   components/intl \
+   components/property \
+   components/library \
+   components/integration \
+   components/mediacore \
+   components/albumart \
+   components/dbengine \
+   components/sqlbuilder \
+   components/job \
+   components/dataremote \
+   components/mediaimport \
+   components/filesystemevents \
+   components/watchfolder \
+   components/controller \
+   components/devices \
+   components/devicesobsolete \
+   components/mediamanager \
+   components/feathers \
+   components/playqueue \
+   components/internalsearch \
+   $(NULL)
+endif
+
 
 tier_componentsall_dirs = \
    components/addonmetadata \

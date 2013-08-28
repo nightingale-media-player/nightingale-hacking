@@ -1,0 +1,18 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(cc9be575-95e6-40b3-9634-ad472d7acc50)]
+interface ngIInternalSearchEngine : nsISupports
+{
+  /**
+   * Whether the engine supports livesearch
+   */
+  attribute boolean liveSearch;
+  /**
+   * The contractID , which implements sbISearchEngine for this engine
+   */
+  attribute AString contractID;
+  /**
+   * States, whether the search engine was hidden before it was registered
+   */
+  attribute boolean wasHidden;
+};

@@ -1,0 +1,13 @@
+#include "nsISupports.idl"
+#include "nsIObserverService.idl"
+
+[scriptable, uuid(bae7b6e1-dc21-48ee-91e1-419329b0a941)]
+interface IUnityProxy : nsISupports
+{
+  void InitializeFor(in string desktopFileName, in string windowTitle);
+  void SoundMenuSetTrackInfo(in string title, in string artist, in string album, in string coverFilePath);
+  void SoundMenuSetPlayingState(in PRInt16 playing);
+  void HideWindow();
+  void ShowWindow();
+  void EnableNotifications (in PRBool needEnable);
+};

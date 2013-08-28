@@ -98,7 +98,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediamanager/public \
-                     $(DEPTH)/components/metrics/public \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(DEPTH)/components/playlistplayback/public \
                      $(DEPTH)/components/playqueue/public \
@@ -129,6 +128,11 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/sqlbuilder/src \
                      $(NULL)
+
+ifdef METRICS_ENABLED
+CPP_EXTRA_INCLUDES += $(DEPTH)/components/metrics/public \
+                      $(NULL)
+endif
 
 ifdef DEBUG
    CPP_EXTRA_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \

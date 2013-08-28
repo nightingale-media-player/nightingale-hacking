@@ -2,7 +2,7 @@
 <!ENTITY window.ok          "OK" >
 <!ENTITY window.cancel      "Cancel" >
 <!ENTITY window.apply       "Apply" >
-<!ENTITY window.browse      "Browse..." >
+<!ENTITY window.browse      "Browse…" >
 <!ENTITY window.save        "Save">
 <!ENTITY window.yes         "Yes">
 <!ENTITY window.no          "No">
@@ -11,7 +11,7 @@
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
 <!ENTITY menu.mac.exit.key              "Q">
 <!ENTITY menu.mac.exit.modifiers        "accel">
-<!ENTITY menu.mac.preferences           "Preferences...">
+<!ENTITY menu.mac.preferences           "Preferences">
 <!ENTITY menu.mac.preferences.key       ",">
 <!ENTITY menu.mac.preferences.modifiers "accel">
 <!ENTITY menu.mac.services              "Services">
@@ -25,18 +25,18 @@
 <!ENTITY menu.mac.minimize.key          "M">
 
 <!ENTITY menu.file              "File" >
-<!ENTITY menu.file.new          "New Playlist" >
-<!ENTITY menu.file.smart        "New Smart Playlist..." >
-<!ENTITY menu.file.remote       "New Subscription..." >
-<!ENTITY menu.file.podcast      "New Podcast..." >
-<!ENTITY menu.file.open         "Open File..." >
-<!ENTITY menu.file.url          "Open Location..." >
-<!ENTITY menu.file.playlist     "Import a Playlist..." >
-<!ENTITY menu.file.library      "Import a Library..." >
+<!ENTITY menu.file.new          "New Playlist…" >
+<!ENTITY menu.file.smart        "New Smart Playlist…" >
+<!ENTITY menu.file.remote       "New Subscription…" >
+<!ENTITY menu.file.podcast      "New Podcast…" >
+<!ENTITY menu.file.open         "Open File…" >
+<!ENTITY menu.file.url          "Open Location…" >
+<!ENTITY menu.file.playlist     "Import a Playlist…" >
+<!ENTITY menu.file.library      "Import a Library…" >
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
-<!ENTITY menu.file.metadata     "View Metadata...">
-<!ENTITY menu.file.scan         "Import Media..." >
+<!ENTITY menu.file.metadata     "View Metadata">
+<!ENTITY menu.file.scan         "Import Media…" >
 <!ENTITY menu.file.exit         "Exit" >
 
 <!ENTITY menu.edit          "Edit" >
@@ -51,7 +51,7 @@
 <!ENTITY menu.edit.findagain   "Find Again" >
 
 <!-- Linux edit menu -->
-<!ENTITY menu.linux.preferences           "Preferences...">
+<!ENTITY menu.linux.preferences           "Preferences">
 <!ENTITY menu.linux.preferences.accesskey "N">
 
 <!ENTITY menu.controls      "Controls" >
@@ -63,7 +63,7 @@
 <!ENTITY menu.control.repa  "Repeat All" >
 <!ENTITY menu.control.rep1  "Repeat One" >
 <!ENTITY menu.control.repx  "Repeat None" >
-<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto "Jump To…" >
 
 <!ENTITY menu.control.play.button      "Play" >
 <!ENTITY menu.control.pause.button     "Pause" >
@@ -85,18 +85,18 @@
 <!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
-<!ENTITY menu.help.homepage "Songbird Website" >
-<!ENTITY menu.help.bugz     "Report a Bug" >
+<!ENTITY menu.help.homepage "&brandShortName; Website" >
+<!ENTITY menu.help.bugz     "Report a Bug…" >
 <!ENTITY menu.help.topics   "Help Topics" >
 <!ENTITY menu.help.keyboard "Keyboard Shortcuts">
-<!ENTITY menu.help.about    "About &brandShortName;..." >
+<!ENTITY menu.help.about    "About &brandShortName;" >
 
-<!ENTITY menu.equalizer     "Equalizer..." >
-<!ENTITY menu.preferences   "Options..." >
-<!ENTITY menu.extensions    "Add-ons..." >
-<!ENTITY menu.clearprivatedata "Clear Private Data...">
+<!ENTITY menu.equalizer     "Equalizer…" >
+<!ENTITY menu.preferences   "Options" >
+<!ENTITY menu.extensions    "Add-ons" >
+<!ENTITY menu.clearprivatedata "Clear Private Data…">
 <!ENTITY menu.errorconsole "Error Console">
-<!ENTITY menu.downloadmgr   "File Downloads..." >
+<!ENTITY menu.downloadmgr   "File Downloads" >
 <!ENTITY menu.switchplayercontrols  "Player Controls" >
 <!ENTITY menu.controllerontop       "Display at Top">
 <!ENTITY menu.controlleronbottom    "Display at Bottom">
@@ -134,7 +134,7 @@
 <!ENTITY tooltip.browser.subscription "Subscribe to this page" >
 <!ENTITY tooltip.browser.mediapages.list "List View" >
 <!ENTITY tooltip.browser.mediapages.filter "Filter Pane View" >
-<!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
+<!ENTITY tooltip.browser.mediapages "Switch Media Views…" >
 <!ENTITY tooltip.servicepane.show    "Show Service Pane" >
 <!ENTITY tooltip.servicepane.collapse    "Collapse Service Pane" >
 <!ENTITY tooltip.servicepane.newnode "New Playlist" >
@@ -212,6 +212,7 @@
 <!ENTITY equalizer.band8.label    "8K" >
 <!ENTITY equalizer.band9.label    "16K" >
 <!ENTITY equalizer.preset.custom      "Custom" >
+<!ENTITY equalizer.preset.flat        "Flat" >
 <!ENTITY equalizer.preset.rock        "Rock" >
 <!ENTITY equalizer.preset.soft_rock   "Soft Rock" >
 <!ENTITY equalizer.preset.techno      "Techno" >
@@ -231,7 +232,7 @@
 <!ENTITY equalizer.preset.full_bass   "Full bass" >
 
 
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setupprogress.pleasewait "Please wait…" >
 <!ENTITY setupprogress.cancel     "Cancel">
 
 <!ENTITY menu.file.accesskey              "F" >
@@ -327,7 +328,7 @@
 <!ENTITY rapi.prefpane.title             "Web Integration" >
 <!ENTITY rapi.prefpane.access.caption    "Web Integration Permissions" >
 <!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with &brandShortName; to create a tighter coupling between the Web and your media. Please configure &brandShortName; to allow or block the following points of integration." >
-<!ENTITY rapi.whitelist.label            "Exceptions..." >
+<!ENTITY rapi.whitelist.label            "Exceptions…" >
 <!ENTITY rapi.restore_defaults.label      "Restore to Default" >
 <!ENTITY rapi.playback_control_disable.label "Block websites from controlling media playback" >
 <!ENTITY rapi.playback_read_disable.label    "Block websites from viewing information about playing media" >
@@ -364,7 +365,7 @@
 
 <!ENTITY jobprogress.details "Details" >
 
-<!ENTITY menu.updateCmd.label          "Check for Updates...">
+<!ENTITY menu.updateCmd.label          "Check for Updates…">
 <!ENTITY menu.updateCmd.accessKey      "o">
 
 
@@ -454,15 +455,15 @@
 
 <!ENTITY device.firmware.wizard.title                     "Update Firmware">
 <!ENTITY device.firmware.wizard.check.page.title          "Check for Updated Firmware">
-<!ENTITY device.firmware.wizard.check.progress.title      "Checking for updated firmware...">
+<!ENTITY device.firmware.wizard.check.progress.title      "Checking for updated firmware…">
 <!ENTITY device.firmware.wizard.check.install.description "Installing the updated firmware should take less than 10 minutes. You can always perform the update at a later time.">
 <!ENTITY device.firmware.wizard.check.already.description "The firmware for your device is already up to date.">
 <!ENTITY device.firmware.wizard.check.release_notes.label "Release Notes">
 <!ENTITY device.firmware.wizard.needs_recovery_mode.description "The device must be connected in repair mode to continue. Please follow the instructions below to set your device to repair mode.">
-<!ENTITY device.firmware.wizard.download.title            "Downloading new firmware...">
+<!ENTITY device.firmware.wizard.download.title            "Downloading new firmware…">
 <!ENTITY device.firmware.wizard.repair.time.description   "This operation should take less than 5 minutes.">
-<!ENTITY device.firmware.wizard.repair.warning            'Unfortunately, any existing content on your device <strong class="loss-of-data-text">will be erased</strong>. You are advised to re-sync with &brandShortName; once this operation is completed.'>
-<!ENTITY device.firmware.wizard.install.title             "Installing firmware...">
+<!ENTITY device.firmware.wizard.repair.warning            "Unfortunately, any existing content on your device <strong class='loss-of-data-text'>will be erased</strong>. You are advised to re-sync with &brandShortName; once this operation is completed.">
+<!ENTITY device.firmware.wizard.install.title             "Installing firmware…">
 
 <!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can only be installed when your device is idle.">
 <!ENTITY device.firmware.wizard.retry.description "Please try again after your device has completed its current operation.">
@@ -503,7 +504,7 @@
 <!ENTITY device.sync.playlist.title "Title">
 <!ENTITY device.sync.playlist.video.duration "Video Duration">
 <!ENTITY device.sync.images.from.label "Sync Photos From:">
-<!ENTITY device.sync.images.browse "Choose folder...">
+<!ENTITY device.sync.images.browse "Choose folder…">
 <!ENTITY device.sync.images.all.label "All photos">
 <!ENTITY device.sync.images.all.template "All photos (&#37;S)">
 <!ENTITY device.sync.images.selected.label "Selected sub-folders">
@@ -545,11 +546,11 @@
 <!ENTITY device.tools.update_firmware.current_firmware.title "Current firmware version:">
 
 <!ENTITY device.tools.restore_device.title "Restore Device">
-<!ENTITY device.tools.restore_device.description 'Restoring your device to factory settings will erase all media on the device, as well as restoring the factory firmware and settings.'>
+<!ENTITY device.tools.restore_device.description "Restoring your device to factory settings will erase all media on the device, as well as restoring the factory firmware and settings.">
 <!ENTITY device.tools.restore_device.label "Restore device to factory settings">
 
 <!ENTITY device.tools.format_device.title "Format Device">
-<!ENTITY device.tools.format_device.description 'Formatting your device will erase all media on the device.'>
+<!ENTITY device.tools.format_device.description "Formatting your device will erase all media on the device.">
 <!ENTITY device.tools.format_device.label "Format device">
 <!ENTITY device.tools.format_volume.button.label "Format">
 
@@ -589,9 +590,9 @@
 <!ENTITY addMediaToPlaylistCmd.noPlaylist.label         "&lt;No Playlists&gt;">
 <!ENTITY addMediaToPlaylistCmd.newPlaylist.label        "New Playlist">
 <!ENTITY addMediaToPlaylistCmd.newPlaylist.accesskey    "n">
-<!ENTITY subscribeMediaPageCmd.label                    "Subscribe To This Page...">
+<!ENTITY subscribeMediaPageCmd.label                    "Subscribe To This Page…">
 <!ENTITY subscribeMediaPageCmd.accesskey                "u">
-<!ENTITY subscribeMediaFrameCmd.label                   "Subscribe To This Frame...">
+<!ENTITY subscribeMediaFrameCmd.label                   "Subscribe To This Frame…">
 <!ENTITY subscribeMediaFrameCmd.accesskey               "u">
 
 <!ENTITY feedback.dialog.title      "Help Make &brandShortName; Better!">
@@ -622,7 +623,7 @@
 <!-- First-run connection entities. -->
 <!ENTITY first_run.connection.header.label         "&brandShortName; Cannot Connect to the Internet">
 <!ENTITY first_run.connection.description          "Check your Connection Settings or Continue with the Setup assistant.">
-<!ENTITY first_run.connection.settings.button      "Connection Settings...">
+<!ENTITY first_run.connection.settings.button      "Connection Settings…">
 <!ENTITY first_run.connection.settings.description "Is your computer or network protected by a firewall or proxy? Fixing incorrect Connection Settings can help solve common network problems.">
 
 <!-- First-run eula entities. -->
@@ -654,12 +655,6 @@
 <!ENTITY first_run.import_media.radio.dont_import.label      "Do not import media">
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
 <!ENTITY first_run.import_media.scan_directories.watch.label "Watch this directory for changes">
-
-<!-- DLNA How To page terms -->
-<!ENTITY first_run.DLNA.name "Songbird Media Server">
-<!ENTITY first_run.DLNA.header.label "Media Sharing Add-on">
-<!ENTITY first_run.DLNA.description "The &first_run.DLNA.name; allows you to share your &brandShortName; library (music and videos) with selected devices in your home network.">
-<!ENTITY first_run.DLNA.point "To turn Media Sharing on or off, open the dialog by clicking on the Media Sharing icon (circled) in the &brandShortName; statusbar.">
 
 <!-- First-run install add-ons entities. -->
 <!ENTITY first_run.install_add_ons.title "Downloading Add-ons">
@@ -802,14 +797,14 @@
 <!ENTITY cdrip.lookup.track_name "Title">
 
 <!-- CD Rip Pref Pane entities -->
-<!ENTITY cdrip.prefpane.label                 "CD Rip">
-<!ENTITY cdrip.prefpane.format                "Format">
-<!ENTITY cdrip.prefpane.quality               "Quality">
-<!ENTITY cdrip.prefpane.quality.units.kbps    "kbps">
-<!ENTITY cdrip.prefpane.eject_after_rip       "When CD Rip is completed eject CD">
-<!ENTITY cdrip.prefpane.soundalert_after_rip  "When CD Rip is completed play system alert sound">
-<!ENTITY cdrip.prefpane.providers.title       "CD Lookup Provider">
-<!ENTITY cdrip.prefpane.quality_desc          "A higher kbps quality setting will result in higher quality audio and a larger file size.">
+<!ENTITY cdrip.prefpane.label "CD Rip">
+<!ENTITY cdrip.prefpane.format "Format">
+<!ENTITY cdrip.prefpane.quality "Quality">
+<!ENTITY cdrip.prefpane.quality.units.kbps "kbps">
+<!ENTITY cdrip.prefpane.eject_after_rip "When CD Rip is completed eject CD">
+<!ENTITY cdrip.prefpane.soundalert_after_rip "When CD Rip is completed play system alert sound">
+<!ENTITY cdrip.prefpane.providers.title "CD Lookup Provider">
+<!ENTITY cdrip.prefpane.quality_desc "A higher kbps quality setting will result in higher quality audio and a larger file size.">
 
 <!-- CD Rip Media View entities -->
 <!ENTITY cdrip.mediaview.cd_rip_settings_label     "CD Rip Settings">
@@ -857,6 +852,5 @@
 <!ENTITY playqueue.inprogress "Adding tracks">
 
 <!ENTITY mediamanagement.removed.dialog.title "Media Management Notice">
-<!ENTITY mediamanagement.removed.dialog.text.line1 "Media Management has been removed from Songbird as of version 1.10." >
+<!ENTITY mediamanagement.removed.dialog.text.line1 "Media Management has been removed from &brandShortName; as of version 1.10." >
 <!ENTITY mediamanagement.removed.dialog.text.line2 "This change is part of an effort to simplify our product and provide an easier-to-use experience." >
-

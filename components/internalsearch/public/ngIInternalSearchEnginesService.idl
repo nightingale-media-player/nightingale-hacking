@@ -1,0 +1,26 @@
+#include "nsISupports.idl"
+
+interface ngIInternalSearchEngine;
+
+[scriptable, uuid(d154ac90-7953-11e2-b92a-0800200c9a66)]
+interface ngIInternalSearchEnginesService : nsISupports
+{
+  /**
+   * Register a search engine to be handled as internal search. Shows the engine if it was hidden before.
+   * \param searchEngineName Name to register the search engine with
+   * \param contractID The ID of the contract implementing sbISearchEngine for the engine
+   * \param liveSearch Indicates, whether the engine supports live search
+   * \return A boolean, true if the registration was successful
+   */
+  boolean registerInternalSearchEngine(in AString searchEngineName, in AString contractID, in boolean liveSearch);
+  /**
+   * Unregister a search engine to be handled as intenral search. The engine is rehidden if it was hidden before being registered.
+   * \param searchEngineName Name the search engine was registered with
+   */
+  void unregisterInternalSearchEngine(in AString searchEngineName);
+  /**
+   * \param searchEngineName Name the search engine was registered with
+   * \return The ngIInternalSearchEngine for the specified search engine
+   */
+  ngIInternalSearchEngine getInternalSearchEngine(in AString searchEngineName);
+};
