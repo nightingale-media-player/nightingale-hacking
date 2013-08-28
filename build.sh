@@ -79,6 +79,7 @@ case $OSTYPE in
     
     [ -f nightingale.config ] || touch nightingale.config
     grep -q -E 'gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
+    grep -q -E 'gstreamer-1.0 ' nightingale.config || echo -e 'ac_add_options --with-gstreamer-1.0\n' >> nightingale.config
     
     # the below needs to be nested...in my testing it won't work otherwise
     if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
@@ -170,5 +171,7 @@ cd $buildir
 make clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make
+
+sed -i 's/0\.10/1\.0/g' nightingale
 
 echo "Build Succeeded!"
