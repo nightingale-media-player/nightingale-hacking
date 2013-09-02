@@ -50,7 +50,7 @@
       </Description>
     </em:targetApplication>
 
-    <em:id>shoutcast-radio@songbirdnest.com</em:id>
+    <em:id>shoutcast-radio@getnightingale.com</em:id>
     <em:name>SHOUTcast Radio</em:name>
     <em:description>Directory of SHOUTcast Internet radio streams</em:description>
     <em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
