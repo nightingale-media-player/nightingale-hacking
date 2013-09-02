@@ -1,24 +1,24 @@
-<!ENTITY lastfm.menu.login "Вхід на Last.fm...">
-<!ENTITY lastfm.menu.logout "Вихід з Last.fm">
+<!ENTITY lastfm.menu.login "Увійти на Last.fm...">
+<!ENTITY lastfm.menu.logout "Вийти з Last.fm">
 <!ENTITY lastfm.menu.enable "Дозволити скробблінг">
-<!ENTITY lastfm.login.caption.label "Login">
-<!ENTITY lastfm.username.label "Username:">
-<!ENTITY lastfm.password.label "Password:">
-<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.caption.label "Увійти">
+<!ENTITY lastfm.username.label "Ім'я користувача:">
+<!ENTITY lastfm.password.label "Пароль:">
+<!ENTITY lastfm.auto.login.label "Автоматичне під'єднання під час запуску">
 <!ENTITY lastfm.login.button "Вхід">
-<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.newaccount.caption "Створити новий обліковий запис">
 <!ENTITY lastfm.signup.label "Реєстрація на Last.fm">
-<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.signup.button.label "Новий обліковий запис">
 <!ENTITY lastfm.loggingin.label "Вхід...">
 <!ENTITY lastfm.cancel.button "Скасувати">
 <!ENTITY lastfm.profile.caption "Профіль">
 <!ENTITY lastfm.profile.scrobble "Скробблити мої доріжки">
 <!ENTITY lastfm.profile.logout "Вихід">
 <!ENTITY lastfm.radio "Радіо Last.fm">
-<!ENTITY lastfm.radio.login.help "Щоб слухати радіо Last.fm, Ви повинні бути авторизовані на сайті. Якщо у Вас немає облікового запису на Last.fm, Ви можете її зареєструвати.">
+<!ENTITY lastfm.radio.login.help "Щоб слухати радіо Last.fm, Ви повинні бути авторизовані на сайті. Якщо у Вас немає облікового запису на Last.fm, Ви можете його створити.">
 <!ENTITY lastfm.radio.start "Не маєте уяви з чого почати? Спробуйте щось знайти чи подивіться, що слухають інші.">
 <!ENTITY lastfm.radio.start.top.artists "Найпопулярніші виконавці на Last.fm">
-<!ENTITY lastfm.radio.start.top.tags "Найпопулярніші ярлики на Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Найпопулярніші теги на Last.fm">
 <!ENTITY lastfm.radio.register "Реєстрація">
 <!ENTITY lastfm.radio.subscriber.button "Підписатися">
 <!ENTITY lastfm.radio.subscriber.help "Для того, щоб слухати радіо Last.fm, ви повинні бути зареєстровані.">
@@ -28,19 +28,19 @@
 <!ENTITY lastfm.radio.neighbourhood "Сусіди">
 <!ENTITY lastfm.radio.recommended "Рекомендації">
 <!ENTITY lastfm.radio.user_stations "Станції користувача">
-<!ENTITY lastfm.radio.recent_stations "Недавні станції">
+<!ENTITY lastfm.radio.recent_stations "Нещодавні станції">
 <!ENTITY lastfm.radio.from.lastfm "З Last.fm">
 <!ENTITY lastfm.radio.recommended_artists "Рекомендовані виконавці">
 <!ENTITY lastfm.radio.top_artists "Ваші найпопулярніші виконавці">
-<!ENTITY lastfm.radio.top_tags "Ваші найпопулярніші ярлики">
+<!ENTITY lastfm.radio.top_tags "Ваші найпопулярніші теги">
 <!ENTITY lastfm.radio.friends "Ваші друзі">
 <!ENTITY lastfm.radio.neighbours "Сусід">
-<!ENTITY lastfm.radio.from.songbird "З Songbird">
-<!ENTITY lastfm.radio.most_played_artists "Ваші найвідтворюванні виконавці">
-<!ENTITY lastfm.radio.highest_rated_artists "Ваші найрейтингові виконавці">
+<!ENTITY lastfm.radio.from.songbird "З Nightingale">
+<!ENTITY lastfm.radio.most_played_artists "Виконавці, яких ви найчастіше слухаєте">
+<!ENTITY lastfm.radio.highest_rated_artists "Ваші виконавці з найвищим рейтингом">
 <!ENTITY lastfm.radio.popular_genres "Ваші популярні жанри">
 <!ENTITY lastfm.radio.play "Відтворити">
-<!ENTITY lastfm.tags.enter_new "Введіть нові ярлики (відокремлені комою)">
-<!ENTITY lastfm.tags.add_fail "Помилка у додаванні ярлику!">
-<!ENTITY lastfm.tags.user "Ваші ярлики:">
-<!ENTITY lastfm.tags.global "Загальні ярлики Last.fm:">
+<!ENTITY lastfm.tags.enter_new "Введіть нові теги (відокремлені комою)">
+<!ENTITY lastfm.tags.add_fail "Помилка у додаванні тегу!">
+<!ENTITY lastfm.tags.user "Ваші теги:">
+<!ENTITY lastfm.tags.global "Глобальні теги Last.fm:">

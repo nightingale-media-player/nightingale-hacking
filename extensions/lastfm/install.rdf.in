@@ -15,7 +15,7 @@
       </Description>
     </em:targetApplication>
 
-    <em:id>audioscrobbler@songbirdnest.com</em:id>
+    <em:id>audioscrobbler@getnightingale.com</em:id>
     <em:name>Last.fm</em:name>
     <em:description>Publish your playback history to Last.fm and listen to Last.fm Radio</em:description>
     <em:creator>Stephen Lau &amp; Ian McKeller</em:creator>
@@ -41,6 +41,7 @@
     <em:contributor>yammesicka: Hebrew Translation</em:contributor>
     <em:contributor>Murat Biskin: Turkish Translation</em:contributor>
     <em:contributor>Sappa: Ukrainian Translation</em:contributor>
+    <em:contributor>Dyedfox: Ukrainian Translation</em:contributor>
     <em:contributor>pokorny: Cornish Translation</em:contributor>
     <em:contributor>Brogh: Cornish Translation</em:contributor>
     <em:contributor>KongShaoLong: Portuguese (Portugal) Translation</em:contributor>
