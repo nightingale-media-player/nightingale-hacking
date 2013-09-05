@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Опште">
+<!ENTITY mtprefs.info "Подаци о извођачу">
+<!ENTITY mtprefs.review "Рецензије">
+<!ENTITY mtprefs.rss "Вести">
+<!ENTITY mtprefs.photo "Слике">
+<!ENTITY mtprefs.flash "Видео">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Подразумевана картица">
+<!ENTITY mtprefs.defaulttab.help "При покретању mashTape-а:">
+<!ENTITY mtprefs.show.info "Прикажи податке о извођачу">
+<!ENTITY mtprefs.show.review "Прикажи рецензије">
+<!ENTITY mtprefs.show.rss "Прикажи вести">
+<!ENTITY mtprefs.show.photo "Прикажи слике">
+<!ENTITY mtprefs.show.flash "Прикажи видео">
+<!ENTITY mtprefs.autohide "Аутоматско сакривање">
+<!ENTITY mtprefs.autohide.help "Аутоматски сакриј панел mashTape-а приликом прегледања веб страница.">
+<!ENTITY mtprefs.services "Сервиси">
+<!ENTITY mtprefs.getmore "Преузмите још сервиса за mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Својства картице Подаци о извођачу">
+<!ENTITY mtprefs.tab.review "Својства картице Рецензије">
+<!ENTITY mtprefs.tab.rss "Својства картице Вести">
+<!ENTITY mtprefs.tab.photo "Својства картице Слике">
+<!ENTITY mtprefs.tab.flash "Својства картице Видео">
+<!ENTITY mtprefs.tab.help "Прикажи ову картицу у mashTape-у.">
+<!ENTITY mtprefs.single "Овај панел може да приказује садржај једног сервиса у једном тренутку. Молим изаберите сервис који желите из доње листе.">
+<!ENTITY mtprefs.multiple "Овај панел може да приказује садржај са више сервиса истовремено. Молим изаберите сервисе по жељи из доње листе.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Локализовани подаци">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Аутоматски преузми локализоване податке о извођачу ако су доступни.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Брзина померања слика:">
+<!ENTITY mtprefs.tab.photo.faster "Брже">
+<!ENTITY mtprefs.tab.photo.slower "Спорије">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Search Keywords">
+<!ENTITY mtprefs.tab.photo.keywords "Additional search keywords:">
+<!ENTITY mtprefs.tab.photo.keywords.help "You can specify additional keywords to be appended to your photo provider search.  Keywords should be separated by spaces, example: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Аутоматски пусти видео">
+<!ENTITY mtprefs.tab.video.autoplay.help "Омогућавање ове опције значи да ће видео материјали бити аутоматски пуштани један за другим. Ово је корисно за аутоматско пуштање свих MTV музичких спотова, на пример. Опција не ради са добављачима који немају ту могућност.">

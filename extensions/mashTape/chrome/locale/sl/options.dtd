@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Predvajajte posnetek in odkrijte sorodne fotografije na Flickru, filme na YouTube, biografije na Last.fm, članke na Google-novice in še več!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Splošno">
+<!ENTITY mtprefs.info "Podatki o izvajalcu">
+<!ENTITY mtprefs.review "Ocene">
+<!ENTITY mtprefs.rss "Novice">
+<!ENTITY mtprefs.photo "Fotografije">
+<!ENTITY mtprefs.flash "Videi">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Privzeti zavihek">
+<!ENTITY mtprefs.defaulttab.help "Ko se mashTape zažene:">
+<!ENTITY mtprefs.show.info "Pokaži podatke o izvajalcu">
+<!ENTITY mtprefs.show.review "Pokaži ocene">
+<!ENTITY mtprefs.show.rss "Pokaži novice">
+<!ENTITY mtprefs.show.photo "Pokaži fotografije">
+<!ENTITY mtprefs.show.flash "Pokaži videe">
+<!ENTITY mtprefs.autohide "Samodejno skrij">
+<!ENTITY mtprefs.autohide.help "Samodejno skrij podokno prikaza mashTape, ko preklopite na ogled spletne strani.">
+<!ENTITY mtprefs.services "Storitve">
+<!ENTITY mtprefs.getmore "Poišči več storitev za mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Nastavitve zavihka s podatki o izvajalcu">
+<!ENTITY mtprefs.tab.review "Nastavitve zavihka z ocenami">
+<!ENTITY mtprefs.tab.rss "Nastavitve zavihka z novicami">
+<!ENTITY mtprefs.tab.photo "Nastavitve zavihka s fotografijami">
+<!ENTITY mtprefs.tab.flash "Nastavitve zavihka z videi">
+<!ENTITY mtprefs.tab.help "Pokaži ta zavihek v mashTape.">
+<!ENTITY mtprefs.single "To podokno podpira prikaz vsebin le z ene storitve naenkrat. Izberite storitev spodaj.">
+<!ENTITY mtprefs.multiple "To podokno podpira prikaz vsebin več storitev naenkrat. Izberite več storitev spodaj.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Lokalizirani podatki">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Samodejno pridobi lokalizirane podatke o izvajalcu, če so na voljo.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Hitrost drsnika po fotografijah">
+<!ENTITY mtprefs.tab.photo.faster "Hitreje">
+<!ENTITY mtprefs.tab.photo.slower "Počasneje">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Iskalna gesla">
+<!ENTITY mtprefs.tab.photo.keywords "Dodatna iskalna gesla:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Določite lahko dodatna gesla za iskanje fotografij. Ključne besede morajo biti ločene s presledki, primer: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Samodejno predvajaj videe">
+<!ENTITY mtprefs.tab.video.autoplay.help "Če omogočite to možnost, se bodo rezultati vključenega video ponudnika samodejno predvajali eden za drugim. To je npr. uporabno za samodejno predvajanje vseh glasbenih spotov MTV. Ne vključeni ponudniki videa s to možnost ne bodo delovali.">

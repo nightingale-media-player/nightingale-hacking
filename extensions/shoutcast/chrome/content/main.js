@@ -426,7 +426,7 @@ var shoutcastUninstallObserver = {
       // Extension has been flagged to be uninstalled
       subject.QueryInterface(Ci.nsIUpdateItem);
       
-      if (subject.id == "shoutcast-radio@songbirdnest.com") {
+      if (subject.id == "shoutcast-radio@getnightingale.com") {
         if (data == "item-uninstalled") {
           this._uninstall = true;
         } else if (data == "item-cancel-action") {

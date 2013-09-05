@@ -1,0 +1,23 @@
+[main]
+host = http://beta.babelzilla.org
+
+[SHOUTcast.genresproperties]
+file_filter = chrome/locale/<lang>/genres.properties
+source_file = chrome/locale/en-US/genres.properties
+source_lang = en-US
+
+[SHOUTcast.overlayproperties]
+file_filter = chrome/locale/<lang>/overlay.properties
+source_file = chrome/locale/en-US/overlay.properties
+source_lang = en-US
+
+[SHOUTcast.overlaydtd]
+file_filter = chrome/locale/<lang>/overlay.dtd
+source_file = chrome/locale/en-US/overlay.dtd
+source_lang = en-US
+
+[SHOUTcast.optionsdtd]
+file_filter = chrome/locale/<lang>/options.dtd
+source_file = chrome/locale/en-US/options.dtd
+source_lang = en-US
+

@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Ogólne">
+<!ENTITY mtprefs.info "Informacje o wykonawcy">
+<!ENTITY mtprefs.review "Recenzje">
+<!ENTITY mtprefs.rss "Nowości">
+<!ENTITY mtprefs.photo "Zdjęcia">
+<!ENTITY mtprefs.flash "Filmy">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Domyślna karta">
+<!ENTITY mtprefs.defaulttab.help "Po uruchomieniu mashTape&apos;a:">
+<!ENTITY mtprefs.show.info "wyświetl informacje o wykonawcy">
+<!ENTITY mtprefs.show.review "wyświetl recenzje">
+<!ENTITY mtprefs.show.rss "wyświetl nowości">
+<!ENTITY mtprefs.show.photo "wyświetl zdjęcia">
+<!ENTITY mtprefs.show.flash "wyświetl filmy">
+<!ENTITY mtprefs.autohide "Automatyczne ukrywanie">
+<!ENTITY mtprefs.autohide.help "Automatycznie ukryj panel mashTape&apos;a po przejściu na stronę internetową.">
+<!ENTITY mtprefs.services "Usługi">
+<!ENTITY mtprefs.getmore "Pobierz więcej usług dla mashTape&apos;a">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Ustawienia karty z informacjami o wykonawcy">
+<!ENTITY mtprefs.tab.review "Ustawienia karty z recenzjami">
+<!ENTITY mtprefs.tab.rss "Ustawienia karty z nowościami">
+<!ENTITY mtprefs.tab.photo "Ustawienia karty ze zdjęciami">
+<!ENTITY mtprefs.tab.flash "Ustawienia karty z filmami">
+<!ENTITY mtprefs.tab.help "Wyświetlaj tę kartę w mashTapie.">
+<!ENTITY mtprefs.single "Ten panel może jednocześnie wyświetlać dane z jednego serwisu. Proszę wybrać serwis z poniższej listy.">
+<!ENTITY mtprefs.multiple "Ten panel może jednocześnie wyświetlać dane z wielu serwisów. Proszę wybrać serwisy z poniższej listy.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Zlokalizowane dane">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatycznie pobieraj zlokalizowane dane (jeśli są dostępne).">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Szybkość przewijania zdjęć:">
+<!ENTITY mtprefs.tab.photo.faster "szybciej">
+<!ENTITY mtprefs.tab.photo.slower "wolniej">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Słowa kluczowe poszukiwań">
+<!ENTITY mtprefs.tab.photo.keywords "Dodatkowe słowa kluczowe:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Możesz określić dodatkowe słowa kluczowe, które zostaną dodane do kryteriów wyszukiwania w wybranym serwisie ze zdjęciami.  Słowa kluczowe powinny zostać oddzielone spacjami. Przykład: na żywo koncert zespół">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Automatycznie odtwarzaj filmy">
+<!ENTITY mtprefs.tab.video.autoplay.help "Włączenie tej opcji spowoduje automatycznie odtwarzanie kolejnych filmów z grup zgodnych z wynikami wyszukiwania.  Funkcja ta jest użyteczna np. dla automatycznego odtwarzania wszystkich teledysków z MTV.  Funkcja ta nie działa z filmami, które nie są dostarczane przez serwisy w grupach.">

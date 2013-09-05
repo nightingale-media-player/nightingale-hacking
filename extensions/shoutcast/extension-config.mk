@@ -27,7 +27,7 @@
 # 
 
 EXTENSION_NAME = shoutcast-radio
-EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_UUID = $(EXTENSION_NAME)@getnightingale.com
 EXTENSION_NO_BINARY_COMPONENTS = 1
 
 EXTENSION_VER = 1.0.10pre

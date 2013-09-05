@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Speel een nummer en ontdek daaraan gerelateerde foto’s op Flickr, video’s op YouTube, biografieën op Last.fm, artikelen op Google News en meer!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Algemeen">
+<!ENTITY mtprefs.info "Artiestinformatie">
+<!ENTITY mtprefs.review "Beoordelingen">
+<!ENTITY mtprefs.rss "Nieuws">
+<!ENTITY mtprefs.photo "Foto’s">
+<!ENTITY mtprefs.flash "Video’s">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Standaardtabblad">
+<!ENTITY mtprefs.defaulttab.help "Als mashTape start:">
+<!ENTITY mtprefs.show.info "Artiestinformatie weergeven">
+<!ENTITY mtprefs.show.review "Beoordelingen weergeven">
+<!ENTITY mtprefs.show.rss "Nieuws weergeven">
+<!ENTITY mtprefs.show.photo "Foto’s weergeven">
+<!ENTITY mtprefs.show.flash "Video’s weergeven">
+<!ENTITY mtprefs.autohide "Automatisch verbergen">
+<!ENTITY mtprefs.autohide.help "Schakel het automatisch inklappen van het mashTape-weergavevenster in wanneer uw naar een webpagina omschakelt.">
+<!ENTITY mtprefs.services "Diensten">
+<!ENTITY mtprefs.getmore "Meer diensten voor mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Instellingen artiestinformatietabblad">
+<!ENTITY mtprefs.tab.review "Instellingen beoordelingentabblad">
+<!ENTITY mtprefs.tab.rss "Instellingen nieuwstabblad">
+<!ENTITY mtprefs.tab.photo "Instellingen fototabblad">
+<!ENTITY mtprefs.tab.flash "Instellingen videotabblad">
+<!ENTITY mtprefs.tab.help "Dit tabblad in mashTape weergeven">
+<!ENTITY mtprefs.single "Dit venster ondersteunt weergave van inhoud van één dienst tegelijk. Selecteer a.u.b. een dienst in onderstaande lijst.">
+<!ENTITY mtprefs.multiple "Dit venster ondersteunt weergave van inhoud van meerdere diensten tegelijk. Selecteer a.u.b. de door u gewenste diensten in onderstaande lijst.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Gelocaliseerde gegevens">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatisch gelokaliseerde artiestinformatie ophalen indien beschikbaar.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Snelheid fotoscrollen">
+<!ENTITY mtprefs.tab.photo.faster "Sneller">
+<!ENTITY mtprefs.tab.photo.slower "Langzamer">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Zoeksleutelwoorden">
+<!ENTITY mtprefs.tab.photo.keywords "Aanvullende zoeksleutelwoorden:">
+<!ENTITY mtprefs.tab.photo.keywords.help "U kunt aanvullende sleutelwoorden opgeven die worden toegevoegd aan de zoekopdracht bij uw fotoprovider. Sleutelwoorden dienen te zijn gescheiden door spaties, bijvoorbeeld: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Video’s automatisch afspelen">
+<!ENTITY mtprefs.tab.video.autoplay.help "Inschakelen van deze optie zorgt ervoor dat de gebundelde resultaten van de video-aanbieder automatisch achter elkaar worden afgespeeld. Dit is nuttig voor bijvoorbeeld het automatisch afspelen van alle MTV muziekvideo’s. Niet-gebundelde video-aanbieders werken niet met deze optie.">

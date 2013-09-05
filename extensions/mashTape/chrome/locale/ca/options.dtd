@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Escolta una cançó i descobreix fotos de Flick, vídeos de Youtube, biografies de Last.fm, articles de Google News i molt més relacionat amb l'artista!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "General">
+<!ENTITY mtprefs.info "Informació de l'artista">
+<!ENTITY mtprefs.review "Valoracions">
+<!ENTITY mtprefs.rss "Notícies">
+<!ENTITY mtprefs.photo "Fotografies">
+<!ENTITY mtprefs.flash "Vídeos">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Pestanya per defecte">
+<!ENTITY mtprefs.defaulttab.help "Quan mashTape s'iniciï:">
+<!ENTITY mtprefs.show.info "Veure informació de l'artista">
+<!ENTITY mtprefs.show.review "Veure valoracions">
+<!ENTITY mtprefs.show.rss "Veure notícies">
+<!ENTITY mtprefs.show.photo "Veure fotografies">
+<!ENTITY mtprefs.show.flash "Veure vídeos">
+<!ENTITY mtprefs.autohide "Ocultar automàticament">
+<!ENTITY mtprefs.autohide.help "Ocultar el penell de mashTape automàticament quan estiguis navegant per una pàgina web.">
+<!ENTITY mtprefs.services "Serveis">
+<!ENTITY mtprefs.getmore "Aconsigueix més serveis per a mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Configuració de la pestanya d'información de l'artista">
+<!ENTITY mtprefs.tab.review "Propietats de la pestanya de valoracions">
+<!ENTITY mtprefs.tab.rss "Configuració de la pestanya de notícies">
+<!ENTITY mtprefs.tab.photo "Configuració de la pestanya de fotografies">
+<!ENTITY mtprefs.tab.flash "Configuració de la pestanya de vídeos">
+<!ENTITY mtprefs.tab.help "Mostrar aquesta pestanya a mashTape">
+<!ENTITY mtprefs.single "Aquest penell permet mostrar contingut d'un sol servei a la vegada. Si us plau, tria un servei de la llista.">
+<!ENTITY mtprefs.multiple "Aquest penell permet mostrar contingut de més d'un servei a la vegada. Si us plau, tria els serveis que vulguis de la llista.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Dades en la teva llengua">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Obtenir automàticament informació de l'artista en la teva llengua, si n'hi ha de disponible.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Velocitat de desplaçament de les fotografies">
+<!ENTITY mtprefs.tab.photo.faster "Més de pressa">
+<!ENTITY mtprefs.tab.photo.slower "Més a poc a poc">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Cerca paraules clau">
+<!ENTITY mtprefs.tab.photo.keywords "Cerca paraules clau addicionals:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Pots especificar paraules clau addicionals per afegir-les al cercador del teu proveïdor de fotos">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Reproduir vídeos automàticament">
+<!ENTITY mtprefs.tab.video.autoplay.help "Activar aquesta opció farà que els resultats de les recopilacions de vídeos es reprodueixin l'un després de l'altre. És útil, per exemple, per reproduir automàticament tots els vídeos de la MTV. Només funciona amb proveïdors de recopilacions de vídeos.">
