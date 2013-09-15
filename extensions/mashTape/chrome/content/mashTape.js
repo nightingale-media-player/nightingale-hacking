@@ -2174,6 +2174,7 @@ mashTape.prefObserver = {
           tab.style.visibility = "collapse";
 #ifdef METRICS_ENABLED
           gMetrics.metricsInc("mashtape", pref[0], "tab.disabled");
+#endif
           // if we're currently on the tab, then hide it and select some
           // other tab
           mashTape.selectPane();
