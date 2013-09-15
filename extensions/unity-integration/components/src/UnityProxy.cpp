@@ -66,7 +66,7 @@ UnityProxy::UnityProxy ()
 
 UnityProxy::~UnityProxy ()
 {
-    unity_music_player_unexport (musicPlayer);
+    if (musicPlayer != NULL) unity_music_player_unexport(musicPlayer);
 }
 
 NS_IMETHODIMP UnityProxy::InitializeFor (const char* desktopFileName, const char* windowTitle)
