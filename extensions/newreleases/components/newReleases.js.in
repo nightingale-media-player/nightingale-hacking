@@ -202,8 +202,10 @@ function NewReleases() {
 
   // Instantiate nsIJSON & sbIMetrics
   this.json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+#ifdef METRICS_ENABLED
   this.metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                    .createInstance(Ci.sbIMetrics);
+#endif
 }
 
 NewReleases.prototype.constructor = NewReleases;
@@ -650,7 +652,9 @@ NewReleases.prototype = {
 
     // Save our current timestamp to denote when it was last updated
     this.prefs.setIntPref("lastupdated", Date.now()/1000);
+#ifdef METRICS_ENABLED
     this.metrics.metricsInc("newReleases", "data.refresh", "");
+#endif
 
     if (async)
       yield true;

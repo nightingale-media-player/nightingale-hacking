@@ -221,8 +221,10 @@ function Songkick() {
 
   // Instantiate nsIJSON & sbIMetrics
   this.json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+#ifdef METRICS_ENABLED
   this.metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                    .createInstance(Ci.sbIMetrics);
+#endif
 }
 
 Songkick.prototype.constructor = Songkick;
@@ -633,7 +635,9 @@ Songkick.prototype = {
 
     // Save our current timestamp to denote when it was last updated
     this.prefs.setIntPref("lastupdated", Date.now()/1000);
+#ifdef METRICS_ENABLED
     this.metrics.metricsInc("concerts", "data.refresh", "");
+#endif
 
     if (async)
       yield true;

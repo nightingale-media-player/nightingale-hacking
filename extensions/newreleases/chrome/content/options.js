@@ -17,9 +17,11 @@ if (typeof Cc == 'undefined')
 if (typeof Ci == 'undefined')
 	var Ci = Components.interfaces;
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
     		.createInstance(Ci.sbIMetrics);
+#endif
 
 /* FIX:
 ** - onTour property stuff
@@ -89,7 +91,9 @@ var NewReleaseOptions = {
 		//if (Application.prefs.getValue("extensions.newreleases.firstrun", false)) {
 		Application.prefs.setValue("extensions.newreleases.country", country);
 
+#ifdef METRICS_ENABLED
 		gMetrics.metricsInc("newReleases", "change.location", "");
+#endif
 /*
 		var box = document.getElementById("library-ontour-box");
 		if (box.style.visibility != "hidden") {

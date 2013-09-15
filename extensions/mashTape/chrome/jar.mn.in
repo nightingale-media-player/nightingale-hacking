@@ -1,5 +1,4 @@
 mashTape.jar:
-* content/mashTape.js (content/mashTape.js)
 % content mashtape %content/ contentaccessible=yes
 % resource mashtape modules/
 % locale mashtape en-US %locale/en-US/
@@ -36,4 +35,5 @@ mashTape.jar:
 % override chrome://songbird-web/skin/base-elements/icon-loading-large.png chrome://songbird/skin/base-elements/icon-loading-large.png
 % style chrome://mashtape/content/mashTape.xul chrome://mashtape/skin/styles-win.css os=WinNT
 % content songbird-web foo/ contentaccessible=yes
+* content/mashTape.js (content/mashTape.js)
 @include_all_to

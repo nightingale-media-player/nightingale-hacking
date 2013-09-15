@@ -14,10 +14,12 @@ Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined") {
   this.gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
       .createInstance(Ci.sbIMetrics);
 }
+#endif
 
 function debugLog(funcName, str) {
   var debug = Application.prefs.getValue("extensions.concerts.debug", false);
@@ -303,7 +305,9 @@ var Concerts = {
     // Prevent the highlight-current-item action from firing
     e.stopPropagation();
 
+#ifdef METRICS_ENABLED
     gMetrics.metricsInc("concerts", "faceplate.link", "");
+#endif
     // Load the artist event page into a new tab
     var item;
     if (Concerts.newMediaCore)
@@ -346,7 +350,9 @@ var Concerts = {
       var city =
         Application.prefs.getValue("extensions.concerts.city", 0);
       url += "?user_location=" + city;
+#ifdef METRICS_ENABLED
       gMetrics.metricsInc("concerts", "library.link", "");
+#endif
       gBrowser.loadOneTab(url);
     }
     e.stopPropagation();
@@ -457,7 +463,9 @@ var Concerts = {
       {
         debugLog("viewChangeListener",
           "Artists on tour playback initiated");
+#ifdef METRICS_ENABLED
         gMetrics.metricsInc("concerts", "smartpls.played", "");
+#endif
       }
     }
   },
@@ -527,9 +535,10 @@ Concerts.uninstallObserver = {
     // 1) Remove Concert prefs
     // 2) Remove "On Tour" property from library if it's visible
 
+#ifdef METRICS_ENABLED
     // Keep a count of when it was uninstalled
     gMetrics.metricsInc("concerts", "uninstall", "");
-    
+#endif
     // 1) Remove Concert prefs
     var prefs = Cc["@mozilla.org/preferences-service;1"]
       .getService(Ci.nsIPrefService).getBranch("extensions.concerts.");

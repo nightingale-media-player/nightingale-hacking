@@ -1,5 +1,4 @@
 lastfm.jar:
-* content/main.js (content/main.js)
 % content sb-lastfm  %content/
 #% locale  sb-lastfm  bn-IN  %locale/bn-IN/
 % locale  sb-lastfm  ca  %locale/ca/
@@ -35,4 +34,5 @@ lastfm.jar:
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://sb-lastfm/content/mini-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://sb-lastfm/content/faceplate-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://sb-lastfm/content/faceplate-overlay.xul
+* content/main.js (content/main.js)
 @include_all_to

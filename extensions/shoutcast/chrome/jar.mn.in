@@ -1,7 +1,4 @@
 shoutcast.jar:
-* content/directory.js (content/directory.js)
-* content/favourites.js (content/favourites.js)
-* content/main.js (content/main.js)
 % content shoutcast-radio %content/
 % resource shoutcast-radio modules/
 % locale shoutcast-radio en-US %locale/en-US/
@@ -34,4 +31,7 @@ shoutcast.jar:
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://shoutcast-radio/content/scripts-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://shoutcast-radio/content/faceplate-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://shoutcast-radio/content/faceplate-overlay.xul
+* content/directory.js (content/directory.js)
+* content/favourites.js (content/favourites.js)
+* content/main.js (content/main.js)
 @include_all_to
