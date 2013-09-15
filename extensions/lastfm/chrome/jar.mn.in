@@ -1,4 +1,5 @@
 lastfm.jar:
+* content/main.js (content/main.js)
 % content sb-lastfm  %content/
 #% locale  sb-lastfm  bn-IN  %locale/bn-IN/
 % locale  sb-lastfm  ca  %locale/ca/

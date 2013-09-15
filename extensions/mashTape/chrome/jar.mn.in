@@ -1,4 +1,5 @@
 mashTape.jar:
+* content/mashTape.js (content/mashTape.js)
 % content mashtape %content/ contentaccessible=yes
 % resource mashtape modules/
 % locale mashtape en-US %locale/en-US/

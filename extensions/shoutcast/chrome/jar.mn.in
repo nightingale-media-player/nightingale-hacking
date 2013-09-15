@@ -1,4 +1,7 @@
 shoutcast.jar:
+* content/directory.js (content/directory.js)
+* content/favourites.js (content/favourites.js)
+* content/main.js (content/main.js)
 % content shoutcast-radio %content/
 % resource shoutcast-radio modules/
 % locale shoutcast-radio en-US %locale/en-US/
