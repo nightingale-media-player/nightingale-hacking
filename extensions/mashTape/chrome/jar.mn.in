@@ -35,4 +35,5 @@ mashTape.jar:
 % override chrome://songbird-web/skin/base-elements/icon-loading-large.png chrome://songbird/skin/base-elements/icon-loading-large.png
 % style chrome://mashtape/content/mashTape.xul chrome://mashtape/skin/styles-win.css os=WinNT
 % content songbird-web foo/ contentaccessible=yes
+* content/mashTape.js (content/mashTape.js)
 @include_all_to

@@ -510,12 +510,14 @@ function sbLastFm() {
 
   this.updateServicePaneNodes();
 
+#ifdef METRICS_ENABLED
   // track metrics
   this._metrics = Cc['@songbirdnest.com/Songbird/Metrics;1']
     .getService(Ci.sbIMetrics);
 
   this._jsonSvc = Cc["@mozilla.org/dom/json;1"]
                     .createInstance(Ci.nsIJSON);
+#endif
 
   // report errors using the console service
   this._console = Cc["@mozilla.org/consoleservice;1"]
@@ -809,8 +811,10 @@ function sbLastFm_handshake(success, failure) {
     self.nowplaying_url = response_lines[2];
     self.submission_url = response_lines[3];
 
+#ifdef METRICS_ENABLED
     // increment metrics
     self._metrics.metricsInc('lastfm', 'login', null);
+#endif
 
     // save the credentials
     Logins.set(self.username, self.password);
@@ -1624,8 +1628,10 @@ function sbLastFm_scrobble(aEntries) {
         self.playcount += (entry_list.length-banCount);
         self.listeners.each(function(l) { l.onProfileUpdated(); });
         self.error = null;
+#ifdef METRICS_ENABLED
         // increment metrics
         self._metrics.metricsAdd('lastfm', 'scrobble', null, entry_list.length);
+#endif
       });
   }
 }

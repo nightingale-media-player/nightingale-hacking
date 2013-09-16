@@ -17,9 +17,11 @@ if (typeof(gMM) == "undefined")
   var gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
     .getService(Ci.sbIMediacoreManager);
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
         .createInstance(Ci.sbIMetrics);
+#endif
 
 if (typeof(FAVICON_PATH) == "undefined")
   const FAVICON_PATH = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
@@ -72,7 +74,9 @@ var mmListener = {
         if (mmListener.time) {
           var now = Date.now()/1000;
           var diff = now - mmListener.time;
+#ifdef METRICS_ENABLED
           gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
+#endif
         }
         
         // if our new stream we're playing isn't a shoutcast
@@ -108,7 +112,9 @@ var mmListener = {
         }
         var now = Date.now()/1000;
         var diff = now - mmListener.time;
+#ifdef METRICS_ENABLED
         gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
+#endif
         mmListener.time = null;
         break;
       case Ci.sbIMediacoreEvent.METADATA_CHANGE:

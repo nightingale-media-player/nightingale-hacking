@@ -31,7 +31,10 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-SONGBIRD_COMPONENTS += $(srcdir)/newReleases.js \
+SONGBIRD_PP_RESOURCES = $(srcdir)/newReleases.js.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS += $(CURDIR)/newReleases.js \
                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk

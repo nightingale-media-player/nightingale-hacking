@@ -34,4 +34,5 @@ lastfm.jar:
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://sb-lastfm/content/mini-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://sb-lastfm/content/faceplate-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://sb-lastfm/content/faceplate-overlay.xul
+* content/main.js (content/main.js)
 @include_all_to
