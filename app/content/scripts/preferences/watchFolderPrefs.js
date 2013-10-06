@@ -238,9 +238,20 @@ var watchFolderPrefsPane = {
   // Internal services.
   //
   //----------------------------------------------------------------------------
-  
+  // luisgmarine hacking part
+  _checkManageMedia: function(){
+	  var manageMediaValue = Application.prefs.getValue("songbird.media_management.library.enabled", false));
+	  var enable = document.getElementById("groupBox1");
+	  if (manageMediaValue) {
+		  return true;
+	  } else {
+		  enable.removeAttribute("hidden");
+	  }
+  }
+  ///
   _updateUIState: function()
   {
+	this._checkManageMedia();
     var checkbox = document.getElementById("watch_folder_enable_checkbox");
     var enabled = checkbox.checked;
     var broadcaster = document.getElementById("watch_folder_disabled_broadcaster");
