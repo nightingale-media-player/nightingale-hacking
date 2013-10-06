@@ -241,6 +241,7 @@ var watchFolderPrefsPane = {
   
   _updateUIState: function()
   {
+    _checkManageMedia();
     var checkbox = document.getElementById("watch_folder_enable_checkbox");
     var enabled = checkbox.checked;
     var broadcaster = document.getElementById("watch_folder_disabled_broadcaster");
