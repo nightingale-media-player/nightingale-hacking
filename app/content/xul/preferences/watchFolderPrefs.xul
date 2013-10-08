@@ -104,7 +104,7 @@
   
         </groupbox>
 
-        <groupbox>
+        <groupbox id="watch_folder_enable_warning">
           <description>&watch_folder.prefs.general_description;</description>
         </groupbox>
       </notificationbox>
