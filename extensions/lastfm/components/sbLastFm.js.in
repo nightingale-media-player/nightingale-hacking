@@ -887,7 +887,7 @@ function sbLastFm_nowPlaying(submission) {
     params[props[j]] = submission[props[j]];
   }
   // post, but don't worry about failure or success, this is best-effort
-  this.asPost(url, params, function() { }, function() { });
+  this.asPost(url, params, function() { }, function() { }, function() { });
 }
 
 // the first argument is an array of object, each with one-letter keys
