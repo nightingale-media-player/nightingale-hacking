@@ -220,10 +220,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     }
 
     const char *extraAudioExtensions[] = {"m4r", "m4p", "oga",
-                                          "ogg", "aac", "3gp"};
-#ifdef XP_WIN
-    const char *extraWindowsAudioExtensions[] = {"wma" };
-#endif
+                                          "ogg", "aac", "3gp",
+                                          "wma"};
 
     { // for scope
 
