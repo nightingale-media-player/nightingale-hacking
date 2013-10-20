@@ -221,7 +221,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
     const char *extraAudioExtensions[] = {"m4r", "m4p", "oga",
                                           "ogg", "aac", "3gp"};
-#ifdef XP_WIN
+#if defined(XP_WIN) || defined(XP_UNIX)
     const char *extraWindowsAudioExtensions[] = {"wma" };
 #endif
 
@@ -329,7 +329,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
         audioExtensions.AppendElement(ext);
     }
 
-#if XP_WIN
+#if defined(XP_WIN) || defined(XP_UNIX)
     for (unsigned int i = 0; i < NS_ARRAY_LENGTH(extraWindowsAudioExtensions); i++) {
       nsString ext = NS_ConvertUTF8toUTF16(extraWindowsAudioExtensions[i]);
       if(!audioExtensions.Contains(ext))
