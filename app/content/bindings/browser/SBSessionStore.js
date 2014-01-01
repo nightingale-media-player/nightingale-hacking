@@ -52,6 +52,9 @@ const PLACEHOLDER_URL = "chrome://songbird/content/mediapages/firstrun.xul";
 // with things like file scan.
 const PREF_FIRSTRUN_SESSION = "songbird.firstrun.is_session";
 
+const PREF_UPDATE_VERSION = "nightingale.update.version";
+const PREF_UPDATE_URL = "nightingale.update.url";
+
 function LOG(str) {
   // var environment = Cc["@mozilla.org/process/environment;1"]
   //                     .createInstance(Ci.nsIEnvironment);
@@ -208,13 +211,26 @@ var SBSessionStore = {
           // we want to load the firstrun page in the foreground
           selectedTab = aTabBrowser.loadOneTab(firstrunURL, null, null, null,
                                                !loadMLInBackground);
-          isFirstTab = false;
         }
         Application.prefs.setValue(PREF_FIRSTRUN, true);
         Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);
+        Application.prefs.setValue(PREF_UPDATE_VERSION, Application.version);
       }
     } else {
       LOG("saved tabs found: " + uneval(tabs));
+
+      // check whether ngale has been upgraded
+      if(Application.prefs.get(PREF_UPDATE_VERSION).value != Application.version) {
+        LOG("first launch after an update");
+
+        var updateURL = Application.prefs.getValue(PREF_UPDATE_URL, null);
+        if(updateURL) {
+            LOG("opening update tab");
+            aTabBrowser.loadOneTab(updateURL, null, null, null, false);
+
+            Application.prefs.setValue(PREF_UPDATE_VERSION, Application.version);
+        }
+      }
 
       // check if this is an invalid chrome url
       var chromeReg = Cc['@mozilla.org/chrome/chrome-registry;1']
