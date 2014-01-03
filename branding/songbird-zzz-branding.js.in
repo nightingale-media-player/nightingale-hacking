@@ -1,7 +1,7 @@
 /* branding preferences */
 #filter substitution
 
-pref("app.update.url", "https://nightingale-media-player.googlecode.com/files/@SB_APPNAME@-%VERSION%-@SB_BUILD_ID@-%BUILD_TARGET%-%CHANNEL%-update.xml");
+pref("app.update.url", "https://github.com/nightingale-media-player/nightingale-hacking/releases/download/nightingale-%VERSION%/%BUILD_TARGET%-%CHANNEL%-update.xml");
 pref("app.update.url.manual", "http://getnightingale.com/");
 pref("app.update.url.details", "http://wiki.getnightingale.com/doku.php?id=release_notes");
 
