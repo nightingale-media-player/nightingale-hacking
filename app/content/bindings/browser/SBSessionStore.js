@@ -219,8 +219,8 @@ var SBSessionStore = {
     } else {
       LOG("saved tabs found: " + uneval(tabs));
 
-      // check whether ngale has been upgraded
-      if(Application.prefs.get(PREF_UPDATE_VERSION).value != Application.version) {
+      // check whether ngale has been upgraded, if the pref is not present we upgraded from <1.12.1
+      if(!Application.prefs.has(PREF_UPDATE_VERSION) || Application.prefs.get(PREF_UPDATE_VERSION).value != Application.version) {
         LOG("first launch after an update");
 
         var updateURL = Application.prefs.getValue(PREF_UPDATE_URL, null);
