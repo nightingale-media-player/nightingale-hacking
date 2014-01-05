@@ -266,8 +266,8 @@ pref("songbird.url.bugzilla", "http://github.com/nightingale-media-player/nighti
 pref("songbird.url.metrics", "");
 pref("songbird.url.support", "http://forum.getnightingale.com/");
 pref("songbird.url.keyboard", "about:keyboard-help");
-pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
-pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
+// pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
+pref("songbird.url.support.corefailure", "http://wiki.getnightingale.com/doku.php?id=developer_center:articles:core_wrapper_failure");
 
 //
 // Media Core prefs

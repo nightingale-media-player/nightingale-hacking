@@ -7,7 +7,7 @@
 #
 # The output from this script works with the Javascript JIT viewer.
 # See thejit.org, treemap.html, and 
-# http://wiki.songbirdnest.com/Developer/Articles/Debugging/Using_TraceMalloc_with_Songbird
+# http://wiki.getnightingale.com/doku.php?id=developer_center:articles:debugging:using_tracemalloc
 #
 
 require 'rubygems'
