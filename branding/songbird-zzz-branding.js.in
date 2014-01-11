@@ -3,7 +3,7 @@
 
 pref("app.update.url", "https://github.com/nightingale-media-player/nightingale-hacking/releases/download/nightingale-%VERSION%/%BUILD_TARGET%-%CHANNEL%-update.xml");
 pref("app.update.url.manual", "http://getnightingale.com/");
-pref("app.update.url.details", "http://wiki.getnightingale.com/doku.php?id=release_notes");
+pref("app.update.url.details", "http://firstrun.getnightingale.com/release-notes/%VERSION%");
 
 // reenable updating of it in songbird-update-prefs.js when updating this url
 // pref("extensions.update.url", "https://addon-files.songbirdnest.com/updates/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/%ITEM_VERSION%/%ITEM_ID%/update.rdf");
