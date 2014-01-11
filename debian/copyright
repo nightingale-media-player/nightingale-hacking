@@ -1,21 +1,28 @@
 This package was debianized by David Rogers <ezekiel000@lavabit.com> on
-Sat, 31 Mar 2012 21:16:39 +0000.
+Sat, 31 Mar 2012 21:16:39 +0000. Updated on Sat, 11 Jan 2014 19:49:16 +0100
 
 It was downloaded from http://github.com/nightingale-media-player/nightingale-hacking
 
 Upstream Authors: 
-	* Steven Bengtson - Stevo
-	* Janek Bevendorff - Manko10
-	* Downward
-	* Lukas Diener - Lukas_Skywalker
-	* Matt Dwyer - MattSD
-	* Martin Giger - freaktechnik
-	* Geoffrey Gates - Timmythepirate
-	* Andrew Luecke - Auzy
-	* Matt Parnell - Ilikenwf
-	* Dirk Steinmetz - rsjtdrjgfuzkfg
-	* Antoine Turmel - GeekShadow
-	* Mark Yen - Mook
+    * Steven Bengtson - Stevo
+    * Janek Bevendorff - Manko10
+    * Downward
+    * Lukas Diener - Lukas_Skywalker
+    * Matt Dwyer - MattSD
+    * Martin Giger - freaktechnik
+    * Geoffrey Gates - Timmythepirate
+    * Andrew Luecke - Auzy
+    * Matt Parnell - Ilikenwf
+    * Dirk Steinmetz - rsjtdrjgfuzkfg
+    * Antoine Turmel - GeekShadow
+    * Mark Yen - Mook
+    * Akil Krishnan - LIB53
+    * Alexander Korenev - LookingMan
+    * John Murray - johnmurrayvi
+    * David Rogers - Ezekial1000
+    * Luis Gallego - luisgmarine
+    * Lars Tobias Skjong-Børsting - larstobi
+    * chocolateboy
 
 Copyright: 
 Certain files in this binary application ("binary") are

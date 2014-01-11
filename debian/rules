@@ -7,16 +7,29 @@
 override_dh_auto_build:
 	echo 'ac_add_options --with-taglib-source=packaged' >> $(CURDIR)/nightingale.config
 	echo 'ac_add_options --enable-unity-integration' >> $(CURDIR)/nightingale.config
+	echo 'ac_add_options --enable-libnotify' >> $(CURDIR)/nightingale.config
 	$(CURDIR)/build.sh
 	mv $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
 	mv $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
+
+	## Addons
+	mkdir -p $(CURDIR)/compiled/nightingale/addons
+	mv $(CURDIR)/compiled/xpi-stage/albumartlastfm/*.xpi $(CURDIR)/compiled/nightingale/addons/
+	mv $(CURDIR)/compiled/xpi-stage/audioscrobbler/*.xpi $(CURDIR)/compiled/nightingale/addons/
+	mv $(CURDIR)/compiled/xpi-stage/concerts/*.xpi $(CURDIR)/compiled/nightingale/addons/
+	mv $(CURDIR)/compiled/xpi-stage/mashTape/*.xpi $(CURDIR)/compiled/nightingale/addons/
+	mv $(CURDIR)/compiled/xpi-stage/shoutcast-radio/*.xpi $(CURDIR)/compiled/nightingale/addons/
 
 override_dh_auto_clean:
 	rm -f $(CURDIR)/nightingale.config $(CURDIR)/config.log
 	make clobber
 
 override_dh_shlibdeps:
-	dh_makeshlibs -Xnightingale
+#	dh_makeshlibs -Xnightingale
+	dh_shlibdeps -l $(CURDIR)/debian/nightingale/usr/share/nightingale/xulrunner/
+
+#override_dh_builddeb:
+#	dh_builddeb -- -Zxz
 
 %:
 	dh $@
