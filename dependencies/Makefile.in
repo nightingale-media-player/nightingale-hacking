@@ -576,3 +576,9 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	 $(SONGBIRD_XR_STUB_DIR)/nightingale.exe, nightingale.res, VersionInfo,1,1033
 endif # }windows
 	$(CHMOD) 0755 $(SONGBIRD_STUB)
+
+# Move updater icon on linux
+ifeq (linux,$(SB_PLATFORM)) #{
+	$(MKDIR) $(SONGBIRD_DISTDIR)/icons
+	$(MV) -f $(SONGBIRD_XULRUNNERDIR)/icons/updater.png $(SONGBIRD_DISTDIR)/icons/updater.png
+endif # }linux
