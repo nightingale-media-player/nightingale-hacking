@@ -45,6 +45,7 @@ ngInternalSearchService.prototype = {
     classID:          Components.ID("{738e3a66-d7b3-4c7d-94ec-a158eb753203}"),
     contractID:       "@getnightingale.com/Nightingale/internal-search-service;1",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIInternalSearchEnginesService]),
+    flags:            Components.interfaces.nsIClassInfo.SINGLETON,
 
     /**
    * Method used to register a searchengine which should be treated as internal.
