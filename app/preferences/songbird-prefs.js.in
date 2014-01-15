@@ -8,7 +8,7 @@ pref("browser.chromeURL", "chrome://songbird/content/xul/macCmdLineFwd.xul");
 // Prevent xulrunner from launching multiple instances of Songbird.
 pref("toolkit.singletonWindowType", "Songbird:Main");
 
-pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
+pref("general.useragent.extra.nightingale", "Nightingale/@SB_MILESTONE@ (@SB_BUILD_ID@)");
 pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 // Default feather settings:
