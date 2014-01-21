@@ -1,0 +1,1095 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/*
+ * Written by Logan F. Smyth Š 2009
+ * http://logansmyth.com
+ * me@logansmyth.com
+ */
+
+#filter substitution
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");  
+
+const CLASS_ID = Components.ID("{03638fa0-5327-11de-8a39-0800200c9a66}");
+const CLASS_NAME = "ngMprisPlugin";
+const CONTRACT_ID = "@getnightingale.com/Nightingale/Mpris;1";
+
+function ngMprisPlugin() {
+  this.info_obj = Components.classes['@mozilla.org/xre/app-info;1'].getService(Components.interfaces.nsIXULAppInfo);
+  this.mediacore = Components.classes['@songbirdnest.com/Songbird/Mediacore/Manager;1'].getService(Components.interfaces.sbIMediacoreManager);
+  this.appStartup = Components.classes['@mozilla.org/toolkit/app-startup;1'].getService(Components.interfaces.nsIAppStartup);
+  this.url_formatter = Components.classes['@mozilla.org/toolkit/URLFormatterService;1'].getService(Components.interfaces.nsIURLFormatter);
+  this.wMediator = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator);
+  this.focusM = Components.classes['@mozilla.org/focus-manager;1'].getService(Components.interfaces.nsIFocusManager);
+
+  this.seq = this.mediacore.sequencer;
+  
+  this.Player = new Player();
+  this.Root = new Root();
+
+  // MPRIS 1
+  var xml_header = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\"><node name=\"/org/mpris/songbird\"><interface name=\"org.mpris.songbird\">";
+  var xml_footer = "</interface></node>";
+  this.introspect_root = xml_header +"	\
+	<method name=\"Identity\">	\
+	  <arg type=\"s\" direction=\"out\"/>		\
+	</method>					\
+	<method name=\"Quit\" />			\
+	<method name=\"MprisVersion\">		\
+	  <arg type=\"(qq)\" direction=\"out\"/>	\
+	</method>" + xml_footer;
+	
+  this.introspect_player = xml_header + "		\
+	<method name=\"Next\" />		\
+	<method name=\"Prev\" />		\
+	<method name=\"Pause\" />		\
+	<method name=\"Stop\" />		\
+	<method name=\"Play\" />		\
+	<method name=\"Repeat\">			\
+	  <arg type=\"b\" direction=\"in\"/>				\
+	</method>					\
+	<method name=\"GetStatus\">			\
+	  <arg type=\"(iiii)\" direction=\"out\"/>	\
+	</method>					\
+	<method name=\"GetMetadata\">			\
+	  <arg type=\"a{sv}\" direction=\"out\" />	\
+	</method>				\
+	<method name=\"SetMetadata\">			\
+	  <arg type=\"s\" direction=\"in\" />	\
+	  <arg type=\"s\" direction=\"in\" />	\
+	</method>					\
+	<method name=\"GetCaps\">			\
+	  <arg type=\"i\" direction=\"out\" />	\
+	</method>					\
+	<method name=\"VolumeSet\">			\
+	  <arg type=\"i\" direction=\"in\"/>				\
+	</method>					\
+	<method name=\"VolumeGet\">			\
+	  <arg type=\"i\" direction=\"out\"/>		\
+	</method>					\
+	<method name=\"PositionSet\">			\
+	  <arg type=\"i\" direction=\"in\"/>				\
+	</method>					\
+	<method name=\"PositionGet\">			\
+	  <arg type=\"i\" direction=\"out\"/>		\
+	</method>					\
+	<signal name=\"TrackChange\">			\
+	  <arg type=\"a{sv}\"/>			\
+	</signal>					\
+	<signal name=\"StatusChange\">		\
+	 <arg type=\"(iiii)\"/>			\
+	</signal>					\
+	<signal name=\"CapsChange\">			\
+	  <arg type=\"i\" />				\
+	</signal>" + xml_footer;
+
+  this.introspect_tracklist = xml_header + "		\
+	<method name=\"GetLength\">			\
+	  <arg type=\"i\" direction=\"out\" />	\
+	</method>					\
+	<method name=\"GetMetadata\">			\
+	  <arg type=\"i\" direction=\"in\" />		\
+	  <arg type=\"a{sv}\" direction=\"out\" />	\
+	</method>			\
+	<method name=\"SetMetadata\">			\
+	  <arg type=\"i\" direction=\"in\" />		\
+	  <arg type=\"s\" direction=\"in\" />	\
+	  <arg type=\"s\" direction=\"in\" />	\
+	</method>					\
+	<method name=\"GetCurrentTrack\">		\
+	  <arg type=\"i\" direction=\"out\" />	\
+	</method>					\
+	<method name=\"GetLength\">			\
+	  <arg type=\"i\" direction=\"out\" />	\
+	</method>					\
+	<method name=\"AddTrack\">			\
+	  <arg type=\"s\" direction=\"in\" />		\
+	  <arg type=\"b\" direction=\"in\" />		\
+	  <arg type=\"i\" direction=\"out\" />	\
+	</method>					\
+	<method name=\"DelTrack\">			\
+	  <arg type=\"i\"  direction=\"in\"/>				\
+	</method>					\
+	<method name=\"SetLoop\">			\
+	  <arg type=\"b\"  direction=\"in\"/>				\
+	</method>					\
+	<method name=\"SetRandom\">			\
+	  <arg type=\"b\"  direction=\"in\"/>				\
+	</method>					\
+	<signal name=\"TrackListChange\">		\
+	  <arg type=\"i\" />				\
+	</signal>" + xml_footer;
+  
+  // MPRIS 2
+  this.xml = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
+<node name=\"/org/mpris/MediaPlayer2\">	\
+    <interface name=\"org.mpris.MediaPlayer2\">	\
+        <method name=\"Raise\" />	\
+        <method name=\"Quit\" />	\
+        <property name=\"CanQuit\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanRaise\" type=\"b\" access=\"read\" />	\
+        <property name=\"HasTrackList\" type=\"b\" access=\"read\" />	\
+        <property name=\"Identity\" type=\"s\" access=\"read\" />	\
+        <property name=\"DesktopEntry\" type=\"s\" access=\"read\" />	\
+        <property name=\"SupportedUriSchemes\" type=\"as\" access=\"read\" />	\
+        <property name=\"SupportedMimeTypes\" type=\"as\" access=\"read\" />	\
+    </interface>	\
+    <interface name=\"org.mpris.MediaPlayer2.Player\">	\
+        <method name=\"Next\" />		\
+        <method name=\"Previous\" />		\
+        <method name=\"Pause\" />		\
+        <method name=\"Stop\" />		\
+        <method name=\"Play\" />		\
+        <method name=\"PlayPause\" />	\
+        <method name=\"Seek\">	\
+            <arg type=\"x\" direction=\"in\" />	\
+        </method>	\
+        <method name=\"SetPosition\">	\
+            <arg type=\"o\" direction=\"in\" />	\
+            <arg type=\"x\" direction=\"in\" />	\
+        </method>	\
+        <signal name=\"Seeked\">	\
+            <arg type=\"x\" />	\
+        </signal>	\
+        <property name=\"PlaybackStatus\" type=\"s\" access=\"read\" />	\
+        <property name=\"LoopStatus\" type=\"s\" access=\"readwrite\" />	\
+        <property name=\"Rate\" type=\"d\" access=\"readwrite\" />	\
+        <property name=\"Shuffle\" type=\"b\" access=\"readwrite\" />	\
+        <property name=\"Metadata\" type=\"a{sv}\" access=\"read\" />	\
+        <property name=\"Volume\" type=\"d\" access=\"readwrite\" />	\
+        <property name=\"Position\" type=\"x\" access=\"read\" />	\
+        <property name=\"MinimumRate\" type=\"d\" access=\"read\" />	\
+        <property name=\"MaximumRate\" type=\"d\" access=\"read\" />	\
+        <property name=\"CanGoNext\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanGoPrevious\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanPlay\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanPause\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanSeek\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanControl\" type=\"b\" access=\"read\" />	\
+    </interface>	\
+</node>";
+};
+
+ngMprisPlugin.prototype = {
+  classDescription: CLASS_NAME,
+  classID:          CLASS_ID,
+  contractID:       CONTRACT_ID,
+  QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIMprisPlugin, Components.interfaces.ngIMethodHandler]),
+  dbus:             null,
+  debug_mode:       false,
+  mediacore:        null,
+  appStartup:       null,
+  info_obj:         null,
+  url_formatter:    null,
+  Player:           null,
+  Root:             null,
+  lastItem:         null,
+  seq:              null,
+  timer:            null,
+  wMediator:        null,
+  focusM:           null,
+  
+  init: function(debug){
+    this.debug_mode = debug;
+    
+    this.dbus = Components.classes['@getnightingale.com/Nightingale/DbusConnection;1'].createInstance(Components.interfaces.ngIDbusConnection);
+    this.dbus.init("org.mpris.MediaPlayer2.nightingale", this.debug_mode);
+    this.dbus.setMatch("type='signal',interface='org.freedesktop.MediaPlayer'");
+    this.dbus.setMethodHandler(this);
+
+    var TimerCallback = function(dbus) { 
+      this.dbus = dbus;
+    }
+    TimerCallback.prototype = {
+      dbus: null,
+      handler: null,
+      QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsITimerCallback]),
+      notify: function(timer){
+	this.dbus.check();
+      }
+    }
+
+    
+    this.timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer)
+      
+    this.timer.initWithCallback(new TimerCallback(this.dbus), 100, this.timer.TYPE_REPEATING_SLACK);
+    
+    var mediacore = this.mediacore;
+    var dbus = this.dbus;
+    var plugin = this;
+	  
+    this.mediacore.addListener({
+      onMediacoreEvent : function(event) {
+	    var item = event.data;
+	    if (mediacore.sequencer.view == null) return;
+	    var list = mediacore.sequencer.view.mediaList;
+	
+        var args = {};
+	    switch (event.type) {
+	      case Components.interfaces.sbIMediacoreEvent.TRACK_CHANGE:
+            if (plugin.lastItem == mediacore.sequencer.currentItem) break;
+		    plugin.lastItem = mediacore.sequencer.currentItem;
+
+            // MPRIS 1
+            dbus.prepareSignal("/Player", "org.freedesktop.MediaPlayer", "TrackChange");
+	        plugin.getMetadata(mediacore.sequencer.viewPosition);
+    	    dbus.sendSignal();
+
+          case Components.interfaces.sbIMediacoreEvent.METADATA_CHANGE:
+            // MPRIS 2
+	        dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+	        dbus.setStringArg("org.mpris.MediaPlayer2.Player");
+            plugin.setDBusArg({"Metadata":plugin.Player.Metadata});
+            dbus.openArray();
+            dbus.closeArray();
+	        dbus.sendSignal();
+
+	        break;
+          case Components.interfaces.sbIMediacoreEvent.SEQUENCE_ENDS:
+            args.CanGoNext = false;
+	      case Components.interfaces.sbIMediacoreEvent.STREAM_PAUSE:
+	      case Components.interfaces.sbIMediacoreEvent.STREAM_STOP:
+	      case Components.interfaces.sbIMediacoreEvent.STREAM_START:
+	      case Components.interfaces.sbIMediacoreEvent.STREAM_END:
+            //MPRIS 2
+            args.PlaybackStatus = plugin.Player.PlaybackStatus;
+            //args.Metadata = plugin.Player.Metadata;
+
+	        dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+            dbus.setStringArg("org.mpris.MediaPlayer2.Player");
+            plugin.setDBusArg(args);
+            dbus.openArray();
+            dbus.closeArray();
+	        dbus.sendSignal();
+
+            // MPRIS 1
+            dbus.prepareSignal("/Player", "org.freedesktop.MediaPlayer", "StatusChange");
+	        plugin.getStatus();
+	        dbus.sendSignal();
+	        break;
+          case Components.interfaces.sbIMediacoreEvent.VOLUME_CHANGE:
+            dbus.prepareSignal("/", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+	        dbus.setStringArg("org.mpris.MediaPlayer2.Player");
+            dbus.openDictEntryArray();
+            dbus.setDictSDEntryArg("Volume",plugin.Player.Volume);
+            dbus.closeDictEntryArray();
+            dbus.openArray();
+            dbus.closeArray();
+	        dbus.sendSignal();
+            break;
+          
+	      default:
+	        break;
+	    }
+      }
+    });
+    
+    //Have to use dataremotes because there aren't mediacore events for these
+    //There might be an undocumented event for shuffle at type 0x1505, but the remotes works fine
+    this.shuffleRemote = Components.classes['@songbirdnest.com/Songbird/DataRemote;1'].createInstance(Components.interfaces.sbIDataRemote);
+    this.shuffleRemote.init("playlist.shuffle");
+    this.shuffleRemote.bindObserver({
+      observe: function(event){
+	    dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+	    dbus.setStringArg("org.mpris.MediaPlayer2.Player");
+        dbus.openDictEntryArray();
+        dbus.setDictSSEntryArg("Shuffle", plugin.Player.Shuffle);
+        dbus.closeDictEntryArray();
+        dbus.openArray();
+        dbus.closeArray();
+	    dbus.sendSignal();
+
+        //MPRIS 1
+        dbus.prepareSignal("/Player", "org.freedesktop.MediaPlayer", "StatusChange");
+	    plugin.getStatus();
+    	dbus.sendSignal();
+      }
+    });
+    
+    this.repeatRemote = Components.classes['@songbirdnest.com/Songbird/DataRemote;1'].createInstance(Components.interfaces.sbIDataRemote);
+    this.repeatRemote.init("playlist.repeat");
+    this.repeatRemote.bindObserver({
+      observe: function(event){
+	    dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+	    dbus.setStringArg("org.mpris.MediaPlayer2.Player");
+        dbus.openDictEntryArray();
+        dbus.setDictSSEntryArg("LoopStatus", plugin.Player.LoopStatus);
+        dbus.closeDictEntryArray();
+        dbus.openArray();
+        dbus.closeArray();
+	    dbus.sendSignal();
+
+        //MPRIS 1
+        dbus.prepareSignal("/Player", "org.freedesktop.MediaPlayer", "StatusChange");
+	    plugin.getStatus();
+    	dbus.sendSignal();
+      }
+    });
+
+    /*this.wMediator.getMostRecentWindow("Songbird:Main").document.getAnonymousElementById("progress-slider").addEventListener("progressSliderChange", function(event) {
+        dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", "Seeked");
+        dbus.setInt64Arg(plugin.Player.Position);
+        dbus.sendSignal();
+    }, false);*/
+    
+  
+  },
+  
+  //Callback called my DBusConnection for each method call received
+  handleMethod: function(inter, path, member) {
+    this.play = this.mediacore.playbackControl;
+  
+    switch(inter) {
+      case "org.freedesktop.DBus.Introspectable":
+	    if(member == "Introspect") {
+            switch(path) {
+                case "/":
+                    this.dbus.setStringArg(this.introspect_root);
+	                break;
+	            case "/Player":
+	                this.dbus.setStringArg(this.introspect_player);
+	                break;
+	            case "/TrackList":
+	                this.dbus.setStringArg(this.introspect_tracklist);
+	                break;
+                case "/org/mpris/MediaPlayer2":
+    	            this.dbus.setStringArg(this.xml);
+                    break;
+            }
+	    }
+	    break;
+      case "org.mpris.MediaPlayer2":
+        if(path == "/org/mpris/MediaPlayer2") {
+            switch(member) {
+                case "Raise":
+        	    	this.wMediator.getMostRecentWindow("Songbird:Main").focus();
+	       	        break;
+	            case "Quit":
+	    	        this.appStartup.quit(Components.interfaces.nsIAppStartup.eForceQuit);
+	                break;
+            }
+        }
+        break;
+	  case "org.mpris.MediaPlayer2.Player":
+        if(path == "/org/mpris/MediaPlayer2") {
+            switch(member){
+                case "Next":
+                    this.seq.next();
+                    break;
+                case "Previous":
+                    this.seq.previous();
+                    break;
+                case "Pause":
+                    this.play.pause();
+                    break;
+                case "Stop":
+                    this.seq.stop();
+                    break;
+                case "Play":
+                    if(ComponentContainer.mediacore.sequencer.currentItem != null)
+                        this.seq.play();
+                    else
+                        Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                    break;
+                case "PlayPause":
+                    try{
+                    if(this.play != null){
+                        if(this.mediacore.status.state != this.mediacore.status.STATUS_PLAYING){
+                            if(ComponentContainer.mediacore.sequencer.currentItem != null)
+                                this.play.play();
+                            else
+                                Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                        }
+                        else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING){
+	                        this.play.pause();
+                        }
+                    }
+                    else
+                        Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                    }catch(e){Components.utils.reportError(e);}
+                    break;
+                case "Seek":
+                    if(this.play != null) this.play.position = this.dbus.getInt64Arg();
+                    break;
+                case "SetPosition":
+                    // switch to this track
+                    this.dbus.getObjectPathArg();
+                    if(this.play != null) this.play.position = this.dbus.getInt64Arg();
+                    break;
+                case "OpenUri":
+                    this.seq.playURL(this.dbus.getStringArg());
+                    break;
+            }
+        }
+        break;
+      case "org.freedesktop.DBus.Properties":
+        switch(member) {
+            case "Get":
+                switch(this.dbus.getStringArg()) {
+                    case "org.mpris.MediaPlayer2":
+                        this.setDBusArg(this.Root[this.dbus.getStringArg()]);
+                        break;
+                    case "org.mpris.MediaPlayer2.Player":
+                        var prop = this.dbus.getStringArg();
+                        this.setDBusArg(this.Player[prop], prop == "Position");
+                        break;                
+                }
+                break;
+            case "Set":
+                switch(this.dbus.getStringArg()) {
+                    case "org.mpris.MediaPlayer2.Player":
+                        var prop = this.dbus.getStringArg();
+                        this.Player[prop] = this.getDBusArg(obj, prop);
+                        break;
+                }
+                break;
+            case "GetAll":
+                switch(this.dbus.getStringArg()) {
+                    case "org.mpris.MediaPlayer2":
+                        this.setDBusArg(this.Root);
+                        break;
+                    case "org.mpris.MediaPlayer2.Player":
+                        this.setDBusArg(this.Player);
+                        break;
+                }
+            break;
+        }
+        break;
+    case "org.freedesktop.MediaPlayer":
+        switch(path) {
+            case "/org/mpris/MediaPlayer2/nightingale":
+	        case "/":
+	            switch(member) {
+	                case "Identity":
+		                this.dbus.setStringArg(this.info_obj.name+" "+this.info_obj.version);
+		                break;
+	                case "Quit":
+		                this.appStartup.quit(Components.interfaces.nsIAppStartup.eForceQuit);
+		                break;
+	                case "MprisVersion": 
+                		this.dbus.openStruct();
+		                this.dbus.setUInt16Arg(1);
+		                this.dbus.setUInt16Arg(0);
+		                this.dbus.closeStruct();     
+                		break;
+	            }
+	            break;
+	        case "/org/mpris/MediaPlayer2/nightingale/Player":
+	        case "/Player":
+	            switch(member){
+                    case "Next":
+                        this.seq.next();
+                		break;
+                    case "Prev":
+                        this.seq.previous();
+                        break;
+                    case "Pause":
+                		if(this.play != null) {
+                            if(this.mediacore.status.state == this.mediacore.status.STATUS_PAUSED) {
+                                this.play.play();
+                            }
+                            else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING) {
+                                this.play.pause();
+                            }
+                        }
+                		break;
+                    case "Stop":
+                        this.seq.stop();
+                		break;
+                    case "Play":
+                        this.seq.play();	
+                        break;
+                    case "Repeat":
+                        if(this.dbus.getBoolArg()) this.seq.repeatMode = this.seq.MODE_REPEAT_ONE;
+                        else{
+                            this.seq.repeatMode = this.seq.MODE_REPEAT_NONE;
+                        }
+                    break;
+                    case "GetStatus":
+                        this.getStatus();
+                        break;
+                    case "GetMetadata":
+                        this.getMetadata(this.seq.viewPosition);
+                        break;
+		
+                    // Nonstandard method for setting metadata
+                    // Proposed by Panflute project
+                    case "SetMetadata":
+                        this.setMetadata(this.seq.viewPosition);
+                        break;
+                    // End nonstandard
+		
+                    case "GetCaps":
+                        this.getCaps();
+                        break;
+                    case "VolumeGet":
+                        this.dbus.setInt32Arg(this.mediacore.volumeControl.volume*100);
+                        break;
+                    case "VolumeSet":
+                        this.mediacore.volumeControl.volume = this.dbus.getInt32Arg()/100;
+                        break;
+                    case "PositionGet":
+                        if(this.play != null) this.dbus.setInt32Arg(this.play.position);
+                        else this.dbus.setInt32Arg(0);
+                        break;
+                    case "PositionSet":
+                        if(this.play != null) this.play.position = this.dbus.getInt32Arg();
+                        break;
+                }
+                break;
+            case "/org/mpris/MediaPlayer2/nightingale/TrackList":
+            case "/TrackList":
+                switch(member){
+                    case "GetLength":
+                        if(this.play != null){
+                            this.dbus.setInt32Arg(this.seq.view.length);
+                        }
+                        else this.dbus.setInt32Arg(0);
+                        break;
+                    case "GetCurrentTrack":
+                        this.dbus.setInt32Arg(this.seq.viewPosition);
+                        break;
+                    case "GetMetadata":
+                        this.getMetadata(this.dbus.getInt32Arg());
+                        break;
+
+                    // Nonstandard method for setting metadata
+                    // Proposed by Panflute project
+	                case "SetMetadata":
+                        this.setMetadata(this.dbus.getInt32Arg());
+                        break;
+                    // End nonstandard
+
+                    case "AddTrack":
+                        this.addTrack(this.dbus.getStringArg(), this.dbus.getBoolArg());
+                        break;
+                    case "DelTrack":
+                        this.delTrack(this.dbus.getInt32Arg());
+                        break;
+                    case "SetLoop":
+                        if(this.dbus.getBoolArg()) this.seq.repeatMode = this.seq.MODE_REPEAT_ALL;
+                        else{
+                            this.seq.repeatMode = this.seq.MODE_REPEAT_NONE;
+                        }
+                        break;
+                    case "SetRandom":
+                        if(this.dbus.getBoolArg()) this.seq.mode = this.seq.MODE_SHUFFLE;
+                        else{
+                            this.seq.mode = this.seq.MODE_FORWARD;
+                        }
+                        break;
+                    }
+            }
+    }
+  },
+
+  setDBusArg: function(val, forceInteger) {
+    if(typeof val == "string") {
+        if(val.match(/^\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+/))
+            this.dbus.setObjectPathArg(val);
+        else
+            this.dbus.setStringArg(val);
+    }
+    else if(typeof val == "boolean")
+        this.dbus.setBoolArg(val);
+    else if(typeof val == "number")  {
+        if(forceInteger)//Number.isInteger(val))
+            this.dbus.setInt64Arg(val);
+        else
+            this.dbus.setDoubleArg(val);
+    }
+    else if(val instanceof Array) {//Array.isArray(val)) {
+        this.dbus.openArray();
+        for(var i = 0; i < val.length; ++i) {
+            if(typeof val[i] == "string")
+                this.dbus.setArrayStringArg(val[i]);
+        }
+        this.dbus.closeArray();
+    }
+    else if(val != null) {
+        this.dbus.openDictEntryArray();
+        for(var prop in val) {
+            if(typeof val[prop] == "string") {
+                if(val[prop].match(/^\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+/))
+                    this.dbus.setDictSOEntryArg(prop, val[prop]);
+                else
+                    this.dbus.setDictSSEntryArg(prop, val[prop]);
+            }
+            else if(typeof val[prop] == "boolean")
+                this.dbus.setDictSBEntryArg(prop, val[prop]);
+            else if(typeof val[prop] == "number") {
+                if(prop == "Position" || prop == "mpris:length")//Number.isInteger(val[prop]))
+                    this.dbus.setDictSI64EntryArg(prop, val[prop]);
+                else if(prop == "xesam:trackNumber" || prop == "xesam:audioBPM" || prop == "xesam:discNumber")
+                    this.dbus.setDictSIEntryArg(prop, val[prop]);
+                else
+                    this.dbus.setDictSDEntryArg(prop, val[prop]);
+            }
+            else if(val[prop] instanceof Array) {//Array.isArray(val[prop])) {
+                this.dbus.openDictSAEntryArg(prop);
+                for(var i = 0; i < val[prop].length; ++i) {
+                    this.dbus.setArrayStringArg(val[prop][i]);
+                }
+                this.dbus.closeDictSAEntryArg();
+            }
+            else if(val[prop] != null) { // for Metadata in GetAll and signals
+                this.dbus.openDictSDEntryArg(prop);
+                for(var p in val[prop]) {
+                    if(typeof val[prop][p] == "string") {
+                        if(val[prop][p].match(/^\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+/))
+                            this.dbus.setDictSOEntryArg(p, val[prop][p]);
+                        else
+                            this.dbus.setDictSSEntryArg(p, val[prop][p]);
+                    }
+                    else if(typeof val[prop][p] == "boolean")
+                        this.dbus.setDictSBEntryArg(p, val[prop][p]);
+                    else if(typeof val[prop][p] == "number") {
+                        if(p == "mpris:length")//Number.isInteger(val[prop][p]))
+                            this.dbus.setDictSI64EntryArg(p, val[prop][p]);
+                        else if(p == "xesam:trackNumber" || p == "xesam:audioBPM" || p == "xesam:discNumber")
+                            this.dbus.setDictSIEntryArg(p, val[prop][p]);
+                        else
+                            this.dbus.setDictSDEntryArg(p, val[prop][p]);
+                    }
+                    else if(val[prop][p] instanceof Array) {//Array.isArray(val[prop][p])) {
+                        this.dbus.openDictSAEntryArg(p);
+                        for(var i = 0; i < val[prop][p].length; ++i) {
+                            this.dbus.setArrayStringArg(val[prop][p][i]);
+                        }
+                        this.dbus.closeDictSAEntryArg();
+                    }
+                }
+                this.dbus.closeDictSDEntryArg();
+            }
+        }
+        this.dbus.closeDictEntryArray();
+    }
+  },
+
+  getDBusArg: function(obj, prop) {
+    if(typeof val == "string")
+        this.dbus.getStringArg(val);
+    else if(typeof val == "boolean")
+        this.dbus.getBoolArg(val);
+    else if(typeof val == "number")  {
+        if(val == Math.round(val))//Number.isInteger(val))
+            this.dbus.getInt64Arg(val);
+        else
+            this.dbus.getDoubleArg(val);
+    }
+  },
+
+//MPRIS 1
+  setMetadata: function(track_num) {
+    var key = this.dbus.getStringArg();
+    var value = this.dbus.getStringArg();
+    
+    var track_info = this.seq.view.getItemByIndex(track_num);
+    
+    switch (key) {
+      case 'rating':
+	track_info.setProperty(SBProperties.rating, value);
+	break;
+      
+    }
+    
+  },
+  
+  getMetadata: function(track_num) {
+    if(this.seq.view == null || track_num >= this.seq.view.length){
+      this.dbus.openDictEntryArray();
+      this.dbus.closeDictEntryArray();
+      return;
+    }
+    
+    var track_info = this.seq.view.getItemByIndex(track_num);
+    var str;
+    
+    this.dbus.openDictEntryArray();
+    
+    if(typeof track_info.getProperty(SBProperties.contentURL) == 'string'){
+      str = track_info.getProperty(SBProperties.contentURL);
+      this.dbus.setDictSSEntryArg("location", str);
+    }
+    if(typeof track_info.getProperty(SBProperties.trackName) == 'string'){
+      str = track_info.getProperty(SBProperties.trackName);
+      this.dbus.setDictSSEntryArg("title", str);
+    }
+    if(typeof track_info.getProperty(SBProperties.artistName) == 'string'){
+      str = track_info.getProperty(SBProperties.artistName);
+      this.dbus.setDictSSEntryArg("artist", str);
+    }
+    if(typeof track_info.getProperty(SBProperties.albumName) == 'string'){
+      str = track_info.getProperty(SBProperties.albumName);
+      this.dbus.setDictSSEntryArg("album", str);
+    }
+    if(typeof track_info.getProperty(SBProperties.trackNumber) == 'string'){
+      str = track_info.getProperty(SBProperties.trackNumber);
+      this.dbus.setDictSSEntryArg("tracknumber", str);    
+    }
+    
+    if(typeof track_info.getProperty(SBProperties.duration) == 'string'){
+      this.dbus.setDictSIEntryArg("time", parseInt(track_info.getProperty(SBProperties.duration))/1000000);
+      this.dbus.setDictSIEntryArg("mtime", parseInt(track_info.getProperty(SBProperties.duration))/1000);
+    }
+    
+    if(typeof track_info.getProperty(SBProperties.genre) == 'string'){
+      str = track_info.getProperty(SBProperties.genre);
+      this.dbus.setDictSSEntryArg("genre", str);
+    }
+    if(typeof track_info.getProperty(SBProperties.comment) == 'string'){
+      str = track_info.getProperty(SBProperties.comment);
+      this.dbus.setDictSSEntryArg("comment", str);
+    }
+    
+    if(typeof track_info.getProperty(SBProperties.year) == 'string'){
+    
+      this.dbus.setDictSIEntryArg("year", parseInt(track_info.getProperty(SBProperties.year)));
+    
+      var date = new Date();
+      date.setFullYear(parseInt(track_info.getProperty(SBProperties.year)));
+      this.dbus.setDictSIEntryArg("date", date.getTime());
+    }
+    
+    if(typeof track_info.getProperty(SBProperties.primaryImageURL) == 'string'){
+      this.dbus.setDictSSEntryArg("arturl", track_info.getProperty(SBProperties.primaryImageURL));
+    }
+    
+    //TODO
+    //~ this.dbus.setDictSSEntryArg("asin", "");
+    //~ this.dbus.setDictSSEntryArg("puid_fingerprint", "");
+    //~ this.dbus.setDictSSEntryArg("mb_track_id", "");
+    //~ this.dbus.setDictSSEntryArg("mb_artist_id", "");
+    //~ this.dbus.setDictSSEntryArg("mb_artist_sort_name", "");
+    //~ this.dbus.setDictSSEntryArg("mb_album_id", "");
+    //~ this.dbus.setDictSSEntryArg("mb_release_date", "");
+    //~ this.dbus.setDictSSEntryArg("mb_album_artist", "");
+    //~ this.dbus.setDictSSEntryArg("mb_album_artist_id", "");
+    //~ this.dbus.setDictSSEntryArg("mb_album_artist_sort_name", "");
+    
+    if(typeof track_info.getProperty(SBProperties.bitRate) == 'string'){
+      this.dbus.setDictSIEntryArg("audio_bitrate", parseInt(track_info.getProperty(SBProperties.bitRate)));
+    }
+    if(typeof track_info.getProperty(SBProperties.sampleRate) == 'string'){
+      this.dbus.setDictSIEntryArg("audio_samplerate", parseInt(track_info.getProperty(SBProperties.sampleRate)));
+    }
+    
+    
+    if(typeof track_info.getProperty(SBProperties.rating) == 'string'){
+      this.dbus.setDictSIEntryArg("rating", parseInt(track_info.getProperty(SBProperties.rating)));
+    }
+    
+    
+    this.dbus.closeDictEntryArray();
+  },
+  getStatus: function(){
+    this.dbus.openStruct();
+    
+    switch(this.mediacore.status.state){
+      case this.mediacore.status.STATUS_PLAYING:
+	this.dbus.setInt32Arg(0);
+	break;
+      case this.mediacore.status.STATUS_PAUSED:
+	this.dbus.setInt32Arg(1);
+	break;
+      default:  
+	this.dbus.setInt32Arg(2);
+	break;
+    }
+    
+    switch(this.seq.mode){
+      case this.seq.MODE_SHUFFLE:
+	this.dbus.setInt32Arg(1);
+	break;
+      default:
+	this.dbus.setInt32Arg(0);
+	break;
+    }
+    
+    switch(this.seq.repeatMode & this.seq.MODE_REPEAT_ONE){
+      case this.seq.MODE_REPEAT_ONE:
+	this.dbus.setInt32Arg(1);
+	break;
+      default:
+	this.dbus.setInt32Arg(0);
+	break;
+    }
+    
+    switch(this.seq.repeatMode & this.seq.MODE_REPEAT_ALL){
+      case this.seq.MODE_REPEAT_ALL:
+	this.dbus.setInt32Arg(1);
+	break;
+      default:
+	this.dbus.setInt32Arg(0);
+	break;
+    }
+    
+    this.dbus.closeStruct();
+  },
+  addTrack: function(uri, play_now) {
+    //TODO
+    
+    this.dbus.setInt32Arg(1);
+  },
+
+  delTrack: function(track_num) {
+    //TODO
+    this.dbus.setInt32Arg(1);
+  },
+  getCaps: function() {
+      var caps = 0;
+      //TODO
+      
+      
+      if(true){
+	  caps += 1;// Has Next
+      }
+      if(true){
+	  caps += 2;// Has Prev
+      }
+      if(true){
+	  caps += 4;// Can Pause
+      }
+      if(true){
+	  caps += 8;// Can Play
+      }
+      if(true){
+	  caps += 16;// Can seek
+      }
+      if(true){
+	  caps += 32;// Can give Metadata
+      }
+      if(true){
+	  caps += 64;// Has Tracklist
+      }
+      
+      this.dbus.setInt32Arg(caps);
+  }
+};
+ngMprisPlugin.prototype.constructor = ngMprisPlugin;
+
+var components = [ngMprisPlugin];
+function NSGetModule(compMgr, fileSpec) { 
+  return XPCOMUtils.generateModule(components);
+}
+
+var ComponentContainer = {
+    mediacore: Components.classes['@songbirdnest.com/Songbird/Mediacore/Manager;1'].getService(Components.interfaces.sbIMediacoreManager),
+    ios: Components.classes['@mozilla.org/network/io-service;1'].getService(Components.interfaces.nsIIOService),
+    appInfo: Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo),
+    wMediator: Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator),
+    focusM: Components.classes["@mozilla.org/focus-manager;1"].getService(Components.interfaces.nsIFocusManager)
+};
+
+function Player() {
+}
+
+Player.prototype = {
+    get PlaybackStatus() {
+        switch(ComponentContainer.mediacore.status.state) {
+            case ComponentContainer.mediacore.status.STATUS_PLAYING:
+                return "Playing";
+            case ComponentContainer.mediacore.status.STATUS_PAUSED:
+                return "Paused";
+            case ComponentContainer.mediacore.status.STATUS_STOPPED:  
+                return "Stopped";
+        }
+    },
+    get LoopStatus() {
+        if(ComponentContainer.mediacore.sequencer.repeatMode == ComponentContainer.mediacore.sequencer.MODE_REPEAT_ONE) {
+            return "Track";
+        }
+        else if(ComponentContainer.mediacore.sequencer.repeatMode == ComponentContainer.mediacore.sequencer.MODE_REPEAT_ALL) {
+            return "Playlist";
+        }
+        else {
+            return "None";
+        }
+    },
+    set LoopStatus(val) {
+        switch(val) {
+            case "None":
+                ComponentContainer.mediacore.sequencer.repeatMode = ComponentContainer.mediacore.sequencer.MODE_REPEAT_NONE;
+                break;
+            case "Track":
+                ComponentContainer.mediacore.sequencer.repeatMode = ComponentContainer.mediacore.sequencer.MODE_REPEAT_ONE;
+                break;
+            case "Playlist":
+                ComponentContainer.mediacore.sequencer.repeatMode = ComponentContainer.mediacore.sequencer.MODE_REPEAT_ALL;
+                break;
+        }
+    },
+    get Rate() {
+        return 1.0;
+    },
+    set Rate(val) {
+        // not supported
+    },
+    get Shuffle() {
+        return ComponentContainer.mediacore.sequencer.mode == ComponentContainer.mediacore.sequencer.MODE_SHUFFLE;
+    },
+    set Shuffle(val) {
+        ComponentContainer.mediacore.sequencer.mode = val ? ComponentContainer.mediacore.sequencer.MODE_SHUFFLE : ComponentContainer.mediacore.sequencer.MODE_FORWARD;
+    },
+    get Metadata() {
+        if(ComponentContainer.mediacore.sequencer.view) {
+            var track_info = ComponentContainer.mediacore.sequencer.view.getItemByIndex(ComponentContainer.mediacore.sequencer.viewPosition);
+
+            var resURL = track_info.getProperty(SBProperties.primaryImageURL);
+            if(resURL)
+                resURL = 'file://'+ComponentContainer.ios.newURI(decodeURI(resURL), null, null).QueryInterface(Components.interfaces.nsIFileURL).file.path;
+
+            var contURL = track_info.getProperty(SBProperties.contentURL);
+            if(contURL && contURL.indexOf("resource://")!= -1)
+                contURL = 'file://'+ComponentContainer.ios.newURI(decodeURI(contURL), null, null).QueryInterface(Compontents.interfaces.nsIFileURL).file.path;
+
+            var ret = {};
+            ret["mpris:trackid"]="/com/getnightingale/Nightingale/"+track_info.getProperty(SBProperties.GUID).replace(/-/g,"_");
+            ret["mpris:length"]=parseInt(track_info.getProperty(SBProperties.duration),10);
+            if(resURL)
+                ret["mpris:artUrl"]=resURL;
+            if(track_info.getProperty(SBProperties.albumName) != null)
+                ret["xesam:album"]=track_info.getProperty(SBProperties.albumName);
+            if(track_info.getProperty(SBProperties.abumArtist) != null)
+                ret["xesam:albumArtist"]=track_info.getProperty(SBProperties.albumArtist).split(",");
+            if(track_info.getProperty(SBProperties.artistName) != null)
+                ret["xesam:artist"]=track_info.getProperty(SBProperties.artistName).split(",");
+            if(track_info.getProperty(SBProperties.bpm))
+                ret["xesam:audioBPM"]=parseInt(track_info.getProperty(SBProperties.bpm),10);
+            if(track_info.getProperty(SBProperties.comment) != null)
+                ret["xesam:comment"]=[track_info.getProperty(SBProperties.comment)];
+            if(track_info.getProperty(SBProperties.composerName) != null)
+                ret["xesam:composer"]=track_info.getProperty(SBProperties.composerName).split(",");
+            if(track_info.getProperty(SBProperties.year) != null)
+                ret["xesam:contentCreated"] = track_info.getProperty(SBProperties.year)+"";
+            if(track_info.getProperty(SBProperties.discNumber))
+                ret["xesam:discNumber"]=parseInt(track_info.getProperty(SBProperties.discNumber),10);
+            if(track_info.getProperty(SBProperties.genre) != null)
+                ret["xesam:genre"]=[track_info.getProperty(SBProperties.genre)];
+                //"xesam:lastUsed":track_info.getProperty(SBProperties.lastPlayTime),
+            if(track_info.getProperty(SBProperties.lyricistName) != null)
+                ret["xesam:lyricist"]=track_info.getProperty(SBProperties.lyricistName).split(",");
+            ret["xesam:title"]=track_info.getProperty(SBProperties.trackName);
+            if(track_info.getProperty(SBProperties.trackNumber))
+                ret["xesam:trackNumber"]=parseInt(track_info.getProperty(SBProperties.trackNumber),10);
+            ret["xesam:url"]=contURL;
+            if(track_info.getProperty(SBProperties.rating) != null)
+                ret["xesam:userRating"]=track_info.getProperty(SBProperties.rating)/5;
+
+            return ret;
+        }
+        return [];
+    },
+    get Volume() {
+        return ComponentContainer.mediacore.volumeControl.volume;
+    },
+    set Volume(val) {
+        ComponentContainer.mediacore.volumeControl.volume = val;
+    },
+    get Position() {
+        if(ComponentContainer.mediacore.playbackControl)
+            return ComponentContainer.mediacore.playbackControl.position;
+        else
+            return 0;
+    },
+    get MinimumRate() {
+        return 1.0;
+    },
+    get MaximumRate() {
+        return 1.0;
+    },
+    get CanGoNext() {
+        return ComponentContainer.mediacore.sequencer.nextItem != null && this.CanControl;
+    },
+    get CanGoPrevious() {
+        return true && this.CanControl;//ComponentContainer.mediacore.sequencer.sequencePosition != 0;
+    },
+    get CanPlay() {
+        return true && this.CanControl;
+    },
+    get CanPause() {
+        return true && this.CanControl;
+    },
+    get CanSeek() {
+        return ComponentContainer.mediacore.sequencer.viewPosition != null && this.CanControl;
+    },
+    get CanControl() {
+        return true;
+    }
+};
+
+function Root() {
+}
+
+Root.prototype = {
+    get CanQuit() {
+        return true;
+    },
+    get CanRaise() {
+        return ComponentContainer.wMediator.getMostRecentWindow("Songbird:Main") != ComponentContainer.focusM.activeWindow;
+    },
+    get HasTrackList() {
+        return "false";
+    },
+    get Identity() {
+        return ComponentContainer.appInfo.name;
+    },
+    get DesktopEntry() {
+        return "nightingale";
+    },
+    get SupportedUriSchemes() {
+        return ["http","https","file","rtsp","ngale","mms"];
+    },
+    get SupportedMimeTypes() {
+        return ["application/ogg",
+                "application/x-ogg",
+                "application/x-ogm-audio",
+                "audio/aac",
+                "audio/mp4",
+                "audio/mpeg",
+                "audio/mpegurl",
+                "audio/ogg",
+                "audio/vnd.rn-realaudio",
+                "audio/vorbis",
+                "audio/x-flac",
+                "audio/x-mp3",
+                "audio/x-mpeg",
+                "audio/x-mpegurl",
+                "audio/x-ms-wma",
+                "audio/x-musepack",
+                "audio/x-oggflac",
+                "audio/x-pn-realaudio",
+                "audio/x-scpls",
+                "audio/x-speex",
+                "audio/x-vorbis",
+                "audio/x-vorbis+ogg",
+                "audio/x-wav",
+                "video/x-ms-asf",
+                "x-content/audio-player",
+                "x-scheme-handler/ngale"];
+    }
+};

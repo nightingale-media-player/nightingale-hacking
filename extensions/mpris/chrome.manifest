@@ -1,9 +1,0 @@
-content mpris  chrome/content/
-locale  mpris  en-US  chrome/locale/en-US/
-skin    mpris  classic/1.0 chrome/skin/
-
-
-overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://mpris/content/scripts-overlay.xul
-
-
-
