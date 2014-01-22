@@ -436,9 +436,10 @@ ngMprisPlugin.prototype = {
                     if(this.play != null) this.play.position = this.dbus.getInt64Arg();
                     break;
                 case "SetPosition":
-                    // switch to this track
-                    this.dbus.getObjectPathArg();
-                    if(this.play != null) this.play.position = this.dbus.getInt64Arg();
+                    var trackPath = "/com/getnightingale/Nightingale/"
+                                    + this.seq.view.getItemByIndex(this.seq.viewPosition).getProperty(SBProperties.GUID).replace(/-/g,"_");
+                    if(this.dbus.getObjectPathArg() == trackPath && this.play != null)
+                        this.play.position = this.dbus.getInt64Arg();
                     break;
                 case "OpenUri":
                     this.seq.playURL(this.dbus.getStringArg());
