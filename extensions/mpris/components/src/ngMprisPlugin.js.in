@@ -1002,7 +1002,7 @@ Player.prototype = {
 
             return ret;
         }
-        return [];
+        return {"mpris:trackid":"/org/mpris/MediaPlayer2/TrackList/NoTrack"};
     },
     get Volume() {
         return ComponentContainer.mediacore.volumeControl.volume;
