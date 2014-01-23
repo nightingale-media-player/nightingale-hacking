@@ -148,8 +148,12 @@ function ngMprisPlugin() {
   this.xml = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
 <node name=\"/org/mpris/MediaPlayer2\">	\
     <interface name=\"org.mpris.MediaPlayer2\">	\
-        <method name=\"Raise\" />	\
-        <method name=\"Quit\" />	\
+        <method name=\"Raise\">	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Quit\">	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
         <property name=\"CanQuit\" type=\"b\" access=\"read\" />	\
         <property name=\"CanRaise\" type=\"b\" access=\"read\" />	\
         <property name=\"HasTrackList\" type=\"b\" access=\"read\" />	\
@@ -159,19 +163,33 @@ function ngMprisPlugin() {
         <property name=\"SupportedMimeTypes\" type=\"as\" access=\"read\" />	\
     </interface>	\
     <interface name=\"org.mpris.MediaPlayer2.Player\">	\
-        <method name=\"Next\" />		\
-        <method name=\"Previous\" />		\
-        <method name=\"Pause\" />		\
-        <method name=\"Stop\" />		\
-        <method name=\"Play\" />		\
-        <method name=\"PlayPause\" />	\
+        <method name=\"Next\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Previous\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Pause\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Stop\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Play\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"PlayPause\">	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
         <method name=\"Seek\">	\
             <arg type=\"x\" direction=\"in\" />	\
-        </method>	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
         <method name=\"SetPosition\">	\
             <arg type=\"o\" direction=\"in\" />	\
             <arg type=\"x\" direction=\"in\" />	\
-        </method>	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
         <signal name=\"Seeked\">	\
             <arg type=\"x\" />	\
         </signal>	\
@@ -181,7 +199,9 @@ function ngMprisPlugin() {
         <property name=\"Shuffle\" type=\"b\" access=\"readwrite\" />	\
         <property name=\"Metadata\" type=\"a{sv}\" access=\"read\" />	\
         <property name=\"Volume\" type=\"d\" access=\"readwrite\" />	\
-        <property name=\"Position\" type=\"x\" access=\"read\" />	\
+        <property name=\"Position\" type=\"x\" access=\"read\">	\
+			<annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"false\"/>		\
+        </property>		\
         <property name=\"MinimumRate\" type=\"d\" access=\"read\" />	\
         <property name=\"MaximumRate\" type=\"d\" access=\"read\" />	\
         <property name=\"CanGoNext\" type=\"b\" access=\"read\" />	\
@@ -189,14 +209,9 @@ function ngMprisPlugin() {
         <property name=\"CanPlay\" type=\"b\" access=\"read\" />	\
         <property name=\"CanPause\" type=\"b\" access=\"read\" />	\
         <property name=\"CanSeek\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanControl\" type=\"b\" access=\"read\" />	\
-    </interface>	\
-</node>";
-
-this.mediakeys_xml = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
-<node name=\"/org/gnome/SettingsDaemon/MediaKeys\">	\
-    <interface name=\"org.gnome.SettingsDaemon.MediaKeys\">	\
-        <method name=\"MediaPlayerKeyPressed\" />	\
+        <property name=\"CanControl\" type=\"b\" access=\"read\">	\
+			<annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"false\"/>		\
+        </property>		\
     </interface>	\
 </node>";
 };
@@ -390,9 +405,6 @@ ngMprisPlugin.prototype = {
 	                break;
                 case "/org/mpris/MediaPlayer2":
     	            this.dbus.setStringArg(this.xml);
-                    break;
-                case "/org/gnome/SettingsDaemon/MediaKeys":
-                    this.dbus.setStringArg(this.mediakeys_xml);
                     break;
             }
 	    }
