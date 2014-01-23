@@ -192,6 +192,13 @@ function ngMprisPlugin() {
         <property name=\"CanControl\" type=\"b\" access=\"read\" />	\
     </interface>	\
 </node>";
+
+this.mediakeys_xml = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
+<node name=\"/org/gnome/SettingsDaemon/MediaKeys\">	\
+    <interface name=\"org.gnome.SettingsDaemon.MediaKeys\">	\
+        <method name=\"MediaPlayerKeyPressed\" />	\
+    </interface>	\
+</node>";
 };
 
 ngMprisPlugin.prototype = {
@@ -218,8 +225,13 @@ ngMprisPlugin.prototype = {
     
     this.dbus = Components.classes['@getnightingale.com/Nightingale/DbusConnection;1'].createInstance(Components.interfaces.ngIDbusConnection);
     this.dbus.init("org.mpris.MediaPlayer2.nightingale", this.debug_mode);
-    this.dbus.setMatch("type='signal',interface='org.freedesktop.MediaPlayer'");
+    this.dbus.setMatch("type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'");
     this.dbus.setMethodHandler(this);
+
+    this.dbus.prepareMethodCall("org.gnome.SettingsDaemon","/org/gnome/SettingsDaemon/MediaKeys","org.gnome.SettingsDaemon.MediaKeys","GrabMediaPlayerKeys");
+    this.dbus.setStringArg("nightingale");
+    this.dbus.setUInt32Arg(0);
+    this.dbus.sendMethodCall();
 
     var TimerCallback = function(dbus) { 
       this.dbus = dbus;
@@ -379,6 +391,9 @@ ngMprisPlugin.prototype = {
                 case "/org/mpris/MediaPlayer2":
     	            this.dbus.setStringArg(this.xml);
                     break;
+                case "/org/gnome/SettingsDaemon/MediaKeys":
+                    this.dbus.setStringArg(this.mediakeys_xml);
+                    break;
             }
 	    }
 	    break;
@@ -416,21 +431,18 @@ ngMprisPlugin.prototype = {
                         Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
                     break;
                 case "PlayPause":
-                    try{
-                    if(this.play != null){
-                        if(this.mediacore.status.state != this.mediacore.status.STATUS_PLAYING){
+                    if(this.play != null) {
+                        if(this.mediacore.status.state != this.mediacore.status.STATUS_PLAYING) {
                             if(ComponentContainer.mediacore.sequencer.currentItem != null)
                                 this.play.play();
                             else
                                 Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
                         }
-                        else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING){
+                        else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING)
 	                        this.play.pause();
-                        }
                     }
                     else
                         Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
-                    }catch(e){Components.utils.reportError(e);}
                     break;
                 case "Seek":
                     if(this.play != null) this.play.position = this.dbus.getInt64Arg();
@@ -480,6 +492,36 @@ ngMprisPlugin.prototype = {
                         break;
                 }
             break;
+        }
+        break;
+    case "org.gnome.SettingsDaemon.MediaKeys":
+        if(path == "/org/gnome/SettingsDaemon/MediaKeys" && member == "MediaPlayerKeyPressed") {
+            if(this.dbus.getStringArg() != "nightingale") break;
+            switch(this.dbus.getStringArg()) {
+                case "Play":
+                    if(this.play != null) {
+                        if(this.mediacore.status.state != this.mediacore.status.STATUS_PLAYING) {
+                            if(ComponentContainer.mediacore.sequencer.currentItem != null)
+                                this.play.play();
+                            else
+                                Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                        }
+                        else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING)
+	                        this.play.pause();
+                    }
+                    else
+                        Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                    break;
+                case "Next":
+                    this.seq.next();
+                    break;
+                case "Previous":
+                    this.seq.previous();
+                    break;
+                case "Stop":
+                    this.seq.stop();
+                    break;                   
+            }
         }
         break;
     case "org.freedesktop.MediaPlayer":

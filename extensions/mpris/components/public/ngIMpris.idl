@@ -65,6 +65,9 @@ interface ngIDbusConnection : nsISupports
   void setMatch(in string match);
   void check();
   long end();
+
+  void prepareMethodCall(in string dest, in string path, in string inter, in string name);
+  void sendMethodCall();
   
   void prepareSignal(in string path, in string inter, in string name);
   void sendSignal();

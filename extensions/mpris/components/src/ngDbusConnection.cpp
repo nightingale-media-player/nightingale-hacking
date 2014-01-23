@@ -149,7 +149,7 @@ NS_IMETHODIMP ngDbusConnection::Check()
     msg = dbus_connection_pop_message(conn);
 
     if(msg != NULL){
-      if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL){
+      if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL || dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL){
 	    if(DEBUG || debug_mode) cout << "*****Calling " << dbus_message_get_member(msg) << endl;
 	
 	    reply_iter = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
@@ -207,6 +207,45 @@ NS_IMETHODIMP ngDbusConnection::Check()
 /* long end (); */
 NS_IMETHODIMP ngDbusConnection::End(PRInt32 *_retval)
 {
+    return NS_OK;
+}
+
+/* vois prepareMethodCall(in string dest, in string path, in string inter, in string name); */
+NS_IMETHODIMP ngDbusConnection::PrepareMethodCall(const char* dest, const char* path,  const char* inter, const char* name)
+{
+  if(DEBUG || debug_mode) cout << "*****Preparing method call " << path << ", " << inter << ", " << name << endl;
+  DBusMessageIter* reply_iter = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
+
+  // Create a D-Bus method call message.
+  signal_msg = dbus_message_new_method_call(dest,
+                                            path,
+                                            inter,
+                                            name);
+  dbus_message_iter_init_append(signal_msg, reply_iter);
+  outgoing_args.push_back(reply_iter);
+
+  return NS_OK;
+}
+
+/* void sendMethodCall (); */
+NS_IMETHODIMP ngDbusConnection::SendMethodCall()
+{
+    if(DEBUG || debug_mode) cout <<  "Starting to send method call" << endl;
+    
+    dbus_connection_send(conn, signal_msg, NULL);
+  
+    dbus_message_unref(signal_msg);
+  
+    if(DEBUG || debug_mode) cout <<  "Freeing args" << endl;
+    while(!outgoing_args.empty()){
+	free(outgoing_args.back());
+	outgoing_args.pop_back();
+    }
+
+    dbus_connection_flush(conn);
+    
+    if(DEBUG || debug_mode) cout <<  "*****Method Call Sent" << endl;
+    
     return NS_OK;
 }
 
