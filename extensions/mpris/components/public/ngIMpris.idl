@@ -42,17 +42,11 @@ interface ngIMethodHandler : nsISupports
 
 
 [scriptable, uuid(a8159f8d-7970-40d0-bd08-8d0adf69e435)]
-interface ngIMprisPlugin : ngIMethodHandler
+interface ngIMprisService : ngIMethodHandler
 {
-  attribute ngIDbusConnection dbus;
   attribute boolean debug_mode;
-  void init(in boolean debug);
-  void getMetadata(in long track_num);
-  void setMetadata(in long track_num);
-  void getStatus();
-  void getCaps();
-  void addTrack(in AString uri, in boolean play_now);
-  void delTrack(in long track_num);
+  void initialize();
+  void uninit();
 };
 
 
@@ -61,7 +55,7 @@ interface ngIDbusConnection : nsISupports
 {
   attribute boolean debug_mode;
     
-  long init(in string name, in boolean debug);
+  long init(in string name);
   void setMatch(in string match);
   void check();
   long end();

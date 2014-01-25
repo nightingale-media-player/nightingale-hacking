@@ -31,25 +31,38 @@
 
 #filter substitution
 
+// Constants for convience
+if (typeof(Cc) == 'undefined')
+  var Cc = Components.classes;
+if (typeof(Ci) == 'undefined')
+  var Ci = Components.interfaces;
+if (typeof(Cu) == 'undefined')
+  var Cu = Components.utils;
+if (typeof(Cr) == 'undefined')
+  var Cr = Components.results;
+
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");  
 
 const CLASS_ID = Components.ID("{03638fa0-5327-11de-8a39-0800200c9a66}");
-const CLASS_NAME = "ngMprisPlugin";
-const CONTRACT_ID = "@getnightingale.com/Nightingale/Mpris;1";
+const CLASS_NAME = "ngMprisService";
+const CONTRACT_ID = "@getnightingale.com/Mpris;1";
 
-function ngMprisPlugin() {
-  this.info_obj = Components.classes['@mozilla.org/xre/app-info;1'].getService(Components.interfaces.nsIXULAppInfo);
-  this.mediacore = Components.classes['@songbirdnest.com/Songbird/Mediacore/Manager;1'].getService(Components.interfaces.sbIMediacoreManager);
-  this.appStartup = Components.classes['@mozilla.org/toolkit/app-startup;1'].getService(Components.interfaces.nsIAppStartup);
-  this.url_formatter = Components.classes['@mozilla.org/toolkit/URLFormatterService;1'].getService(Components.interfaces.nsIURLFormatter);
-  this.wMediator = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator);
-  this.focusM = Components.classes['@mozilla.org/focus-manager;1'].getService(Components.interfaces.nsIFocusManager);
+var ComponentContainer = {};
 
-  this.seq = this.mediacore.sequencer;
-  
-  this.Player = new Player();
-  this.Root = new Root();
+function ngMprisService() {
+  XPCOMUtils.defineLazyServiceGetter(ComponentContainer, "mediacore", "@songbirdnest.com/Songbird/Mediacore/Manager;1", "sbIMediacoreManager");
+  XPCOMUtils.defineLazyServiceGetter(ComponentContainer, "ios", "@mozilla.org/network/io-service;1", "nsIIOService");
+  XPCOMUtils.defineLazyServiceGetter(ComponentContainer, "appInfo", "@mozilla.org/xre/app-info;1", "nsIXULAppInfo");
+  XPCOMUtils.defineLazyServiceGetter(ComponentContainer, "wMediator", "@mozilla.org/appshell/window-mediator;1", "nsIWindowMediator");
+  XPCOMUtils.defineLazyServiceGetter(ComponentContainer, "focusM", "@mozilla.org/focus-manager;1", "nsIFocusManager");
+
+  this._Player = new Player();
+  this._Root = new Root();
+
+  XPCOMUtils.defineLazyServiceGetter(this, "_mediacore", '@songbirdnest.com/Songbird/Mediacore/Manager;1', "sbIMediacoreManager");
+  XPCOMUtils.defineLazyServiceGetter(this, "_appStartup", '@mozilla.org/toolkit/app-startup;1', "nsIAppStartup");
+  XPCOMUtils.defineLazyServiceGetter(this, "_wMediator", '@mozilla.org/appshell/window-mediator;1', "nsIWindowMediator");
 
   // MPRIS 1
   var xml_header = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\"><node name=\"/org/mpris/songbird\"><interface name=\"org.mpris.songbird\">";
@@ -216,60 +229,80 @@ function ngMprisPlugin() {
 </node>";
 };
 
-ngMprisPlugin.prototype = {
-  classDescription: CLASS_NAME,
+ngMprisService.prototype = {
+  className:        CLASS_NAME,
+  classDescription: "MPRIS DBus Action Handler",
   classID:          CLASS_ID,
   contractID:       CONTRACT_ID,
-  QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIMprisPlugin, Components.interfaces.ngIMethodHandler]),
-  dbus:             null,
-  debug_mode:       false,
-  mediacore:        null,
-  appStartup:       null,
-  info_obj:         null,
-  url_formatter:    null,
-  Player:           null,
-  Root:             null,
-  lastItem:         null,
-  seq:              null,
-  timer:            null,
-  wMediator:        null,
-  focusM:           null,
-  
-  init: function(debug){
-    this.debug_mode = debug;
-    
-    this.dbus = Components.classes['@getnightingale.com/Nightingale/DbusConnection;1'].createInstance(Components.interfaces.ngIDbusConnection);
-    this.dbus.init("org.mpris.MediaPlayer2.nightingale", this.debug_mode);
-    this.dbus.setMatch("type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'");
-    this.dbus.setMethodHandler(this);
+  QueryInterface:   XPCOMUtils.generateQI([Ci.ngIMprisService, Ci.ngIMethodHandler, Ci.nsIObserver]),
+  _xpcom_categories: [{
+    category: "app-startup",
+    entry: CLASS_NAME,
+    service: true,
+  }],
 
-    this.dbus.prepareMethodCall("org.gnome.SettingsDaemon","/org/gnome/SettingsDaemon/MediaKeys","org.gnome.SettingsDaemon.MediaKeys","GrabMediaPlayerKeys");
-    this.dbus.setStringArg("nightingale");
-    this.dbus.setUInt32Arg(0);
-    this.dbus.sendMethodCall();
+  _dbus:            null,
+  _Player:          null,
+  _Root:            null,
+  _lastItem:        null,
+  _timer:           null,
+  _isInitialized:   false,
+  _prefs:           null,
+  _observerService: null,
+
+  get debug_mode() {
+    return this._prefs.getBoolPref("debug_mode");
+  },
+  set debug_mode(val) {
+    this._prefs.setBooleanPref("debug_mode",val);
+    if(this._dbus != null)
+        this._dbus.debug_mode = val;
+  }
+};
+  
+ngMprisService.prototype.initialize = function() {
+    this._prefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService).getBranch("mpris.");
+    this._prefs.QueryInterface(Ci.nsIPrefBranch2);
+    this._prefs.addObserver("", this, false);
+
+    this._observerService.addObserver(this, 'songbird-main-window-presented', false);
+    this._observerService.addObserver(this, 'quit-application', false);
+};
+
+ngMprisService.prototype.initDBus = function() {
+
+    this._dbus = Cc['@getnightingale.com/Nightingale/DbusConnection;1'].createInstance(Ci.ngIDbusConnection);
+    this._dbus.init("org.mpris.MediaPlayer2.nightingale");
+    this._dbus.debug_mode = this.debug_mode;
+
+    this._dbus.setMatch("type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'");
+    this._dbus.setMethodHandler(this);
+
+    this._dbus.prepareMethodCall("org.gnome.SettingsDaemon","/org/gnome/SettingsDaemon/MediaKeys","org.gnome.SettingsDaemon.MediaKeys","GrabMediaPlayerKeys");
+    this._dbus.setStringArg("nightingale");
+    this._dbus.setUInt32Arg(0);
+    this._dbus.sendMethodCall();
 
     var TimerCallback = function(dbus) { 
       this.dbus = dbus;
-    }
+    };
     TimerCallback.prototype = {
       dbus: null,
       handler: null,
-      QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsITimerCallback]),
+      QueryInterface: XPCOMUtils.generateQI([Ci.nsITimerCallback]),
       notify: function(timer){
-	this.dbus.check();
+    	this.dbus.check();
       }
-    }
-
+    };
     
-    this.timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer)
-      
-    this.timer.initWithCallback(new TimerCallback(this.dbus), 100, this.timer.TYPE_REPEATING_SLACK);
+    this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer)
+    this._timer.initWithCallback(new TimerCallback(this._dbus), 100, this._timer.TYPE_REPEATING_SLACK);
     
-    var mediacore = this.mediacore;
-    var dbus = this.dbus;
+    var mediacore = this._mediacore;
+    var dbus = this._dbus;
     var plugin = this;
 	  
-    this.mediacore.addListener({
+    this._mediacore.addListener({
       onMediacoreEvent : function(event) {
 	    var item = event.data;
 	    if (mediacore.sequencer.view == null) return;
@@ -277,34 +310,33 @@ ngMprisPlugin.prototype = {
 	
         var args = {};
 	    switch (event.type) {
-	      case Components.interfaces.sbIMediacoreEvent.TRACK_CHANGE:
-            if (plugin.lastItem == mediacore.sequencer.currentItem) break;
-		    plugin.lastItem = mediacore.sequencer.currentItem;
+	      case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+            if (plugin._lastItem == mediacore.sequencer.currentItem) break;
+		    plugin._lastItem = mediacore.sequencer.currentItem;
 
             // MPRIS 1
             dbus.prepareSignal("/Player", "org.freedesktop.MediaPlayer", "TrackChange");
 	        plugin.getMetadata(mediacore.sequencer.viewPosition);
     	    dbus.sendSignal();
 
-          case Components.interfaces.sbIMediacoreEvent.METADATA_CHANGE:
+          case Ci.sbIMediacoreEvent.METADATA_CHANGE:
             // MPRIS 2
 	        dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
 	        dbus.setStringArg("org.mpris.MediaPlayer2.Player");
-            plugin.setDBusArg({"Metadata":plugin.Player.Metadata});
+            plugin.setDBusArg({"Metadata":plugin._Player.Metadata});
             dbus.openArray();
             dbus.closeArray();
 	        dbus.sendSignal();
 
 	        break;
-          case Components.interfaces.sbIMediacoreEvent.SEQUENCE_ENDS:
+          case Ci.sbIMediacoreEvent.SEQUENCE_ENDS:
             args.CanGoNext = false;
-	      case Components.interfaces.sbIMediacoreEvent.STREAM_PAUSE:
-	      case Components.interfaces.sbIMediacoreEvent.STREAM_STOP:
-	      case Components.interfaces.sbIMediacoreEvent.STREAM_START:
-	      case Components.interfaces.sbIMediacoreEvent.STREAM_END:
+	      case Ci.sbIMediacoreEvent.STREAM_PAUSE:
+	      case Ci.sbIMediacoreEvent.STREAM_STOP:
+	      case Ci.sbIMediacoreEvent.STREAM_START:
+	      case Ci.sbIMediacoreEvent.STREAM_END:
             //MPRIS 2
-            args.PlaybackStatus = plugin.Player.PlaybackStatus;
-            //args.Metadata = plugin.Player.Metadata;
+            args.PlaybackStatus = plugin._Player.PlaybackStatus;
 
 	        dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
             dbus.setStringArg("org.mpris.MediaPlayer2.Player");
@@ -318,15 +350,20 @@ ngMprisPlugin.prototype = {
 	        plugin.getStatus();
 	        dbus.sendSignal();
 	        break;
-          case Components.interfaces.sbIMediacoreEvent.VOLUME_CHANGE:
+          case Ci.sbIMediacoreEvent.VOLUME_CHANGE:
             dbus.prepareSignal("/", "org.freedesktop.DBus.Properties", "PropertiesChanged");
 	        dbus.setStringArg("org.mpris.MediaPlayer2.Player");
             dbus.openDictEntryArray();
-            dbus.setDictSDEntryArg("Volume",plugin.Player.Volume);
+            dbus.setDictSDEntryArg("Volume",plugin._Player.Volume);
             dbus.closeDictEntryArray();
             dbus.openArray();
             dbus.closeArray();
 	        dbus.sendSignal();
+            break;
+          case Ci.sbIMediacoreEvent.SEEKED:
+            dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", "Seeked");
+            dbus.setInt64Arg(plugin._Player.Position);
+            dbus.sendSignal();
             break;
           
 	      default:
@@ -337,14 +374,14 @@ ngMprisPlugin.prototype = {
     
     //Have to use dataremotes because there aren't mediacore events for these
     //There might be an undocumented event for shuffle at type 0x1505, but the remotes works fine
-    this.shuffleRemote = Components.classes['@songbirdnest.com/Songbird/DataRemote;1'].createInstance(Components.interfaces.sbIDataRemote);
+    this.shuffleRemote = Cc['@songbirdnest.com/Songbird/DataRemote;1'].createInstance(Ci.sbIDataRemote);
     this.shuffleRemote.init("playlist.shuffle");
     this.shuffleRemote.bindObserver({
       observe: function(event){
 	    dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
 	    dbus.setStringArg("org.mpris.MediaPlayer2.Player");
         dbus.openDictEntryArray();
-        dbus.setDictSSEntryArg("Shuffle", plugin.Player.Shuffle);
+        dbus.setDictSSEntryArg("Shuffle", plugin._Player.Shuffle);
         dbus.closeDictEntryArray();
         dbus.openArray();
         dbus.closeArray();
@@ -357,14 +394,14 @@ ngMprisPlugin.prototype = {
       }
     });
     
-    this.repeatRemote = Components.classes['@songbirdnest.com/Songbird/DataRemote;1'].createInstance(Components.interfaces.sbIDataRemote);
+    this.repeatRemote = Cc['@songbirdnest.com/Songbird/DataRemote;1'].createInstance(Ci.sbIDataRemote);
     this.repeatRemote.init("playlist.repeat");
     this.repeatRemote.bindObserver({
       observe: function(event){
 	    dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
 	    dbus.setStringArg("org.mpris.MediaPlayer2.Player");
         dbus.openDictEntryArray();
-        dbus.setDictSSEntryArg("LoopStatus", plugin.Player.LoopStatus);
+        dbus.setDictSSEntryArg("LoopStatus", plugin._Player.LoopStatus);
         dbus.closeDictEntryArray();
         dbus.openArray();
         dbus.closeArray();
@@ -377,34 +414,54 @@ ngMprisPlugin.prototype = {
       }
     });
 
-    /*this.wMediator.getMostRecentWindow("Songbird:Main").document.getAnonymousElementById("progress-slider").addEventListener("progressSliderChange", function(event) {
-        dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", "Seeked");
-        dbus.setInt64Arg(plugin.Player.Position);
-        dbus.sendSignal();
-    }, false);*/
-    
+    this._isInitialized = true;
+};
   
-  },
+//Unload the Service
+ngMprisService.prototype.uninit = function() {
+    this._prefs.removeObserver("", this);
+    if(this._isInitialized) {
+        this._timer.stop();
+    }
+};
+
+ngMprisService.prototype.observe = function(subject, topic, data) {
+    if(topic == 'app-startup') {
+        this._observerService = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+        this._observerService.addObserver(this, 'profile-after-change', false);
+    }
+    else if(topic == 'profile-after-change') {
+        this._observerService.removeObserver(this, 'profile-after-change', false);
+        this.initialize();
+    }
+    else if(topic == 'songbird-main-window-presented') {
+        this.initDBus();
+    }
+    else if(topic == 'nsPref:changed' && data == "debug_mode" && this._isInitialized)
+         this._dbus.debug_mode = this.debug_mode;
+    else if(topic == 'quit-application')
+        this.uninit();
+};
   
   //Callback called my DBusConnection for each method call received
-  handleMethod: function(inter, path, member) {
-    this.play = this.mediacore.playbackControl;
+ngMprisService.prototype.handleMethod = function(inter, path, member) {
+    this.play = this._mediacore.playbackControl;
   
     switch(inter) {
       case "org.freedesktop.DBus.Introspectable":
 	    if(member == "Introspect") {
             switch(path) {
                 case "/":
-                    this.dbus.setStringArg(this.introspect_root);
+                    this._dbus.setStringArg(this.introspect_root);
 	                break;
 	            case "/Player":
-	                this.dbus.setStringArg(this.introspect_player);
+	                this._dbus.setStringArg(this.introspect_player);
 	                break;
 	            case "/TrackList":
-	                this.dbus.setStringArg(this.introspect_tracklist);
+	                this._dbus.setStringArg(this.introspect_tracklist);
 	                break;
                 case "/org/mpris/MediaPlayer2":
-    	            this.dbus.setStringArg(this.xml);
+    	            this._dbus.setStringArg(this.xml);
                     break;
             }
 	    }
@@ -413,10 +470,10 @@ ngMprisPlugin.prototype = {
         if(path == "/org/mpris/MediaPlayer2") {
             switch(member) {
                 case "Raise":
-        	    	this.wMediator.getMostRecentWindow("Songbird:Main").focus();
+        	    	this._wMediator.getMostRecentWindow("Songbird:Main").focus();
 	       	        break;
 	            case "Quit":
-	    	        this.appStartup.quit(Components.interfaces.nsIAppStartup.eForceQuit);
+	    	        this._appStartup.quit(Ci.nsIAppStartup.eForceQuit);
 	                break;
             }
         }
@@ -425,50 +482,50 @@ ngMprisPlugin.prototype = {
         if(path == "/org/mpris/MediaPlayer2") {
             switch(member){
                 case "Next":
-                    this.seq.next();
+                    this._mediacore.sequencer.next();
                     break;
                 case "Previous":
-                    this.seq.previous();
+                    this._mediacore.sequencer.previous();
                     break;
                 case "Pause":
                     this.play.pause();
                     break;
                 case "Stop":
-                    this.seq.stop();
+                    this._mediacore.sequencer.stop();
                     break;
                 case "Play":
                     if(ComponentContainer.mediacore.sequencer.currentItem != null)
-                        this.seq.play();
+                        this._mediacore.sequencer.play();
                     else
-                        Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                        Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
                     break;
                 case "PlayPause":
                     if(this.play != null) {
-                        if(this.mediacore.status.state != this.mediacore.status.STATUS_PLAYING) {
+                        if(this._mediacore.status.state != this._mediacore.status.STATUS_PLAYING) {
                             if(ComponentContainer.mediacore.sequencer.currentItem != null)
                                 this.play.play();
                             else
-                                Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                                Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
                         }
-                        else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING)
+                        else if(this._mediacore.status.state == this._mediacore.status.STATUS_PLAYING)
 	                        this.play.pause();
                     }
                     else
-                        Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                        Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
                     break;
                 case "Seek":
-                    if(this.play != null) this.play.position = this.dbus.getInt64Arg();
+                    if(this.play != null) this.play.position = this._dbus.getInt64Arg();
                     break;
                 case "SetPosition":
-                    var currItem = this.seq.view.getItemByIndex(this.seq.viewPosition),
+                    var currItem = this._mediacore.sequencer.view.getItemByIndex(this._mediacore.sequencer.viewPosition),
                         trackPath = "/com/getnightingale/Nightingale/" + currItem.getProperty(SBProperties.GUID).replace(/-/g,"_"),
-                        pathArg = this.dbus.getObjectPathArg(),
-                        pos = this.dbus.getInt64Arg();
+                        pathArg = this._dbus.getObjectPathArg(),
+                        pos = this._dbus.getInt64Arg();
                     if(pathArg == trackPath && this.play != null && pos >= 0 && pos <= parseInt(currItem.getProperty(SBProperties.duration),10))
                         this.play.position = pos;
                     break;
                 case "OpenUri":
-                    this.seq.playURL(this.dbus.getStringArg());
+                    this._mediacore.sequencer.playURL(this._dbus.getStringArg());
                     break;
             }
         }
@@ -476,31 +533,31 @@ ngMprisPlugin.prototype = {
       case "org.freedesktop.DBus.Properties":
         switch(member) {
             case "Get":
-                switch(this.dbus.getStringArg()) {
+                switch(this._dbus.getStringArg()) {
                     case "org.mpris.MediaPlayer2":
-                        this.setDBusArg(this.Root[this.dbus.getStringArg()]);
+                        this.setDBusArg(this._Root[this._dbus.getStringArg()]);
                         break;
                     case "org.mpris.MediaPlayer2.Player":
-                        var prop = this.dbus.getStringArg();
-                        this.setDBusArg(this.Player[prop], prop == "Position");
+                        var prop = this._dbus.getStringArg();
+                        this.setDBusArg(this._Player[prop], prop == "Position");
                         break;                
                 }
                 break;
             case "Set":
-                switch(this.dbus.getStringArg()) {
+                switch(this._dbus.getStringArg()) {
                     case "org.mpris.MediaPlayer2.Player":
-                        var prop = this.dbus.getStringArg();
-                        this.Player[prop] = this.getDBusArg(obj, prop);
+                        var prop = this._dbus.getStringArg();
+                        this._Player[prop] = this.getDBusArg(obj, prop);
                         break;
                 }
                 break;
             case "GetAll":
-                switch(this.dbus.getStringArg()) {
+                switch(this._dbus.getStringArg()) {
                     case "org.mpris.MediaPlayer2":
-                        this.setDBusArg(this.Root);
+                        this.setDBusArg(this._Root);
                         break;
                     case "org.mpris.MediaPlayer2.Player":
-                        this.setDBusArg(this.Player);
+                        this.setDBusArg(this._Player);
                         break;
                 }
             break;
@@ -508,30 +565,30 @@ ngMprisPlugin.prototype = {
         break;
     case "org.gnome.SettingsDaemon.MediaKeys":
         if(path == "/org/gnome/SettingsDaemon/MediaKeys" && member == "MediaPlayerKeyPressed") {
-            if(this.dbus.getStringArg() != "nightingale") break;
-            switch(this.dbus.getStringArg()) {
+            if(this._dbus.getStringArg() != "nightingale") break;
+            switch(this._dbus.getStringArg()) {
                 case "Play":
                     if(this.play != null) {
-                        if(this.mediacore.status.state != this.mediacore.status.STATUS_PLAYING) {
+                        if(this._mediacore.status.state != this._mediacore.status.STATUS_PLAYING) {
                             if(ComponentContainer.mediacore.sequencer.currentItem != null)
                                 this.play.play();
                             else
-                                Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                                Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
                         }
-                        else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING)
+                        else if(this._mediacore.status.state == this._mediacore.status.STATUS_PLAYING)
 	                        this.play.pause();
                     }
                     else
-                        Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Components.interfaces.sbIApplicationController).playDefault();
+                        Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
                     break;
                 case "Next":
-                    this.seq.next();
+                    this._mediacore.sequencer.next();
                     break;
                 case "Previous":
-                    this.seq.previous();
+                    this._mediacore.sequencer.previous();
                     break;
                 case "Stop":
-                    this.seq.stop();
+                    this._mediacore.sequencer.stop();
                     break;                   
             }
         }
@@ -542,16 +599,17 @@ ngMprisPlugin.prototype = {
 	        case "/":
 	            switch(member) {
 	                case "Identity":
-		                this.dbus.setStringArg(this.info_obj.name+" "+this.info_obj.version);
+                        var infoObj = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULAppInfo);
+		                this._dbus.setStringArg(infoObj.name+" "+infoObj.version);
 		                break;
 	                case "Quit":
-		                this.appStartup.quit(Components.interfaces.nsIAppStartup.eForceQuit);
+		                this._appStartup.quit(Ci.nsIAppStartup.eForceQuit);
 		                break;
 	                case "MprisVersion": 
-                		this.dbus.openStruct();
-		                this.dbus.setUInt16Arg(1);
-		                this.dbus.setUInt16Arg(0);
-		                this.dbus.closeStruct();     
+                		this._dbus.openStruct();
+		                this._dbus.setUInt16Arg(1);
+		                this._dbus.setUInt16Arg(0);
+		                this._dbus.closeStruct();     
                 		break;
 	            }
 	            break;
@@ -559,44 +617,44 @@ ngMprisPlugin.prototype = {
 	        case "/Player":
 	            switch(member){
                     case "Next":
-                        this.seq.next();
+                        this._mediacore.sequencer.next();
                 		break;
                     case "Prev":
-                        this.seq.previous();
+                        this._mediacore.sequencer.previous();
                         break;
                     case "Pause":
                 		if(this.play != null) {
-                            if(this.mediacore.status.state == this.mediacore.status.STATUS_PAUSED) {
+                            if(this._mediacore.status.state == this._mediacore.status.STATUS_PAUSED) {
                                 this.play.play();
                             }
-                            else if(this.mediacore.status.state == this.mediacore.status.STATUS_PLAYING) {
+                            else if(this._mediacore.status.state == this._mediacore.status.STATUS_PLAYING) {
                                 this.play.pause();
                             }
                         }
                 		break;
                     case "Stop":
-                        this.seq.stop();
+                        this._mediacore.sequencer.stop();
                 		break;
                     case "Play":
-                        this.seq.play();	
+                        this._mediacore.sequencer.play();	
                         break;
                     case "Repeat":
-                        if(this.dbus.getBoolArg()) this.seq.repeatMode = this.seq.MODE_REPEAT_ONE;
+                        if(this._dbus.getBoolArg()) this._mediacore.sequencer.repeatMode = this._mediacore.sequencer.MODE_REPEAT_ONE;
                         else{
-                            this.seq.repeatMode = this.seq.MODE_REPEAT_NONE;
+                            this._mediacore.sequencer.repeatMode = this._mediacore.sequencer.MODE_REPEAT_NONE;
                         }
                     break;
                     case "GetStatus":
                         this.getStatus();
                         break;
                     case "GetMetadata":
-                        this.getMetadata(this.seq.viewPosition);
+                        this.getMetadata(this._mediacore.sequencer.viewPosition);
                         break;
 		
                     // Nonstandard method for setting metadata
                     // Proposed by Panflute project
                     case "SetMetadata":
-                        this.setMetadata(this.seq.viewPosition);
+                        this.setMetadata(this._mediacore.sequencer.viewPosition);
                         break;
                     // End nonstandard
 		
@@ -604,17 +662,17 @@ ngMprisPlugin.prototype = {
                         this.getCaps();
                         break;
                     case "VolumeGet":
-                        this.dbus.setInt32Arg(this.mediacore.volumeControl.volume*100);
+                        this._dbus.setInt32Arg(this._mediacore.volumeControl.volume*100);
                         break;
                     case "VolumeSet":
-                        this.mediacore.volumeControl.volume = this.dbus.getInt32Arg()/100;
+                        this._mediacore.volumeControl.volume = this._dbus.getInt32Arg()/100;
                         break;
                     case "PositionGet":
-                        if(this.play != null) this.dbus.setInt32Arg(this.play.position);
-                        else this.dbus.setInt32Arg(0);
+                        if(this.play != null) this._dbus.setInt32Arg(this.play.position);
+                        else this._dbus.setInt32Arg(0);
                         break;
                     case "PositionSet":
-                        if(this.play != null) this.play.position = this.dbus.getInt32Arg();
+                        if(this.play != null) this.play.position = this._dbus.getInt32Arg();
                         break;
                 }
                 break;
@@ -623,149 +681,149 @@ ngMprisPlugin.prototype = {
                 switch(member){
                     case "GetLength":
                         if(this.play != null){
-                            this.dbus.setInt32Arg(this.seq.view.length);
+                            this._dbus.setInt32Arg(this._mediacore.sequencer.view.length);
                         }
-                        else this.dbus.setInt32Arg(0);
+                        else this._dbus.setInt32Arg(0);
                         break;
                     case "GetCurrentTrack":
-                        this.dbus.setInt32Arg(this.seq.viewPosition);
+                        this._dbus.setInt32Arg(this._mediacore.sequencer.viewPosition);
                         break;
                     case "GetMetadata":
-                        this.getMetadata(this.dbus.getInt32Arg());
+                        this.getMetadata(this._dbus.getInt32Arg());
                         break;
 
                     // Nonstandard method for setting metadata
                     // Proposed by Panflute project
 	                case "SetMetadata":
-                        this.setMetadata(this.dbus.getInt32Arg());
+                        this.setMetadata(this._dbus.getInt32Arg());
                         break;
                     // End nonstandard
 
                     case "AddTrack":
-                        this.addTrack(this.dbus.getStringArg(), this.dbus.getBoolArg());
+                        this.addTrack(this._dbus.getStringArg(), this._dbus.getBoolArg());
                         break;
                     case "DelTrack":
-                        this.delTrack(this.dbus.getInt32Arg());
+                        this.delTrack(this._dbus.getInt32Arg());
                         break;
                     case "SetLoop":
-                        if(this.dbus.getBoolArg()) this.seq.repeatMode = this.seq.MODE_REPEAT_ALL;
+                        if(this._dbus.getBoolArg()) this._mediacore.sequencer.repeatMode = this._mediacore.sequencer.MODE_REPEAT_ALL;
                         else{
-                            this.seq.repeatMode = this.seq.MODE_REPEAT_NONE;
+                            this._mediacore.sequencer.repeatMode = this._mediacore.sequencer.MODE_REPEAT_NONE;
                         }
                         break;
                     case "SetRandom":
-                        if(this.dbus.getBoolArg()) this.seq.mode = this.seq.MODE_SHUFFLE;
+                        if(this._dbus.getBoolArg()) this._mediacore.sequencer.mode = this._mediacore.sequencer.MODE_SHUFFLE;
                         else{
-                            this.seq.mode = this.seq.MODE_FORWARD;
+                            this._mediacore.sequencer.mode = this._mediacore.sequencer.MODE_FORWARD;
                         }
                         break;
                     }
             }
     }
-  },
+};
 
-  setDBusArg: function(val, forceInteger) {
+ngMprisService.prototype.setDBusArg = function(val, forceInteger) {
     if(typeof val == "string") {
         if(val.match(/^\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+/))
-            this.dbus.setObjectPathArg(val);
+            this._dbus.setObjectPathArg(val);
         else
-            this.dbus.setStringArg(val);
+            this._dbus.setStringArg(val);
     }
     else if(typeof val == "boolean")
-        this.dbus.setBoolArg(val);
+        this._dbus.setBoolArg(val);
     else if(typeof val == "number")  {
         if(forceInteger)//Number.isInteger(val))
-            this.dbus.setInt64Arg(val);
+            this._dbus.setInt64Arg(val);
         else
-            this.dbus.setDoubleArg(val);
+            this._dbus.setDoubleArg(val);
     }
     else if(val instanceof Array) {//Array.isArray(val)) {
-        this.dbus.openArray();
+        this._dbus.openArray();
         for(var i = 0; i < val.length; ++i) {
             if(typeof val[i] == "string")
-                this.dbus.setArrayStringArg(val[i]);
+                this._dbus.setArrayStringArg(val[i]);
         }
-        this.dbus.closeArray();
+        this._dbus.closeArray();
     }
     else if(val != null) {
-        this.dbus.openDictEntryArray();
+        this._dbus.openDictEntryArray();
         for(var prop in val) {
             if(typeof val[prop] == "string") {
                 if(val[prop].match(/^\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+/))
-                    this.dbus.setDictSOEntryArg(prop, val[prop]);
+                    this._dbus.setDictSOEntryArg(prop, val[prop]);
                 else
-                    this.dbus.setDictSSEntryArg(prop, val[prop]);
+                    this._dbus.setDictSSEntryArg(prop, val[prop]);
             }
             else if(typeof val[prop] == "boolean")
-                this.dbus.setDictSBEntryArg(prop, val[prop]);
+                this._dbus.setDictSBEntryArg(prop, val[prop]);
             else if(typeof val[prop] == "number") {
                 if(prop == "Position" || prop == "mpris:length")//Number.isInteger(val[prop]))
-                    this.dbus.setDictSI64EntryArg(prop, val[prop]);
+                    this._dbus.setDictSI64EntryArg(prop, val[prop]);
                 else if(prop == "xesam:trackNumber" || prop == "xesam:audioBPM" || prop == "xesam:discNumber")
-                    this.dbus.setDictSIEntryArg(prop, val[prop]);
+                    this._dbus.setDictSIEntryArg(prop, val[prop]);
                 else
-                    this.dbus.setDictSDEntryArg(prop, val[prop]);
+                    this._dbus.setDictSDEntryArg(prop, val[prop]);
             }
             else if(val[prop] instanceof Array) {//Array.isArray(val[prop])) {
-                this.dbus.openDictSAEntryArg(prop);
+                this._dbus.openDictSAEntryArg(prop);
                 for(var i = 0; i < val[prop].length; ++i) {
-                    this.dbus.setArrayStringArg(val[prop][i]);
+                    this._dbus.setArrayStringArg(val[prop][i]);
                 }
-                this.dbus.closeDictSAEntryArg();
+                this._dbus.closeDictSAEntryArg();
             }
             else if(val[prop] != null) { // for Metadata in GetAll and signals
-                this.dbus.openDictSDEntryArg(prop);
+                this._dbus.openDictSDEntryArg(prop);
                 for(var p in val[prop]) {
                     if(typeof val[prop][p] == "string") {
                         if(val[prop][p].match(/^\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+/))
-                            this.dbus.setDictSOEntryArg(p, val[prop][p]);
+                            this._dbus.setDictSOEntryArg(p, val[prop][p]);
                         else
-                            this.dbus.setDictSSEntryArg(p, val[prop][p]);
+                            this._dbus.setDictSSEntryArg(p, val[prop][p]);
                     }
                     else if(typeof val[prop][p] == "boolean")
-                        this.dbus.setDictSBEntryArg(p, val[prop][p]);
+                        this._dbus.setDictSBEntryArg(p, val[prop][p]);
                     else if(typeof val[prop][p] == "number") {
                         if(p == "mpris:length")//Number.isInteger(val[prop][p]))
-                            this.dbus.setDictSI64EntryArg(p, val[prop][p]);
+                            this._dbus.setDictSI64EntryArg(p, val[prop][p]);
                         else if(p == "xesam:trackNumber" || p == "xesam:audioBPM" || p == "xesam:discNumber")
-                            this.dbus.setDictSIEntryArg(p, val[prop][p]);
+                            this._dbus.setDictSIEntryArg(p, val[prop][p]);
                         else
-                            this.dbus.setDictSDEntryArg(p, val[prop][p]);
+                            this._dbus.setDictSDEntryArg(p, val[prop][p]);
                     }
                     else if(val[prop][p] instanceof Array) {//Array.isArray(val[prop][p])) {
-                        this.dbus.openDictSAEntryArg(p);
+                        this._dbus.openDictSAEntryArg(p);
                         for(var i = 0; i < val[prop][p].length; ++i) {
-                            this.dbus.setArrayStringArg(val[prop][p][i]);
+                            this._dbus.setArrayStringArg(val[prop][p][i]);
                         }
-                        this.dbus.closeDictSAEntryArg();
+                        this._dbus.closeDictSAEntryArg();
                     }
                 }
-                this.dbus.closeDictSDEntryArg();
+                this._dbus.closeDictSDEntryArg();
             }
         }
-        this.dbus.closeDictEntryArray();
+        this._dbus.closeDictEntryArray();
     }
-  },
+};
 
-  getDBusArg: function(obj, prop) {
+ngMprisService.prototype.getDBusArg = function(obj, prop) {
     if(typeof val == "string")
-        this.dbus.getStringArg(val);
+        this._dbus.getStringArg(val);
     else if(typeof val == "boolean")
-        this.dbus.getBoolArg(val);
+        this._dbus.getBoolArg(val);
     else if(typeof val == "number")  {
         if(val == Math.round(val))//Number.isInteger(val))
-            this.dbus.getInt64Arg(val);
+            this._dbus.getInt64Arg(val);
         else
-            this.dbus.getDoubleArg(val);
+            this._dbus.getDoubleArg(val);
     }
-  },
+};
 
 //MPRIS 1
-  setMetadata: function(track_num) {
-    var key = this.dbus.getStringArg();
-    var value = this.dbus.getStringArg();
+ngMprisService.prototype.setMetadata = function(track_num) {
+    var key = this._dbus.getStringArg();
+    var value = this._dbus.getStringArg();
     
-    var track_info = this.seq.view.getItemByIndex(track_num);
+    var track_info = this._mediacore.sequencer.view.getItemByIndex(track_num);
     
     switch (key) {
       case 'rating':
@@ -774,150 +832,153 @@ ngMprisPlugin.prototype = {
       
     }
     
-  },
+};
   
-  getMetadata: function(track_num) {
-    if(this.seq.view == null || track_num >= this.seq.view.length){
-      this.dbus.openDictEntryArray();
-      this.dbus.closeDictEntryArray();
+ngMprisService.prototype.getMetadata = function(track_num) {
+    if(this._mediacore.sequencer.view == null || track_num >= this._mediacore.sequencer.view.length){
+      this._dbus.openDictEntryArray();
+      this._dbus.closeDictEntryArray();
       return;
     }
     
-    var track_info = this.seq.view.getItemByIndex(track_num);
+    var track_info = this._mediacore.sequencer.view.getItemByIndex(track_num);
     var str;
     
-    this.dbus.openDictEntryArray();
+    this._dbus.openDictEntryArray();
     
     if(typeof track_info.getProperty(SBProperties.contentURL) == 'string'){
       str = track_info.getProperty(SBProperties.contentURL);
-      this.dbus.setDictSSEntryArg("location", str);
+      this._dbus.setDictSSEntryArg("location", str);
     }
     if(typeof track_info.getProperty(SBProperties.trackName) == 'string'){
       str = track_info.getProperty(SBProperties.trackName);
-      this.dbus.setDictSSEntryArg("title", str);
+      this._dbus.setDictSSEntryArg("title", str);
     }
     if(typeof track_info.getProperty(SBProperties.artistName) == 'string'){
       str = track_info.getProperty(SBProperties.artistName);
-      this.dbus.setDictSSEntryArg("artist", str);
+      this._dbus.setDictSSEntryArg("artist", str);
     }
     if(typeof track_info.getProperty(SBProperties.albumName) == 'string'){
       str = track_info.getProperty(SBProperties.albumName);
-      this.dbus.setDictSSEntryArg("album", str);
+      this._dbus.setDictSSEntryArg("album", str);
     }
     if(typeof track_info.getProperty(SBProperties.trackNumber) == 'string'){
       str = track_info.getProperty(SBProperties.trackNumber);
-      this.dbus.setDictSSEntryArg("tracknumber", str);    
+      this._dbus.setDictSSEntryArg("tracknumber", str);    
     }
     
     if(typeof track_info.getProperty(SBProperties.duration) == 'string'){
-      this.dbus.setDictSIEntryArg("time", parseInt(track_info.getProperty(SBProperties.duration))/1000000);
-      this.dbus.setDictSIEntryArg("mtime", parseInt(track_info.getProperty(SBProperties.duration))/1000);
+      this._dbus.setDictSIEntryArg("time", parseInt(track_info.getProperty(SBProperties.duration))/1000000);
+      this._dbus.setDictSIEntryArg("mtime", parseInt(track_info.getProperty(SBProperties.duration))/1000);
     }
     
     if(typeof track_info.getProperty(SBProperties.genre) == 'string'){
       str = track_info.getProperty(SBProperties.genre);
-      this.dbus.setDictSSEntryArg("genre", str);
+      this._dbus.setDictSSEntryArg("genre", str);
     }
     if(typeof track_info.getProperty(SBProperties.comment) == 'string'){
       str = track_info.getProperty(SBProperties.comment);
-      this.dbus.setDictSSEntryArg("comment", str);
+      this._dbus.setDictSSEntryArg("comment", str);
     }
     
     if(typeof track_info.getProperty(SBProperties.year) == 'string'){
     
-      this.dbus.setDictSIEntryArg("year", parseInt(track_info.getProperty(SBProperties.year)));
+      this._dbus.setDictSIEntryArg("year", parseInt(track_info.getProperty(SBProperties.year)));
     
       var date = new Date();
       date.setFullYear(parseInt(track_info.getProperty(SBProperties.year)));
-      this.dbus.setDictSIEntryArg("date", date.getTime());
+      this._dbus.setDictSIEntryArg("date", date.getTime());
     }
     
     if(typeof track_info.getProperty(SBProperties.primaryImageURL) == 'string'){
-      this.dbus.setDictSSEntryArg("arturl", track_info.getProperty(SBProperties.primaryImageURL));
+      this._dbus.setDictSSEntryArg("arturl", track_info.getProperty(SBProperties.primaryImageURL));
     }
     
     //TODO
-    //~ this.dbus.setDictSSEntryArg("asin", "");
-    //~ this.dbus.setDictSSEntryArg("puid_fingerprint", "");
-    //~ this.dbus.setDictSSEntryArg("mb_track_id", "");
-    //~ this.dbus.setDictSSEntryArg("mb_artist_id", "");
-    //~ this.dbus.setDictSSEntryArg("mb_artist_sort_name", "");
-    //~ this.dbus.setDictSSEntryArg("mb_album_id", "");
-    //~ this.dbus.setDictSSEntryArg("mb_release_date", "");
-    //~ this.dbus.setDictSSEntryArg("mb_album_artist", "");
-    //~ this.dbus.setDictSSEntryArg("mb_album_artist_id", "");
-    //~ this.dbus.setDictSSEntryArg("mb_album_artist_sort_name", "");
+    //~ this._dbus.setDictSSEntryArg("asin", "");
+    //~ this._dbus.setDictSSEntryArg("puid_fingerprint", "");
+    //~ this._dbus.setDictSSEntryArg("mb_track_id", "");
+    //~ this._dbus.setDictSSEntryArg("mb_artist_id", "");
+    //~ this._dbus.setDictSSEntryArg("mb_artist_sort_name", "");
+    //~ this._dbus.setDictSSEntryArg("mb_album_id", "");
+    //~ this._dbus.setDictSSEntryArg("mb_release_date", "");
+    //~ this._dbus.setDictSSEntryArg("mb_album_artist", "");
+    //~ this._dbus.setDictSSEntryArg("mb_album_artist_id", "");
+    //~ this._dbus.setDictSSEntryArg("mb_album_artist_sort_name", "");
     
     if(typeof track_info.getProperty(SBProperties.bitRate) == 'string'){
-      this.dbus.setDictSIEntryArg("audio_bitrate", parseInt(track_info.getProperty(SBProperties.bitRate)));
+      this._dbus.setDictSIEntryArg("audio_bitrate", parseInt(track_info.getProperty(SBProperties.bitRate)));
     }
     if(typeof track_info.getProperty(SBProperties.sampleRate) == 'string'){
-      this.dbus.setDictSIEntryArg("audio_samplerate", parseInt(track_info.getProperty(SBProperties.sampleRate)));
+      this._dbus.setDictSIEntryArg("audio_samplerate", parseInt(track_info.getProperty(SBProperties.sampleRate)));
     }
     
     
     if(typeof track_info.getProperty(SBProperties.rating) == 'string'){
-      this.dbus.setDictSIEntryArg("rating", parseInt(track_info.getProperty(SBProperties.rating)));
+      this._dbus.setDictSIEntryArg("rating", parseInt(track_info.getProperty(SBProperties.rating)));
     }
     
     
-    this.dbus.closeDictEntryArray();
-  },
-  getStatus: function(){
-    this.dbus.openStruct();
+    this._dbus.closeDictEntryArray();
+};
+
+ngMprisService.prototype.getStatus = function(){
+    this._dbus.openStruct();
     
-    switch(this.mediacore.status.state){
-      case this.mediacore.status.STATUS_PLAYING:
-	this.dbus.setInt32Arg(0);
+    switch(this._mediacore.status.state){
+      case this._mediacore.status.STATUS_PLAYING:
+	this._dbus.setInt32Arg(0);
 	break;
-      case this.mediacore.status.STATUS_PAUSED:
-	this.dbus.setInt32Arg(1);
+      case this._mediacore.status.STATUS_PAUSED:
+	this._dbus.setInt32Arg(1);
 	break;
       default:  
-	this.dbus.setInt32Arg(2);
+	this._dbus.setInt32Arg(2);
 	break;
     }
     
-    switch(this.seq.mode){
-      case this.seq.MODE_SHUFFLE:
-	this.dbus.setInt32Arg(1);
+    switch(this._mediacore.sequencer.mode){
+      case this._mediacore.sequencer.MODE_SHUFFLE:
+	this._dbus.setInt32Arg(1);
 	break;
       default:
-	this.dbus.setInt32Arg(0);
+	this._dbus.setInt32Arg(0);
 	break;
     }
     
-    switch(this.seq.repeatMode & this.seq.MODE_REPEAT_ONE){
-      case this.seq.MODE_REPEAT_ONE:
-	this.dbus.setInt32Arg(1);
+    switch(this._mediacore.sequencer.repeatMode & this._mediacore.sequencer.MODE_REPEAT_ONE){
+      case this._mediacore.sequencer.MODE_REPEAT_ONE:
+	this._dbus.setInt32Arg(1);
 	break;
       default:
-	this.dbus.setInt32Arg(0);
+	this._dbus.setInt32Arg(0);
 	break;
     }
     
-    switch(this.seq.repeatMode & this.seq.MODE_REPEAT_ALL){
-      case this.seq.MODE_REPEAT_ALL:
-	this.dbus.setInt32Arg(1);
+    switch(this._mediacore.sequencer.repeatMode & this._mediacore.sequencer.MODE_REPEAT_ALL){
+      case this._mediacore.sequencer.MODE_REPEAT_ALL:
+	this._dbus.setInt32Arg(1);
 	break;
       default:
-	this.dbus.setInt32Arg(0);
+	this._dbus.setInt32Arg(0);
 	break;
     }
     
-    this.dbus.closeStruct();
-  },
-  addTrack: function(uri, play_now) {
-    //TODO
-    
-    this.dbus.setInt32Arg(1);
-  },
+    this._dbus.closeStruct();
+};
 
-  delTrack: function(track_num) {
+ngMprisService.prototype.addTrack = function(uri, play_now) {
     //TODO
-    this.dbus.setInt32Arg(1);
-  },
-  getCaps: function() {
+    
+    this._dbus.setInt32Arg(1);
+};
+
+ngMprisService.prototype.delTrack = function(track_num) {
+    //TODO
+    this._dbus.setInt32Arg(1);
+};
+
+ngMprisService.prototype.getCaps = function() {
       var caps = 0;
       //TODO
       
@@ -944,23 +1005,12 @@ ngMprisPlugin.prototype = {
 	  caps += 64;// Has Tracklist
       }
       
-      this.dbus.setInt32Arg(caps);
-  }
+      this._dbus.setInt32Arg(caps);
 };
-ngMprisPlugin.prototype.constructor = ngMprisPlugin;
 
-var components = [ngMprisPlugin];
-function NSGetModule(compMgr, fileSpec) { 
-  return XPCOMUtils.generateModule(components);
-}
+//ngMprisPlugin.prototype.constructor = ngMprisPlugin;
 
-var ComponentContainer = {
-    mediacore: Components.classes['@songbirdnest.com/Songbird/Mediacore/Manager;1'].getService(Components.interfaces.sbIMediacoreManager),
-    ios: Components.classes['@mozilla.org/network/io-service;1'].getService(Components.interfaces.nsIIOService),
-    appInfo: Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo),
-    wMediator: Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator),
-    focusM: Components.classes["@mozilla.org/focus-manager;1"].getService(Components.interfaces.nsIFocusManager)
-};
+var NSGetModule = XPCOMUtils.generateNSGetModule([ngMprisService]);
 
 function Player() {
 }
@@ -1018,44 +1068,58 @@ Player.prototype = {
 
             var resURL = track_info.getProperty(SBProperties.primaryImageURL);
             if(resURL)
-                resURL = 'file://'+ComponentContainer.ios.newURI(decodeURI(resURL), null, null).QueryInterface(Components.interfaces.nsIFileURL).file.path;
+                resURL = 'file://'+ComponentContainer.ios.newURI(decodeURI(resURL), null, null).QueryInterface(Ci.nsIFileURL).file.path;
 
             var contURL = track_info.getProperty(SBProperties.contentURL);
             if(contURL && contURL.indexOf("resource://")!= -1)
-                contURL = 'file://'+ComponentContainer.ios.newURI(decodeURI(contURL), null, null).QueryInterface(Compontents.interfaces.nsIFileURL).file.path;
+                contURL = 'file://'+ComponentContainer.ios.newURI(decodeURI(contURL), null, null).QueryInterface(Ci.nsIFileURL).file.path;
 
             var ret = {};
-            ret["mpris:trackid"]="/com/getnightingale/Nightingale/"+track_info.getProperty(SBProperties.GUID).replace(/-/g,"_");
+            ret["mpris:trackid"]="/com/getnightingale/Nightingale/Tracks/"+track_info.getProperty(SBProperties.GUID).replace(/-/g,"_");
             ret["mpris:length"]=parseInt(track_info.getProperty(SBProperties.duration),10);
+            ret["xesam:title"] = track_info.getProperty(SBProperties.trackName);
+            ret["xesam:url"] = contURL;
+
             if(resURL)
-                ret["mpris:artUrl"]=resURL;
+                ret["mpris:artUrl"] = resURL;
+
             if(track_info.getProperty(SBProperties.albumName) != null)
-                ret["xesam:album"]=track_info.getProperty(SBProperties.albumName);
+                ret["xesam:album"] = track_info.getProperty(SBProperties.albumName);
+
             if(track_info.getProperty(SBProperties.abumArtist) != null)
-                ret["xesam:albumArtist"]=track_info.getProperty(SBProperties.albumArtist).split(",");
+                ret["xesam:albumArtist"] = track_info.getProperty(SBProperties.albumArtist).split(",");
+
             if(track_info.getProperty(SBProperties.artistName) != null)
-                ret["xesam:artist"]=track_info.getProperty(SBProperties.artistName).split(",");
+                ret["xesam:artist"] = track_info.getProperty(SBProperties.artistName).split(",");
+
             if(track_info.getProperty(SBProperties.bpm))
-                ret["xesam:audioBPM"]=parseInt(track_info.getProperty(SBProperties.bpm),10);
+                ret["xesam:audioBPM"] = parseInt(track_info.getProperty(SBProperties.bpm),10);
+
             if(track_info.getProperty(SBProperties.comment) != null)
-                ret["xesam:comment"]=[track_info.getProperty(SBProperties.comment)];
+                ret["xesam:comment"] = [track_info.getProperty(SBProperties.comment)];
+
             if(track_info.getProperty(SBProperties.composerName) != null)
-                ret["xesam:composer"]=track_info.getProperty(SBProperties.composerName).split(",");
+                ret["xesam:composer"] = track_info.getProperty(SBProperties.composerName).split(",");
+
             if(track_info.getProperty(SBProperties.year) != null)
                 ret["xesam:contentCreated"] = track_info.getProperty(SBProperties.year)+"";
+
             if(track_info.getProperty(SBProperties.discNumber))
-                ret["xesam:discNumber"]=parseInt(track_info.getProperty(SBProperties.discNumber),10);
+                ret["xesam:discNumber"] = parseInt(track_info.getProperty(SBProperties.discNumber),10);
+
             if(track_info.getProperty(SBProperties.genre) != null)
-                ret["xesam:genre"]=[track_info.getProperty(SBProperties.genre)];
+                ret["xesam:genre"] = [track_info.getProperty(SBProperties.genre)];
+
                 //"xesam:lastUsed":track_info.getProperty(SBProperties.lastPlayTime),
+
             if(track_info.getProperty(SBProperties.lyricistName) != null)
-                ret["xesam:lyricist"]=track_info.getProperty(SBProperties.lyricistName).split(",");
-            ret["xesam:title"]=track_info.getProperty(SBProperties.trackName);
+                ret["xesam:lyricist"] = track_info.getProperty(SBProperties.lyricistName).split(",");
+
             if(track_info.getProperty(SBProperties.trackNumber))
-                ret["xesam:trackNumber"]=parseInt(track_info.getProperty(SBProperties.trackNumber),10);
-            ret["xesam:url"]=contURL;
+                ret["xesam:trackNumber"] = parseInt(track_info.getProperty(SBProperties.trackNumber),10);
+
             if(track_info.getProperty(SBProperties.rating) != null)
-                ret["xesam:userRating"]=track_info.getProperty(SBProperties.rating)/5;
+                ret["xesam:userRating"] = track_info.getProperty(SBProperties.rating)/5;
 
             return ret;
         }
@@ -1099,6 +1163,8 @@ Player.prototype = {
     }
 };
 
+var mimeList = [];
+
 function Root() {
 }
 
@@ -1122,31 +1188,52 @@ Root.prototype = {
         return ["http","https","file","rtsp","ngale","mms"];
     },
     get SupportedMimeTypes() {
-        return ["application/ogg",
-                "application/x-ogg",
-                "application/x-ogm-audio",
-                "audio/aac",
-                "audio/mp4",
-                "audio/mpeg",
-                "audio/mpegurl",
-                "audio/ogg",
-                "audio/vnd.rn-realaudio",
-                "audio/vorbis",
-                "audio/x-flac",
-                "audio/x-mp3",
-                "audio/x-mpeg",
-                "audio/x-mpegurl",
-                "audio/x-ms-wma",
-                "audio/x-musepack",
-                "audio/x-oggflac",
-                "audio/x-pn-realaudio",
-                "audio/x-scpls",
-                "audio/x-speex",
-                "audio/x-vorbis",
-                "audio/x-vorbis+ogg",
-                "audio/x-wav",
-                "video/x-ms-asf",
-                "x-content/audio-player",
-                "x-scheme-handler/ngale"];
+        if(mimeList.length == 0) {
+            var ext, mime
+                typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"].createInstance(Ci.sbIMediacoreTypeSniffer),
+                mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService); //@mozilla.org/uriloader/external-helper-app-service;1
+
+            var media = typeSniffer.mediaFileExtensions;
+
+            while(media.hasMore()) {
+                ext = media.getNext();
+                try {
+                    mime = mimeService.getTypeFromExtension(ext)
+                } catch(e) {
+                    //Don't worry, this just means the system doesn't know what it is
+                }
+                if(mimeList.indexOf(mime) == -1) {
+                    mimeList.push(mime);
+                }
+            }
+
+            var playlist = typeSniffer.playlistFileExtensions;
+            while(playlist.hasMore()) {
+                ext = playlist.getNext();
+                try {
+                    mime = mimeService.getTypeFromExtension(ext)
+                } catch(e) {
+                    //Don't worry, this just means the system doesn't know what it is
+                }
+                if(mimeList.indexOf(mime) == -1) {
+                    mimeList.push(mime);
+                }
+            }
+
+            /*var image = typeSniffer.imageFileExtensions;
+            while(image.hasMore()) {
+                ext = image.getNext();
+                try {
+                    mime = mimeService.getTypeFromExtension(ext)
+                } catch(e) {
+                    //Don't worry, this just means the system doesn't know what it is
+                }
+                if(mimeList.indexOf(mime) == -1) {
+                    mimeList.push(mime);
+                }
+            }*/
+        }
+
+        return mimeList;
     }
 };

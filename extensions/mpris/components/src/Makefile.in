@@ -77,10 +77,10 @@ DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
                            $(DBUS_LIBS) \
                            $(NULL)
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/ngMprisPlugin.js.in \
+SONGBIRD_PP_RESOURCES = $(srcdir)/ngMprisService.js.in \
                         $(NULL)
 
-SONGBIRD_COMPONENTS += $(CURDIR)/ngMprisPlugin.js \
+SONGBIRD_COMPONENTS += $(CURDIR)/ngMprisService.js \
                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk

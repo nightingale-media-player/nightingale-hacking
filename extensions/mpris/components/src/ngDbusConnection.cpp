@@ -70,9 +70,8 @@ NS_IMETHODIMP ngDbusConnection::SetDebug_mode(PRBool aDebug_mode)
 
 
 /* long init (in string name); */
-NS_IMETHODIMP ngDbusConnection::Init(const char *name, PRBool debug, PRInt32 *_retval)
+NS_IMETHODIMP ngDbusConnection::Init(const char *name, PRInt32 *_retval)
 {
-    debug_mode = debug;
     if(debug_mode) cout << "-----------MPRIS: DEBUG MODE------------" << endl;
 
     *_retval = 0;
