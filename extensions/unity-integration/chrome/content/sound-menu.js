@@ -188,32 +188,11 @@ UnityIntegration.soundMenu = {
 		observe: function (aSubject, aTopic, aData) {
 			if(aTopic != "nsPref:changed" && aTopic != "needInit") return;
 
-			switch (aData) {
-				case "hideOnClose":
-					UnityIntegration.soundMenu.registerOnClose(true);
-					break;
-
-				case "enableNotifications":
-					var enableNotifPref = UnityIntegration.soundMenu.prefs.getBoolPref("enableNotifications");
-					var enableNotifTBtn = document.getElementById("unity-integration-enableNotifTButton");
-					if (enableNotifPref) {
-						enableNotifTBtn.checked = false;
-						enableNotifTBtn.setAttribute("tooltiptext", "Notifications enabled");
-						enableNotifTBtn.image = "chrome://unity-integration/content/notif-enabled.png";
-					} else {
-						enableNotifTBtn.checked = true;
-						enableNotifTBtn.setAttribute("tooltiptext", "Notifications disabled");
-						enableNotifTBtn.image = "chrome://unity-integration/content/notif-disabled.png";
-					}
-					UnityIntegration.soundMenu.unityServiceProxy.EnableNotifications(enableNotifPref);
-			}
+			if (aData == "hideOnClose")
+				UnityIntegration.soundMenu.registerOnClose(true);
 		}
 	}
 };
-
-function onNotifTButtonClick (element) {
-	UnityIntegration.soundMenu.prefs.setBoolPref("enableNotifications", !element.checked);
-}
 
 window.addEventListener("load",   function(e) { UnityIntegration.soundMenu.onLoad(); },   false);
 window.addEventListener("unload", function(e) { UnityIntegration.soundMenu.onUnLoad(); }, false);

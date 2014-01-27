@@ -12,17 +12,4 @@
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<script type="application/x-javascript" src="chrome://unity-integration/content/sound-menu.js"/>
-
-	<hbox id="control_pane">
-		<vbox>
-			<spacer flex="1" />
-				<toolbarbutton 
-					id="unity-integration-enableNotifTButton" 
-					type="checkbox" 
-					image="chrome://unity-integration/content/notif.png" 
-					tooltiptext = "12345"
-					oncommand="onNotifTButtonClick(this);"/>
-			<spacer flex="1" />
-		</vbox>
-	</hbox>
 </overlay>
