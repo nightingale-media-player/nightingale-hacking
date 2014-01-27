@@ -118,14 +118,26 @@ UnityIntegration.soundMenu = {
 					case Components.interfaces.sbIMediacoreEvent.TRACK_CHANGE:
 						if (that.lastItem == that.gMM.sequencer.currentItem) break;
 						else that.lastItem = that.gMM.sequencer.currentItem;
-						var resourceURL = that.gMM.sequencer.currentItem.getProperty(SBProperties.primaryImageURL);
 
 						var artist = that.stringConverter.ConvertFromUnicode(that.gMM.sequencer.currentItem.getProperty(SBProperties.artistName));
 						var album = that.stringConverter.ConvertFromUnicode(that.gMM.sequencer.currentItem.getProperty(SBProperties.albumName));
 						var track = that.stringConverter.ConvertFromUnicode(that.gMM.sequencer.currentItem.getProperty(SBProperties.trackName));
-						that.downloadFileToTemp(resourceURL, function (coverFilePath) {
-								that.unityServiceProxy.SoundMenuSetTrackInfo(track, artist, album, coverFilePath);
-							});
+						var coverFilePath = null;
+
+						var resourceURL = that.gMM.sequencer.currentItem.getProperty(SBProperties.primaryImageURL);
+						if (resourceURL != null) {
+							try {
+								var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+								var fileURI = ios.newURI(decodeURI(resourceURL), null, null).QueryInterface(Components.interfaces.nsIFileURL);
+								var fileurl = fileURI.file.path; // code from FolderSync
+                				if (fileURI.file.exists())
+                  					coverFilePath = fileurl;
+							} catch(e) {
+									Cu.reportError(e + " " + resourceURL);
+							}
+						}
+
+						that.unityServiceProxy.SoundMenuSetTrackInfo(track, artist, album, coverFilePath);
 						break;
 
 					case Components.interfaces.sbIMediacoreEvent.STREAM_START:
@@ -162,69 +174,6 @@ UnityIntegration.soundMenu = {
 		} else if (force) {
 			this.mainwindow.onclose = "";
 		}
-	},
-
-	downloadFileToTemp: function (aWebURL, aCallback) {
-		if (!aWebURL || aWebURL == "") {
-			aCallback(null);
-			return;
-		}
-
-		// The tempFile we are saving to.
-		var tempFile = Cc["@mozilla.org/file/directory_service;1"]
-						 .getService(Ci.nsIProperties)
-						 .get("TmpD", Ci.nsIFile);
-
-		var webProgressListener = {
-			QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener]),
-
-			/* nsIWebProgressListener methods */
-			// No need to implement anything in these functions
-			onLocationChange : function (a, b, c) { },
-			onProgressChange : function (a, b, c, d, e, f) { },
-			onSecurityChange : function (a, b, c) { },
-			onStatusChange : function (a, b, c, d) { },
-			onStateChange : function (aWebProgress, aRequest, aStateFlags, aStatus) {
-				// when the transfer is complete...
-				if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
-					if (aStatus == 0) {
-						aCallback(tempFile.path);
-					} else { }
-				}
-			}
-		};
-
-		var fileName = aWebURL.substr(aWebURL.lastIndexOf("/")+1);
-		tempFile.append(fileName);
-
-		try {
-			tempFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0644);
-		}
-		catch (e) {
-			if (e.name == "NS_ERROR_FILE_ALREADY_EXISTS")
-				aCallback(tempFile.path);
-			else
-				aCallback(null);
-
-			return;
-		};
-
-		// Make sure it is deleted when we shutdown
-		var registerFileForDelete = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
-									 .getService(Ci.nsPIExternalAppLauncher);
-		registerFileForDelete.deleteTemporaryFileOnExit(tempFile);
-
-		// Download the file
-		var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var webDownloader = Cc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1'].createInstance(Ci.nsIWebBrowserPersist);
-		webDownloader.persistFlags = Ci.nsIWebBrowserPersist.PERSIST_FLAGS_NONE;
-		webDownloader.progressListener = webProgressListener;
-		webDownloader.saveURI(ioService.newURI(aWebURL, null, null), // URL
-							  null,
-							  null,
-							  null,
-							  null,
-							  tempFile);  // File to save to
 	},
 
 	preferencesObserver: {
