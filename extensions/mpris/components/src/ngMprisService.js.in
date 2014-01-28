@@ -517,7 +517,7 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                     if(this.play != null) this.play.position = this._dbus.getInt64Arg();
                     break;
                 case "SetPosition":
-                    var currItem = this._mediacore.sequencer.view.getItemByIndex(this._mediacore.sequencer.viewPosition),
+                    var currItem = this._mediacore.sequencer.currentItem,
                         trackPath = "/com/getnightingale/Nightingale/" + currItem.getProperty(SBProperties.GUID).replace(/-/g,"_"),
                         pathArg = this._dbus.getObjectPathArg(),
                         pos = this._dbus.getInt64Arg();
@@ -1064,7 +1064,7 @@ Player.prototype = {
     },
     get Metadata() {
         if(ComponentContainer.mediacore.sequencer.view) {
-            var track_info = ComponentContainer.mediacore.sequencer.view.getItemByIndex(ComponentContainer.mediacore.sequencer.viewPosition);
+            var track_info = ComponentContainer.mediacore.sequencer.currentItem;
 
             var resURL = track_info.getProperty(SBProperties.primaryImageURL);
             if(resURL)
