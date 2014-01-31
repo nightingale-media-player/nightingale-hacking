@@ -50,7 +50,7 @@ binary-component sbWatchFolderService_d.so
 binary-component sbWindowWatcher_d.so
 binary-component sbxpcom_d.so
 #else
-binary-component sbAlbumArt.so
+# binary-component sbAlbumArt.so # broken in release builds currently
 binary-component sbBrowserAPI.so
 binary-component sbCDDevice.so
 binary-component sbClipboardHelper.so
@@ -73,7 +73,7 @@ binary-component sbIntl.so
 binary-component sbiTunesMediaImport.so
 binary-component sbLibraryManager.so
 binary-component sbLinuxFileSystemEvents.so
-binary-component sbLocalDatabaseLibrary.so
+# binary-component sbLocalDatabaseLibrary.so # broken in release builds currently
 binary-component sbMediacoreBase.so
 binary-component sbMediacoreManager.so
 binary-component sbMediaExport.so
