@@ -571,9 +571,13 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                 break;
             case "Set":
                 switch(this._dbus.getStringArg()) {
+                    case "org.mpris.MediaPlayer2":
+                        var prop = this._dbus.getStringArg();
+                        this._Root[prop] = this.getDBusArg(this._Root[prop]);
+                        break;
                     case "org.mpris.MediaPlayer2.Player":
                         var prop = this._dbus.getStringArg();
-                        this._Player[prop] = this.getDBusArg(obj, prop);
+                        this._Player[prop] = this.getDBusArg(this._Player[prop]);
                         break;
                 }
                 break;
@@ -831,7 +835,7 @@ ngMprisService.prototype.setDBusArg = function(val, forceInteger) {
     }
 };
 
-ngMprisService.prototype.getDBusArg = function(obj, prop) {
+ngMprisService.prototype.getDBusArg = function(val) {
     if(typeof val == "string")
         this._dbus.getStringArg(val);
     else if(typeof val == "boolean")
@@ -1200,16 +1204,17 @@ Root.prototype = {
     },
     get Fullscreen() {
         var videoWindow = ComponentContainer.mediacore.getPrimaryVideoWindow(false);
-        if(videoWindow != null)
-            return videoWindow.fullscreen
+        if(videoWindow != null) {
+            return videoWindow.QueryInterface(Ci.sbIMediacoreVideoWindow).fullscreen;
+        }
         //else
-        return ComponentContainer.wMediator.getMostRecentWindow("Songbird:Main").QueryInterface(Ci.sbIMediacoreVideoWindow).fullScreen;
+        return ComponentContainer.wMediator.getMostRecentWindow("Songbird:Main").fullScreen;
     },
     set Fullscreen(val) {
         if(typeof val == "boolean") {
             var videoWindow = ComponentContainer.mediacore.getPrimaryVideoWindow(false);
             if(videoWindow != null)
-                videoWindow.fullscreen = val;
+                videoWindow.QueryInterface(Ci.sbIMediacoreVideoWindow).fullscreen = val;
             else
                 ComponentContainer.wMediator.getMostRecentWindow("Songbird:Main").fullScreen = val;
         }
