@@ -168,6 +168,8 @@ function ngMprisService() {
 			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
         </method>		\
         <property name=\"CanQuit\" type=\"b\" access=\"read\" />	\
+        <property name=\"Fullscreen\" type=\"b\" access=\"readwrite\" />	\
+        <property name=\"CanSetFullscreen\" type=\"b\" access=\"read\" />	\
         <property name=\"CanRaise\" type=\"b\" access=\"read\" />	\
         <property name=\"HasTrackList\" type=\"b\" access=\"read\" />	\
         <property name=\"Identity\" type=\"s\" access=\"read\" />	\
@@ -301,6 +303,23 @@ ngMprisService.prototype.initDBus = function() {
     var mediacore = this._mediacore;
     var dbus = this._dbus;
     var plugin = this;
+
+    var wasInFS = this._Root.Fullscreen;
+    function _ngMprisCheckFullscreen(event) {
+        if(plugin._Root.Fullscreen != wasInFS) {
+            wasInFS = plugin._Root.Fullscreen;
+
+            dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+	        dbus.setStringArg("org.mpris.MediaPlayer2");
+            dbus.openDictEntryArray();
+            dbus.setDictSBEntryArg("Fullscreen",plugin._Root.Fullscreen);
+            dbus.closeDictEntryArray();
+            dbus.openArray();
+            dbus.closeArray();
+	        dbus.sendSignal();
+        }
+    }
+    this._wMediator.getMostRecentWindow("Songbird:Main").addEventListener("resize", _ngMprisCheckFullscreen, false);
 	  
     this._mediacore.addListener({
       onMediacoreEvent : function(event) {
@@ -331,10 +350,17 @@ ngMprisService.prototype.initDBus = function() {
 	        break;
           case Ci.sbIMediacoreEvent.SEQUENCE_ENDS:
             args.CanGoNext = false;
+          case Ci.sbIMediacoreEvent.STREAM_START:
+          /*TODO send fullscreen change signal when video window changes size
+            var videoWindow = plugin._mediacore.getPrimaryVideoWindow(false);
+            if(videoWindow!= null) {
+                dump("Video window!");
+                videoWindow.QueryInterface(Ci.sbIMediacoreVideoWindow).videoWindow.QueryInterface(Ci.nsIDOMXULElement).addEventListener("resize", _ngMprisCheckFullscreen, false);
+            }*/
 	      case Ci.sbIMediacoreEvent.STREAM_PAUSE:
 	      case Ci.sbIMediacoreEvent.STREAM_STOP:
-	      case Ci.sbIMediacoreEvent.STREAM_START:
 	      case Ci.sbIMediacoreEvent.STREAM_END:
+
             //MPRIS 2
             args.PlaybackStatus = plugin._Player.PlaybackStatus;
 
@@ -351,7 +377,7 @@ ngMprisService.prototype.initDBus = function() {
 	        dbus.sendSignal();
 	        break;
           case Ci.sbIMediacoreEvent.VOLUME_CHANGE:
-            dbus.prepareSignal("/", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+            dbus.prepareSignal("/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties", "PropertiesChanged");
 	        dbus.setStringArg("org.mpris.MediaPlayer2.Player");
             dbus.openDictEntryArray();
             dbus.setDictSDEntryArg("Volume",plugin._Player.Volume);
@@ -494,7 +520,7 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                     this._mediacore.sequencer.stop();
                     break;
                 case "Play":
-                    if(ComponentContainer.mediacore.sequencer.currentItem != null)
+                    if(this._mediacore.sequencer.currentItem != null)
                         this._mediacore.sequencer.play();
                     else
                         Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
@@ -502,7 +528,7 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                 case "PlayPause":
                     if(this.play != null) {
                         if(this._mediacore.status.state != this._mediacore.status.STATUS_PLAYING) {
-                            if(ComponentContainer.mediacore.sequencer.currentItem != null)
+                            if(this._mediacore.sequencer.currentItem != null)
                                 this.play.play();
                             else
                                 Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
@@ -570,7 +596,7 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                 case "Play":
                     if(this.play != null) {
                         if(this._mediacore.status.state != this._mediacore.status.STATUS_PLAYING) {
-                            if(ComponentContainer.mediacore.sequencer.currentItem != null)
+                            if(this._mediacore.sequencer.currentItem != null)
                                 this.play.play();
                             else
                                 Cc["@songbirdnest.com/Songbird/ApplicationController;1"].getService(Ci.sbIApplicationController).playDefault();
@@ -1170,6 +1196,25 @@ function Root() {
 
 Root.prototype = {
     get CanQuit() {
+        return true;
+    },
+    get Fullscreen() {
+        var videoWindow = ComponentContainer.mediacore.getPrimaryVideoWindow(false);
+        if(videoWindow != null)
+            return videoWindow.fullscreen
+        //else
+        return ComponentContainer.wMediator.getMostRecentWindow("Songbird:Main").QueryInterface(Ci.sbIMediacoreVideoWindow).fullScreen;
+    },
+    set Fullscreen(val) {
+        if(typeof val == "boolean") {
+            var videoWindow = ComponentContainer.mediacore.getPrimaryVideoWindow(false);
+            if(videoWindow != null)
+                videoWindow.fullscreen = val;
+            else
+                ComponentContainer.wMediator.getMostRecentWindow("Songbird:Main").fullScreen = val;
+        }
+    },
+    get CanSetFullscreen() {
         return true;
     },
     get CanRaise() {
