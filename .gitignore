@@ -7,6 +7,10 @@ dependencies/*.zip
 dependencies/*.tar.???
 dependencies/*.tar.????
 dependencies/**/*
+debian/nightingale
+debian/*.debhelper.log
+debian/*.substvars
+debian/files
 tools/win32/reshacker/ResHacker.ini
 tools/win32/reshacker/ResHacker.log
 songbirdconfig.out

@@ -10,6 +10,7 @@ override_dh_auto_build:
 	echo 'ac_add_options --enable-libnotify' >> $(CURDIR)/nightingale.config
 	$(CURDIR)/build.sh
 	mv $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
+	mv $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
 
 	## Addons
 	mkdir -p $(CURDIR)/compiled/nightingale/addons
