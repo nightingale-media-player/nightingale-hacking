@@ -45,68 +45,117 @@
  title="&equalizer.title;"
  buttons="accept"
  defaultButton="accept"
- width="350"
+ width="380"
  height="200"
  hidechrome="true"
  type="songbird"
  onload="return doInit();"
 >
 
-  <vbox flex="1">
+  <vbox>
     <hbox>
       <checkbox id="equalizer-check" 
                 oncommand="onCheckEqualizer(event);" 
                 label="&equalizer.on.checkbox;"/>
     </hbox>
     <hbox>
-      <vbox>
+      <vbox width="35">
         <label value="&equalizer.band0.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band0" band="0" onchange="onSliderChange(0)" orient="vertical"/>
-	      <label value="0" id="eq-label-band0" class="sb-eq-label" crop="none"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band0" band="0" onchange="onSliderChange(0)" orient="vertical" flex="1"/>
+          <spacer flex="1"/>
+        </hbox>
+	      <label value="0" id="eq-label-band0" class="sb-eq-label"/>
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band1.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band1" band="1" onchange="onSliderChange(1)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band1" band="1" onchange="onSliderChange(1)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band1" class="sb-eq-label"/>
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band2.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band2" band="2" onchange="onSliderChange(2)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band2" band="2" onchange="onSliderChange(2)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band2" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band3.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band3" band="3" onchange="onSliderChange(3)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band3" band="3" onchange="onSliderChange(3)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band3" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band4.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band4" band="4" onchange="onSliderChange(4)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band4" band="4" onchange="onSliderChange(4)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band4" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band5.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band5" band="5" onchange="onSliderChange(5)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band5" band="5" onchange="onSliderChange(5)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band5" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band6.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band6" band="6" onchange="onSliderChange(6)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band6" band="6" onchange="onSliderChange(6)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band6" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band7.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band7" band="7" onchange="onSliderChange(7)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band7" band="7" onchange="onSliderChange(7)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band7" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band8.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band8" band="8" onchange="onSliderChange(8)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band8" band="8" onchange="onSliderChange(8)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band8" class="sb-eq-label" />
       </vbox>
-      <vbox>
+      <spacer flex="2"/>
+      <vbox width="35">
         <label value="&equalizer.band9.label;" class="sb-eq-label"/>
-        <xul:sb-eq-band-slider id="eq-band9" band="9" onchange="onSliderChange(9)" orient="vertical"/>
+        <hbox>
+          <spacer flex="1"/>
+          <xul:sb-eq-band-slider id="eq-band9" band="9" onchange="onSliderChange(9)" orient="vertical"/>
+          <spacer flex="1"/>
+        </hbox>
 	      <label value="0" id="eq-label-band9" class="sb-eq-label" />
       </vbox>
     </hbox>
