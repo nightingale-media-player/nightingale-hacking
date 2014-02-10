@@ -1,4 +1,4 @@
 compiled/nightingale usr/share
-debian/nightingale/usr/share/nightingale/chrome/icons/default/*.xpm usr/share/pixmaps
+debian/nightingale/usr/share/nightingale/chrome/icons/default/default.xpm usr/share/pixmaps/nightingale.xpm
 debian/scripts/* usr/bin
 debian/*.desktop usr/share/applications
