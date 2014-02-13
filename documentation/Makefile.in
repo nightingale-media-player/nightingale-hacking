@@ -77,5 +77,5 @@ else
 	$(DOXYGEN) songbird.dox
 endif
 	$(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
-	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/sdkapi/html/sb_logo_doc.gif
-	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/webpageapi/sb_logo_doc.gif
+	$(INSTALL_FILE) $(srcdir)/ng_logo_doc.png $(CURDIR)/sdkapi/html/ng_logo_doc.png
+	$(INSTALL_FILE) $(srcdir)/ng_logo_doc.png $(CURDIR)/webpageapi/ng_logo_doc.png
