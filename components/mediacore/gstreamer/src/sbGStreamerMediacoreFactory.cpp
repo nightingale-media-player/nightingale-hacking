@@ -238,6 +238,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       // PLUS VOB
 
       videoExtensions.AppendElement(NS_LITERAL_STRING("ogv"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("ogx"));
       videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
       videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
       videoExtensions.AppendElement(NS_LITERAL_STRING("mkv"));
