@@ -262,7 +262,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
       // Check for the 'qtvideowrapper' plugin to add mp4/m4v extensions.
       PRBool foundQTPlugin = PR_FALSE;
-      GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
+      GstPlugin *plugin = gst_registry_find_plugin(gst_registry_get(),
+                                                   ("qtvideowrapper"));
       if (plugin) {
         foundQTPlugin = PR_TRUE;
         videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
@@ -271,7 +272,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
         gst_object_unref(plugin);
       }
       // Check for the 'ewmpeg4dec' plugin to add divx/avi extensions.
-      plugin = gst_default_registry_find_plugin("ewmpeg4dec");
+      plugin = gst_registry_find_plugin(gst_registry_get(),
+                                        ("ewmpeg4dec"));
       if (plugin) {
         videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
@@ -298,7 +300,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       const gchar* factoryName = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory));
       gboolean isAudioFactory = g_str_has_prefix(factoryName, "audio/");
 
-      gchar **factoryexts = gst_type_find_factory_get_extensions (factory);
+      const gchar* const *factoryexts = gst_type_find_factory_get_extensions (factory);
       if (factoryexts) {
         while (*factoryexts) {
           gboolean isAudioExtension = isAudioFactory;

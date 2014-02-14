@@ -294,8 +294,6 @@ sbGStreamerService::Init()
 #if !defined(XP_MACOSX) && !defined(XP_WIN)
 
     if (!noSystemPlugins) {
-
-
       // 4. Add $HOME/.gstreamer-1.0/plugins to system plugin path
       // Use the same code as gstreamer for this to ensure it's the
       // same path...
