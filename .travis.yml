@@ -2,7 +2,7 @@ language: cpp
 compiler: gcc
 before_install:
  - "sudo apt-get update -qq"
- - "sudo apt-get install -qq autoconf libgtk2.0-dev libdbus-glib-1-dev libtag1-dev libgstreamer-plugins-base0.10-dev zip unzip gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-ffmpeg, gtk2-engines-pixbuf"
+ - "sudo apt-get install -qq autoconf libgtk2.0-dev libdbus-glib-1-dev libtag1-dev libgstreamer-plugins-base0.10-dev zip unzip gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-ffmpeg gtk2-engines-pixbuf"
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"
 install:
