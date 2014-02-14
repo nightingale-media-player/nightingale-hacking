@@ -1,0 +1,14 @@
+language: cpp
+compiler: gcc
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq autoconf libgtk2.0-dev libdbus-glib-1-dev libtag1-dev libgstreamer-plugins-base0.10-dev zip unzip
+install:
+ - echo 'ac_add_options --with-taglib-source=packaged' >> nightingale.config
+ - echo 'ac_add_options --enable-tests' >> nightingale.config
+script: ./build.sh && compiled/dist/nightingale --test
+branches:
+  only:
+    - sb-trunk-oldxul
+notifications:
+  irc: "irc.mozilla.org#nightingale"
