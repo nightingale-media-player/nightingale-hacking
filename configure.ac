@@ -975,6 +975,7 @@ case "$SB_PLATFORM" in
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
 
+
     # Breakpad needs stabs debugging data, so always explicitly request it with
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
@@ -1027,9 +1028,9 @@ case "$SB_PLATFORM" in
     AC_SUBST(PTHREAD_LIBS, $LIBS)
     LIBS=$_SAVE_LIBS
 
-	GST_MAJORMINOR=1.0
-	GST_REQS=1.0.6
-	GSTPLUG_REQS=1.0.6
+    GST_MAJORMINOR=1.0
+    GST_REQS=1.0.6
+    GSTPLUG_REQS=1.0.6
 
     PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
@@ -1306,21 +1307,21 @@ done
 AC_SUBST(FORCE_MEDIA_CORE_WMP)
 AC_SUBST(FORCE_MEDIA_CORE_QT)
 
-
 #
 # If we're building with MEDIA_CORE_GST_SYSTEM, find our required packages
 #
 
 if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
-	GST_MAJORMINOR=1.0
-	GST_REQS=1.0.6
-	GSTPLUG_REQS=1.0.6
+    GST_MAJORMINOR=1.0
+    GST_REQS=1.0.6
+    GSTPLUG_REQS=1.0.6
 
-	PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
-	AC_SUBST(GSTREAMER_CFLAGS)
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
+    AC_SUBST(GSTREAMER_CFLAGS)
 
-	GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-	AC_SUBST(GSTREAMER_LIBS)
+    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
+    AC_SUBST(GSTREAMER_LIBS)
+
 fi
 
 #
@@ -1344,7 +1345,6 @@ if test "$MEDIA_CORE_GST" = "1" -a "$SB_PLATFORM" = "linux"; then
   )
 fi
 AC_SUBST(HAVE_FLUENDO_MP3)
-
 
 #
 # Checks for libraries.
