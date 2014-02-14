@@ -34,3 +34,4 @@ conftest.o
 confdefs.h
 thumbs.db
 .directory
+documentation/api/*
