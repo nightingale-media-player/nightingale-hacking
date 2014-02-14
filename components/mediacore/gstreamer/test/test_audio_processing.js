@@ -278,10 +278,9 @@ const K_TEST_CASES = [
       {expected: "event", eventType: Ci.sbIMediacoreAudioProcessorListener.EVENT_START, action: null},
       {expected: "samples", sampleCount: 21184, action: null, blockAction: null },
       {expected: "event", eventType: Ci.sbIMediacoreAudioProcessorListener.EVENT_GAP, action: null },
-      // Note: gap handling in GStreamer's vorbisdec element changed upstream.
-      // After the next update to GStreamer, we'll probably need to fix this
-      // value up to be 58688.
-      {expected: "samples", sampleCount: 59712, action: null, blockAction: null },
+      {expected: "samples", sampleCount: 19456, action: null, blockAction: null },
+      {expected: "event", eventType: Ci.sbIMediacoreAudioProcessorListener.EVENT_GAP, action: null },
+      {expected: "samples", sampleCount: 39232, action: null, blockAction: null },
       {expected: "event", eventType: Ci.sbIMediacoreAudioProcessorListener.EVENT_EOS, action: null }
     ]
   }
