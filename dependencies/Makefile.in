@@ -101,16 +101,12 @@ ifdef MEDIA_CORE_GST #{
    GSTREAMER_NAMES = gstreamer \
                      gstbase \
                      gstcontroller \
-                     gstdataprotocol \
                      gstnet \
                      $(NULL)
 
    GST_PLUGINS_BASE_LIBS_NAMES = gstapp \
                                  gstaudio \
-                                 gstcdda \
                                  gstfft \
-                                 gstinterfaces \
-                                 gstnetbuffer \
                                  gstpbutils \
                                  gstriff \
                                  gstrtp \
@@ -140,7 +136,6 @@ ifdef MEDIA_CORE_GST #{
                 $(NULL)
 
    GST_PLUGINS_CORE_NAMES = gstcoreelements \
-                            gstcoreindexers \
                             $(NULL)
 
    GST_PLUGINS_BASE_NAMES = gstapp \
@@ -149,13 +144,7 @@ ifdef MEDIA_CORE_GST #{
                             gstaudiorate \
                             gstaudioresample \
                             gstaudiotestsrc \
-                            gstdecodebin \
-                            gstdecodebin2 \
-                            gstffmpegcolorspace \
-                            gstgdp \
                             gstogg \
-                            gstplaybin \
-                            gstqueue2 \
                             gsttheora \
                             gsttypefindfunctions \
                             gstvideorate \
@@ -186,7 +175,6 @@ ifdef MEDIA_CORE_GST #{
                             gstmulaw \
                             gstmultifile \
                             gstmultipart \
-                            gstqtdemux \
                             gstreplaygain \
                             gstrtp \
                             gstrtpmanager \
@@ -194,28 +182,20 @@ ifdef MEDIA_CORE_GST #{
                             gstsmpte \
                             gstspectrum \
                             gstudp \
-                            gstvideobalance \
                             gstvideobox \
                             gstvideocrop \
-                            gstvideoflip \
                             gstvideomixer \
                             gstwavenc \
                             gstwavparse \
                             $(NULL)
 
    GST_PLUGINS_UGLY_NAMES = gstasf \
-                            gstmpegaudioparse \
                             $(NULL)
 
-   GST_PLUGINS_BAD_NAMES = gstaiffparse \
-                           gstadpcmdec \
+   GST_PLUGINS_BAD_NAMES = gstadpcmdec \
                            gstadpcmenc \
                            gstid3tag \
-                           gstqtmux \
                            gstsdpelem \
-                           gstselector \
-                           gstmozilla \
-                           gstmpeg4videoparse \
                            $(NULL)
 
    # Include asfmux only if it's present in the vendor binaries.
@@ -398,11 +378,9 @@ ifdef MEDIA_CORE_GST #{
 
       GST_PLUGINS_BASE_NAMES += gstalsa \
                                 gstximagesink \
-                                gstxvimagesink \
                                 $(NULL)
 
-      GST_PLUGINS_GOOD_NAMES += gstpulse \
-                                $(NULL)
+      GST_PLUGINS_GOOD_NAMES += $(NULL)
 
       GSTREAMER = \
        $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
