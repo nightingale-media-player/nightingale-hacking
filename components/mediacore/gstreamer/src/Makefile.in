@@ -161,6 +161,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstapp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstvideo-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \
