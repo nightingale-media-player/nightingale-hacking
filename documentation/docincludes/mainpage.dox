@@ -3,7 +3,7 @@
 
 \section docintro Documenting Nightingale
 
-Doxygen documentation is generated from all source files (*.cpp, *.dox, *.h, *.idl, *.js) within the directories ./components, ./dependencies/vendor, ./bindings, ./extensions, and ./documentation/docincludes
+Doxygen documentation is generated from all source files (*.cpp, *.dox, *.h, *.idl, *.js) within the directories ./app, ./components, ./dependencies/vendor, ./bindings, ./extensions, and ./documentation/docincludes
 
 \subsection creatingdocs Creating Documentation
 
