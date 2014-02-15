@@ -28,16 +28,9 @@ Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const LOG = DebugUtils.generateLogFunction("ngInternalSearchService", 2);
 
-var ngInternalSearchServiceInstance;
-
 function ngInternalSearchService()
-{
-    if(ngInternalSearchServiceInstance)
-        return ngInternalSearchServiceInstance;
-    ngInternalSearchServiceInstance = this;    
-        
-    this.searchService =
-      Components.classes["@mozilla.org/browser/search-service;1"].getService(Components.interfaces.nsIBrowserSearchService);
+{    
+    XPCOMUtils.defineLazyServiceGetter(this, "searchService", "@mozilla.org/browser/search-service;1", Components.interfaces.nsIBrowserSearchService);
 }
 
 ngInternalSearchService.prototype = {
@@ -45,19 +38,26 @@ ngInternalSearchService.prototype = {
     classID:          Components.ID("{738e3a66-d7b3-4c7d-94ec-a158eb753203}"),
     contractID:       "@getnightingale.com/Nightingale/internal-search-service;1",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIInternalSearchEnginesService]),
-    flags:            Components.interfaces.nsIClassInfo.SINGLETON,
 
-    /**
+  /**
    * Method used to register a searchengine which should be treated as internal.
    * If the engine was hidden it will now be visible.
    * @param: searchEngineName:   Name of the targeted engine
    *         contractID:         part of the ID of the search engine handler
-   *                             contract (implementing sbISearchEngine)                           
+   *                             contract (implementing sbISearchEngine)            
    *         liveSearch:         boolean; Whether the search should be triggered
    *                             on every keydown or only on submit
    * @return true if registered successfully, else false.
+   * @throws: Throws NS_ERROR_ILLEGAL_VALUE if the contractID doesn't implement sbISearchEngine
    */
   registerInternalSearchEngine : function(searchEngineName, contractID, liveSearch) {
+        try {
+            Components.classes["@songbirdnest.com/Songbird/"+contractID+";1"].createInstance(Components.interfaces.sbISearchEngine);
+        }
+        catch(error) {
+            throw Components.results.NS_ERROR_ILLEGAL_VALUE;
+        }
+
         var engine = this.searchService.getEngineByName(searchEngineName);
         
         // Only continue if the engine isn't yet registered and exists
