@@ -95,6 +95,8 @@ AUTOCONF ?= autoconf
 MKDIR ?= mkdir -p
 PERL ?= perl
 RM ?= rm
+CP ?= cp
+LN ?= ln
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -105,6 +107,29 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
+# Prepare tests command
+ifeq (,$(filter --enable-tests,$(SONGBIRDCONFIG_CONFIGURE_OPTIONS)))
+    TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
+else
+    TEST_COMMAND = $(DISTDIR)/nightingale --test
+endif
+
+# Prepare install
+UNAME_S := $(shell uname -s)
+NOT_SUPPORTED = $(error Installing using make is currently not supported on your operating system.)
+
+ifneq ($(OS),Windows_NT)
+    ifeq ($(UNAME_S),Linux)
+        INSTALL = $(CP) $(DISTDIR) /usr/lib/nightingale \
+                   $(LN) -s /usr/lib/nightingale/nightingale /usr/bin/nightingale \
+                   xdg-icon-ressource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale \
+                   xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop \
+    else
+        INSTALL = $(NOT_SUPPORTED)
+    endif
+else
+    INSTALL = $(NOT_SUPPORTED)
+endif
 
 all: songbird_output build
 
@@ -144,10 +169,9 @@ build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
 test:
-    ifeq (,$(filter --enable-tests,$(SONGBIRDCONFIG_CONFIGURE_OPTIONS)))
-        $(error Not a Build with enabled Tests. Please set --enable-tests.)
-    endif
+	$(TEST_COMMAND)
 
-	$(DISTDIR)/nightingale --test
+install:
+	$(INSTALL)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install
