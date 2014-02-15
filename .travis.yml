@@ -8,7 +8,7 @@ before_install:
 install:
  - "echo 'ac_add_options --with-taglib-source=packaged' >> nightingale.config"
  - "echo 'ac_add_options --enable-tests' >> nightingale.config"
-script: "./build.sh && compiled/dist/nightingale --test"
+script: "./build.sh && make test"
 branches:
   only:
     - sb-trunk-oldxul

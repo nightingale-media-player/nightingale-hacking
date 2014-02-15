@@ -110,7 +110,7 @@ all: songbird_output build
 
 run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 	cd $(OBJDIR) && \
-   $(CONFIGURE) $(CONFIGURE_ARGS)
+    $(CONFIGURE) $(CONFIGURE_ARGS)
 
 $(CONFIGURE): $(CONFIGURE_PREREQS)
 	cd $(TOPSRCDIR) && \
@@ -131,7 +131,7 @@ $(OBJDIR) $(DISTDIR):
 makefiles: $(OBJDIR) $(DISTDIR) run_configure
 
 clean:
-	rm -rf $(OBJDIR)
+	$(RM) -rf $(OBJDIR)
 
 clobber:
 	$(RM) $(CLOBBER_TRASH)
@@ -143,4 +143,7 @@ depclobber:
 build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build
+test:
+	$(DISTDIR)/nightingale --test
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test

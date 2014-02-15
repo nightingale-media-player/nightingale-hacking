@@ -145,7 +145,7 @@ case $OSTYPE in
     ;;
   *)
     echo "Can't find deps for $OSTYPE. You may need to build them yourself. Doublecheck the SVN's for \n
-    Songbird and Nightingale trunks to be sure."
+    Nightingale trunk to be sure."
     ;;
 esac
 
