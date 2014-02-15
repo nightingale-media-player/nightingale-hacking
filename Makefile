@@ -144,6 +144,10 @@ build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
 test:
+    ifeq (,$(filter --enable-tests,$(SONGBIRDCONFIG_CONFIGURE_OPTIONS)))
+        $(error Not a Build with enabled Tests. Please set --enable-tests.)
+    endif
+
 	$(DISTDIR)/nightingale --test
 
 .PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test
