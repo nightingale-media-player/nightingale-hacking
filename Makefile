@@ -108,27 +108,41 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(NULL)
 
 # Prepare tests command
-ifeq (,$(filter --enable-tests,$(SONGBIRDCONFIG_CONFIGURE_OPTIONS)))
+ifeq (,$(filter --enable-tests, $(CONFIGURE_ARGS)))
     TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
 else
-    TEST_COMMAND = $(DISTDIR)/nightingale -test
+    TEST_COMMAND = $(SONGBIRD_DISTDIR)/nightingale -test
 endif
 
 # Prepare install
 UNAME_S := $(shell uname -s)
-NOT_SUPPORTED = $(error Installing using make is currently not supported on your operating system.)
+INSTALL_LIBDIR = /usr/lib
+INSTALL_BINDIR = /usr/bin
 
-ifneq ($(OS),Windows_NT)
-    ifeq ($(UNAME_S),Linux)
-        INSTALL = $(CP) $(DISTDIR) /usr/lib/nightingale \
-                  $(LN) -s /usr/lib/nightingale/nightingale /usr/bin/nightingale \
-                  xdg-icon-ressource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale \
-                  xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop \
-    else
-        INSTALL = $(NOT_SUPPORTED)
+ifneq (Windows_NT,$(OS))
+    ifeq (Darwin,$(UNAME_S))
+        INSTALL = @echo Please use the .dmg file in compiled/dist.
+    endif
+    ifeq (Linux, $(UNAME_S))
+        INSTALL = $(CP) -r $(DISTDIR) $(INSTALL_LIBDIR)/nightingale &&\
+                  $(LN) -s $(INSTALL_LIBDIR)/nightingale/nightingale $(INSTALL_BINDIR)/nightingale &&\
+                  xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
+                  xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop
+        UNINSTALL = $(RM) -r $(INSTALL_LIBDIR)/nightingale &&\
+                    $(RM) $(INSTALL_BINDIR)/nightingale &&\
+                    xdg-icon-resource uninstall --size 512 nightingale &&\
+                    xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
     endif
 else
-    INSTALL = $(NOT_SUPPORTED)
+    INSTALL = @echo Please use the installer located in compiled/dist.
+endif
+
+ifndef INSTALL
+    INSTALL = $(error Installing using make is currently not supported on your operating system.)
+endif
+
+ifndef UNINSTALL
+    UNINSTALL = $(error Uninstalling using make is currently not supported on your operating system.)
 endif
 
 all: songbird_output build
@@ -174,4 +188,7 @@ test:
 install:
 	$(INSTALL)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install
+uninstall:
+	$(UNINSTALL)
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall

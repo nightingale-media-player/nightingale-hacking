@@ -1250,7 +1250,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
                 MEDIA_CORE_QT=1
             ;;
             linux|solaris)
-                MEDIA_CORE_GST=1
+                MEDIA_CORE_GST_SYSTEM=1
             ;;
             *)
                 AC_MSG_ERROR([No platform default media cores found; please manually specify --with-media-core=])
