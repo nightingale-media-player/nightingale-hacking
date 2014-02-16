@@ -121,9 +121,9 @@ NOT_SUPPORTED = $(error Installing using make is currently not supported on your
 ifneq ($(OS),Windows_NT)
     ifeq ($(UNAME_S),Linux)
         INSTALL = $(CP) $(DISTDIR) /usr/lib/nightingale \
-                   $(LN) -s /usr/lib/nightingale/nightingale /usr/bin/nightingale \
-                   xdg-icon-ressource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale \
-                   xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop \
+                  $(LN) -s /usr/lib/nightingale/nightingale /usr/bin/nightingale \
+                  xdg-icon-ressource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale \
+                  xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop \
     else
         INSTALL = $(NOT_SUPPORTED)
     endif

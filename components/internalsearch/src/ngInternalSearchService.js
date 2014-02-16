@@ -28,6 +28,13 @@ Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const LOG = DebugUtils.generateLogFunction("ngInternalSearchService", 2);
 
+/**
+ * \brief Manager class for internal search engines
+ *
+ * \class ngInternalSearchService
+ * \cid {738e3a66-d7b3-4c7d-94ec-a158eb753203}
+ * \contractid \@getnightingale.com/Nightingale/internal-search-service;1
+ */
 function ngInternalSearchService()
 {    
     XPCOMUtils.defineLazyServiceGetter(this, "searchService", "@mozilla.org/browser/search-service;1", Components.interfaces.nsIBrowserSearchService);
