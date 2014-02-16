@@ -186,4 +186,4 @@ distdir_manifest:
 	@echo Making distdir manifest in $(topsrcdir)/update...
 	cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
 
-.PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols test_distdir_manifest distdir_manifest test install
+.PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols test_distdir_manifest distdir_manifest
