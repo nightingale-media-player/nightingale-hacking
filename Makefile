@@ -111,7 +111,7 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
 ifeq (,$(filter --enable-tests,$(SONGBIRDCONFIG_CONFIGURE_OPTIONS)))
     TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
 else
-    TEST_COMMAND = $(DISTDIR)/nightingale --test
+    TEST_COMMAND = $(DISTDIR)/nightingale -test
 endif
 
 # Prepare install
