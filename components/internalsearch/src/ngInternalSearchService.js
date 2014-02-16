@@ -34,6 +34,7 @@ const LOG = DebugUtils.generateLogFunction("ngInternalSearchService", 2);
  * \class ngInternalSearchService
  * \cid {738e3a66-d7b3-4c7d-94ec-a158eb753203}
  * \contractid \@getnightingale.com/Nightingale/internal-search-service;1
+ * \implements ngIInternalSearchEnginesService
  */
 function ngInternalSearchService()
 {    
