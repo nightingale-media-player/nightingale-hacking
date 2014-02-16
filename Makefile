@@ -27,6 +27,8 @@
 #   just how it's gonna be... This MUST match what's in
 #   configure.ac or bad things will happen!
 #
+SHELL = /bin/sh
+
 OBJDIRNAME  = compiled
 DISTDIRNAME = dist
 OBJDIR_DEPTH = ..
@@ -97,6 +99,7 @@ PERL ?= perl
 RM ?= rm
 CP ?= cp
 LN ?= ln
+#INSTALL ?= install
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -107,42 +110,57 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
+#
 # Prepare tests command
+#
 ifeq (,$(filter --enable-tests, $(CONFIGURE_ARGS)))
     TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
 else
     TEST_COMMAND = $(DISTDIR)/nightingale -test
 endif
 
+#
 # Prepare install
+# For best practices see: https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html#Makefile-Conventions
+# Should use the install command to install Nightingale, however since it's not recursive that's non-trivial.
+#
 UNAME_S := $(shell uname -s)
-INSTALL_LIBDIR = /usr/lib
-INSTALL_BINDIR = /usr/bin
+prefix = /usr
+exec_prefix = $(prefix)
+libdir ?= $(exec_prefix)/lib
+bindir ?= $(exec_prefix)/bin
+#INSTALL_PROGRAM = $(INSTALL)
+#INSTALL_DATA = ${INSTALL} -m 644
 
 ifneq (Windows_NT,$(OS))
     ifeq (Darwin,$(UNAME_S))
-        INSTALL = @echo Please use the .dmg file in compiled/dist.
+        INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
     endif
     ifeq (Linux, $(UNAME_S))
-        INSTALL = $(CP) -r $(DISTDIR) $(INSTALL_LIBDIR)/nightingale &&\
-                  $(LN) -s $(INSTALL_LIBDIR)/nightingale/nightingale $(INSTALL_BINDIR)/nightingale &&\
-                  xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
-                  xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop
-        UNINSTALL = $(RM) -r $(INSTALL_LIBDIR)/nightingale &&\
-                    $(RM) $(INSTALL_BINDIR)/nightingale &&\
-                    xdg-icon-resource uninstall --size 512 nightingale &&\
-                    xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
+        INSTALL_CMD = $(MKDIR) $(DESTDIR)$(libdir)/nightingale &&\
+                     $(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale &&\
+                     $(LN) -s $(DESTDIR)$(INSTALL_LIBDIR)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+
+        UNINSTALL_CMD = $(RM) -r $(DESTDIR)$(INSTALL_LIBDIR)/nightingale &&\
+                        $(RM) $(DESTDIR)$(bindir)/nightingale
+        ifndef DESTDIR
+            POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
+                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop
+
+            POST_UNINSTALL_CMD = xdg-icon-resource uninstall --size 512 nightingale &&\
+                                 xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
+        endif
     endif
 else
-    INSTALL = @echo Please use the installer located in compiled/dist.
+    INSTALL_CMD = @echo Please use the installer located in compiled/dist.
 endif
 
-ifndef INSTALL
-    INSTALL = $(error Installing using make is currently not supported on your operating system.)
+ifndef INSTALL_CMD
+    INSTALL_CMD = $(error Installing using make is currently not supported on your operating system.)
 endif
 
-ifndef UNINSTALL
-    UNINSTALL = $(error Uninstalling using make is currently not supported on your operating system.)
+ifndef NORMAL_UNINSTALL
+    UNINSTALL_CMD = $(error Uninstalling using make is currently not supported on your operating system.)
 endif
 
 all: songbird_output build
@@ -186,9 +204,17 @@ test:
 	$(TEST_COMMAND)
 
 install:
-	$(INSTALL)
+	$(PRE_INSTALL)
+	$(NORMAL_INSTALL) # Normal commands follow
+	$(INSTALL_CMD)
+	$(POST_INSTALL) # Post-install commands follow
+	$(POST_INSTALL_CMD)
 
 uninstall:
-	$(UNINSTALL)
+	$(PRE_UNINSTALL)
+	$(NORMAL_UNINSTALL) # Normal commands follow
+	$(UNINSTALL_CMD)
+	$(POST_UNINSTALL) # Post-uninstallation commands follow
+	$(POST_UNINSTALL_CMD)
 
 .PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall

@@ -33,5 +33,20 @@ notification if an update is available, but applying it will fail.
 In order to update your Nightingale installation, you will have to
 redownload the source code of Nightingale, build and install it again.
 
-If you want automatic updates, adjust the INSTALL_LIBDIR variable in the
-Makefile to a location in your homefolder.
+If you want automatic updates, specify a `DESTDIR` inside your home.
+Example:
+    $ make DESTDIR=/home/user/ngale install
+
+However this currently will not install Nightingale so you can launch it
+with the command `nightingale` from the console nor does it add it to
+your system's menu.
+
+Alternatively you can alter `libdir` to a location inside your
+homefolder with something along the lines of
+    $ make libdir=/home/user/ngale install
+
+Now only what normally would be installed to /usr/lib will be
+installed to you home folder.
+
+If you use sudo to install Nightingale to your homefolder updates will
+still not work.

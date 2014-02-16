@@ -1,4 +1,0 @@
-#!/bin/sh
-export LD_BIND_NOW=1
-cd /usr/lib/nightingale
-./nightingale $@
