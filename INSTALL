@@ -1,12 +1,12 @@
-If you don't want to build Nightingale yourself, you can Download
+If you don't want to build Nightingale yourself, you can download
 prebuilt binaries form http://getnightingale.com.
 
 ========================================================================
 1. Prepare Build Envoironment:
 ========================================================================
-Make sure you have all dependencies for Nightingale installed and added
-the wished configuration options. For further Information, please check
-out the README.
+Make sure you have all dependencies to build Nightingale installed and
+added the wished configuration options. For further information, please
+check out the README.
 
 ========================================================================
 2. Build and Install Nightingale:
@@ -25,13 +25,13 @@ not work. You will find an installed in the compiled/dist folder.
 A. On Updating
 ========================================================================
 
-By installing Nightingale to your systm, Nightingale can no longer
+By installing Nightingale to your system, Nightingale can no longer
 update itself. This is most likely deserved, as updates would replace
-self-built binaries with pre-built binaries. You will still receiver a
+self-built binaries with pre-built binaries. You will still receive a
 notification if an update is available, but applying it will fail.
 
-You will have to redownload the source code of Nightingale, build and
-install it again.
+In order to update your Nightingale installation, you will have to
+redownload the source code of Nightingale, build and install it again.
 
-If you want automatic updates, don't run `sudo make install` and instead
-use Nightingale from your homefolder.
+If you want automatic updates, adjust the INSTALL_LIBDIR variable in the
+Makefile to a location in your homefolder.
