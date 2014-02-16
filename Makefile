@@ -95,6 +95,8 @@ AUTOCONF ?= autoconf
 MKDIR ?= mkdir -p
 PERL ?= perl
 RM ?= rm
+CP ?= cp
+LN ?= ln
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -105,12 +107,49 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
+# Prepare tests command
+ifeq (,$(filter --enable-tests, $(CONFIGURE_ARGS)))
+    TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
+else
+    TEST_COMMAND = $(SONGBIRD_DISTDIR)/nightingale -test
+endif
+
+# Prepare install
+UNAME_S := $(shell uname -s)
+INSTALL_LIBDIR = /usr/lib
+INSTALL_BINDIR = /usr/bin
+
+ifneq (Windows_NT,$(OS))
+    ifeq (Darwin,$(UNAME_S))
+        INSTALL = @echo Please use the .dmg file in compiled/dist.
+    endif
+    ifeq (Linux, $(UNAME_S))
+        INSTALL = $(CP) -r $(DISTDIR) $(INSTALL_LIBDIR)/nightingale &&\
+                  $(LN) -s $(INSTALL_LIBDIR)/nightingale/nightingale $(INSTALL_BINDIR)/nightingale &&\
+                  xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
+                  xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop
+        UNINSTALL = $(RM) -r $(INSTALL_LIBDIR)/nightingale &&\
+                    $(RM) $(INSTALL_BINDIR)/nightingale &&\
+                    xdg-icon-resource uninstall --size 512 nightingale &&\
+                    xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
+    endif
+else
+    INSTALL = @echo Please use the installer located in compiled/dist.
+endif
+
+ifndef INSTALL
+    INSTALL = $(error Installing using make is currently not supported on your operating system.)
+endif
+
+ifndef UNINSTALL
+    UNINSTALL = $(error Uninstalling using make is currently not supported on your operating system.)
+endif
 
 all: songbird_output build
 
 run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 	cd $(OBJDIR) && \
-   $(CONFIGURE) $(CONFIGURE_ARGS)
+    $(CONFIGURE) $(CONFIGURE_ARGS)
 
 $(CONFIGURE): $(CONFIGURE_PREREQS)
 	cd $(TOPSRCDIR) && \
@@ -131,7 +170,7 @@ $(OBJDIR) $(DISTDIR):
 makefiles: $(OBJDIR) $(DISTDIR) run_configure
 
 clean:
-	rm -rf $(OBJDIR)
+	$(RM) -rf $(OBJDIR)
 
 clobber:
 	$(RM) $(CLOBBER_TRASH)
@@ -143,4 +182,13 @@ depclobber:
 build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build
+test:
+	$(TEST_COMMAND)
+
+install:
+	$(INSTALL)
+
+uninstall:
+	$(UNINSTALL)
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall

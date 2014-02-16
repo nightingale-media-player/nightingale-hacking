@@ -82,19 +82,10 @@ case $OSTYPE in
     fi
     } ; )
     
-    # # use our own gstreamer libs
-    # for dir in /usr/lib /usr/lib64 /usr/lib/${arch}-linux-gnu ; do
-    #   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-    #     export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
-    #     break
-    #   elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-    #     export GST_PLUGIN_PATH=${dir}/gstreamer0.10
-    #     break
-    #   fi
-    # done
-    
-    [ -f nightingale.config ] || touch nightingale.config
-    grep -q -E 'ac_add_options\s+--with-media-core=gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
+    # the below needs to be nested...in my testing it won't work otherwise
+    if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
+		grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
+    fi
     ;;
   msys*)
     depdirn="windows-i686"
@@ -154,7 +145,7 @@ case $OSTYPE in
     ;;
   *)
     echo "Can't find deps for $OSTYPE. You may need to build them yourself. Doublecheck the SVN's for \n
-    Songbird and Nightingale trunks to be sure."
+    Nightingale trunk to be sure."
     ;;
 esac
 
