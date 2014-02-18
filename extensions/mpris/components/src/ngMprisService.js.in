@@ -65,7 +65,7 @@ function ngMprisService() {
   XPCOMUtils.defineLazyServiceGetter(this, "_wMediator", '@mozilla.org/appshell/window-mediator;1', "nsIWindowMediator");
 
   // MPRIS 1
-  var xml_header = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\"><node name=\"/org/mpris/songbird\"><interface name=\"org.mpris.songbird\">";
+  var xml_header = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\"><node name=\"/org/mpris/MediaPlayer2/nightingale\"><interface name=\"org.freedesktop.MediaPlayer\">";
   var xml_footer = "</interface></node>";
   this.introspect_root = xml_header +"	\
 	<method name=\"Identity\">	\
@@ -478,12 +478,15 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
 	    if(member == "Introspect") {
             switch(path) {
                 case "/":
+                case"org/mpris/MediaPlayer2/nightingale":
                     this._dbus.setStringArg(this.introspect_root);
 	                break;
 	            case "/Player":
+              case"org/mpris/MediaPlayer2/nightingale/Player":
 	                this._dbus.setStringArg(this.introspect_player);
 	                break;
 	            case "/TrackList":
+              case"org/mpris/MediaPlayer2/nightingale/TrackList":
 	                this._dbus.setStringArg(this.introspect_tracklist);
 	                break;
                 case "/org/mpris/MediaPlayer2":
