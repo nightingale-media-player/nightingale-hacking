@@ -10,6 +10,13 @@ build="release"
 buildir="$(pwd)"
 version=1.12
 
+count=`grep '\-\-enable\-debug' nightingale.config|wc -l`
+if [ $count -ne 0 ] ; then
+     build="debug"
+fi
+
+echo "You are building a $build build"
+
 download() {
   if which wget &>/dev/null ; then
     wget "$1"
@@ -68,11 +75,15 @@ case $OSTYPE in
 
     echo "linux $arch"
     ( cd dependencies && {
+        if [ ! -f "$fname" ] ; then
+            # We want the new deps instead of the old ones...
+            rm -rf "$depdirn"
+			download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+		fi
 		if [ ! -d "$depdirn" ] ; then
-			if [ ! -f "$fname" ] ; then
-				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+            if [ -f "$fname.md5" ] ; then
 				md5_verify "$fname"
-			fi
+            fi
 			tar xvf "$fname"
 		fi
 	} ; )
@@ -86,7 +97,7 @@ case $OSTYPE in
     depdirn="windows-i686"
     # Nightingale version number and dependency version, change if the deps change.
     version=1.12
-    depversion="20130121-release"
+    depversion="20130121"
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -94,17 +105,21 @@ case $OSTYPE in
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
     
     cd dependencies
+
+    fname=$depdirn-$version-$depversion-$build.tar.lzma 
     
-    if [ ! -f "$depdirn-$version-$depversion.tar.lzma" ] ; then
+    if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
       rm -rf "$depdirn"
-      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depversion.tar.lzma"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
     
     if [ ! -d "$depdirn" ] ; then
-      md5_verify "$depdirn-$version-$depversion.tar.lzma"
+      if [ -f "$fname.md5" ] ; then
+          md5_verify "$fname"
+      fi
       mkdir "$depdirn"
-      tar --lzma -xvf "$depdirn-$version-$depversion.tar.lzma" -C "$depdirn"
+      tar --lzma -xvf "$fname" -C "$depdirn"
     fi
     cd ../    
     ;;
@@ -127,15 +142,19 @@ case $OSTYPE in
     
     cd dependencies
 
-    if [ ! -f "$depdirn-$version-$depversion-$build.tar.bz2" ] ; then
+    fname=$depdirn-$version-$depversion-$build.tar.bz2
+
+    if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
       rm -rf "$depdirn"
-      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depversion-$build.tar.bz2"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
     
     if [ ! -d "$depdirn" ] ; then
-      md5_verify "$depdirn-$version-$depversion-$build.tar.bz2"
-      tar xvf "$depdirn-$version-$depversion-$build.tar.bz2"
+      if [ -f "$fname.md5" ] ; then
+          md5_verify "$fname"
+      fi
+      tar xvf "$fname"
     fi
 
     cd ../
