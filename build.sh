@@ -10,6 +10,10 @@ build="release"
 buildir="$(pwd)"
 version=1.12
 
+# This variable is used to look into the mozilla dependencies to see
+# which versions (build/release) have been extracted.
+mozdepver="mozilla-1.9.2"
+
 count=`grep '\-\-enable\-debug' nightingale.config|wc -l`
 if [ $count -ne 0 ] ; then
      build="debug"
@@ -79,15 +83,16 @@ case $OSTYPE in
             # We want the new deps instead of the old ones...
             rm -rf "$depdirn"
 			download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
-		fi
-		if [ ! -d "$depdirn" ] ; then
+	fi
+	if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
             if [ -f "$fname.md5" ] ; then
-				md5_verify "$fname"
+		md5_verify "$fname"
             fi
-			tar xvf "$fname"
-		fi
+	    echo "Need to extract $fname"
+	    tar xvf "$fname"
+	fi
 	} ; )
-    
+
     # the below needs to be nested...in my testing it won't work otherwise
     if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
 		grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
@@ -114,7 +119,7 @@ case $OSTYPE in
       download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
     
-    if [ ! -d "$depdirn" ] ; then
+    if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
       if [ -f "$fname.md5" ] ; then
           md5_verify "$fname"
       fi
@@ -150,7 +155,7 @@ case $OSTYPE in
       download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
     
-    if [ ! -d "$depdirn" ] ; then
+    if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
       if [ -f "$fname.md5" ] ; then
           md5_verify "$fname"
       fi
