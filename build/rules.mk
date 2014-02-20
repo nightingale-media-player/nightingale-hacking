@@ -171,7 +171,7 @@ ifdef IS_EXTENSION # {
       ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
          OUR_EXTENSION_VER = $(EXTENSION_VER)+dev-$(OUR_EXTENSION_VER_DEVDATE)
       else
-         ifneq($(SONGBIRD_NIGHTLY))
+         ifneq ($(SONGBIRD_NIGHTLY))
             OUR_EXTENSION_VER = $(EXTENSION_VER)pre.$(SB_BUILD_NUMBER)
          else
             OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
