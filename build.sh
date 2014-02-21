@@ -111,7 +111,7 @@ case $OSTYPE in
     
     cd dependencies
 
-    fname=$depdirn-$version-$depversion-$build.tar.lzma 
+    fname="$depdirn-$version-$depversion-$build.tar.lzma "
     
     if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
@@ -147,7 +147,7 @@ case $OSTYPE in
     
     cd dependencies
 
-    fname=$depdirn-$version-$depversion-$build.tar.bz2
+    fname="$depdirn-$version-$depversion-$build.tar.bz2"
 
     if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
