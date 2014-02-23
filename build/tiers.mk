@@ -130,7 +130,6 @@ tier_appbase_dirs = \
 
 tier_deps_dirs = \
    dependencies \
-   gst-plugins \
    $(NULL)
 
 tier_ui_dirs = \

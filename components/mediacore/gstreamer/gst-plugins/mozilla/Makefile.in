@@ -21,7 +21,7 @@
 #=END NIGHTINGALE GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
@@ -125,7 +125,7 @@ ifeq (windows,$(SB_PLATFORM))
    CPP_EXTRA_FLAGS += "-wd4244"
 endif
 
-DYNAMIC_LIB = $(SONGBIRD_OBJDIR)/gst-plugins/gstmozilla
+DYNAMIC_LIB = gstmozilla
 IS_GSTLIB = 1
 
 include $(topsrcdir)/build/rules.mk
