@@ -29,7 +29,7 @@ Package: nightingale
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gstreamer0.10-plugins-good
 Suggests: gstreamer0.10-plugins-bad, gstreamer0.10-plugins-ugly, gstreamer0.10-ffmpeg, gtk2-engines-pixbuf
-Description: Nightingale is a desktop media player
+Description: This desktop media player is a
  a digital jukebox and Web browser mash-up. It supports extensions
- and skins feathers. Like Firefox/Iceweasel, it is built from the Mozilla
- cross-platform and open source framework, based on Songbird.
+ and feathers (skins). Like Firefox/Iceweasel, it is built from the Mozilla
+ cross-platform and open source framework, and based on Songbird.
