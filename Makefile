@@ -148,10 +148,7 @@ ifneq (Windows_NT,$(OS))
         INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
     endif
     ifeq (Linux, $(UNAME_S))
-        INSTALL_CMD = $(MAKE) installdirs &&\
-                     $(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale &&\
-                     $(LN) -s $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale &&\
-                     $(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+        INSTALL_CMD = $(MAKE) install-linux
 
         UNINSTALL_CMD = $(RM) -r $(DESTDIR)$(libdir)/nightingale &&\
                         $(RM) $(DESTDIR)$(bindir)/nightingale &&\
@@ -227,7 +224,12 @@ uninstall:
 
 installdirs:
 	$(MKDIR) $(DESTDIR)$(bindir)
-	$(MKDIR) $(DESTDIR)$(libdir)
-	$(MKDIR) $(DESTDIR)$(man1dir)
+	$(MKDIR) $(DESTDIR)$(libdir)/nightingale
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs
+install-linux:
+	$(MAKE) installdirs
+	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
+	$(LN) -s $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	-$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux
