@@ -35,3 +35,4 @@ confdefs.h
 thumbs.db
 .directory
 documentation/api/*
+.bzr

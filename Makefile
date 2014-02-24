@@ -99,7 +99,7 @@ PERL ?= perl
 RM ?= rm
 CP ?= cp
 LN ?= ln
-#INSTALL ?= install
+INSTALL ?= install
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -129,20 +129,33 @@ prefix = /usr
 exec_prefix = $(prefix)
 libdir ?= $(exec_prefix)/lib
 bindir ?= $(exec_prefix)/bin
-#INSTALL_PROGRAM = $(INSTALL)
-#INSTALL_DATA = ${INSTALL} -m 644
+datarootdir ?= $(prefix)/share
+mandir ?= $(datarootdir)/man
+man1dir ?= $(mandir)/man1
+manext ?= .1
+man1ext ?= $(manext)
+docdir ?= $(datarootdir)/doc/nightingale
+htmldir ?= $(docdir)
+dvidir ?= $(docdir)
+pdfdir ?= $(docdir)
+psdir ?= $(docdir)
+infodir ?= $(datarootdir)/info
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = ${INSTALL} -m 644
 
 ifneq (Windows_NT,$(OS))
     ifeq (Darwin,$(UNAME_S))
         INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
     endif
     ifeq (Linux, $(UNAME_S))
-        INSTALL_CMD = $(MKDIR) $(DESTDIR)$(libdir)/nightingale &&\
+        INSTALL_CMD = $(MAKE) installdirs &&\
                      $(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale &&\
-                     $(LN) -s $(DESTDIR)$(INSTALL_LIBDIR)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+                     $(LN) -s $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale &&\
+                     $(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
 
-        UNINSTALL_CMD = $(RM) -r $(DESTDIR)$(INSTALL_LIBDIR)/nightingale &&\
-                        $(RM) $(DESTDIR)$(bindir)/nightingale
+        UNINSTALL_CMD = $(RM) -r $(DESTDIR)$(libdir)/nightingale &&\
+                        $(RM) $(DESTDIR)$(bindir)/nightingale &&\
+                        $(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
         ifndef DESTDIR
             POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
                                xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop
@@ -155,13 +168,8 @@ else
     INSTALL_CMD = @echo Please use the installer located in compiled/dist.
 endif
 
-ifndef INSTALL_CMD
-    INSTALL_CMD = $(error Installing using make is currently not supported on your operating system.)
-endif
-
-ifndef NORMAL_UNINSTALL
-    UNINSTALL_CMD = $(error Uninstalling using make is currently not supported on your operating system.)
-endif
+INSTALL_CMD ?= $(error Installing using make is currently not supported on your operating system.)
+UNINSTALL_CMD ?= $(error Uninstalling using make is currently not supported on your operating system.)
 
 all: songbird_output build
 
@@ -217,4 +225,9 @@ uninstall:
 	$(POST_UNINSTALL) # Post-uninstallation commands follow
 	$(POST_UNINSTALL_CMD)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall
+installdirs:
+	$(MKDIR) $(DESTDIR)$(bindir)
+	$(MKDIR) $(DESTDIR)$(libdir)
+	$(MKDIR) $(DESTDIR)$(man1dir)
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs

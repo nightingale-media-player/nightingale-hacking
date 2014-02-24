@@ -162,6 +162,10 @@ tier_installer_dirs = \
    installer \
    $(NULL)
 
+tier_documentation_dirs = \
+   documentation \
+   $(NULL)
+
 #------------------------------------------------------------------------------
 endif #TIERS_MK_INCLUDED
 #------------------------------------------------------------------------------
