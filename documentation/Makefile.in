@@ -30,7 +30,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = manpage \
-          $(NULL)
+SUBDIRS = $(NULL)
+
+# Build manpages if we're on linux
+ifeq (linux,$(SB_PLATFORM))
+	SUBDIRS += manpage
+endif
 
 include $(topsrcdir)/build/rules.mk
