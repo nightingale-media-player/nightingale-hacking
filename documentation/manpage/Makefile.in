@@ -36,4 +36,4 @@ include $(topsrcdir)/build/rules.mk
 
 export::
 	groff -Tascii -man $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1.tr >> $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
-	gzip -9 $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
+	gzip -9 -f $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
