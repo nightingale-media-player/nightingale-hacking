@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 
 CPP_SCRS = mozillaplugin.cpp \
            mozillasink.cpp \
-           mozillarsc.cpp \
+           mozillasrc.cpp \
            $(NULL)
 
 ifdef MEDIA_CORE_GST_SYSTEM
