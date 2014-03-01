@@ -69,6 +69,13 @@
 #include <sbThreadPoolService.h>
 #include <sbDebugUtils.h>
 
+// VS2010 doesn't auto-include this like VS2008 did
+// http://stackoverflow.com/q/2959234
+#if defined(XP_WIN)
+  #include <iterator>
+#endif
+
+
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabasePropertyCache:5
@@ -1613,7 +1620,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   nsCOMArray<sbILocalDatabaseGUIDArray> arrays;
 
   {
-	mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mDependentGUIDArrayMonitor);
     DependentGUIDArrays_t::iterator cit = mDependentGUIDArrays.begin();
     DependentGUIDArrays_t::iterator end = mDependentGUIDArrays.end();
     while (cit != end) {
@@ -1638,7 +1645,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   // Copy the data into a temporary set to avoid invalidating the guid arrays
   // with the property cache lock held.
   {
-	mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
     std::insert_iterator<std::vector<PRUint32> > insertIter(dirtyPropIDs,
                                                             dirtyPropIDs.end());
     std::copy(mDirtyForInvalidation.begin(),
