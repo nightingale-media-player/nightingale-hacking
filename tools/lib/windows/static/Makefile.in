@@ -45,7 +45,11 @@ CPP_EXTRA_INCLUDES += \
  $(topsrcdir)/components/include \
  $(NULL)
 
-CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
+CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC) \
+                   $(NULL)
+
+CPP_EXTRA_DEFS += -DMOZ_NO_MOZALLOC \
+                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

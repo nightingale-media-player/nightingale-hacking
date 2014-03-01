@@ -45,6 +45,7 @@ CPP_EXTRA_INCLUDES += \
  $(NULL)
 
 CPP_EXTRA_DEFS += -DSB_LOG_TO_WINDOWS_EVENT_LOG \
+                  -DMOZ_NO_MOZALLOC \
                   $(NULL)
 
 SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \

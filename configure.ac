@@ -825,8 +825,10 @@ case "$SB_PLATFORM" in
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -EHsc -Zi -c"
 
     if test "$_CC_SUITE" -ge "8"; then
+      # MSVC 10 gives linker errors (https://bugzilla.mozilla.org/show_bug.cgi?id=682259)
       # MSVC 8+ use native wchar_t, but Mozilla builds without it
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
+      # MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS"
     fi
 
     if test "$enable_debug" = "yes"; then
@@ -853,13 +855,14 @@ case "$SB_PLATFORM" in
     fi
 
     if test "$SB_USE_JEMALLOC" == "1"; then
-      if test "$enable_debug" == "yes"; then
-        MOZ_CRT_DLL_NAME="mozcrt19d"
-      else
-        MOZ_CRT_DLL_NAME="mozcrt19"
-      fi
+      # if test "$enable_debug" == "yes"; then
+      #   MOZ_CRT_DLL_NAME="mozcrt19d"
+      # else
+      #   MOZ_CRT_DLL_NAME="mozcrt19"
+      # fi
 
-      MSVC_DLL_LINKER_FLAGS="-NODEFAULTLIB:MSVCRT -NODEFAULTLIB:MSVCRTD -NODEFAULTLIB:LIBCMT -NODEFAULTLIB:LIBCMTD -DEFAULTLIB:$MOZ_CRT_DLL_NAME"
+      # MSVC_DLL_LINKER_FLAGS="-NODEFAULTLIB:MSVCRT -NODEFAULTLIB:MSVCRTD -NODEFAULTLIB:LIBCMT -NODEFAULTLIB:LIBCMTD -DEFAULTLIB:$MOZ_CRT_DLL_NAME"
+      MSVC_DLL_LINKER_FLAGS=""
     fi
 
     CFLAGS="$CFLAGS $MSVC_COMPILER_FLAGS -TC"

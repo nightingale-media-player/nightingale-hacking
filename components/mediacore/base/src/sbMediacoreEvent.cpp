@@ -94,7 +94,7 @@ sbMediacoreEvent::SetTarget(sbIMediacoreEventTarget *aTarget)
   NS_ENSURE_ARG_POINTER(aTarget);
 
   // XXX 
-  mozilla::MutexAutoLock lock(mLock);
+  // mozilla::MutexAutoLock lock(mLock);
   mTarget = aTarget;
 
   return NS_OK;
