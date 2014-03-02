@@ -21,6 +21,12 @@
 
 #include <gst/gst.h>
 
+#define GST_MOZ_VERSION "1.0.4" // Version of gst-plugibs-bad
+#define GST_MOZ_LICENSE "GPL"
+#define GST_MOZ_PACKAGE "GStreamer Mozilla Plugin for Nightingale"
+#define GST_MOZ_ORIGIN "http://www.getnightingale.com"
+#define PACKAGE "Nightingale"
+
 GType gst_mozilla_src_get_type (void);
 #define GST_TYPE_MOZILLA_SRC \
   (gst_mozilla_src_get_type())
