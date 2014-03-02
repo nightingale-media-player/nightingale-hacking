@@ -14,6 +14,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more 
  */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -36,9 +37,15 @@ plugin_init (GstPlugin * plugin)
 }
 
 extern "C" {
-  GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
-      GST_VERSION_MINOR,
-      "mozilla",
-      "Mozilla source and sink",
-      plugin_init, VERSION, GST_LICENSE, GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN)
+  GST_PLUGIN_DEFINE (
+    GST_VERSION_MAJOR,
+    GST_VERSION_MINOR,
+    "mozilla",
+    "Mozilla source and sink",
+    plugin_init,
+    GST_MOZ_VERSION,
+    GST_MOZ_LICENSE,
+    GST_MOZ_PACKAGE,
+    GST_MOZ_ORIGIN
+  )
 }
