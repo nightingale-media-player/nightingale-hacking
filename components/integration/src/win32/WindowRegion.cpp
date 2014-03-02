@@ -31,7 +31,10 @@
  
 #include "WindowRegion.h"
 #include "nsIScriptableRegion.h"
-#include "nsIRegion.h"
+// nsIRegion was removed
+// https://bugzilla.mozilla.org/show_bug.cgi?id=635643
+// #include "nsIRegion.h"
+#include "nsRegion.h"
 
 // CLASSES ====================================================================
 //=============================================================================
@@ -69,14 +72,13 @@ NS_IMETHODIMP CWindowRegion::SetWindowRegion(nsISupports *window, nsISupports *r
   region->QueryInterface(NS_GET_IID(nsIScriptableRegion), (void **)&srgn);
   if (!srgn) return NS_ERROR_FAILURE;
   
-  nsIRegion *rgn = NULL;
-  srgn->GetRegion(&rgn);
+  nsIntRegion *rgn = NULL;
+  srgn->GetRegion(rgn);
   
   if (rgn)
   {
 #ifdef XP_WIN
-    void *hrgn;
-    rgn->GetNativeRegion(hrgn);
+    void *hrgn = NULL;
     ::SetWindowRgn(wnd, (HRGN)hrgn, TRUE);
 #endif
   }

@@ -564,10 +564,7 @@ Win32PlatformInterface::SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay)
     rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    nsCOMPtr<nsIRunnable> runnable =
-        NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
-                                mCore,
-                                RequestVideoWindow);
+    nsCOMPtr<nsIRunnable> runnable = new nsRunnableMethod_RequestVideoWindow(mCore);
 
     rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
     NS_ENSURE_SUCCESS(rv, /* void */);

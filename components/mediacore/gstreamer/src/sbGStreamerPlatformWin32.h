@@ -27,11 +27,14 @@
 
 #include <windows.h>
 
+#include <a11yGeneric.h>
+
 #include <gst/gst.h>
 #include <gst/video/videooverlay.h>
 
 #include "sbIGstPlatformInterface.h"
 #include "sbGStreamerPlatformBase.h"
+#include "sbGStreamerMediacore.h"
 
 class Win32PlatformInterface : public BasePlatformInterface
 {
@@ -69,6 +72,8 @@ private:
 
   HWND SelectParentWindow(HWND hWnd);
   PRBool HasMouseMoved(PRInt32 aX, PRInt32 aY);
+
+  NS_DECL_RUNNABLEMETHOD(sbGStreamerMediacore, RequestVideoWindow);
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_WIN32_H_
