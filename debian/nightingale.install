@@ -1,2 +1,1 @@
-debian/nightingale/usr/lib/nightingale/chrome/icons/default/nightingale.xpm usr/share/pixmaps
-debian/*.desktop usr/share/applications
+compiled/usr     /
