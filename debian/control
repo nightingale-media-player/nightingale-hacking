@@ -36,26 +36,13 @@ Suggests:
  gstreamer0.10-plugins-bad,
  gstreamer0.10-plugins-ugly,
  gstreamer0.10-ffmpeg,
- gtk2-engines-pixbuf
-Provides: nightingale, nightingale-nounity
+ gtk2-engines-pixbuf,
+ gnome-settings-daemon
+Provides: nightingale
 Replaces: nightingale, nightingale-nounity
 Description: Play, manage and organize digital media
  This desktop media player is a digital jukebox and Web browser mash-up.
  It supports extensions and feathers (skins). Like Firefox/Iceweasel,
  it is built from the Mozilla cross-platform and open source framework,
  and based on Songbird.
-
-Package: nightingale-unity-integration
-Architecture: any
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- nightingale (= ${binary:Version})
-Description: Unity integration plugin
- This desktop media player is a digital jukebox and Web browser mash-up.
- It supports extensions and feathers (skins). Like Firefox/Iceweasel,
- it is built from the Mozilla cross-platform and open source framework,
- and based on Songbird.
- .
- This package adds support for Unity's sound menu.
 

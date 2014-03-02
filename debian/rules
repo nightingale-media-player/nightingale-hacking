@@ -1,21 +1,15 @@
 #!/usr/bin/make -f
 
-SB_MILESTONE    ?= $(shell grep -e 'SB_MILESTONE=' build/sbBuildInfo.mk.in | sed -e 's/SB_MILESTONE=//')
-SB_BUILD_NUMBER ?= $(shell grep -e 'BuildNumber=' build/sbBuildInfo.mk.in | sed -e 's/BuildNumber=//')
-NG_VERSION      ?= "$(SB_MILESTONE) (build $(SB_BUILD_NUMBER))"
-
 %:
 	dh $@ --parallel
+
+override_dh_auto_configure:
+    # nothing to do, as we do that with make.
 
 override_dh_auto_build:
 	echo 'ac_add_options --with-taglib-source=packaged' >> $(CURDIR)/nightingale.config
 	echo 'ac_add_options --enable-libnotify' >> $(CURDIR)/nightingale.config
-	echo 'ac_add_options --enable-unity-integration' >> $(CURDIR)/nightingale.config
-	echo 'ac_add_options --enable-official' >> $(CURDIR)/nightingale.config
 	$(CURDIR)/build.sh
-
-	# prepare manpage
-	sed 's/@NG_VERSION@/$(NG_VERSION)/g' debian/nightingale.1.in > debian/nightingale.1
 
 	# remove extra license file
 	rm -f $(CURDIR)/compiled/dist/xulrunner/LICENSE
@@ -37,134 +31,10 @@ override_dh_auto_build:
 	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.rdf`
 	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.so`
 
-	# overwrite hardlinks with symbolic links
-	cd $(CURDIR)/compiled/dist/xulrunner/defaults/profile/chrome && \
-	    ln -fs ../US/chrome/userChrome-example.css userChrome-example.css
-	cd $(CURDIR)/compiled/dist/xulrunner/defaults/profile/chrome && \
-	    ln -fs ../US/chrome/userContent-example.css userContent-example.css
-	cd $(CURDIR)/compiled/dist/xulrunner/defaults/profile/ && ln -fs US/localstore.rdf localstore.rdf
-
-	# create temporary installation folders
-	mkdir -p $(CURDIR)/compiled/usr/bin
-	mkdir -p $(CURDIR)/compiled/usr/lib
-	mkdir -p $(CURDIR)/compiled/usr/share/applications
-	mkdir -p $(CURDIR)/compiled/usr/share/icons/hicolor
-	mkdir -p $(CURDIR)/compiled/usr/share/pixmaps
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res/html
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/xulrunner/icons
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/xulrunner/chrome/icons/default
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/icons/hicolor
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/xulrunner/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/extensions/albumart@songbirdnest.com/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/extensions/foldersync-ng@getnightingale.com/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/extensions/playlistfolders@getnightingale.com/chrome
-	mkdir -p $(CURDIR)/compiled/usr/share/nightingale/extensions/unity-integration@lookingman.org/chrome
-
-	# move compiled files into temporary installation folders
-	mv $(CURDIR)/compiled/dist          $(CURDIR)/compiled/usr/lib/nightingale
-	mv $(CURDIR)/debian/*.desktop       $(CURDIR)/compiled/usr/share/applications
-	mv $(CURDIR)/app/branding/hicolor/* $(CURDIR)/compiled/usr/share/icons/hicolor
-
-	# move images and jar files to /usr/share
-	# this avoids two types of Lintian warnings
-	mv $(CURDIR)/compiled/usr/lib/nightingale/chrome/icons/default/default.xpm \
-	   $(CURDIR)/compiled/usr/share/pixmaps/nightingale.xpm
-	mv $(CURDIR)/compiled/usr/lib/nightingale/icons/*.png              $(CURDIR)/compiled/usr/share/nightingale/icons
-	mv $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/chrome/icons/default/*.png \
-	   $(CURDIR)/compiled/usr/share/nightingale/xulrunner/chrome/icons/default
-	mv $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/icons/*.png    $(CURDIR)/compiled/usr/share/nightingale/xulrunner/icons
-	mv $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/*.gif      $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res
-	mv $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/*.png      $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res
-	mv $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/html/*.png $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res/html
-	mv $(CURDIR)/compiled/usr/lib/nightingale/chrome/*.jar             $(CURDIR)/compiled/usr/share/nightingale/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/chrome/*.jar   $(CURDIR)/compiled/usr/share/nightingale/xulrunner/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/albumart@songbirdnest.com/chrome/*.jar \
-	   $(CURDIR)/compiled/usr/share/nightingale/extensions/albumart@songbirdnest.com/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/foldersync-ng@getnightingale.com/chrome/*.jar \
-	   $(CURDIR)/compiled/usr/share/nightingale/extensions/foldersync-ng@getnightingale.com/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome/*.jar \
-	   $(CURDIR)/compiled/usr/share/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome/*.jar \
-	   $(CURDIR)/compiled/usr/share/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/playlistfolders@getnightingale.com/chrome/*.jar \
-	   $(CURDIR)/compiled/usr/share/nightingale/extensions/playlistfolders@getnightingale.com/chrome
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/unity-integration@lookingman.org/chrome/*.jar \
-	   $(CURDIR)/compiled/usr/share/nightingale/extensions/unity-integration@lookingman.org/chrome
-
-	# create symbolic links
-	# can't use "ln -rs" if I want to keep it compatible with Ubuntu 12.04
-	cd $(CURDIR)/compiled/usr/bin/ && \
-	    ln -s ../lib/nightingale/nightingale nightingale
-	cd $(CURDIR)/compiled/usr/lib/nightingale/chrome/icons/default/ && \
-	    ln -s ../../../../../share/pixmaps/nightingale.xpm default.xpm
-	cd $(CURDIR)/compiled/usr/lib/nightingale/icons/ && \
-	    ln -s ../../../share/nightingale/icons/*.png .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/chrome/icons/default/ && \
-	    ln -s ../../../../../../share/nightingale/xulrunner/chrome/icons/default/*.png .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/icons/ && \
-	    ln -s ../../../../share/nightingale/xulrunner/icons/*.png .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/ && \
-	    ln -s ../../../../share/nightingale/xulrunner/res/*.gif .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/ && \
-	    ln -s ../../../../share/nightingale/xulrunner/res/*.png .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/html/ && \
-	    ln -s ../../../../../share/nightingale/xulrunner/res/html/*.png .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/chrome/ && \
-	    ln -s ../../../share/nightingale/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/chrome/ && \
-	    ln -s ../../../../share/nightingale/xulrunner/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/extensions/albumart@songbirdnest.com/chrome/ && \
-	    ln -s ../../../../../share/nightingale/extensions/albumart@songbirdnest.com/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/extensions/foldersync-ng@getnightingale.com/chrome/ && \
-	    ln -s ../../../../../share/nightingale/extensions/foldersync-ng@getnightingale.com/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome/ && \
-	    ln -s ../../../../../share/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome/ && \
-	    ln -s ../../../../../share/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/extensions/playlistfolders@getnightingale.com/chrome/ && \
-	    ln -s ../../../../../share/nightingale/extensions/playlistfolders@getnightingale.com/chrome/*.jar .
-	cd $(CURDIR)/compiled/usr/lib/nightingale/extensions/unity-integration@lookingman.org/chrome/ && \
-	    ln -s ../../../../../share/nightingale/extensions/unity-integration@lookingman.org/chrome/*.jar .
-#	ln -rs $(CURDIR)/compiled/usr/lib/nightingale/nightingale                $(CURDIR)/compiled/usr/bin/nightingale
-#	ln -rs $(CURDIR)/compiled/usr/share/pixmaps/nightingale.xpm \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/chrome/icons/default/default.xpm
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/icons/*.png              $(CURDIR)/compiled/usr/lib/nightingale/icons
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/xulrunner/chrome/icons/default/*.png \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/chrome/icons/default
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/xulrunner/icons/*.png    $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/icons
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res/*.gif      $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res/*.png      $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/xulrunner/res/html/*.png $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/res/html
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/chrome/*.jar             $(CURDIR)/compiled/usr/lib/nightingale/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/xulrunner/chrome/*.jar   $(CURDIR)/compiled/usr/lib/nightingale/xulrunner/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/extensions/albumart@songbirdnest.com/chrome/*.jar \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/extensions/albumart@songbirdnest.com/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/extensions/foldersync-ng@getnightingale.com/chrome/*.jar \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/extensions/foldersync-ng@getnightingale.com/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome/*.jar \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/extensions/foldersync@rsjtdrjgfuzkfg.com/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome/*.jar \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/extensions/libnotify-notifs@getnightingale.com/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/extensions/playlistfolders@getnightingale.com/chrome/*.jar \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/extensions/playlistfolders@getnightingale.com/chrome
-#	ln -rs $(CURDIR)/compiled/usr/share/nightingale/extensions/unity-integration@lookingman.org/chrome/*.jar \
-#	       $(CURDIR)/compiled/usr/lib/nightingale/extensions/unity-integration@lookingman.org/chrome
-
 override_dh_auto_test:
 	# This isn't a build with enabled tests.
 	# dh_auto_test would make the build stop with an error warning.
 	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
-
-override_dh_auto_install:
-	mkdir -p $(CURDIR)/debian/unity-integration/usr/lib/nightingale/extensions
-	mkdir -p $(CURDIR)/debian/unity-integration/usr/share/nightingale/extensions
-	mv $(CURDIR)/compiled/usr/lib/nightingale/extensions/unity-integration@lookingman.org \
-	   $(CURDIR)/debian/unity-integration/usr/lib/nightingale/extensions
-	mv $(CURDIR)/compiled/usr/share/nightingale/extensions/unity-integration@lookingman.org \
-	   $(CURDIR)/debian/unity-integration/usr/share/nightingale/extensions
 
 override_dh_shlibdeps:
 	# using dh_shlibdeps with -l AND -L prevents the unnecessary dependency of libnspr4
@@ -173,4 +43,3 @@ override_dh_shlibdeps:
 clean:
 	rm -rf $(CURDIR)/nightingale.config $(CURDIR)/config.log
 	dh_auto_clean -- clobber
-

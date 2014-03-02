@@ -1,1 +1,2 @@
-compiled/usr     /
+debian/*.desktop usr/share/applications
+app/branding/hicolor/* usr/share/icons/hicolor
