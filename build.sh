@@ -75,6 +75,7 @@ case $OSTYPE in
     if [ ! -d "$depdirn" ] ; then
       if [ ! -f "$depdirn-$version-$depdate.tar.bz2" ] ; then
         download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2"
+        download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2.md5"
         md5_verify "$depdirn-$version-$depdate.tar.bz2"
       fi
       tar xvf "$depdirn-$version-$depdate.tar.bz2"
@@ -107,8 +108,9 @@ case $OSTYPE in
     
     cd dependencies
     
-    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+    if [ ! -f "$depdirn-$version-$msvcver-$depdate.tar.bz2" ] ; then
       $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$msvcver-$depdate.tar.bz2"
+      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$msvcver-$depdate.tar.bz2.md5"
       md5_verify "$depdirn-$version-$msvcver-$depdate.tar.bz2"
     fi
     
@@ -138,8 +140,9 @@ case $OSTYPE in
     
     cd dependencies
       
-    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+    if [ ! -f "$depdirn-$version-$depdate.tar.bz2" ] ; then
       $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2"
+      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2.md5"
       md5_verify "$depdirn-$version-$depdate.tar.bz2"
     fi
       
