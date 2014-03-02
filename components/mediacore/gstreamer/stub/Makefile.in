@@ -25,19 +25,15 @@ endif
 
 IS_COMPONENT = 1
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/gst_libs_$(SB_PLATFORM).txt.in \
-                        $(NULL)
-
-GST_PP_LIBS_FILE = $(CURDIR)/gst_libs_$(SB_PLATFORM).txt
-
 GST_LIBS_FILE = gst_libs.txt
 
-GARBAGE += $(GST_PP_LIBS_FILE)
+GARBAGE += $(GST_LIBS_FILE)
 
 include $(topsrcdir)/build/rules.mk
 
-# XXX Make sure the newly preprocessed windows libs txt file fixes this:
 # XXX Note that on a windows debug build, ogg.dll is named ogg_d.dll.  This is
 # fixed using a perl script to copy the file and make the change
-export:: 
-	$(INSTALL_FILE) $(GST_PP_LIBS_FILE) $(SONGBIRD_COMPONENTSDIR)/$(GST_LIBS_FILE)
+export::
+	$(PERL) -p -e "s/ogg.dll/ogg$(DEBUG:%=_d).dll/g" \
+	$(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(GST_LIBS_FILE)
+	$(INSTALL_FILE) $(GST_LIBS_FILE) $(SONGBIRD_COMPONENTSDIR)
