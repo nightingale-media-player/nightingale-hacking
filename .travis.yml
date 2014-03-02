@@ -8,7 +8,7 @@ before_install:
 install:
  - "echo 'ac_add_options --with-media-core=gstreamer' >> nightingale.config"
  - "echo 'ac_add_options --with-taglib-source=packaged' >> nightingale.config"
-script: "./build.sh
+script: ./build.sh
 branches:
   only:
   - master-xul-9.0.1
