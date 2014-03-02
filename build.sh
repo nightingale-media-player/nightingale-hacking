@@ -60,38 +60,45 @@ case $OSTYPE in
     esac
 
     depdirn="linux-$arch"
+
     #if you have a dep built on a differing date for either arch, just use a conditional to set this
-    depdate=20140214
+    if [ "$arch" = "i686" ] ; then
+      depdate=20130813
+    else
+      depdate=20130706 # TODO: with gst-1, use 20140214 deps!
+    fi
+
     #export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
     ( cd dependencies && {
     if [ ! -d "$depdirn" ] ; then
-      if [ ! -f "$depdirn-$version-$depdate-release.tar.bz2" ] ; then
-        download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version-$depdate.tar.bz2"
-        md5_verify "$depdirn-$version-$depdate-release.tar.bz2"
+      if [ ! -f "$depdirn-$version-$depdate.tar.bz2" ] ; then
+        download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2"
+        md5_verify "$depdirn-$version-$depdate.tar.bz2"
       fi
-      tar xvf "$depdirn-$version-$depdate-release.tar.bz2"
+      tar xvf "$depdirn-$version-$depdate.tar.bz2"
     fi
     } ; )
     
-    # use our own gstreamer libs
-    for dir in /usr/lib /usr/lib64 /usr/lib/${arch}-linux-gnu ; do
-      if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-        export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
-        break
-      elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-        export GST_PLUGIN_PATH=${dir}/gstreamer0.10
-        break
-      fi
-    done
+    # # use our own gstreamer libs
+    # for dir in /usr/lib /usr/lib64 /usr/lib/${arch}-linux-gnu ; do
+    #   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
+    #     export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
+    #     break
+    #   elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+    #     export GST_PLUGIN_PATH=${dir}/gstreamer0.10
+    #     break
+    #   fi
+    # done
     
     [ -f nightingale.config ] || touch nightingale.config
     grep -q -E 'ac_add_options\s+--with-media-core=gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
     ;;
   msys*)
     depdirn="windows-i686"
-    depdate=20140204
+    depdate=20140302
+    msvcver="msvc10"
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -101,13 +108,13 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version-$depdate.tar.bz2"
-      md5_verify "$depdirn-$version.tar.bz2"
+      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$msvcver-$depdate.tar.bz2"
+      md5_verify "$depdirn-$version-$msvcver-$depdate.tar.bz2"
     fi
     
     if [ ! -d "$depdirn" ] ; then
       mkdir "$depdirn"
-      tar -jxvf "$depdirn-$version.tar.bz2" -C "$depdirn"
+      tar -jxvf "$depdirn-$version-$msvcver-$depdate.tar.bz2" -C "$depdirn"
     fi
     cd ../    
     ;;
@@ -133,12 +140,12 @@ case $OSTYPE in
       
     if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
       $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2"
-      md5_verify "$depdirn-$version.tar.bz2"
+      md5_verify "$depdirn-$version-$depdate.tar.bz2"
     fi
       
     if [ ! -d "$depdirn" ] ; then
       mkdir "$depdirn"
-      tar -jxvf "$depdirn-$version.tar.bz2" -C "$depdirn"
+      tar -jxvf "$depdirn-$version-$depdate.tar.bz2" -C "$depdirn"
     fi
     cd ../
     ;;
