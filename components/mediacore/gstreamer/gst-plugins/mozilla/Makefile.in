@@ -30,7 +30,7 @@ include $(DEPTH)/build/autodefs.mk
 
 # This makefile is cobbled together from different makefiles involving the GStreamer mediacore. But it works.
 
-CPP_SCRS = mozillaplugin.cpp \
+CPP_SRCS = mozillaplugin.cpp \
            mozillasink.cpp \
            mozillasrc.cpp \
            $(NULL)
