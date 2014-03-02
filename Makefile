@@ -155,7 +155,7 @@ ifneq (Windows_NT,$(OS))
                         $(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
         ifndef DESTDIR
             POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
-                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/debian/nightingale.desktop
+                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/nightingale.desktop
 
             POST_UNINSTALL_CMD = xdg-icon-resource uninstall --size 512 nightingale &&\
                                  xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
