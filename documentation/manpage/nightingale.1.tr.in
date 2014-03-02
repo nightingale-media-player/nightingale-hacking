@@ -26,12 +26,11 @@
 
 #filter substitution
 
-.TH nightingale "1" "FEBRUARY 2014" "@NG_VERSION@"
+.TH nightingale "1" "MARCH 2014" "@NG_VERSION@"
 .SH NAME
 nightingale \- Desktop Media Player
 .SH SYNOPSIS
-.B nightingale
-[ \fIoptions \fR... ] [\fIURL\fR]
+.B nightingale \fR[ \fIoptions \fR... ] [\fIurl\fR\fB|\fR\fIpath\fR\fB]
 
 .SH DESCRIPTION
 \fBnightingale\fR is a desktop media player, a digital jukebox and web browser mash-up.
