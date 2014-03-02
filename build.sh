@@ -8,7 +8,7 @@ set -e
 # to your nightingale.config file!
 build="release"
 buildir="$(pwd)"
-version=1.11
+version=xul9.0.1
 
 download() {
   if which wget &>/dev/null ; then
@@ -58,22 +58,22 @@ case $OSTYPE in
       *86)  arch=i686 ;;
       *) echo "Unknown arch" >&2 ; exit 1 ;;
     esac
+
     depdirn="linux-$arch"
-    patch=1
-    version=2.2.0
     #if you have a dep built on a differing date for either arch, just use a conditional to set this
-    depdate=20120929
+    depdate=20140214
     #export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
+
     echo "linux $arch"
     ( cd dependencies && {
-		if [ ! -d "$depdirn" ] ; then
-			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
-				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version-$depdate-release.tar.lzma"
-				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
-			fi
-			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
-		fi
-	} ; )
+    if [ ! -d "$depdirn" ] ; then
+      if [ ! -f "$depdirn-$version-$depdate-release.tar.bz2" ] ; then
+        download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version-$depdate.tar.bz2"
+        md5_verify "$depdirn-$version-$depdate-release.tar.bz2"
+      fi
+      tar xvf "$depdirn-$version-$depdate-release.tar.bz2"
+    fi
+    } ; )
     
     # use our own gstreamer libs
     for dir in /usr/lib /usr/lib64 /usr/lib/${arch}-linux-gnu ; do
@@ -91,6 +91,7 @@ case $OSTYPE in
     ;;
   msys*)
     depdirn="windows-i686"
+    depdate=20140204
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -99,21 +100,23 @@ case $OSTYPE in
     
     cd dependencies
     
-    if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-		$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
-		md5_verify "$depdirn-$version.tar.lzma"
+    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version-$depdate.tar.bz2"
+      md5_verify "$depdirn-$version.tar.bz2"
     fi
     
     if [ ! -d "$depdirn" ] ; then
-		mkdir "$depdirn"
-		tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
+      mkdir "$depdirn"
+      tar -jxvf "$depdirn-$version.tar.bz2" -C "$depdirn"
     fi
     cd ../    
     ;;
   darwin*)
-	# no wget on OSX, use curl
+    # no wget on OSX, use curl
     DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
+    depdate=00000000
+
     arch_flags="-m32 -arch i386"
     export CFLAGS="$arch_flags" 
     export CXXFLAGS="$arch_flags" 
@@ -127,15 +130,15 @@ case $OSTYPE in
     echo 'ac_add_options --enable-compiler-environment-checks=no' >> nightingale.config
     
     cd dependencies
-    
-	if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-		$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
-		md5_verify "$depdirn-$version.tar.bz2"
-	fi
-    
-	if [ ! -d "$depdirn" ] ; then
-		mkdir "$depdirn"
-		tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
+      
+    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version-$depdate.tar.bz2"
+      md5_verify "$depdirn-$version.tar.bz2"
+    fi
+      
+    if [ ! -d "$depdirn" ] ; then
+      mkdir "$depdirn"
+      tar -jxvf "$depdirn-$version.tar.bz2" -C "$depdirn"
     fi
     cd ../
     ;;
@@ -145,18 +148,18 @@ case $OSTYPE in
     ;;
 esac
 
-# get the vendor build deps...
-cd dependencies
+# # get the vendor build deps...
+# cd dependencies
 
-if [ ! -f "vendor-$version.zip" ] ; then
-	download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
-	md5_verify "vendor-$version.zip"
-fi
+# if [ ! -f "vendor-$version.zip" ] ; then
+#   download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+#   md5_verify "vendor-$version.zip"
+# fi
 
-if [ ! -d "vendor" ] ; then
-	rm -rf vendor &> /dev/null
-	unzip "vendor-$version.zip"
-fi
+# if [ ! -d "vendor" ] ; then
+#   rm -rf vendor &> /dev/null
+#   unzip "vendor-$version.zip"
+# fi
 
 cd ../
 cd $buildir
