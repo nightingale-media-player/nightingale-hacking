@@ -5,7 +5,7 @@ nightingale (1.12.2a-1~ubuntu13.10.1~ppa1) saucy; urgency=low
 
  -- Marshall Banana <djcj@gmx.de>  Sun, 02 Mar 2014 02:02:00 +0100
 
-nightingale (1.12.21-) unstable; urgency=low
+nightingale (1.12.2-1) unstable; urgency=low
 
   * New upstream version
 
