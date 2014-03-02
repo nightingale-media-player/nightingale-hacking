@@ -64,7 +64,10 @@ ifeq (windows,$(SB_PLATFORM))
    GST_LIB_SUFFIX += -0
 endif
 
-DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-rpath,$(topsrcdir)/compiled/dist/xulrunner
+
+DYNAMIC_LIB_EXTRA_IMPORTS = xul \
+                            plds4 \
                             gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
