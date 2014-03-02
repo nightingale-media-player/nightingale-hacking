@@ -39,7 +39,6 @@ ifdef MEDIA_CORE_GST_SYSTEM
    CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
 
    CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
-                       $(GTK_CFLAGS) \
                        $(NULL)
 else
    CPP_EXTRA_INCLUDES += \
@@ -53,10 +52,6 @@ else
        $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
        $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
        $(NULL)
-   else
-      # everything else
-      CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
-                          $(NULL)
    endif
 endif
 
@@ -84,8 +79,6 @@ ifdef MEDIA_CORE_GST_SYSTEM
                       $(NULL)
 
    DYNAMIC_LIB_RAW_IMPORTS += $(GSTREAMER_LIBS) \
-                              $(GTK_LIBS) \
-                              -lX11 \
                               $(NULL)
 else
    DYNAMIC_LIB_EXTRA_IMPORTS += gstreamer-$(GST_VERSION)$(GST_LIB_SUFFIX) \
