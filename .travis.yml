@@ -6,12 +6,12 @@ before_install:
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"
 install:
+ - "echo 'ac_add_options --with-media-core=gstreamer' >> nightingale.config"
  - "echo 'ac_add_options --with-taglib-source=packaged' >> nightingale.config"
- - "echo 'ac_add_options --enable-tests' >> nightingale.config"
-script: "./build.sh && make test"
+script: "./build.sh
 branches:
   only:
-    - sb-trunk-oldxul
+  - master-xul-9.0.1
 notifications:
   email:
     on_success: change
