@@ -154,10 +154,27 @@ ifneq (Windows_NT,$(OS))
                         $(RM) $(DESTDIR)$(bindir)/nightingale &&\
                         $(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
         ifndef DESTDIR
-            POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
+        	# Doing this recursively would be way nicer... But ohwell.
+            POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(TOPSRCDIR)/app/branding/nightingale-512.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 256 $(TOPSRCDIR)/app/branding/nightingale-256.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 128 $(TOPSRCDIR)/app/branding/nightingale-128.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 96 $(TOPSRCDIR)/app/branding/hicolor/96x96/apps/nightingale.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 64 $(TOPSRCDIR)/app/branding/nightingale-64.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 48 $(TOPSRCDIR)/app/branding/hicolor/48x48/apps/nightingale.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 32 $(TOPSRCDIR)/app/branding/nightingale-32.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 24 $(TOPSRCDIR)/app/branding/hicolor/24x24/apps/nightingale.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 16 $(TOPSRCDIR)/app/branding/hicolor/16x16/apps/nightingale.png nightingale &&\
                                xdg-desktop-menu install --novendor $(TOPSRCDIR)/nightingale.desktop
 
             POST_UNINSTALL_CMD = xdg-icon-resource uninstall --size 512 nightingale &&\
+                                 xdg-icon-resource uninstall --size 256 nightingale &&\
+                                 xdg-icon-resource uninstall --size 128 nightingale &&\
+                                 xdg-icon-resource uninstall --size 96 nightingale &&\
+                                 xdg-icon-resource uninstall --size 64 nightingale &&\
+                                 xdg-icon-resource uninstall --size 48 nightingale &&\
+                                 xdg-icon-resource uninstall --size 32 nightingale &&\
+                                 xdg-icon-resource uninstall --size 24 nightingale &&\
+                                 xdg-icon-resource uninstall --size 16 nightingale &&\
                                  xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
         endif
     endif
