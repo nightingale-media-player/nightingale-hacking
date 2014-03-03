@@ -229,7 +229,7 @@ installdirs:
 install-linux:
 	$(MAKE) installdirs
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
-	$(LN) -s $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(LN) -fs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
 	-$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
 
 .PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux
