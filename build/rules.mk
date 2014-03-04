@@ -551,10 +551,15 @@ endif
 #
 
 CPP_DEFAULT_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-                       $(MOZSDK_INCLUDE_DIR)/nspr \
                        $(MOZSDK_INCLUDE_DIR)/xpcom \
                        $(MOZSDK_INCLUDE_DIR)/string \
                        $(NULL)
+
+ifdef (NG_SYSTEM_NSPR)
+   CPP_DEFAULT_INCLUDES += $(MOZSDK_INCLUDE_DIR)/nspr
+else
+   CPP_RAW_INCLUDES += $(NSPR_CFLAGS)
+endif
 
 ifdef CPP_FLAGS
    OUR_CPP_FLAGS = $(CPP_FLAGS)

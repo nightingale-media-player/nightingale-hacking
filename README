@@ -33,7 +33,7 @@ If on Linux, simply run the build.sh script. It will download the deps
 and build the app for you. You'll generally need the usual build deps
 for most software packages, though.
 
-Ubuntu and Debian users should note you'll need:
+Ubuntu and Debian users should note you'll need (and a few more, checkout the build article for a full list):
 libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
@@ -69,6 +69,9 @@ Configure Options:
   --enable-libnotify                    Optionally enable libnotify
   --enable-unity-integration            Optional support for Unity's 
                                         sound menu
+  --enable-system-nspr                  Optionally use your system's NSPR
+                                        instead of the bundled one form
+                                        Mozilla
 
 ========================================================================
 Notes for Configurable Options:
@@ -82,6 +85,8 @@ Notes for Configurable Options:
     dependencies: libunity-dev
                   libnotify-dev
                   libgtk2.0-dev
+  System NSPR
+    dependencies: libnspr4-dev
 
 ========================================================================
 Contributions:

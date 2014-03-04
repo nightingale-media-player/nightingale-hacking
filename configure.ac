@@ -1394,6 +1394,23 @@ fi
 AC_SUBST(METRICS_ENABLED)
 
 #
+# Are we going to use system nspr?
+#
+
+AC_ARG_ENABLE(system-nspr,
+      [  --enable-system-nspr  use system's NSPR (default=no)])
+if test "$enable_system_nspr" = "yes"; then
+  PKG_CHECK_MODULES(NSPR, nspr)
+  AC_SUBST(NSPR_CFLAGS)
+  AC_SUBST(NSPR_LIBS)
+  NG_SYSTEM_NSPR=1
+  AC_DEFINE(NG_SYSTEM_NSPR)
+else
+  NG_SYSTEM_NSPR=
+fi
+AC_SUBST(NG_SYSTEM_NSPR)
+
+#
 # Checks for libraries.
 #
 

@@ -9,6 +9,7 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	echo 'ac_add_options --with-taglib-source=packaged' >> $(CURDIR)/nightingale.config
 	echo 'ac_add_options --enable-libnotify' >> $(CURDIR)/nightingale.config
+	echo 'ac_add_options --enable-system-nspr' >> $(CURDIR)/nightingale.config
 	$(CURDIR)/build.sh
 
 	# remove extra license file
