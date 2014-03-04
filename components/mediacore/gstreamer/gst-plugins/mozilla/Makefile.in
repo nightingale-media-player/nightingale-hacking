@@ -36,8 +36,6 @@ CPP_SRCS = mozillaplugin.cpp \
            $(NULL)
 
 ifdef MEDIA_CORE_GST_SYSTEM
-   CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
-
    CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
                        $(NULL)
 else
