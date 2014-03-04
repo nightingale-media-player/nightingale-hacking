@@ -64,7 +64,7 @@ ifeq (windows,$(SB_PLATFORM))
    GST_LIB_SUFFIX += -0
 endif
 
-DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-rpath,$(DEPTH)/compiled/dist/xulrunner
+DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-rpath,$(topsrcdir)/compiled/dist/xulrunner
 
 DYNAMIC_LIB_EXTRA_IMPORTS = xul \
                             plds4 \
