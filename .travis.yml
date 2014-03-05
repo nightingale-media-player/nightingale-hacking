@@ -17,3 +17,6 @@ notifications:
     on_success: change
     on_failure: change
   irc: "irc.mozilla.org#nightingale"
+  webhooks:
+    urls:
+        - http://buildborg.jasonincode.com/hook/00caslhd
