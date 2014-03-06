@@ -307,7 +307,7 @@ NS_IMETHODIMP ngDbusConnection::GetInt64Arg(PRInt64 *_retval)
       *_retval = data;
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' recieved but expecting a Int64" << endl;
+      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a Int64" << endl;
     }
   
     return NS_OK;
@@ -326,7 +326,7 @@ NS_IMETHODIMP ngDbusConnection::GetBoolArg(PRBool *_retval)
       *_retval = data;
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' recieved but expecting a Boolean" << endl;
+      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a Boolean" << endl;
     }
   
     return NS_OK;
@@ -353,7 +353,7 @@ NS_IMETHODIMP ngDbusConnection::GetStringArg(char **_retval)
       
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' recieved but expecting a String" << endl;
+      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a String" << endl;
       
     }
   
@@ -380,7 +380,7 @@ NS_IMETHODIMP ngDbusConnection::GetObjectPathArg(char **_retval)
       
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' recieved but expecting an Object" << endl;
+      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting an Object" << endl;
       
     }
   
@@ -400,7 +400,7 @@ NS_IMETHODIMP ngDbusConnection::GetDoubleArg(PRFloat64 *_retval)
       *_retval = data;
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' recieved but expecting a Double" << endl;
+      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a Double" << endl;
     }
   
     return NS_OK;
