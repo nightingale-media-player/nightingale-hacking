@@ -18,7 +18,6 @@ Build-Depends:
  libnspr4-dev,
  libxext-dev,
  libxt6,
- libnspr4-dev,
  python (>=2.6),
  unzip,
  wget,
