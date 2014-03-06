@@ -51,9 +51,7 @@ override_dh_auto_test:
 	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
 
 override_dh_shlibdeps:
-	# using dh_shlibdeps with -l AND -L prevents the unnecessary dependency of
-	# libnspr4
-	dh_shlibdeps -Lnightingale -l$(CURDIR)/compiled/usr/lib/nightingale/xulrunner
+	dh_shlibdeps -l$(CURDIR)/compiled/usr/lib/nightingale/xulrunner
 
 clean:
 	rm -rf $(CURDIR)/nightingale.config $(CURDIR)/config.log
