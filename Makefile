@@ -158,12 +158,12 @@ ifneq (Windows_NT,$(OS))
             POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(TOPSRCDIR)/app/branding/nightingale-512.png nightingale &&\
                                xdg-icon-resource install --novendor --size 256 $(TOPSRCDIR)/app/branding/nightingale-256.png nightingale &&\
                                xdg-icon-resource install --novendor --size 128 $(TOPSRCDIR)/app/branding/nightingale-128.png nightingale &&\
-                               xdg-icon-resource install --novendor --size 96 $(TOPSRCDIR)/app/branding/hicolor/96x96/apps/nightingale.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 96 $(TOPSRCDIR)/app/branding/nightingale-96.png nightingale &&\
                                xdg-icon-resource install --novendor --size 64 $(TOPSRCDIR)/app/branding/nightingale-64.png nightingale &&\
-                               xdg-icon-resource install --novendor --size 48 $(TOPSRCDIR)/app/branding/hicolor/48x48/apps/nightingale.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 48 $(TOPSRCDIR)/app/branding/nightingale-48.png nightingale &&\
                                xdg-icon-resource install --novendor --size 32 $(TOPSRCDIR)/app/branding/nightingale-32.png nightingale &&\
-                               xdg-icon-resource install --novendor --size 24 $(TOPSRCDIR)/app/branding/hicolor/24x24/apps/nightingale.png nightingale &&\
-                               xdg-icon-resource install --novendor --size 16 $(TOPSRCDIR)/app/branding/hicolor/16x16/apps/nightingale.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 24 $(TOPSRCDIR)/app/branding/nightingale-24.png nightingale &&\
+                               xdg-icon-resource install --novendor --size 16 $(TOPSRCDIR)/app/branding/nightingale-16.png nightingale &&\
                                xdg-desktop-menu install --novendor $(TOPSRCDIR)/nightingale.desktop
 
             POST_UNINSTALL_CMD = xdg-icon-resource uninstall --size 512 nightingale &&\
