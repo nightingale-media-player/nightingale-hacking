@@ -50,9 +50,6 @@ override_dh_auto_test:
 	# dh_auto_test would make the build stop with an error warning.
 	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
 
-override_dh_shlibdeps:
-	dh_shlibdeps -l$(CURDIR)/compiled/usr/lib/nightingale/xulrunner
-
 clean:
 	rm -rf $(CURDIR)/nightingale.config $(CURDIR)/config.log
 	dh_auto_clean -- clobber
