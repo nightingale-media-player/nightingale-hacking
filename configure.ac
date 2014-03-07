@@ -896,7 +896,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     XULRUNNERDIR="/xulrunner"
-    COMPILER_GARBAGE="vc70.pdb vc71.pdb vc80.pdb vc90.pdb"
+    COMPILER_GARBAGE="vc70.pdb vc71.pdb vc80.pdb vc90.pdb vc100.pdb"
   ;;
   macosx)
     if ! test -e $SB_MACOSX_SDK/SDKSettings.plist; then
