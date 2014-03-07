@@ -278,7 +278,7 @@ ifdef MEDIA_CORE_GST #{
              $(addsuffix $(DLL_SUFFIX), $(FLAC_VERSIONED_NAMES)))
 
       JPEG_VERSIONED_NAMES = $(join $(JPEG_NAMES), -7)
-      JPEG = $(addprefix $(DEPS_DIR)/libjpeg-turbo/$(SB_CONFIGURATION)/bin/, \
+      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/bin/, \
              $(addsuffix $(DLL_SUFFIX), $(JPEG_VERSIONED_NAMES)))
 
       GST_PLUGINS_CORE = \
