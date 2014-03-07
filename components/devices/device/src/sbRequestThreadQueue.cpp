@@ -28,6 +28,7 @@
 
 // Platform includes
 #include <algorithm>
+#include <iterator>
 
 // Mozilla includes
 #include <nsArrayUtils.h>

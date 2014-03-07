@@ -25,6 +25,8 @@
 
 #include "sbMockDevice.h"
 
+#include <iterator>
+
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
