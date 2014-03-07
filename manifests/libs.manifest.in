@@ -1,5 +1,59 @@
+
+# Linux #
+# system gstreamer
+
 #ifdef DEBUG
-binary-component sbGStreamerMediacore_d.so
+binary-component sbGStreamerMediacore_d.so os=Linux
 #else
-binary-component sbGStreamerMediacore.so
+binary-component sbGStreamerMediacore.so os=Linux
+#endif
+
+
+
+# Windows #
+
+FLAC-8.dll os=WINNT
+charset.dll os=WINNT
+gettextlib.dll os=WINNT
+gettextpo.dll os=WINNT
+gettextsrc.dll os=WINNT
+gstapp-0.10-0.dll os=WINNT
+gstaudio-0.10-0.dll os=WINNT
+gstbase-0.10-0.dll os=WINNT
+gstcdda-0.10-0.dll os=WINNT
+gstcontroller-0.10-0.dll os=WINNT
+gstdataprotocol-0.10-0.dll os=WINNT
+gstfft-0.10-0.dll os=WINNT
+gstinterfaces-0.10-0.dll os=WINNT
+gstnet-0.10-0.dll os=WINNT
+gstnetbuffer-0.10-0.dll os=WINNT
+gstpbutils-0.10-0.dll os=WINNT
+gstreamer-0.10-0.dll os=WINNT
+gstriff-0.10-0.dll os=WINNT
+gstrtp-0.10-0.dll os=WINNT
+gstrtsp-0.10-0.dll os=WINNT
+gstsdp-0.10-0.dll os=WINNT
+gsttag-0.10-0.dll os=WINNT
+gstvideo-0.10-0.dll os=WINNT
+iconv.dll os=WINNT
+intl.dll os=WINNT
+jpeg-7.dll os=WINNT
+libglib-2.0-0.dll os=WINNT
+libgmodule-2.0-0.dll os=WINNT
+libgobject-2.0-0.dll os=WINNT
+libgthread-2.0-0.dll os=WINNT
+libs.manifest os=WINNT
+ogg-0.dll os=WINNT
+sbWindowsFormatter.dll os=WINNT
+theora-0.dll os=WINNT
+theoradec-1.dll os=WINNT
+theoraenc-1.dll os=WINNT
+vorbis-0.dll os=WINNT
+vorbisenc-2.dll os=WINNT
+vorbisfile-3.dll os=WINNT
+
+#ifdef DEBUG
+sbGStreamerMediacore_d.dll os=WINNT
+#else
+sbGStreamerMediacore.dll os=WINNT
 #endif

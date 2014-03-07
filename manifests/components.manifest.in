@@ -1,103 +1,219 @@
 #ifdef DEBUG
-# binary-component sbAlbumArt_d.so
-binary-component sbBrowserAPI_d.so
-binary-component sbCDDevice_d.so
-binary-component sbClipboardHelper_d.so
-binary-component sbdataremote_d.so
-binary-component sbDBEngine_d.so
-binary-component sbDeviceBase_d.so
-binary-component sbDeviceDeviceTester_d.so
-binary-component sbDeviceFirmwareTester_d.so
-binary-component sbDeviceFirmwareUpdater_d.so
-binary-component sbDeviceManager2_d.so
-binary-component sbDeviceManager_d.so
-binary-component sbDownloadDevice_d.so
-binary-component sbFileScan_d.so
-binary-component sbFileUtils_d.so
-# binary-component sbGStreamerStub_d.so
-binary-component sbIdentityServiceComponent_d.so
-binary-component sbImageParser_d.so
-binary-component sbIntegration_d.so
-binary-component sbIntl_d.so
-binary-component sbiTunesMediaImport_d.so
-binary-component sbLibraryManager_d.so
-binary-component sbLinuxFileSystemEvents_d.so
-binary-component sbLocalDatabaseLibrary_d.so
-binary-component sbMediacoreBase_d.so
-binary-component sbMediacoreManager_d.so
-binary-component sbMediaExport_d.so
-binary-component sbMediaItemDownloadService_d.so
-binary-component sbMediaManager_d.so
-binary-component sbMediaSniffer_d.so
-binary-component sbMetadataHandlerTaglib_d.so
-binary-component sbMetadataModule_d.so
-binary-component sbMockCDDevice_d.so
-binary-component sbMozVariant_d.so
-binary-component sbNetworkProxy_d.so
-binary-component sbPlaybackHistoryService_d.so
-binary-component sbPlaylistCommands_d.so
-binary-component sbPlayQueueService_d.so
-binary-component sbPrompter_d.so
-binary-component sbProperties_d.so
-binary-component sbSQLBuilder_d.so
-binary-component sbStrings_d.so
-binary-component sbTemporaryFileService_d.so
-binary-component sbTestMediacoreBase_d.so
-binary-component sbThreadPoolService_d.so
-binary-component sbTranscodeModule_d.so
-binary-component sbUpdate_d.so
-binary-component sbWatchFolderService_d.so
-binary-component sbWindowWatcher_d.so
-binary-component sbxpcom_d.so
+
+# Linux #
+# binary-component sbAlbumArt_d.so os=Linux
+binary-component sbBrowserAPI_d.so os=Linux
+binary-component sbCDDevice_d.so os=Linux
+binary-component sbClipboardHelper_d.so os=Linux
+binary-component sbdataremote_d.so os=Linux
+binary-component sbDBEngine_d.so os=Linux
+binary-component sbDeviceBase_d.so os=Linux
+binary-component sbDeviceDeviceTester_d.so os=Linux
+binary-component sbDeviceFirmwareTester_d.so os=Linux
+binary-component sbDeviceFirmwareUpdater_d.so os=Linux
+binary-component sbDeviceManager2_d.so os=Linux
+binary-component sbDeviceManager_d.so os=Linux
+binary-component sbDownloadDevice_d.so os=Linux
+binary-component sbFileScan_d.so os=Linux
+binary-component sbFileUtils_d.so os=Linux
+# binary-component sbGStreamerStub_d.so os=Linux
+binary-component sbIdentityServiceComponent_d.so os=Linux
+binary-component sbImageParser_d.so os=Linux
+binary-component sbIntegration_d.so os=Linux
+binary-component sbIntl_d.so os=Linux
+binary-component sbiTunesMediaImport_d.so os=Linux
+binary-component sbLibraryManager_d.so os=Linux
+binary-component sbLinuxFileSystemEvents_d.so os=Linux
+binary-component sbLocalDatabaseLibrary_d.so os=Linux
+binary-component sbMediacoreBase_d.so os=Linux
+binary-component sbMediacoreManager_d.so os=Linux
+binary-component sbMediaExport_d.so os=Linux
+binary-component sbMediaItemDownloadService_d.so os=Linux
+binary-component sbMediaManager_d.so os=Linux
+binary-component sbMediaSniffer_d.so os=Linux
+binary-component sbMetadataHandlerTaglib_d.so os=Linux
+binary-component sbMetadataModule_d.so os=Linux
+binary-component sbMockCDDevice_d.so os=Linux
+binary-component sbMozVariant_d.so os=Linux
+binary-component sbNetworkProxy_d.so os=Linux
+binary-component sbPlaybackHistoryService_d.so os=Linux
+binary-component sbPlaylistCommands_d.so os=Linux
+binary-component sbPlayQueueService_d.so os=Linux
+binary-component sbPrompter_d.so os=Linux
+binary-component sbProperties_d.so os=Linux
+binary-component sbSQLBuilder_d.so os=Linux
+binary-component sbStrings_d.so os=Linux
+binary-component sbTemporaryFileService_d.so os=Linux
+binary-component sbTestMediacoreBase_d.so os=Linux
+binary-component sbThreadPoolService_d.so os=Linux
+binary-component sbTranscodeModule_d.so os=Linux
+binary-component sbUpdate_d.so os=Linux
+binary-component sbWatchFolderService_d.so os=Linux
+binary-component sbWindowWatcher_d.so os=Linux
+binary-component sbxpcom_d.so os=Linux
+
+# Windows #
+binary-component sbAlbumArt_d.dll os=WINNT
+binary-component sbBrowserAPI_d.dll os=WINNT
+binary-component sbCDDevice_d.dll os=WINNT
+binary-component sbClipboardHelper_d.dll os=WINNT
+binary-component sbDBEngine_d.dll os=WINNT
+binary-component sbDeviceBase_d.dll os=WINNT
+binary-component sbDeviceDeviceTester_d.dll os=WINNT
+binary-component sbDeviceFirmwareTester_d.dll os=WINNT
+binary-component sbDeviceFirmwareUpdater_d.dll os=WINNT
+binary-component sbDeviceManager2_d.dll os=WINNT
+binary-component sbDeviceManager_d.dll os=WINNT
+binary-component sbDirectoryProvider_d.dll os=WINNT
+binary-component sbDownloadDevice_d.dll os=WINNT
+binary-component sbFileScan_d.dll os=WINNT
+binary-component sbFileSystemEventsBase_d.dll os=WINNT
+binary-component sbFileUtils_d.dll os=WINNT
+binary-component sbGStreamerStub_d.dll os=WINNT
+binary-component sbIdentityServiceComponent_d.dll os=WINNT
+binary-component sbImageParser_d.dll os=WINNT
+binary-component sbIntegration_d.dll os=WINNT
+binary-component sbIntl_d.dll os=WINNT
+binary-component sbLibraryManager_d.dll os=WINNT
+binary-component sbLocalDatabaseLibrary_d.dll os=WINNT
+binary-component sbMediaExport_d.dll os=WINNT
+binary-component sbMediaItemDownloadService_d.dll os=WINNT
+binary-component sbMediaManager_d.dll os=WINNT
+binary-component sbMediaSniffer_d.dll os=WINNT
+binary-component sbMediacoreBase_d.dll os=WINNT
+binary-component sbMediacoreManager_d.dll os=WINNT
+binary-component sbMetadataHandlerTaglib_d.dll os=WINNT
+binary-component sbMetadataHandlerWMA_d.dll os=WINNT
+binary-component sbMetadataModule_d.dll os=WINNT
+binary-component sbMockCDDevice_d.dll os=WINNT
+binary-component sbMozVariant_d.dll os=WINNT
+binary-component sbNetworkProxy_d.dll os=WINNT
+binary-component sbPlayQueueService_d.dll os=WINNT
+binary-component sbPlaybackHistoryService_d.dll os=WINNT
+binary-component sbPlaylistCommands_d.dll os=WINNT
+binary-component sbPrompter_d.dll os=WINNT
+binary-component sbProperties_d.dll os=WINNT
+binary-component sbSQLBuilder_d.dll os=WINNT
+binary-component sbStrings_d.dll os=WINNT
+binary-component sbTemporaryFileService_d.dll os=WINNT
+binary-component sbTestMediacoreBase_d.dll os=WINNT
+binary-component sbThreadPoolService_d.dll os=WINNT
+binary-component sbTranscodeModule_d.dll os=WINNT
+binary-component sbUpdate_d.dll os=WINNT
+binary-component sbWatchFolderService_d.dll os=WINNT
+binary-component sbWin32FileSystemEvents_d.dll os=WINNT
+binary-component sbWindowWatcher_d.dll os=WINNT
+binary-component sbdataremote_d.dll os=WINNT
+binary-component sbiTunesMediaImport_d.dll os=WINNT
+binary-component sbxpcom_d.dll os=WINNT
+
 #else
-# binary-component sbAlbumArt.so # broken in release builds currently
-binary-component sbBrowserAPI.so
-binary-component sbCDDevice.so
-binary-component sbClipboardHelper.so
-binary-component sbdataremote.so
-binary-component sbDBEngine.so
-binary-component sbDeviceBase.so
-binary-component sbDeviceDeviceTester.so
-binary-component sbDeviceFirmwareTester.so
-binary-component sbDeviceFirmwareUpdater.so
-binary-component sbDeviceManager2.so
-binary-component sbDeviceManager.so
-binary-component sbDownloadDevice.so
-binary-component sbFileScan.so
-binary-component sbFileUtils.so
-binary-component sbGStreamerStub.so
-binary-component sbIdentityServiceComponent.so
-binary-component sbImageParser.so
-binary-component sbIntegration.so
-binary-component sbIntl.so
-binary-component sbiTunesMediaImport.so
-binary-component sbLibraryManager.so
-binary-component sbLinuxFileSystemEvents.so
-# binary-component sbLocalDatabaseLibrary.so # broken in release builds currently
-binary-component sbMediacoreBase.so
-binary-component sbMediacoreManager.so
-binary-component sbMediaExport.so
-binary-component sbMediaItemDownloadService.so
-binary-component sbMediaManager.so
-binary-component sbMediaSniffer.so
-binary-component sbMetadataHandlerTaglib.so
-binary-component sbMetadataModule.so
-binary-component sbMockCDDevice.so
-binary-component sbMozVariant.so
-binary-component sbNetworkProxy.so
-binary-component sbPlaybackHistoryService.so
-binary-component sbPlaylistCommands.so
-binary-component sbPlayQueueService.so
-binary-component sbPrompter.so
-binary-component sbProperties.so
-binary-component sbSQLBuilder.so
-binary-component sbStrings.so
-binary-component sbTemporaryFileService.so
-binary-component sbTestMediacoreBase.so
-binary-component sbThreadPoolService.so
-binary-component sbTranscodeModule.so
-binary-component sbUpdate.so
-binary-component sbWatchFolderService.so
-binary-component sbWindowWatcher.so
-binary-component sbxpcom.so
+
+# Linux #
+# binary-component sbAlbumArt.so os=Linux # broken in release builds currently
+binary-component sbBrowserAPI.so os=Linux
+binary-component sbCDDevice.so os=Linux
+binary-component sbClipboardHelper.so os=Linux
+binary-component sbdataremote.so os=Linux
+binary-component sbDBEngine.so os=Linux
+binary-component sbDeviceBase.so os=Linux
+binary-component sbDeviceDeviceTester.so os=Linux
+binary-component sbDeviceFirmwareTester.so os=Linux
+binary-component sbDeviceFirmwareUpdater.so os=Linux
+binary-component sbDeviceManager2.so os=Linux
+binary-component sbDeviceManager.so os=Linux
+binary-component sbDownloadDevice.so os=Linux
+binary-component sbFileScan.so os=Linux
+binary-component sbFileUtils.so os=Linux
+binary-component sbGStreamerStub.so os=Linux
+binary-component sbIdentityServiceComponent.so os=Linux
+binary-component sbImageParser.so os=Linux
+binary-component sbIntegration.so os=Linux
+binary-component sbIntl.so os=Linux
+binary-component sbiTunesMediaImport.so os=Linux
+binary-component sbLibraryManager.so os=Linux
+binary-component sbLinuxFileSystemEvents.so os=Linux
+# binary-component sbLocalDatabaseLibrary.so os=Linux # broken in release builds currently
+binary-component sbMediacoreBase.so os=Linux
+binary-component sbMediacoreManager.so os=Linux
+binary-component sbMediaExport.so os=Linux
+binary-component sbMediaItemDownloadService.so os=Linux
+binary-component sbMediaManager.so os=Linux
+binary-component sbMediaSniffer.so os=Linux
+binary-component sbMetadataHandlerTaglib.so os=Linux
+binary-component sbMetadataModule.so os=Linux
+binary-component sbMockCDDevice.so os=Linux
+binary-component sbMozVariant.so os=Linux
+binary-component sbNetworkProxy.so os=Linux
+binary-component sbPlaybackHistoryService.so os=Linux
+binary-component sbPlaylistCommands.so os=Linux
+binary-component sbPlayQueueService.so os=Linux
+binary-component sbPrompter.so os=Linux
+binary-component sbProperties.so os=Linux
+binary-component sbSQLBuilder.so os=Linux
+binary-component sbStrings.so os=Linux
+binary-component sbTemporaryFileService.so os=Linux
+binary-component sbTestMediacoreBase.so os=Linux
+binary-component sbThreadPoolService.so os=Linux
+binary-component sbTranscodeModule.so os=Linux
+binary-component sbUpdate.so os=Linux
+binary-component sbWatchFolderService.so os=Linux
+binary-component sbWindowWatcher.so os=Linux
+binary-component sbxpcom.so os=Linux
+
+# Windows #
+binary-component sbAlbumArt.dll os=WINNT
+binary-component sbBrowserAPI.dll os=WINNT
+binary-component sbCDDevice.dll os=WINNT
+binary-component sbClipboardHelper.dll os=WINNT
+binary-component sbDBEngine.dll os=WINNT
+binary-component sbDeviceBase.dll os=WINNT
+binary-component sbDeviceDeviceTester.dll os=WINNT
+binary-component sbDeviceFirmwareTester.dll os=WINNT
+binary-component sbDeviceFirmwareUpdater.dll os=WINNT
+binary-component sbDeviceManager2.dll os=WINNT
+binary-component sbDeviceManager.dll os=WINNT
+binary-component sbDirectoryProvider.dll os=WINNT
+binary-component sbDownloadDevice.dll os=WINNT
+binary-component sbFileScan.dll os=WINNT
+binary-component sbFileSystemEventsBase.dll os=WINNT
+binary-component sbFileUtils.dll os=WINNT
+binary-component sbGStreamerStub.dll os=WINNT
+binary-component sbIdentityServiceComponent.dll os=WINNT
+binary-component sbImageParser.dll os=WINNT
+binary-component sbIntegration.dll os=WINNT
+binary-component sbIntl.dll os=WINNT
+binary-component sbLibraryManager.dll os=WINNT
+binary-component sbLocalDatabaseLibrary.dll os=WINNT
+binary-component sbMediaExport.dll os=WINNT
+binary-component sbMediaItemDownloadService.dll os=WINNT
+binary-component sbMediaManager.dll os=WINNT
+binary-component sbMediaSniffer.dll os=WINNT
+binary-component sbMediacoreBase.dll os=WINNT
+binary-component sbMediacoreManager.dll os=WINNT
+binary-component sbMetadataHandlerTaglib.dll os=WINNT
+binary-component sbMetadataHandlerWMA.dll os=WINNT
+binary-component sbMetadataModule.dll os=WINNT
+binary-component sbMockCDDevice.dll os=WINNT
+binary-component sbMozVariant.dll os=WINNT
+binary-component sbNetworkProxy.dll os=WINNT
+binary-component sbPlayQueueService.dll os=WINNT
+binary-component sbPlaybackHistoryService.dll os=WINNT
+binary-component sbPlaylistCommands.dll os=WINNT
+binary-component sbPrompter.dll os=WINNT
+binary-component sbProperties.dll os=WINNT
+binary-component sbSQLBuilder.dll os=WINNT
+binary-component sbStrings.dll os=WINNT
+binary-component sbTemporaryFileService.dll os=WINNT
+binary-component sbTestMediacoreBase.dll os=WINNT
+binary-component sbThreadPoolService.dll os=WINNT
+binary-component sbTranscodeModule.dll os=WINNT
+binary-component sbUpdate.dll os=WINNT
+binary-component sbWatchFolderService.dll os=WINNT
+binary-component sbWin32FileSystemEvents.dll os=WINNT
+binary-component sbWindowWatcher.dll os=WINNT
+binary-component sbdataremote.dll os=WINNT
+binary-component sbiTunesMediaImport.dll os=WINNT
+binary-component sbxpcom.dll os=WINNT
+
 #endif

@@ -43,7 +43,7 @@ interfaces sbFileScan.xpt
 interfaces sbLibraryImporter.xpt
 interfaces sbiTunesImporter.xpt
 interfaces sbPlaylistReader.xpt
-interfaces sbIURIImportService.xpt
+interfaces sbIURIImportService.xpt os=Linux
 interfaces sbMediaManager.xpt
 interfaces sbMediaPages.xpt
 interfaces sbMetrics.xpt
@@ -67,3 +67,6 @@ interfaces sbSQLBuilder.xpt
 interfaces sbUpdate.xpt
 interfaces sbWatchFolderService.xpt
 interfaces sbWebServicesLastFm.xpt
+interfaces sbMetadataHandlerWMA.xpt.xpt os=WINNT
+interfaces sbStrings.xpt os=WINNT
+interfaces sbWindowsSystem.xpt os=WINNT
