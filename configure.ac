@@ -977,10 +977,6 @@ case "$SB_PLATFORM" in
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
 
-    PKG_CHECK_MODULES(TAGLIB, taglib >= 1.8.0)
-    AC_SUBST(TAGLIB_LIBS)
-    AC_SUBST(TAGLIB_CFLAGS)
-
     # Breakpad needs stabs debugging data, so always explicitly request it with
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
