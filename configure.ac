@@ -838,9 +838,9 @@ case "$SB_PLATFORM" in
     fi
 
     if test "$enable_debug" == "yes"; then
-      CFLAGS_STATIC_LIBC="-MTd"
+      CFLAGS_STATIC_LIBC="-MDd"
     else
-      CFLAGS_STATIC_LIBC="-MT"
+      CFLAGS_STATIC_LIBC="-MD"
     fi
     if test "$SB_USE_JEMALLOC" != "1"; then
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS $CFLAGS_STATIC_LIBC"
