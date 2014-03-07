@@ -29,21 +29,31 @@
 * \brief Songbird WMA Metadata Handler Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 #include "MetadataHandlerWMA.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataHandlerWMA)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataHandlerWMA);
+NS_DEFINE_NAMED_CID(SONGBIRD_METADATAHANDLERWMA_CID);
 
-static nsModuleComponentInfo sbMetadataHandlerWMAComponent[] =
-{
-
-  {
-    SONGBIRD_METADATAHANDLERWMA_CLASSNAME,
-    SONGBIRD_METADATAHANDLERWMA_CID,
-    SONGBIRD_METADATAHANDLERWMA_CONTRACTID,
-    sbMetadataHandlerWMAConstructor
-  },
-
+static const mozilla::Module::CIDEntry kMetadataHandlerWMACIDs[] = {
+  { &kSONGBIRD_METADATAHANDLERWMA_CID, false, NULL, sbMetadataHandlerWMAConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE("SongbirdMetadataHandlerWMAComponent", sbMetadataHandlerWMAComponent)
+static const mozilla::Module::ContractIDEntry kMetadataHandlerWMAContracts[] = {
+  { SONGBIRD_METADATAHANDLERWMA_CONTRACTID, &kSONGBIRD_METADATAHANDLERWMA_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kMetadataHandlerWMACategories[] = {
+  { NULL }
+};
+
+static const mozilla::Module kMetadataHandlerWMAModule = {
+    mozilla::Module::kVersion,
+    kMetadataHandlerWMACIDs,
+    kMetadataHandlerWMAContracts,
+    kMetadataHandlerWMACategories
+};
+
+NSMODULE_DEFN(sbMetadataHandlerWMAComponent) = &kMetadataHandlerWMAModule;
