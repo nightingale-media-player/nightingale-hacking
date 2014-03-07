@@ -115,11 +115,8 @@ DYNAMIC_LIB_STATIC_IMPORTS = components/moz/strings/src/sbMozStringUtils \
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4  \
                             $(NULL)
 
-ifeq (windows,$(SB_PLATFORM))
-   DYNAMIC_LIB_EXTRA_IMPORTS += js3250
-else
-   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
-endif
+
+DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 
 IS_COMPONENT = 1
 
