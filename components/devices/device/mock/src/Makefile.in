@@ -72,8 +72,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += "-std=gnu++0x" \
-                   $(NULL)
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+  CPP_EXTRA_FLAGS += -std=gnu++0x \
+                     $(NULL)
+endif
 
 DYNAMIC_LIB = sbDeviceDeviceTester
 

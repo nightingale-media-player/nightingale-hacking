@@ -113,8 +113,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += "-std=gnu++0x" \
-                   $(NULL)
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+  CPP_EXTRA_FLAGS += -std=gnu++0x \
+                     $(NULL)
+endif
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/devices-device.manifest.in \
                         $(NULL)
