@@ -54,8 +54,10 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(topsrcdir)/components/property/src \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+  CPP_EXTRA_FLAGS += -std=gnu++0x \
+                     $(NULL)
+endif
 
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/strings/src/sbMozStringUtils \

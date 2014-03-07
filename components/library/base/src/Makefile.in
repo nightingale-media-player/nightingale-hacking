@@ -68,8 +68,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
                      $(MOZSDK_INCLUDE_DIR)/rdf \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+  CPP_EXTRA_FLAGS += -std=gnu++0x \
+                     $(NULL)
+endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)

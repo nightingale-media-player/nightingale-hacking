@@ -42,8 +42,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/strings/components/public \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+  CPP_EXTRA_FLAGS += -std=gnu++0x \
+                     $(NULL)
+endif
 
 DYNAMIC_LIB = sbStrings
 
