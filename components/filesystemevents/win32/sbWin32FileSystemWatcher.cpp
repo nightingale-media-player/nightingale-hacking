@@ -31,7 +31,7 @@
 #include <nsIObserverService.h>
 #include <nsMemory.h>
 #include <nsThreadUtils.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <sbStringUtils.h>
 #include <sbDebugUtils.h>
 
@@ -73,7 +73,7 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
   if (fileInfo) {
     {
       TRACE("%s: found changes in %s", __FUNCTION__, fileInfo->FileName);
-      nsAutoLock lock(watcher->GetEventPathsSetLock());
+      mozilla::MutexAutoLock lock(*watcher->GetEventPathsSetLock());
 
       while (PR_TRUE) {
         // Push in the event path into the queue
@@ -135,19 +135,15 @@ sbWin32FileSystemWatcher::sbWin32FileSystemWatcher() :
   mBuffer(nsnull),
   mShouldRunThread(PR_FALSE),
   mIsThreadRunning(PR_FALSE),
-  mShuttingDown(PR_FALSE)
+  mShuttingDown(PR_FALSE),
+  mEventPathsSetLock("sbWin32FileSystemWatcher::mEventPathsSetLock")
 {
   SB_PRLOG_SETUP(sbWin32FSWatcher);
-
-  mEventPathsSetLock =
-    nsAutoLock::NewLock("sbWin32FileSystemWatcher::mEventPathsSetLock");
-  NS_ASSERTION(mEventPathsSetLock, "Failed to create lock");
 }
 
 sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
 {
   TRACE("%s", __FUNCTION__);
-  nsAutoLock::DestroyLock(mEventPathsSetLock);
 
   // The thread was asked to terminate in the "quit-application" notification.
   // If it is still running, force kill it now.
@@ -290,10 +286,10 @@ sbWin32FileSystemWatcher::GetEventPathsSet()
   return &mEventPathsSet;
 }
 
-PRLock*
+mozilla::Mutex*
 sbWin32FileSystemWatcher::GetEventPathsSetLock()
 {
-  return mEventPathsSetLock;
+  return &mEventPathsSetLock;
 }
 
 //------------------------------------------------------------------------------
@@ -316,8 +312,7 @@ sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
   NS_ENSURE_STATE(!mRebuildThread);
 
   // Setup the timer callback, on a background thread
-  nsCOMPtr<nsIRunnable> initRebuildEvent =
-    NS_NEW_RUNNABLE_METHOD(sbWin32FileSystemWatcher, this, InitRebuildThread);
+  nsCOMPtr<nsIRunnable> initRebuildEvent = new nsRunnableMethod_InitRebuildThread(this);
   NS_ENSURE_TRUE(initRebuildEvent, NS_ERROR_OUT_OF_MEMORY);
 
   rv = NS_NewThread(getter_AddRefs(mRebuildThread), initRebuildEvent);
@@ -396,7 +391,7 @@ sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
 {
   TRACE("%s", __FUNCTION__);
   {
-    nsAutoLock lock(mEventPathsSetLock);
+    mozilla::MutexAutoLock lock(mEventPathsSetLock);
 
     sbStringSet folderEventPaths;
 

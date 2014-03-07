@@ -29,6 +29,8 @@
 
 #include <sbBaseFileSystemWatcher.h>
 #include <sbFileSystemTree.h>
+#include <a11ygeneric.h>
+#include <mozilla/Mutex.h>
 #include <nsStringAPI.h>
 #include <nsIObserver.h>
 #include <nsCOMPtr.h>
@@ -95,7 +97,7 @@ public:
   //
   // \brief Accessor for the event paths set lock.
   //
-  PRLock* GetEventPathsSetLock();
+  mozilla::Mutex* GetEventPathsSetLock();
 
   //
   // \brief Method to setup the chained call to |ReadDirectoryChangesW|.
@@ -107,6 +109,7 @@ protected:
   friend DWORD WINAPI BackgroundThreadProc(void *p);
   void Cleanup();
   void InitRebuildThread();
+  NS_DECL_RUNNABLEMETHOD(sbWin32FileSystemWatcher, InitRebuildThread);
 
 private:
   nsCOMPtr<nsITimer>   mTimer;
@@ -118,7 +121,7 @@ private:
   PRBool               mShouldRunThread;
   PRBool               mIsThreadRunning;
   sbStringSet          mEventPathsSet;
-  PRLock               *mEventPathsSetLock;
+  mozilla::Mutex       mEventPathsSetLock;
   PRBool               mShuttingDown;
 };
 
