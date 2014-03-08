@@ -1,0 +1,23 @@
+[main]
+host = http://beta.babelzilla.org
+
+[Nightingale.songbirddtd]
+file_filter = locales/<lang>/songbird/songbird.dtd
+source_file = locales/en-US/songbird/songbird.dtd
+source_lang = en-US
+
+[Nightingale.helpdtd]
+file_filter = locales/<lang>/songbird/help.dtd
+source_file = locales/en-US/songbird/help.dtd
+source_lang = en-US
+
+[Nightingale.songbirdproperties]
+file_filter = locales/<lang>/songbird/songbird.properties
+source_file = locales/en-US/songbird/songbird.properties
+source_lang = en-US
+
+[Nightingale.preferencesdtd]
+file_filter = locales/<lang>/songbird/preferences.dtd
+source_file = locales/en-US/songbird/preferences.dtd
+source_lang = en-US
+

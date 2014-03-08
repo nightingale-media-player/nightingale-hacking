@@ -1,4 +1,2 @@
-compiled/nightingale usr/share
-debian/nightingale/usr/share/nightingale/chrome/icons/default/*.xpm usr/share/pixmaps
-debian/scripts/* usr/bin
-debian/*.desktop usr/share/applications
+*.desktop usr/share/applications
+app/branding/hicolor/* usr/share/icons/hicolor

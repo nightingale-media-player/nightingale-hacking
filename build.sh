@@ -10,6 +10,17 @@ build="release"
 buildir="$(pwd)"
 version=1.12
 
+# This variable is used to look into the mozilla dependencies to see
+# which versions (build/release) have been extracted.
+mozdepver="mozilla-1.9.2"
+
+count=`grep '\-\-enable\-debug' nightingale.config|wc -l`
+if [ $count -ne 0 ] ; then
+     build="debug"
+fi
+
+echo "You are building a $build build"
+
 download() {
   if which wget &>/dev/null ; then
     wget "$1"
@@ -61,40 +72,37 @@ case $OSTYPE in
     depdirn="linux-$arch"
     patch=1
     version=1.12
-    #if you have a dep built on a differing date for either arch, just use a conditional to set this
-    depdate=20130101
+    depdate=20130316
+    fname="$depdirn-$version-$depdate-$build-final.tar.lzma"
+    
     export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
     ( cd dependencies && {
-		if [ ! -d "$depdirn" ] ; then
-			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
-				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depdate-release.tar.lzma"
-				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
-			fi
-			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
-		fi
+        if [ ! -f "$fname" ] ; then
+            # We want the new deps instead of the old ones...
+            rm -rf "$depdirn"
+			download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+	fi
+	if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
+            if [ -f "$fname.md5" ] ; then
+		md5_verify "$fname"
+            fi
+	    echo "Need to extract $fname"
+	    tar xvf "$fname"
+	fi
 	} ; )
-    
-    # use our own gstreamer libs
-    for dir in /usr/lib /usr/lib64 /usr/lib/${arch}-linux-gnu ; do
-      if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-        export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
-        break
-      elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-        export GST_PLUGIN_PATH=${dir}/gstreamer0.10
-        break
-      fi
-    done
-    
-    [ -f nightingale.config ] || touch nightingale.config
-    grep -q -E 'ac_add_options\s+--with-media-core=gstreamer-system' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
+
+    # the below needs to be nested...in my testing it won't work otherwise
+    if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
+		grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
+    fi
     ;;
   msys*)
     depdirn="windows-i686"
     # Nightingale version number and dependency version, change if the deps change.
     version=1.12
-    depversion="20130111-release"
+    depversion="20130121"
     
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -102,54 +110,63 @@ case $OSTYPE in
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
     
     cd dependencies
+
+    fname="$depdirn-$version-$depversion-$build.tar.lzma"
     
-    if [ ! -f "$depdirn-$version-$depversion.tar.lzma" ] ; then
+    if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
       rm -rf "$depdirn"
-      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn-$version-$depversion.tar.lzma"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
     
-    if [ ! -d "$depdirn" ] ; then
-      md5_verify "$depdirn-$version-$depversion.tar.lzma"
+    if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
+      if [ -f "$fname.md5" ] ; then
+          md5_verify "$fname"
+      fi
       mkdir "$depdirn"
-      tar --lzma -xvf "$depdirn-$version-$depversion.tar.lzma" -C "$depdirn"
+      tar --lzma -xvf "$fname" -C "$depdirn"
     fi
     cd ../    
     ;;
   darwin*)
-	# no wget on OSX, use curl
-    DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
+    depversion="20130130"
     arch_flags="-m32 -arch i386"
     export CFLAGS="$arch_flags" 
     export CXXFLAGS="$arch_flags" 
     export CPPFLAGS="$arch_flags"
     export LDFLAGS="$arch_flags" 
     export OBJCFLAGS="$arch_flags"
+    export CC="gcc"
+    export CXX="g++"
 
-    echo 'ac_add_options --with-macosx-sdk=/Developer/SDKs/MacOSX10.4u.sdk' > nightingale.config
+    echo 'ac_add_options --with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk' > nightingale.config
     echo 'ac_add_options --enable-installer' >> nightingale.config
     echo 'ac_add_options --enable-official' >> nightingale.config
     echo 'ac_add_options --enable-compiler-environment-checks=no' >> nightingale.config
     
     cd dependencies
-    
-    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+
+    fname="$depdirn-$version-$depversion-$build.tar.bz2"
+
+    if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
       rm -rf "$depdirn"
-      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
-      md5_verify "$depdirn-$version.tar.bz2"
+      download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
     
-	if [ ! -d "$depdirn" ] ; then
-		mkdir "$depdirn"
-		tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
+    if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
+      if [ -f "$fname.md5" ] ; then
+          md5_verify "$fname"
+      fi
+      tar xvf "$fname"
     fi
+
     cd ../
     ;;
   *)
     echo "Can't find deps for $OSTYPE. You may need to build them yourself. Doublecheck the SVN's for \n
-    Songbird and Nightingale trunks to be sure."
+    Nightingale trunk to be sure."
     ;;
 esac
 
@@ -171,8 +188,8 @@ fi
 cd ../
 cd $buildir
 
-make -f nightingale.mk clobber
+make clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
-make -f nightingale.mk
+make
 
-echo "Build finished!"
+echo "Build Succeeded!"

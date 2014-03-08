@@ -47,6 +47,7 @@
 
   <implementation>
     <field name="band">0</field>
+    <field name="onchange">null</field>
 
     <constructor>
       <![CDATA[
@@ -112,6 +113,11 @@
           this.mm.equalizer.setBand(this.band);
           
           this.remote_gain.stringValue = this.band.gain;
+
+          //BUG #240 - Adding a callback so the UI can update
+          if (this.onchange != null) 
+            this.onchange(this.bandIndex);
+
         ]]>
       </body>
     </method>

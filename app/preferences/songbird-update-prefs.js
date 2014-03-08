@@ -72,7 +72,7 @@ pref("app.update.incompatible.mode", 0);
 //  extensions.{GUID}.update.interval
 //  .. etc ..
 //
-pref("extensions.update.enabled", true);
+pref("extensions.update.enabled", false);
 // - see branding prefs
 // pref("extensions.update.url", ****);
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and
@@ -82,7 +82,7 @@ pref("extensions.update.interval", 86400);  // Check for updates to Extensions a
 // pref("extensions.getMoreExtensionsURL", ****);
 // pref("extensions.getMoreThemesURL", ****);
 
-pref("extensions.blocklist.enabled", true);
+pref("extensions.blocklist.enabled", false);
 pref("extensions.blocklist.interval", 86400);
 // see branding prefs
 // pref("extensions.blocklist.url", ****);

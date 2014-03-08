@@ -218,6 +218,13 @@ interface sbIMediacoreEvent : nsISupports
    */
   const unsigned long EXPLICIT_STOP       = 0x00004007;
 
+  /**
+   * \brief Playback has progressed in an unusual way
+   * \note data is a property bag, containing
+   *       PRUint64 "position" - the position of the stream after seeking.
+   */
+  const unsigned long SEEKED          = 0x00001005; 
+
   // Video specific events
 
   /**

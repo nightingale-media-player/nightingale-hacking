@@ -1,10 +1,47 @@
 #!/usr/bin/make -f
 
-include /usr/share/cdbs/1/rules/debhelper.mk
+%:
+	dh $@ --parallel
 
-DEB_DH_SHLIBDEPS_ARGS_ALL := -X nightingale
+override_dh_auto_configure:
+    # nothing to do, as we do that with make.
 
-makebuilddir/nightingale::
-	./build.sh
-	cp -r $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
-	cp $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
+override_dh_auto_build:
+	echo 'ac_add_options --with-taglib-source=packaged' >> $(CURDIR)/nightingale.config
+	echo 'ac_add_options --enable-libnotify' >> $(CURDIR)/nightingale.config
+	$(CURDIR)/build.sh
+
+	# remove extra license file
+	rm -f $(CURDIR)/compiled/dist/xulrunner/LICENSE
+
+	# correct permissions of files that were incorrectly marked as executable
+	chmod a-x $(CURDIR)/compiled/dist/icons/updater.png
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.aff`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.chk`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.css`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.dic`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.dtd`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.gif`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.html`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.ini`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.js`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.jsm`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.png`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.properties`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.rdf`
+	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.so`
+
+override_dh_auto_test:
+	# This isn't a build with enabled tests.
+	# dh_auto_test would make the build stop with an error warning.
+	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
+
+override_dh_shlibdeps:
+	# using dh_shlibdeps with -l AND -L prevents the unnecessary dependency of libnspr4
+	dh_shlibdeps -Lnightingale -l$(CURDIR)/compiled/usr/lib/nightingale/xulrunner
+
+override_dh_auto_clean:
+	dh_auto_clean -- clobber
+
+override_dh_clean:
+    dh_clean $(CURDIR)/nightingale.config $(CURDIR)/config.log

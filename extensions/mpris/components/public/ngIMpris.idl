@@ -1,0 +1,106 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/*
+ * Written by Logan F. Smyth Š 2009
+ * http://logansmyth.com
+ * me@logansmyth.com
+ */
+
+
+#include "nsISupports.idl"
+
+interface ngIDbusConnection;
+
+[scriptable, uuid(bc3f9c62-9a5f-47e8-a00f-49d80f3bb6c9)]
+interface ngIMethodHandler : nsISupports
+{
+  void handleMethod(in string interface_name, in string path, in string member);
+};
+
+
+[scriptable, uuid(a8159f8d-7970-40d0-bd08-8d0adf69e435)]
+interface ngIMprisService : ngIMethodHandler
+{
+  attribute boolean debug_mode;
+  void initialize();
+  void uninit();
+};
+
+
+[scriptable, uuid(4c809340-0f6f-4122-b242-d4e900bed92b)]
+interface ngIDbusConnection : nsISupports
+{
+  attribute boolean debug_mode;
+    
+  long init(in string name);
+  void setMatch(in string match);
+  void check();
+  long end();
+
+  void prepareMethodCall(in string dest, in string path, in string inter, in string name);
+  void sendMethodCall();
+  
+  void prepareSignal(in string path, in string inter, in string name);
+  void sendSignal();
+  
+  void setMethodHandler(in ngIMethodHandler handler);
+
+  PRInt64 getInt64Arg();
+  boolean getBoolArg();
+  string getStringArg();
+  string getObjectPathArg();
+  double getDoubleArg();
+  
+  void setUInt32Arg(in unsigned long val);
+  void setInt32Arg(in long val);
+  void setUInt16Arg(in unsigned short val);
+  void setStringArg(in string val);
+//  void setStringArg(in AString val);
+  void setDictSSEntryArg(in string key, in AString val);
+  void setDictSOEntryArg(in string key, in string val);
+  void setDictSIEntryArg(in string key, in unsigned long val);
+  void setDictSI64EntryArg(in string key, in PRInt64 val);
+  void setDictSBEntryArg(in string key, in boolean val);
+  void setDictSDEntryArg(in string key, in double val);
+  void openDictSAEntryArg(in string key);
+  void closeDictSAEntryArg();
+  void openDictSDEntryArg(in string key);
+  void closeDictSDEntryArg();
+  void setBoolArg(in boolean val);
+  void setDoubleArg(in double val);
+  void setArrayStringArg(in string val);
+  void setInt64Arg(in PRInt64 val);
+  void setObjectPathArg(in string val);
+
+  void openDictEntryArray();
+  void closeDictEntryArray();
+
+  void openArray();
+  void closeArray();
+
+  void openStruct();
+  void closeStruct();
+};

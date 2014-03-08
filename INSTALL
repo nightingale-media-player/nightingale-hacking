@@ -1,0 +1,52 @@
+If you don't want to build Nightingale yourself, you can download
+prebuilt binaries form http://getnightingale.com.
+
+========================================================================
+1. Prepare Build Envoironment:
+========================================================================
+Make sure you have all dependencies to build Nightingale installed and
+added the wished configuration options. For further information, please
+check out the README.
+
+========================================================================
+2. Build and Install Nightingale:
+========================================================================
+
+Type the following commands into any console with the context of the
+source folder:
+
+    $ ./build.sh
+    $ sudo make install
+
+If you are on Windows or Mac OS X, the `sudo make install` command will
+not work. You will find an installed in the compiled/dist folder.
+
+========================================================================
+A. On Updating
+========================================================================
+
+By installing Nightingale to your system, Nightingale can no longer
+update itself. This is most likely deserved, as updates would replace
+self-built binaries with pre-built binaries. You will still receive a
+notification if an update is available, but applying it will fail.
+
+In order to update your Nightingale installation, you will have to
+redownload the source code of Nightingale, build and install it again.
+
+If you want automatic updates, specify a `DESTDIR` inside your home.
+Example:
+    $ make DESTDIR=/home/user/ngale install
+
+However this currently will not install Nightingale so you can launch it
+with the command `nightingale` from the console nor does it add it to
+your system's menu.
+
+Alternatively you can alter `libdir` to a location inside your
+homefolder with something along the lines of
+    $ make libdir=/home/user/ngale install
+
+Now only what normally would be installed to /usr/lib will be
+installed to you home folder.
+
+If you use sudo to install Nightingale to your homefolder updates will
+still not work.

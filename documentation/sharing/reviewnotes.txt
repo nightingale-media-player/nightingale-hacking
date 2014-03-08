@@ -1,0 +1,199 @@
+Firefox addons developer guide
+https://developer.mozilla.org/En/Firefox_addons_dev_guide
+
+Here are some files from where some of the stuff was copied:
+app\content\bindings\playerControls.xml
+app\content\bindings\playlist.xml
+app\content\xul\playQueue.xul
+
+And the main player xul file, might just be interesting to see:
+feathers\purplerain\chrome\content\xul\mainplayer.xul
+
+xul = ui description
+binding via css
+xbl = lib
+
+chrome/content
+jar.mn.in
+- "content" relative path mapping to chrome://sharing/content URI
+- "resource" relative path mapping to resource: URI
+- relative path to skin %skin/
+- relative path to locales
+- specify xul overlays
+
+chrome/content/push/bindings/playerControls.xml (XBL)
+#device-button-base
+- knows what device it belongs to
+- needs to implement destroy because xbl destructor is not called when expected
+*** perhaps remove onStateReceived because it is empty implementation and there is no imminent demand for common functionality
+#playpause-button
+copy existing SB playlist button xbl. Could not extend because content cannot be overridden-changed in xbl, only implementation (most probably the context menu requirement, Arne does not remember exactly :))
+constructor replaces onDeviceStateReceived of sbSharingPushMediaRendererListener
+click events just emit another device-state-specific event and wait for anyone to take over
+onStateReceived : handling state received from the device
+#back-button
+#forward-button
+*** empty mouse events
+*** only two extenders of the device-button-base, functionality may be rolled in somehow (and save some length of xbl)
+"command" > xul automatic for button click
+#stop-button (most probably obsolete)
+#repeat-button
+again a copy for the same reason as #playpause-button
+*** duplicate functionality in event.target.setAttribute("hidden", true);
+#device-info
+*** replace xul:stack with xul:box, stack is not needed anymore (no more spinner)
+*** onStateReceived clean up the redundant condition by using formatState
+#volume-slider
+volume and mute too
+unbind from driving the base SB playlist controls
+*** onSoundVolumeReceived : correct this => self
+#playpos-slider
+original progress-slider does not call event handlers (contrary to volume-slider) only posts events so playpos-slider must subscribe its own handlers
+#play-position
+@todo understand the fraction logic
+#device-busy-box
+spinner repository and switching logic
+#device-controls
+*** Check if onPlayPositionReceived should really be here or directly in playPosition widget
+*** Check if device-controls need to listen for event from all device control buttons just to bubble up
+#device-playlist
+@todo have a look in the base class (see extends="")
+#device
+*** remove obsolete onvaluereceived
+*** check if device events bubble without forwarding explicitly. if so, remove subscribing event listeners
+
+for push points to 
+chrome/content/push/pushController.xul
+<window id="playqueue-pane">
+refers to the id of existing play queue window telling mozilla that it is an overlay
+sharing-push-device-menu is an element identifier for JS
+<script> tag -> sort of main() entry point for the addon
+
+->scripts/pushController.js
+// bootstrap load function
+// initialize/finalize service
+
+->src/push/sbPushControllerService.js
+holds observer for sharing events
+
+*** play/stop/pause looks like a dead code (doesn't do anything meaningful and similar methods implemented elsewhere)
+
+->modules/MessageLoop.jsm
+runs in UIManager, PushControllerService
+
+->modules/UIManager.jsm
+adding/removing devices in UI
+
+->modules/Device.jsm
+(controller)
+used in UIManager
+contains DeviceUI
+
+->modules/DeviceUI.jsm
+(view)
+contained in Device
+*** change the timer driving logic. Now it adds the X timeout on top of any time taken by the device to respond. It should be only the time left to the nearest tick (or immediately in case the tick has been over)
+
+->modules/Timers.jsm
+->modules/Tools.jsm
+
+modules/
+sbSharingPushMediaRendererListener.jsm
+is a default implementation of sbISharingPushMediaRendererListener
+
+
+
+
+*** fill in just a simple list of files from which the logic/content in SB implementation was copied/based upon
+
+xul = ui description
+binding via css
+xbl = lib
+
+chrome/content
+jar.mn.in
+- "content" relative path mapping to chrome://sharing/content URI
+- "resource" relative path mapping to resource: URI
+- relative path to skin %skin/
+- relative path to locales
+- specify xul overlays
+
+chrome/content/push/bindings/playerControls.xml (XBL)
+#device-button-base
+- knows what device it belongs to
+- needs to implement destroy because xbl destructor is not called when expected
+*** perhaps remove onStateReceived because it is empty implementation and there is no imminent demand for common functionality
+#playpause-button
+copy existing SB playlist button xbl. Could not extend because content cannot be overridden-changed in xbl, only implementation (most probably the context menu requirement, Arne does not remember exactly :))
+constructor replaces onDeviceStateReceived of sbSharingPushMediaRendererListener
+click events just emit another device-state-specific event and wait for anyone to take over
+onStateReceived : handling state received from the device
+#back-button
+#forward-button
+*** empty mouse events
+*** only two extenders of the device-button-base, functionality may be rolled in somehow (and save some length of xbl)
+"command" > xul automatic for button click
+#stop-button (most probably obsolete)
+#repeat-button
+again a copy for the same reason as #playpause-button
+*** duplicate functionality in event.target.setAttribute("hidden", true);
+#device-info
+*** replace xul:stack with xul:box, stack is not needed anymore (no more spinner)
+*** onStateReceived clean up the redundant condition by using formatState
+#volume-slider
+volume and mute too
+unbind from driving the base SB playlist controls
+*** onSoundVolumeReceived : correct this => self
+#playpos-slider
+original progress-slider does not call event handlers (contrary to volume-slider) only posts events so playpos-slider must subscribe its own handlers
+#play-position
+@todo understand the fraction logic
+#device-busy-box
+spinner repository and switching logic
+#device-controls
+*** Check if onPlayPositionReceived should really be here or directly in playPosition widget
+*** Check if device-controls need to listen for event from all device control buttons just to bubble up
+#device-playlist
+@todo have a look in the base class (see extends="")
+#device
+*** remove obsolete onvaluereceived
+*** check if device events bubble without forwarding explicitly. if so, remove subscribing event listeners
+
+for push points to 
+chrome/content/push/pushController.xul
+<window id="playqueue-pane">
+refers to the id of existing play queue window telling mozilla that it is an overlay
+sharing-push-device-menu is an element identifier for JS
+<script> tag -> sort of main() entry point for the addon
+
+->scripts/pushController.js
+// bootstrap load function
+// initialize/finalize service
+
+->src/push/sbPushControllerService.js
+holds observer for sharing events
+
+*** play/stop/pause looks like a dead code (doesn't do anything meaningful and similar methods implemented elsewhere)
+
+->modules/MessageLoop.jsm
+runs in UIManager, PushControllerService
+
+->modules/UIManager.jsm
+adding/removing devices in UI
+
+->modules/Device.jsm
+(controller)
+used in UIManager
+contains DeviceUI
+
+->modules/DeviceUI.jsm
+(view)
+contained in Device
+*** change the timer driving logic. Now it adds the X timeout on top of any time taken by the device to respond. It should be only the time left to the nearest tick (or immediately in case the tick has been over)
+
+->modules/Timers.jsm
+->modules/Tools.jsm
+
+modules/
+sbSharingPushMediaRendererListener.jsm
+is a default implementation of sbISharingPushMediaRendererListener

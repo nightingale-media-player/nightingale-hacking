@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "ทั่วไป">
+<!ENTITY mtprefs.info "ศิลปิน">
+<!ENTITY mtprefs.review "คำวิจารณ์">
+<!ENTITY mtprefs.rss "ข่าว">
+<!ENTITY mtprefs.photo "รูปภาพ">
+<!ENTITY mtprefs.flash "วิดีโอ">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "แท็บปริยาย">
+<!ENTITY mtprefs.defaulttab.help "เมื่อเปิด mashTape:">
+<!ENTITY mtprefs.show.info "แสดงข้อมูลศิลปิน">
+<!ENTITY mtprefs.show.review "แสดงคำวิจารณ์">
+<!ENTITY mtprefs.show.rss "แสดงข่าว">
+<!ENTITY mtprefs.show.photo "แสดงรูปภาพ">
+<!ENTITY mtprefs.show.flash "แสดงวิดีโอ">
+<!ENTITY mtprefs.autohide "ซ่อนอัตโนมัติ">
+<!ENTITY mtprefs.autohide.help "ซ่อนบานหน้าต่าง mashTape อัตโนมัติเมื่อท่านต้องการเข้าเว็บ">
+<!ENTITY mtprefs.services "เซอร์วิส">
+<!ENTITY mtprefs.getmore "เพิ่มเซอร์วิสอื่นให้กับ mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "การตั้งค่าแท็บแสดงข้อมูลศิลปิน">
+<!ENTITY mtprefs.tab.review "การตั้งค่าแท็บแสดงคำวิจารณ์">
+<!ENTITY mtprefs.tab.rss "การตั้งค่าแท็บแสดงข่าว">
+<!ENTITY mtprefs.tab.photo "การตั้งค่าแท็บแสดงรูปภาพ">
+<!ENTITY mtprefs.tab.flash "การตั้งค่าแท็บแสดงวิดีโอ">
+<!ENTITY mtprefs.tab.help "แสดงแท็บนี้ใน mashTape">
+<!ENTITY mtprefs.single "บานหน้าต่างนี้รองรับการเปิดเนื้อหาเดียวเท่าั้นนั้น โปรดเลือกเซอร์วิสนั้นจากรายการด้างล่าง">
+<!ENTITY mtprefs.multiple "บานหน้าต่างนี้รองรับการแสดงเนื้อหาหลายรูปแบบ โปรดเลือกเซอร์วิสเหล่านั้นจากรายการด้านล่าง">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "ข้อมูลที่ถูกแปลภาษา">
+<!ENTITY mtprefs.tab.info.autolocalise.help "รับข้อมูลเกี่ยวกับศิลปินที่หากมีการแปลโดยอัตโนมัติ">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "ความเร็วในการเลื่อนรูป">
+<!ENTITY mtprefs.tab.photo.faster "เร็วขึ้น">
+<!ENTITY mtprefs.tab.photo.slower "ช้าลง">
+<!ENTITY mtprefs.tab.photo.keywords.caption "คำค้นหา">
+<!ENTITY mtprefs.tab.photo.keywords "คำค้นหาเพิ่มเติม:">
+<!ENTITY mtprefs.tab.photo.keywords.help "ท่านสามารถเลือกคำค้นเพิ่มเติมจากผู้ให้บริการฝากภาพของท่านได้ โดยให้แยกคำค้นนั้นด้วยช่องว่าง เช่น live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "เล่นวิดีโออัตโนมัติ">
+<!ENTITY mtprefs.tab.video.autoplay.help "เปิดตัวเลือกนี้เพื่อให้รวมผลลัพธ์ของผู้ให้บริการฝากวิดีโอและเล่นอัตโนมัติติดต่อกันไป ตัวเลือกนี้ค่อนข้างมีประโยชน์สำหรับการเล่นต่อเนื่องเช่น เล่น มิวสิกวิดีโอของ MTV ทั้งหมดเป็นต้น หากวิดีโอไม่ได้ถูกรวมมาก็ไม่สามารถใช้ตัวเลือกนี้ได้">

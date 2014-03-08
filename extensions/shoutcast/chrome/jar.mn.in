@@ -7,19 +7,18 @@ shoutcast.jar:
 % locale shoutcast-radio en-GB %locale/en-GB/
 #% locale shoutcast-radio es-CL %locale/es-CL/
 % locale shoutcast-radio es-ES %locale/es-ES/
-#% locale shoutcast-radio eu-ES %locale/eu-ES/
+#% locale shoutcast-radio eu %locale/eu/
 % locale shoutcast-radio fr %locale/fr/
-% locale shoutcast-radio hu-HU %locale/hu-HU/
+% locale shoutcast-radio hu %locale/hu/
 % locale shoutcast-radio it %locale/it/
 % locale shoutcast-radio ja %locale/ja/
-% locale shoutcast-radio kw-GB %locale/kw-GB/
+% locale shoutcast-radio kw %locale/kw/
 % locale shoutcast-radio nl %locale/nl/
 % locale shoutcast-radio pl %locale/pl/
 % locale shoutcast-radio pt-BR %locale/pt-BR/
 % locale shoutcast-radio pt-PT %locale/pt-PT/
 % locale shoutcast-radio ru %locale/ru/
 % locale shoutcast-radio sl %locale/sl/
-% locale shoutcast-radio sl-SI %locale/sl-SI/
 % locale shoutcast-radio sr %locale/sr/
 % locale shoutcast-radio sv-SE %locale/sv-SE/
 #% locale shoutcast-radio tr %locale/tr/
@@ -32,4 +31,7 @@ shoutcast.jar:
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://shoutcast-radio/content/scripts-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://shoutcast-radio/content/faceplate-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://shoutcast-radio/content/faceplate-overlay.xul
+* content/directory.js (content/directory.js)
+* content/favourites.js (content/favourites.js)
+* content/main.js (content/main.js)
 @include_all_to

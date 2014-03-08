@@ -237,7 +237,7 @@ sbHotkeyService.prototype =
   ///////////////////////////////////////////////////////////////////
   _init: function() {
     if(!HotkeyManager) {
-      Cu.reportError("Global Hotkey Manager is not available.");
+      //Cu.reportError("Global Hotkey Manager is not available.");
       return;
     }
 

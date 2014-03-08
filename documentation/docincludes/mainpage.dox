@@ -1,0 +1,32 @@
+/*!
+\mainpage Welcome to the Nigntingale API documentation
+
+\section docintro Documenting Nightingale
+
+Doxygen documentation is generated from all source files (*.cpp, *.dox, *.h, *.idl, *.js) within the directories ./app, ./components, ./dependencies/vendor, ./bindings, ./extensions, and ./documentation/docincludes
+
+\subsection creatingdocs Creating Documentation
+
+We generally use the <a href="https://developer.mozilla.org/en-US/docs/Developer_Guide/Interface_development_guide/Commenting_IDL_for_better_documentation">Mozilla IDL commentary style guide</a>.
+
+See the <a href="http://www.stack.nl/~dimitri/doxygen/manual/index.html">Doxygen manual</a> for general Doxygen reference.
+
+\subsection customcommands Custom Doxygen Commands
+
+\subsubsection cidcmd \\cid
+
+Usage \\cid {UUID}
+
+This command generates the following output:
+
+\cid {UUID}
+
+\subsubsection contractidcmd \\contractid
+
+Usage \\contractid @domain.tld/component/feature;version
+
+This command generates the following output:
+
+\contractid \@domain.tld/component/feature;version
+
+*/

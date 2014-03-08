@@ -103,7 +103,7 @@ function runTest () {
 
   while (addons.hasMoreElements()) {
     var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-    if (addon.Value == ADDON_NS("coppery@getnightingale.com")) {
+    if (addon.Value == ADDON_NS("bluemonday@getnightingale.com")) {
       coppery = addon;
       break;
     }

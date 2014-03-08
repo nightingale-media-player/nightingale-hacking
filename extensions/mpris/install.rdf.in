@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:type>2</em:type>
+    <em:name>MPRIS</em:name>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:creator>Logan Smyth</em:creator>
+    <em:contributor>Martin Giger</em:contributor>
+    <em:description>Adds support for the MPRIS media player communication/control protocol</em:description>
+    <em:iconURL>chrome://mpris/content/icon.png</em:iconURL>
+    <em:homepageURL>http://logansmyth.com/project/mpris-songbird-extension</em:homepageURL>
+    <em:targetPlatform>Linux</em:targetPlatform>
+    
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+
+  </Description>
+</RDF>

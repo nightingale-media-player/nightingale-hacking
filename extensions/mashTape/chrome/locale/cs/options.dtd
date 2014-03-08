@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Hlavní">
+<!ENTITY mtprefs.info "Informace o umělci">
+<!ENTITY mtprefs.review "Recenze">
+<!ENTITY mtprefs.rss "Novinky">
+<!ENTITY mtprefs.photo "Fotografie">
+<!ENTITY mtprefs.flash "Videa">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Výchozí panel">
+<!ENTITY mtprefs.defaulttab.help "Po spuštění mashTape:">
+<!ENTITY mtprefs.show.info "Zobrazit informace o umělci">
+<!ENTITY mtprefs.show.review "Zobrazit recenze">
+<!ENTITY mtprefs.show.rss "Zobrazit novinky">
+<!ENTITY mtprefs.show.photo "Zobrazit fotografie">
+<!ENTITY mtprefs.show.flash "Zobrazit videa">
+<!ENTITY mtprefs.autohide "Automaticky skrývat">
+<!ENTITY mtprefs.autohide.help "Automaticky skrýt panel mashTape při přepnutí na webovou stránku.">
+<!ENTITY mtprefs.services "Služby">
+<!ENTITY mtprefs.getmore "Získat více služeb pro mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Nastavení panelu Informace o umělci">
+<!ENTITY mtprefs.tab.review "Nastavení panelu Recenze">
+<!ENTITY mtprefs.tab.rss "Nastavení panelu Novinky">
+<!ENTITY mtprefs.tab.photo "Nastavení panelu Fotografie">
+<!ENTITY mtprefs.tab.flash "Nastavení panelu Videa">
+<!ENTITY mtprefs.tab.help "Zobrazit tento panel v mashTape">
+<!ENTITY mtprefs.single "Tento panel podporuje zobrazení obsahu pouze z jedné služby v daný moment. Prosím vyberte službu z následujícího seznamu.">
+<!ENTITY mtprefs.multiple "Tento panel podporuje zobrazení obsahu z více služeb zároveň. Prosím vyberte služby z následujícího seznamu.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Lokalizované informace">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automaticky získávat lokalizované informace o umělci, jsou-li dostupné.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Rychlost rolování fotografií">
+<!ENTITY mtprefs.tab.photo.faster "Rychleji">
+<!ENTITY mtprefs.tab.photo.slower "Pomaleji">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Search Keywords">
+<!ENTITY mtprefs.tab.photo.keywords "Additional search keywords:">
+<!ENTITY mtprefs.tab.photo.keywords.help "You can specify additional keywords to be appended to your photo provider search.  Keywords should be separated by spaces, example: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Automaticky přehrát videa">
+<!ENTITY mtprefs.tab.video.autoplay.help "Povolením této volby umožníte poskytovatelům videa automaticky přehrávat videa jedno po druhém. To je užitečné například pro automatické přehrávání všech hudebních videí z MTV. Tato funkce funguje jen s poskytovateli videa, kteří jsou součástí mashTape.">

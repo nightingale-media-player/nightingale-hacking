@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://mlyrics/skin/options.css" type="text/css"?>
+
+<!DOCTYPE page [
+    <!ENTITY % sbDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+    %sbDTD;
+    <!ENTITY % libnotify-notifs-DTD SYSTEM "chrome://libnotify-notifs/locale/overlay.dtd">
+    %libnotify-notifs-DTD;
+]>
+
+<prefwindow id="libnotify-notifs-prefs" 
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            title="&libnotify-notifs.options.title;">
+
+    <prefpane label="&libnotify-notifs.options.title;">
+        <preferences>
+            <preference id="pref_notificationTimeout" 
+                        name="extensions.libnotify-notifs.notificationTimeout" 
+                        type="int" />
+
+            <preference id="pref_enableNotifications" 
+                        name="extensions.libnotify-notifs.enableNotifications"
+                        type="bool" />
+        </preferences>
+
+        <groupbox>
+            <caption label="General"/>
+
+            <textbox preference="pref_notificationTimeout" 
+                     label="&libnotify-notifs.options.notificationTimeout;" 
+                     min="1" max="30000" />
+
+            <checkbox preference="pref_enableNotifications" 
+                      label="&libnotify-notifs.options.enableNotifications;" />
+        </groupbox>
+    </prefpane>
+
+</prefwindow>

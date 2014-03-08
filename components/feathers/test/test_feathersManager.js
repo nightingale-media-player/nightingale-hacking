@@ -39,9 +39,9 @@ var gBundledSkins = []; // Empty, will get filled in testAddonMetadataReader
 var gBundledLayouts = []; // Empty, will get filled in testAddonMetadataReader
 
 // These skins / Layouts are required to be registered
-var gRequiredSkinInternalNames = [ "coppery" ];
-var gRequiredLayoutURLs = [ "chrome://coppery/content/xul/mainplayer.xul",
-                            "chrome://coppery/content/xul/miniplayer.xul" ];
+var gRequiredSkinInternalNames = [ "bluemonday" ];
+var gRequiredLayoutURLs = [ "chrome://bluemonday/content/xul/mainplayer.xul",
+                            "chrome://bluemonday/content/xul/miniplayer.xul" ];
 
 // Preference constants for default layout/skin/feather
 // @see sbFeathersManager.js for information about each pref.

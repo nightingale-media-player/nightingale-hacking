@@ -6,5 +6,14 @@ songbird.jar:
 #
 # Include everything in this directory, and preprocess bindings.css
 @include_all_to content/songbird/bindings/
+# metrics preprocessing
+* content/songbird/bindings/browser/sbTabBrowserTab.xml (browser/sbTabBrowserTab.xml)
+* content/songbird/bindings/firstRun/firstRunFeedback.xml (firstRun/firstRunFeedback.xml)
+* content/songbird/bindings/sbCommands.xml      (sbCommands.xml)
+* content/songbird/bindings/sbSearch.xml        (sbSearch.xml)
+* content/songbird/bindings/servicePane.xml     (servicePane.xml)
+* content/songbird/bindings/servicePane.xml     (servicePane.xml)
+* content/songbird/bindings/smartSplitter.xml   (smartSplitter.xml)
+# 
 * content/songbird/bindings/bindings.css (bindings.css)
 * content/songbird/bindings/dialog.xml   (dialog.xml)

@@ -1,0 +1,127 @@
+#
+#=BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# http://getnightingale.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+# 
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+# This makefile is cobbled together from different makefiles involving the GStreamer mediacore. But it works.
+
+CPP_SRCS = mozillaplugin.cpp \
+           mozillasink.cpp \
+           mozillasrc.cpp \
+           $(NULL)
+
+ifdef MEDIA_CORE_GST_SYSTEM
+   CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
+
+   CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
+                       $(NULL)
+else
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+    $(NULL)
+
+   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+      # macosx or windows
+      CPP_EXTRA_INCLUDES += \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+       $(NULL)
+   endif
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+   CMM_EXTRA_INCLUDES = $(CPP_EXTRA_INCLUDES)
+endif
+
+# The dynamic gstreamer libs on windows have "-0" appended to their names
+ifeq (windows,$(SB_PLATFORM))
+   GST_LIB_SUFFIX += -0
+endif
+
+DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-rpath,$(topsrcdir)/compiled/dist/xulrunner
+
+DYNAMIC_LIB_EXTRA_IMPORTS = xul \
+                            plds4 \
+                            gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstapp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            $(NULL)
+
+# Use system headers for MEDIA_CORE_GST_SYSTEM only
+ifdef MEDIA_CORE_GST_SYSTEM
+   CPP_EXTRA_FLAGS += $(GSTREAMER_CFLAGS) \
+                      $(NULL)
+
+   DYNAMIC_LIB_RAW_IMPORTS += $(GSTREAMER_LIBS) \
+                              $(NULL)
+else
+   DYNAMIC_LIB_EXTRA_IMPORTS += gstreamer-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                                $(NULL)
+
+   DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+    $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib \
+    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib \
+    $(NULL)
+
+   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+      # macosx or windows
+      DYNAMIC_LIB_EXTRA_IMPORTS += intl \
+                                   iconv \
+                                   glib-$(GLIB_VERSION) \
+                                   gmodule-$(GLIB_VERSION) \
+                                   gobject-$(GLIB_VERSION) \
+                                   gthread-$(GLIB_VERSION) \
+                                   $(NULL)
+
+      DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib \
+       $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib \
+       $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib \
+       $(NULL)
+   else
+       # everything else
+       DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
+                                  -lX11 \
+                                  $(NULL)
+   endif
+endif
+
+CPP_EXTRA_FLAGS += "-fshort-wchar"
+# The GStreamer headers trigger this warning on MSVC; it's harmless
+ifeq (windows,$(SB_PLATFORM))
+   CPP_EXTRA_FLAGS += "-wd4244"
+endif
+
+DYNAMIC_LIB = gstmozilla
+IS_GSTLIB = 1
+
+include $(topsrcdir)/build/rules.mk

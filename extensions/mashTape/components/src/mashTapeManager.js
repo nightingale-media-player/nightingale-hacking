@@ -15,6 +15,14 @@ function mashTapeManager() {
 	this._listeners = [];
 }
 
+
+/**
+\brief Manager class for mashTape
+
+\class mashTapeManager
+\cid {066D6E67-39FE-429B-80D8-99A1CEFF3934}
+\contractid \@songbirdnest.com/mashTape/manager;1
+*/
 mashTapeManager.prototype.constructor = mashTapeManager;
 mashTapeManager.prototype = {
 	classDescription: DESCRIPTION,

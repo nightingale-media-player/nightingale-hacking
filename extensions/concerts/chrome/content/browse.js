@@ -20,9 +20,11 @@ if (typeof(gBrowser) == "undefined")
       .getService(Ci.nsIWindowMediator)
       .getMostRecentWindow("Songbird:Main").window.gBrowser;
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
         .createInstance(Ci.sbIMetrics);
+#endif
 
 function flushDisplay() {
   if (typeof(Components) == "undefined")
@@ -123,7 +125,9 @@ ConcertTicketing.init = function() {
   this.skSvc.getConcertCount(
       this.filterLibraryArtists, this);
 
+#ifdef METRICS_ENABLED
   gMetrics.metricsInc("concerts", "servicepane.clicked", "");
+#endif
   // Register our UI display callback with the Songkick object
   if (!this.skSvc.hasDisplayCallback()) {
     var displayCB = new this.displayCallback(this);
@@ -382,7 +386,9 @@ ConcertTicketing.openProviderPage = function() {
 ConcertTicketing.playArtist = function(e) {
   var artistName = this.getAttribute("artistName");
   
+#ifdef METRICS_ENABLED
   gMetrics.metricsInc("concerts", "browse.view.artist.playartist", "");
+#endif
   var list = songbirdMainWindow.Concerts.touringPlaylist;
   var view = list.createView();
   var cfs = view.cascadeFilterSet;
@@ -655,7 +661,9 @@ ConcertTicketing.onBrowseDatesReady = function(concerts) {
   var todayDate = today.getDate();
   var todayYear = today.getFullYear();
 
+#ifdef METRICS_ENABLED
   gMetrics.metricsInc("concerts", "browse.view.date", "");
+#endif
   while (concerts.hasMoreElements()) {
     if (this.abortDrawing)
       return;
@@ -833,7 +841,9 @@ ConcertTicketing.onBrowseArtistsReady = function(concerts) {
   var todayDate = today.getDate();
   var todayYear = today.getFullYear();
 
+#ifdef METRICS_ENABLED
   gMetrics.metricsInc("concerts", "browse.view.artist", "");
+#endif
   while (concerts.hasMoreElements()) {
     if (this.abortDrawing)
       return;
@@ -997,7 +1007,9 @@ ConcertTicketing.createLetterBlock = function(letter) {
 
 ConcertTicketing.openDateLink = function(e) {
   var citypage=Application.prefs.getValue("extensions.concerts.citypage", "");
+#ifdef METRICS_ENABLED
   gMetrics.metricsInc("concerts", "browse.link.datebox", "");
+#endif
   if (citypage) {
     var year = this.getAttribute("year");
     var month = parseInt(this.getAttribute("month")) + 1;
@@ -1191,8 +1203,10 @@ ConcertTicketing.createRowDateView = function(concert) {
  * do metrics reporting, in addition to just opening the link
  ***************************************************************************/
 ConcertTicketing.openAndReport = function(e) {
+#ifdef METRICS_ENABLED
   var metric = this.getAttribute("metric-key");
   gMetrics.metricsInc("concerts", "browse.link." + metric, "");
+#endif
   gBrowser.loadOneTab(this.href);
   e.preventDefault();
   return false;
@@ -1408,11 +1422,12 @@ ConcertTicketing.changeFilter = function(updateCheckbox) {
   this.filterLibraryArtists = !this.filterLibraryArtists;
   Application.prefs.setValue("extensions.concerts.filterLibraryArtists",
       this.filterLibraryArtists);
+#ifdef METRICS_ENABLED
   if (this.filterLibraryArtists)
     gMetrics.metricsInc("concerts", "filter.library", "");
   else
     gMetrics.metricsInc("concerts", "filter.all", "");
-
+#endif
   /* checks the filter checkbox (for the path taken when there are no
      results in the user's city and they click the button to see
      all concerts, rather than checking the checkbox themselves */

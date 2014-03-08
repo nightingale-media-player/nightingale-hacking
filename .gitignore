@@ -1,3 +1,5 @@
+*~
+*.anjuta*
 dependencies/linux-*
 .DS_Store
 dependencies/vendor
@@ -5,6 +7,10 @@ dependencies/*.zip
 dependencies/*.tar.???
 dependencies/*.tar.????
 dependencies/**/*
+debian/nightingale
+debian/*.debhelper.log
+debian/*.substvars
+debian/files
 tools/win32/reshacker/ResHacker.ini
 tools/win32/reshacker/ResHacker.log
 songbirdconfig.out
@@ -27,3 +33,6 @@ config.log
 conftest.o
 confdefs.h
 thumbs.db
+.directory
+documentation/api/*
+.bzr

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<!-- ***************************************************************************
+ *******************************************************************************
+ *
+ *
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ *
+ *
+ *************************************************************************** -->
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:NC="http://home.netscape.com/NC-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:type>2</em:type>
+    <em:name>libnotify-notifs</em:name>
+    <em:targetPlatform>Linux</em:targetPlatform>
+    <em:description>Notifications through libnotify</em:description>
+    <!-- <em:iconURL>chrome://libnotify-notifs/skin/icon.png</em:iconURL> -->
+    <em:optionsURL>chrome://libnotify-notifs/content/options.xul</em:optionsURL>
+    <em:creator>johnmurrayvi</em:creator>
+
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+</RDF>

@@ -29,18 +29,8 @@
  */
 
 Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
-
 const LOG = DebugUtils.generateLogFunction("searchHandler", 2);
 
-// Searches using engines tagged with "songbird:internal" are not
-// sent to the browser
-const SEARCHENGINE_TAG_INTERNAL = "songbird:internal";
-
-// Enable live search for engines tagged with "songbird:livesearch"
-const SEARCHENGINE_TAG_LIVESEARCH = "songbird:livesearch";
-
-// Alias identifying the Songbird search engine
-const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
 
 /**
  * \brief Songbird Search Handler.
@@ -59,12 +49,14 @@ const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
  */
 const gSearchHandler = {
 
+  // name identifying the standard library search, gets adjusted in init
+  SEARCHENGINE_NAME_SONGBIRD: "Nightingale",
 
   /**
    * Register search handler listeners
    */
   init: function SearchHandler_init() {
-
+     
     // If there is no gBrowser, then there is nothing
     // for us to do.
     if (typeof gBrowser == 'undefined') {
@@ -88,13 +80,16 @@ const gSearchHandler = {
     document.addEventListener("search",
                               function (event) { gSearchHandler.onSearchEvent(event); },
                               true);
-
-    // Show the songbird search engine
-    // (All songbird: tagged engines are hidden on startup)
-    var songbirdEngines = this.getSongbirdSearchEngines();
-    for (let i = 0; i < songbirdEngines.length; ++i) {
-      songbirdEngines[i].hidden = false;
-    }
+    
+    // get the brand strings to get the name of the library search
+    var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
+    var brand = stringBundleService.createBundle("chrome://branding/locale/brand.properties");
+    this.SEARCHENGINE_NAME_SONGBIRD = brand.GetStringFromName("brandShortName");
+    
+    this.internalSearchService = Cc["@getnightingale.com/Nightingale/internal-search-service;1"].getService(Ci.ngIInternalSearchEnginesService);
+    
+    // register the library search and activate live search
+    this.internalSearchService.registerInternalSearchEngine(this.SEARCHENGINE_NAME_SONGBIRD,"songbird-internal-search",true);
   },
 
 
@@ -103,6 +98,7 @@ const gSearchHandler = {
    */
   uninit: function SearchHandler_uninit() {
     // Hmm, nothing to do?
+    this.internalSearchService.unregisterInternalSearchEngine(this.SEARCHENGINE_NAME_SONGBIRD);
   },
 
 
@@ -226,8 +222,8 @@ const gSearchHandler = {
 
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
-    if (currentEngine.tags &&
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+    var engineEntry = this.internalSearchService.getInternalSearchEngine(currentEngine.name);
+    if (engineEntry!==null)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
@@ -235,7 +231,7 @@ const gSearchHandler = {
       // Special case for our internal search. Other people can add their
       // own listeners as well.
       var contractID =
-        "@songbirdnest.com/Songbird/" + currentEngine.alias + ";1";
+        "@songbirdnest.com/Songbird/" + engineEntry.contractID + ";1";
       if (contractID in Cc) {
         var searchEngine = Cc[contractID].getService(Ci.sbISearchEngine);
         searchEngine.doSearch(window, searchBar.value);
@@ -382,14 +378,14 @@ const gSearchHandler = {
    * Returns the Songbird internal search engine
    */
   getSongbirdSearchEngine:
-    function SearchHandler_getSongbirdSearchEngine(aAlias) {
-    if (!aAlias)
-      aAlias = SEARCHENGINE_ALIAS_SONGBIRD;
+    function SearchHandler_getSongbirdSearchEngine(aName) {
+    if (!aName||aName=="internal")
+      aName = this.SEARCHENGINE_NAME_SONGBIRD;
     var songbirdEngine = this.getSearchBar()
                              .searchService
-                             .getEngineByAlias(aAlias);
+                             .getEngineByName(aName);
     if (!songbirdEngine) {
-      LOG("\n\nThe Songbird search engine with alias \"" + aAlias +
+      LOG("\n\nThe Songbird search engine with name \"" + aName +
           "\" could not be found.\n");
     }
     return songbirdEngine;
@@ -449,28 +445,28 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
 
     // Save the previous web search engine, used when switch to web search
-    if (!currentEngine.tags ||
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) < 0)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.name)===null)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
     }
 
     // Get the corresponding search engine for the service pane node.
-    var alias = null;
+    var name = null;
     if (gServicePane) {
       // Get the current active node.
       var node = gServicePane.activeNode;
       if (node) {
-        alias = "songbird-" + node.searchtype + "-search";
+        name = node.searchtype;
       }
     }
-    var engine = this.getSongbirdSearchEngine(alias);
-
+    var engine = this.getSongbirdSearchEngine(name);
+    if(engine.name!="")
+        name = engine.name;
+    
     var liveSearchEnabled = false;
-    // Live search is disabled for search engines whose tags do not
-    // contain "livesearch".
-    if (engine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_LIVESEARCH) > -1) {
+    // Live search is disabled for search engines who don't support livesearch
+    if (this.internalSearchService.getInternalSearchEngine(name).liveSearch) {
       liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
     }
@@ -488,7 +484,7 @@ const gSearchHandler = {
     }
 
     // Set the query to match the state of the media page
-    this._syncSearchBarToMediaPage(alias);
+    this._syncSearchBarToMediaPage(name);
 
     searchBar.updateDisplay();
   },
@@ -509,10 +505,9 @@ const gSearchHandler = {
       searchBar.setEngineDisplayText(currentEngine, null);
     }
 
-    // If this engine has no tags or not been tagged as internal,
+    // If this engine has not been registered as internal,
     // we need to restore the engine active prior to us.
-    if (currentEngine.tags &&
-        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+    if (this.internalSearchService.getInternalSearchEngine(currentEngine.name)!==null)
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause
@@ -684,7 +679,7 @@ const gSearchHandler = {
    * the state of the current media list view
    */
   _syncSearchBarToMediaPage:
-    function SearchHandler__syncSearchBarToMediaPage(aAlias) {
+    function SearchHandler__syncSearchBarToMediaPage(aName) {
     // if we are not currently showing a view (iem we're showing a web site)
     // then do not change anything, we want the content of the search bar to
     // persist
@@ -701,7 +696,7 @@ const gSearchHandler = {
     // the current search context.
     var mediaPageName = this._getMediaPageDisplayName();
     if (mediaPageName != "") {
-      var engine = this.getSongbirdSearchEngine(aAlias);
+      var engine = this.getSongbirdSearchEngine(aName);
       searchBar.setEngineDisplayText(engine, mediaPageName);
     }
 
@@ -730,4 +725,3 @@ window.addEventListener("unload",
     gSearchHandler.uninit();
   },
   false);
-
