@@ -40,6 +40,8 @@ override_dh_shlibdeps:
 	# using dh_shlibdeps with -l AND -L prevents the unnecessary dependency of libnspr4
 	dh_shlibdeps -Lnightingale -l$(CURDIR)/compiled/usr/lib/nightingale/xulrunner
 
-clean:
-	rm -rf $(CURDIR)/nightingale.config $(CURDIR)/config.log
+override_dh_auto_clean:
 	dh_auto_clean -- clobber
+
+override_dh_clean:
+    dh_clean $(CURDIR)/nightingale.config $(CURDIR)/config.log
