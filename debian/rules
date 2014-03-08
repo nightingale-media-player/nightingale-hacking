@@ -1,5 +1,9 @@
 #!/usr/bin/make -f
 
+ICONS_DESTDIR = $(CURDIR)/compiled/icons/hicolor
+INSTALL_DATA ?= install -m 644 -T
+SIZES = 16 24 32 48 64 96 128 256 512
+
 %:
 	dh $@ --parallel
 
@@ -9,11 +13,21 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	echo 'ac_add_options --with-taglib-source=packaged' >> $(CURDIR)/nightingale.config
 	echo 'ac_add_options --enable-libnotify' >> $(CURDIR)/nightingale.config
+	echo 'ac_add_options --enable-system-nspr' >> $(CURDIR)/nightingale.config
 	$(CURDIR)/build.sh
 
 	# remove extra license file
 	rm -f $(CURDIR)/compiled/dist/xulrunner/LICENSE
 
+	# remove libnspr, as we use the native one
+	rm -f $(CURDIR)/compiled/dist/xulrunner/libnspr4.so
+
+    # Install application icons
+
+	$(foreach SIZE,$(SIZES),mkdir -p $(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ; \
+	$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale-$(SIZE).png $(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+
+    # Workaround (remove when fixed in deps):
 	# correct permissions of files that were incorrectly marked as executable
 	chmod a-x $(CURDIR)/compiled/dist/icons/updater.png
 	chmod a-x `find $(CURDIR)/compiled/dist/xulrunner/ -name *.aff`
@@ -35,10 +49,6 @@ override_dh_auto_test:
 	# This isn't a build with enabled tests.
 	# dh_auto_test would make the build stop with an error warning.
 	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
-
-override_dh_shlibdeps:
-	# using dh_shlibdeps with -l AND -L prevents the unnecessary dependency of libnspr4
-	dh_shlibdeps -Lnightingale -l$(CURDIR)/compiled/usr/lib/nightingale/xulrunner
 
 override_dh_auto_clean:
 	dh_auto_clean -- clobber
