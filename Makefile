@@ -142,6 +142,7 @@ psdir ?= $(docdir)
 infodir ?= $(datarootdir)/info
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = ${INSTALL} -m 644
+ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
 ifneq (Windows_NT,$(OS))
     ifeq (Darwin,$(UNAME_S))
@@ -154,11 +155,11 @@ ifneq (Windows_NT,$(OS))
                         $(RM) $(DESTDIR)$(bindir)/nightingale &&\
                         $(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
         ifndef DESTDIR
-            POST_INSTALL_CMD = xdg-icon-resource install --novendor --size 512 $(DISTDIR)/chrome/icons/default/default.xpm nightingale &&\
-                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/nightingale.desktop
+            POST_INSTALL_CMD = $(foreach SIZE,$(ICON_SIZES),xdg-icon-resource install --novendor --size $(SIZE) $(TOPSRCDIR)/app/branding/nightingale-$(SIZE).png nightingale ;) \
+                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/installer/common/nightingale.desktop
 
-            POST_UNINSTALL_CMD = xdg-icon-resource uninstall --size 512 nightingale &&\
-                                 xdg-desktop-menu uninstall $(TOPSRCDIR)/debian/nightingale.desktop
+            POST_UNINSTALL_CMD = $(foreach SIZE,$(ICON_SIZES),xdg-icon-resource uninstall --size $(SIZE) nightingale ;) \
+                                 xdg-desktop-menu uninstall $(TOPSRCDIR)/installer/common/nightingale.desktop
         endif
     endif
 else
@@ -229,7 +230,7 @@ installdirs:
 install-linux:
 	$(MAKE) installdirs
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
-	$(LN) -s $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(LN) -fs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
 	-$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
 
 .PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux

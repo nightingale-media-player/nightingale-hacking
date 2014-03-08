@@ -1,0 +1,4 @@
+version=3
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/nightingale-$1\.tar\.gz/ \
+https://github.com/nightingale-media-player/nightingale-hacking/tags .*/nightingale-?(\d\S*)\.tar\.gz
+#https://github.com/nightingale-media-player/nightingale-hacking/archive/nightingale-1.12.1.tar.gz

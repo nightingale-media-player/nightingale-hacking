@@ -23,9 +23,7 @@
 .\" On Debian systems, the complete text of the GNU General
 .\" Public License can be found in `/usr/share/common-licenses/GPL-2'.
 .\"
-
 #filter substitution
-
 .TH nightingale "1" "MARCH 2014" "@NG_VERSION@"
 .SH NAME
 nightingale \- Desktop Media Player

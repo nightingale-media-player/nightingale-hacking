@@ -1,7 +1,7 @@
 Source: nightingale
 Section: sound 
 Priority: optional
-Maintainer: David Rogers <ezekiel000@lavabit.com> 
+Maintainer: Martin Giger <zm.redaktion@gmail.com>
 Build-Depends:
  autoconf,
  autotools-dev,
@@ -15,10 +15,9 @@ Build-Depends:
  libsqlite0-dev,
  libtag1-dev,
  libnotify-dev,
- libunity-dev,
+ libnspr4-dev,
  libxext-dev,
  libxt6,
- libnspr4-dev,
  python (>=2.6),
  unzip,
  wget,
@@ -45,4 +44,3 @@ Description: Play, manage and organize digital media
  It supports extensions and feathers (skins). Like Firefox/Iceweasel,
  it is built from the Mozilla cross-platform and open source framework,
  and based on Songbird.
-

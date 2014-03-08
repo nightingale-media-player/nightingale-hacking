@@ -30,10 +30,9 @@ include $(DEPTH)/build/autodefs.mk
 
 PPDEFINES = -DNG_VERSION="$(SB_MILESTONE) (build $(SB_BUILD_NUMBER))"
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/nightingale.1.tr.in
+SONGBIRD_PP_RESOURCES = $(srcdir)/nightingale.1.in
 
 include $(topsrcdir)/build/rules.mk
 
 export::
-	groff -Tascii -man $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1.tr >> $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
-	gzip -9 -f $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
+	gzip -9f $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
