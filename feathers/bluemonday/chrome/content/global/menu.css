@@ -72,10 +72,6 @@ menuitem.spell-suggestion {
   font-weight:bold;
 }
 
-menubar > menu {
-  padding: 0 3px !important;
-}
-
 /* ::::: menu/menuitems in menulist popups ::::: */
 
 .menulist-menupopup > menuitem,

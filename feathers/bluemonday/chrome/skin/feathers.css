@@ -214,7 +214,6 @@ treechildren::-moz-tree-separator {
 }
 
 toolbar,
-/*menubar,*/
 .generic-bar {
   background-color: rgb(50,50,50);
 }
@@ -226,13 +225,6 @@ menubar,
 toolbarseparator {
   background-color:rgb(131,131,131);
 }
-
-/* shortcut keys displayed in menus 
-.menu-accel,
-.menu-iconic-accel {
-  color:rgb(131,131,131);
-}
-*/
 tooltip {
   -moz-appearance: none;
   background-color: rgb(239,245,202) !important;
@@ -514,8 +506,6 @@ treechildren::-moz-tree-row( selected, odd ) {
 **/
 listbox:focus listitem[selected="true"],
 richlistbox:focus richlistitem[selected="true"],
-/*menu[_moz-menuactive="true"],
-menuitem[_moz-menuactive="true"],*/
 treechildren.autocomplete-treebody::-moz-tree-row( selected even ),
 treechildren::-moz-tree-row( selected focus even ) {
   background-image: url(chrome://songbird/skin/playlist/bg-selected-row.png);
@@ -532,21 +522,12 @@ treechildren::-moz-tree-row( selected focus odd ) {
 listitem[selected="true"] label,
 richlistitem[selected="true"] label,
 richlistitem[selected="true"] description,
-/*menu[_moz-menuactive="true"] > label,
-menuitem[_moz-menuactive="true"] > label,*/
 .autocomplete-treebody::-moz-tree-cell-text(selected),
 treechildren::-moz-tree-cell-text( selected ),
 treechildren::-moz-tree-cell-text( selected, focus ) {
   color:rgb(255,255,255);
 }
 
-
-/*menuitem[checked="true"][_moz-menuactive="true"],
-menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
-.menulist-menupopup > menuitem[selected="true"][_moz-menuactive="true"] {
-  background-color: rgb(70,118,171); /* BLUE /
-}
-*/
 /******************************************************************************
 * DISABLED STATES
 ******************************************************************************/
@@ -592,22 +573,6 @@ sb-sys-titlebar[platform="Darwin"][inactive] {
   font-weight:bold;
   color: rgb(0,0,0);
 }
-/* used for Linux and Windows only - this is the file menu displayed in the title bar
-#main-menubar > menu[_moz-menuactive="true"][open="true"] {
-  background-color: rgb(207,207,207);
-}
-#main-menubar > menu[_moz-menuactive="true"] {
-  background-image: none;
-  background-color: rgb(80,141,188);
-}
-#main-menubar > menu[_moz-menuactive="true"] > label {
-  color: rgb(255,255,255);
-}
-#main-menubar > menu > label {
-  color: rgb(0,0,0);
-}
-*/
-
 
 /******************************************************************************
 * SERVICE PANE
@@ -1075,11 +1040,6 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
   /* XXXstevel we opt'd not to do this, leaving it here in case other
    * Featherers want to */
 }
-/*
-.searchbar-engine-button menupopup menuitem {
-  margin-left: -8px !important;
-}
-*/
 
 /******************************************************************************
 * DISPLAY PANES

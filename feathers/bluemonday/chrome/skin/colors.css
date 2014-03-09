@@ -238,13 +238,6 @@ treecolpicker > .tree-columnpicker-icon {
   opacity: 1.0 !important;
 }
 
-
-
-menubar > menu {
-  background-color:transparent;
-  padding:4px 8px !important;
-}
-
 menulist {
   min-width:0px;
   min-height:0px;
