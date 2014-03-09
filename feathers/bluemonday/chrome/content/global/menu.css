@@ -95,6 +95,7 @@ menulist > menupopup > menu {
   color: inherit;
 }
 
+/* can't use .menu-iconic-text as some items would get the rules twice */
 .menu-text,
 menuitem label {
   /* This is (18 + the size of end-padding on .menu-iconic-left)px */
@@ -108,7 +109,7 @@ menuitem label {
 
 menuitem[_moz-menuactive="true"]:not([disabled="true"]) .menu-text,
 menuitem[_moz-menuactive="true"]:not([disabled="true"]) .menu-iconic-text,
-.menu-iconic:hover[_moz-menuactive="true"] > menuitem > .menu-iconic-text {
+menu[_moz-menuactive="true"]:not([disabled="true"]) > .menu-text {
   color: -moz-menuhovertext !important;
 }
 
