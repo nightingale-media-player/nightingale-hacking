@@ -72,7 +72,7 @@ menuitem.spell-suggestion {
   font-weight:bold;
 }
 
-#main-menubar > menu {
+menubar > menu {
   padding: 0 3px !important;
 }
 
