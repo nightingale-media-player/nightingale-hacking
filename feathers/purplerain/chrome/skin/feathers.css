@@ -111,6 +111,10 @@ irc.mozilla.org #songbird
 *
 * Mostly vanilla elements that act as the starting point for rules to follow.
 ******************************************************************************/
+* {
+  -moz-appearance: none;
+}
+
 wizard,
 dialog,
 window,
