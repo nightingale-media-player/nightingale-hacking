@@ -169,12 +169,13 @@ menu[_moz-menuactive="true"]:not([disabled="true"]) > .menu-text {
 }
 
 
+/*XXX This rule breaks pane's swiching menu icons.
 .menulist-menupopup > menuitem > .menu-iconic-left,
 menulist > menupopup > menuitem > .menu-iconic-left,
 .menulist-menupopup > menu > .menu-iconic-left,
 menulist > menupopup > menu > .menu-iconic-left {
   display: none;
-}
+}*/
 
 /* ::::: checkbox menuitem ::::: */
 
