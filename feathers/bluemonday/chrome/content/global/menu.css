@@ -1,4 +1,6 @@
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+/* Those are modified global styles from Firefox.
+ * They are modified because we overwrite some rules in our feather.
+ */
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,7 +47,7 @@ menuitem[disabled="true"],
 }
 
 menubar > menu {
-  padding: 0px 4px;
+  padding: 0px 4px !important;
   color: -moz-menubartext;
 }
 
@@ -68,6 +70,10 @@ menubar > menu[open] {
 }
 menuitem.spell-suggestion {
   font-weight:bold;
+}
+
+#main-menubar > menu {
+  padding: 0 3px !important;
 }
 
 /* ::::: menu/menuitems in menulist popups ::::: */
@@ -105,7 +111,8 @@ menuitem label {
 }
 
 menuitem[_moz-menuactive="true"]:not([disabled="true"]) .menu-text,
-menuitem[_moz-menuactive= "true"]:not([disabled="true"]) label {
+menuitem[_moz-menuactive="true"]:not([disabled="true"]) .menu-iconic-text,
+.menu-iconic:hover[_moz-menuactive="true"] > menuitem > .menu-iconic-text {
   color: -moz-menuhovertext !important;
 }
 
@@ -228,16 +235,20 @@ panel {
   background-color: Menu;
 }
 
-/* rules for popups associated with menulists */
+menupopup > menu > menupopup,
+popup > menu > menupopup {
+  margin-top: -4px;
+}
 
-menulist > menupopup,
-.menulist-menupopup {
-  padding: 0px;
-  min-width: 0px;
+menulist[editable="true"] > menupopup {
+  -moz-appearance: none;
+}
+
+menulist[editable="true"] > menupopup > .popup-internal-box {
+  padding: 0;
 }
 
 /* menubar */
-
 
 menubar, toolbar[type="menubar"] {
   -moz-appearance: menubar;

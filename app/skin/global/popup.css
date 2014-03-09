@@ -53,7 +53,7 @@ popup {
 /* ::::: popup internal box ::::: */
 
 .popup-internal-box {
-        -moz-appearance: none;
+    -moz-appearance: none;
 	padding: 4px 0px 4px 0px !important;
 }
 

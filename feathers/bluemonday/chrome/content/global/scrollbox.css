@@ -55,15 +55,10 @@
 
 
 .autorepeatbutton-up {
-  list-style-image: url("chrome://songbird/skin/menu/menu-spin-up.png");
+  -moz-appearance: button-arrow-up !important;
 }
 .autorepeatbutton-down {
-  list-style-image:  url("chrome://songbird/skin/menu/menu-spin-down.png");
-}
-
-.autorepeatbutton-up,
-.autorepeatbutton-down {
-  -moz-image-region:rect(0px 9px 9px 0px);
+  -moz-appearance: button-arrow-down !important;
 }
 
 .scrollbutton-up[orient="horizontal"],
@@ -78,24 +73,6 @@
 .scrollbutton-down[disabled="true"] {
   -moz-image-region:rect(24px 8px 32px 0px);
 }
-
-
-.autorepeatbutton-up[orient="horizontal"][disabled="true"],
-.autorepeatbutton-down[orient="horizontal"][disabled="true"],
-.autorepeatbutton-up[disabled="true"],
-.autorepeatbutton-down[disabled="true"] {
-  opacity:0.5;
-}
-
-
-
-.autorepeatbutton-up {
-  padding-bottom:2px;
-}
-.autorepeatbutton-down {
-  padding-top:2px;
-}
-
 
 .scrollbutton-up > .toolbarbutton-text,
 .scrollbutton-down > .toolbarbutton-text {
