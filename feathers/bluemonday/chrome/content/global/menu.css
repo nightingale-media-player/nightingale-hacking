@@ -232,6 +232,10 @@ panel {
   background-color: Menu;
 }
 
+.popup-internal-box {
+  padding: 0 !important;
+}
+
 menupopup > menu > menupopup,
 popup > menu > menupopup {
   margin-top: -4px;

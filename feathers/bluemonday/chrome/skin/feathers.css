@@ -217,11 +217,7 @@ toolbar,
 .generic-bar {
   background-color: rgb(50,50,50);
 }
-toolbar,
-menubar,
-.generic-bar {
-  /*XXXstevel border-bottom:1px solid rgb(131,131,131);*/
-}
+
 toolbarseparator {
   background-color:rgb(131,131,131);
 }

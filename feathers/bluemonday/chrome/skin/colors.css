@@ -361,22 +361,6 @@ DATEPICKER see the RICHLISTBOX for box styles
 .datepicker-gridlabel[selected="true"] {
 }
 
-
-/** 
-*******************************************************************************
-MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
-*******************************************************************************
-*/
-
-/*
-menuitem > label,
-menupopup > menu > label,
-popup > menu > label {
-  padding:0;
-  margin:0;
-}
-*/
-
 /** 
 *******************************************************************************
 THE SPLITTERS
