@@ -145,7 +145,7 @@
                       class="mashTape-splitter" />
                     <!--src="chrome://mashTape/content/iframeFlash.html"-->
             <iframe id="mashTape-panel-flash-detail" flex="1"
-                    src="chrome://mashTape/content/iframeFlash2.html"
+                    src="http://static.getnightingale.com/mashTape/iframeFlash2.html"
                     type="content" tooltip="aHTMLTooltip"
                     class="detail-frame" />
           </hbox>
