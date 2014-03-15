@@ -23,7 +23,7 @@ This command generates the following output:
 
 \subsubsection contractidcmd \\contractid
 
-Usage \\contractid @domain.tld/component/feature;version
+Usage \\contractid \@domain.tld/component/feature;version
 
 This command generates the following output:
 
