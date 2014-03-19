@@ -308,9 +308,7 @@ ifdef MEDIA_CORE_GST #{
                                 gstosxvideosink \
                                 $(NULL)
 
-      GST_PLUGINS_BAD_NAMES += gstqtaudiowrapper \
-                               gstqtvideowrapper \
-                               $(NULL)
+      GST_PLUGINS_BAD_NAMES += $(NULL)
 
       GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/lib, \
              $(addsuffix -$(GLIB_VERSION)$(DLL_SUFFIX), $(GLIB_NAMES)))
