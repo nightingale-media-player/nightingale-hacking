@@ -41,11 +41,11 @@
 
 # use our own gstreamer libs
 for dir in /usr/lib /usr/lib64 /usr/lib/$(uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!s/.*/i386/')-linux-gnu ; do
-  if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-    export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
+  if [ -f ${dir}/gstreamer-1.0/libgstcoreelements.so ] ; then
+    export GST_PLUGIN_PATH=${dir}/gstreamer\-1.0
     break
-  elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-    export GST_PLUGIN_PATH=${dir}/gstreamer0.10
+  elif [ -f ${dir}/gstreamer1.0/libgstcoreelements.so ] ; then
+    export GST_PLUGIN_PATH=${dir}/gstreamer1.0
     break
   fi
 done

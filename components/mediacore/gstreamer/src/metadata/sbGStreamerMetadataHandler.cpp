@@ -1,29 +1,27 @@
 // vim: set sw=2 :
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ */
 
 #include "sbGStreamerMetadataHandler.h"
 
@@ -357,7 +355,7 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
   gst_bus_set_sync_handler(bus.get(), SyncToAsyncDispatcher,
-                           static_cast<sbGStreamerMessageHandler*>(this));
+                           static_cast<sbGStreamerMessageHandler*>(this), NULL);
   
   TRACE(("%s: Setting URI to [%s]", __FUNCTION__, mSpec.get()));
   g_object_set(G_OBJECT(decodeBin.get()), "uri", mSpec.get(), NULL);
@@ -524,10 +522,10 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
       if (gst_is_missing_plugin_message(message)) {
         /* If we got a missing plugin message about a missing video decoder,
            we should still mark it as a video file */
-        const gchar *type = gst_structure_get_string(message->structure, "type");
+        const gchar *type = gst_structure_get_string(gst_message_get_structure(message), "type");
         if (type && !strcmp(type, "decoder")) {
           /* Missing decoder: see if it's video */
-          const GValue *val = gst_structure_get_value (message->structure, "detail");
+          const GValue *val = gst_structure_get_value(gst_message_get_structure(message), "detail");
           const GstCaps *caps = gst_value_get_caps (val);
           GstStructure *structure = gst_caps_get_structure (caps, 0);
           const gchar *capsname = gst_structure_get_name (structure);
@@ -554,8 +552,8 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
             G_OBJECT_GET_CLASS (message->src));
         GstElementFactory *factory = elementclass->elementfactory;
 
-        if (strstr (factory->details.klass, "Video") &&
-            strstr (factory->details.klass, "Decoder"))
+        if (gst_element_factory_get_metadata(factory, "Video") &&
+            gst_element_factory_get_metadata(factory, "Decoder"))
         {
           mHasVideo = PR_TRUE;
         }
@@ -682,7 +680,7 @@ sbGStreamerMetadataHandler::on_pad_caps_changed(GstPad *pad,
     return;
   }
   GstStructure* capStruct = NULL;
-  sbGstCaps caps = gst_pad_get_negotiated_caps(pad);
+  sbGstCaps caps = gst_pad_get_current_caps(pad);
   if (!caps) {
     // no negotiated caps yet, keep waiting
     TRACE(("%s: no caps yet", __FUNCTION__));

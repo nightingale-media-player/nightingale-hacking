@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ */
 
 #include "sbGStreamerPlatformGDK.h"
 #include "sbGStreamerMediacore.h"
@@ -89,11 +87,13 @@ GDKPlatformInterface::GDKPlatformInterface(sbGStreamerMediacore *aCore) :
     mParentWindow(NULL),
     mFullscreenWindow(NULL)
 {
+  TRACE(("GDKPlatformInterface -- constructed"));
 }
 
 void
 GDKPlatformInterface::FullScreen()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- FullScreen", this));
   NS_ASSERTION (mFullscreenWindow == NULL, "Fullscreen window is non-null");
 
   GdkScreen *screen = NULL;
@@ -148,6 +148,7 @@ GDKPlatformInterface::FullScreen()
 void 
 GDKPlatformInterface::UnFullScreen()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- UnFullScreen", this));
   NS_ASSERTION (mFullscreenWindow, "Fullscreen window is null");
 
   gdk_window_remove_filter(mWindow, gdk_event_filter, this);
@@ -164,6 +165,7 @@ GDKPlatformInterface::UnFullScreen()
 void 
 GDKPlatformInterface::SetInvisibleCursor()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetInvisibleCursor", this));
   guint32 data = 0;
   GdkPixmap* pixmap = gdk_bitmap_create_from_data(NULL, (gchar*)&data, 1, 1);
 
@@ -184,6 +186,7 @@ GDKPlatformInterface::SetInvisibleCursor()
 void
 GDKPlatformInterface::SetDefaultCursor()
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetDefaultCursor", this));
   gdk_window_set_cursor(mWindow, NULL);
   if (mFullscreenWindow)
     gdk_window_set_cursor(mFullscreenWindow, NULL);
@@ -192,6 +195,8 @@ GDKPlatformInterface::SetDefaultCursor()
 void 
 GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- MoveVideoWindow(%d, %d, %d, %d)",
+                                               this, x, y, width, height));
   if (mWindow) {
     LOG(("Moving video window to %d,%d, size %d,%d", x, y, width, height));
     gdk_window_move_resize(mWindow, x, y, width, height);
@@ -201,6 +206,7 @@ GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 GstElement *
 GDKPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetVideoSink", this));
   if (mVideoSink) {
     gst_object_unref(mVideoSink);
     mVideoSink = NULL;
@@ -226,6 +232,7 @@ GDKPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 GstElement *
 GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetAudioSink", this));
   if (mAudioSink) {
     gst_object_unref(mAudioSink);
     mAudioSink = NULL;
@@ -259,6 +266,7 @@ GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
 nsresult
 GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetVideoBox", this));
   // First let the superclass do its thing.
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -304,8 +312,9 @@ GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
   return NS_OK;
 }
 
-void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
+void GDKPlatformInterface::SetVideoOverlayWindowID(GstVideoOverlay *aVideoOverlay)
 {
+  TRACE(("GDKPlatformInterface[0x%.8x] -- SetVideoOverlayWindowID", this));
   nsresult rv;
 
   if (!mWindow) {
@@ -323,9 +332,9 @@ void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
   }
 
   if (mWindowXID) {
-    gst_x_overlay_set_xwindow_id(aXOverlay, mWindowXID);
+    gst_video_overlay_set_window_handle(aVideoOverlay, mWindowXID);
 
-    LOG(("Set xoverlay %d to windowid %x\n", aXOverlay, mWindowXID));
+    LOG(("Set video overlay %d to windowid %x\n", aVideoOverlay, mWindowXID));
   }
 }
 

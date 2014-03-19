@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale Media Player.
 #
-# Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# Copyright(c) 2013
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH  = ../../../..
@@ -117,9 +117,11 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
+CPP_EXTRA_FLAGS = -std=gnu++0x \
+                  $(NULL)
+
 ifdef MEDIA_CORE_GST_SYSTEM
    CPP_EXTRA_FLAGS = -DGST_SYSTEM=1 \
-                     -std=gnu++0x \
                      $(NULL)
 
    CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
@@ -155,11 +157,11 @@ endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-                            gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstapp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstvideo-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \

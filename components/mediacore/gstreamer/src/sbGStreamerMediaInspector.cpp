@@ -1,16 +1,16 @@
 /*
- *=BEGIN SONGBIRD GPL
+ * BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale Media Player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2013
+ * http://getnightingale.com
  *
  * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
+ * GNU General Public License Version 2 (the "GPL").
  *
  * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
  * express or implied. See the GPL for the specific language
  * governing rights and limitations.
  *
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ * END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerMediaInspector.h"
@@ -613,8 +613,8 @@ sbGStreamerMediaInspector::BuildPipeline()
   mPipeline = gst_pipeline_new ("media-inspector-pipeline");
 
   nsCString uri = NS_ConvertUTF16toUTF8 (mSourceURI);
-  GstElement *src = gst_element_make_from_uri (GST_URI_SRC,
-          uri.BeginReading(), "uri-source");
+  GstElement *src = gst_element_make_from_uri(GST_URI_SRC, uri.BeginReading(),
+                                              "uri-source", NULL);
 
   if (!src) {
     // TODO: Signal failure somehow with more info?
@@ -623,8 +623,8 @@ sbGStreamerMediaInspector::BuildPipeline()
 
   mDecodeBin = gst_element_factory_make ("decodebin2", NULL);
   // Take ownership of mDecodeBin via ref/sink
-  gst_object_ref (mDecodeBin);
-  gst_object_sink (mDecodeBin);
+  gst_object_ref(mDecodeBin);
+  gst_object_ref_sink(mDecodeBin);
 
   // TODO: Connect up autoplug-sort signal to handle some special cases
 //  g_signal_connect (decodebin, "autoplug-sort",
@@ -634,8 +634,8 @@ sbGStreamerMediaInspector::BuildPipeline()
 
   gst_bin_add_many (GST_BIN (mPipeline), src, mDecodeBin, NULL);
 
-  GstPad *srcpad = gst_element_get_pad (src, "src");
-  GstPad *sinkpad = gst_element_get_pad (mDecodeBin, "sink");
+  GstPad *srcpad = gst_element_get_request_pad(src, "src");
+  GstPad *sinkpad = gst_element_get_request_pad(mDecodeBin, "sink");
 
   gst_pad_link (srcpad, sinkpad);
 
@@ -656,8 +656,8 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
   // to identify audio vs. video vs. other, and the template caps returned by
   // this will be sufficient.
   // We don't look at the caps in detail until we are in the PAUSED state, at
-  // which point we explicitly look at the negotiated caps.
-  sbGstCaps caps = gst_pad_get_caps (srcpad);
+  sbGstCaps caps = gst_pad_query_caps(srcpad, NULL);
+  // which point we explicitly look at the current caps.
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);
   bool isVideo = g_str_has_prefix (name, "video/");
@@ -671,16 +671,16 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
     gst_element_sync_state_with_parent (queue);
     gst_element_sync_state_with_parent (fakesink);
 
-    GstPad *sinkpad = gst_element_get_pad (queue, "sink");
+    GstPad *sinkpad = gst_element_get_request_pad(queue, "sink");
 
     gst_pad_link (srcpad, sinkpad);
     g_object_unref (sinkpad);
 
     gst_element_link (queue, fakesink);
 
-    GstPad *fakesinkpad = gst_element_get_pad (fakesink, "sink");
-    gst_pad_add_event_probe (fakesinkpad,
-        G_CALLBACK (fakesink_audio_event_cb), this);
+    GstPad *fakesinkpad = gst_element_get_request_pad(fakesink, "sink");
+    gst_pad_add_probe(fakesinkpad, GST_PAD_PROBE_TYPE_EVENT_BOTH,
+                      GstPadProbeCallback(fakesink_audio_event_cb), this, NULL);
 
     g_object_unref (fakesinkpad);
 
@@ -694,16 +694,16 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
     gst_element_sync_state_with_parent (queue);
     gst_element_sync_state_with_parent (fakesink);
 
-    GstPad *sinkpad = gst_element_get_pad (queue, "sink");
+    GstPad *sinkpad = gst_element_get_static_pad(queue, "sink");
 
     gst_pad_link (srcpad, sinkpad);
     g_object_unref (sinkpad);
 
     gst_element_link (queue, fakesink);
 
-    GstPad *fakesinkpad = gst_element_get_pad (fakesink, "sink");
-    gst_pad_add_event_probe (fakesinkpad,
-        G_CALLBACK (fakesink_video_event_cb), this);
+    GstPad *fakesinkpad = gst_element_get_static_pad(fakesink, "sink");
+    gst_pad_add_probe(fakesinkpad, GST_PAD_PROBE_TYPE_EVENT_BOTH,
+                      GstPadProbeCallback(fakesink_video_event_cb), this, NULL);
 
     g_object_unref (fakesinkpad);
 
@@ -717,10 +717,12 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 }
 
 nsresult
-sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
+sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstPadProbeInfo *info,
                                          PRBool isAudio)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
+
+  GstEvent *event = gst_pad_probe_info_get_event(info);
 
   // Bit rate is already available.
   if ((isAudio && mAudioBitRate) || (!isAudio && mVideoBitRate))
@@ -749,6 +751,10 @@ sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
       mAudioBitRate = bitrate;
     else
       mVideoBitRate = bitrate;
+  }
+
+  if (info != NULL) {
+    gst_pad_remove_probe(srcpad, info->id);
   }
 
   return NS_OK;
@@ -793,12 +799,12 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
   gboolean done = FALSE;
 
   while (!done) {
-    gpointer element;
+    GValue element;
 
-    switch (gst_iterator_next (it, &element)) {
+    switch (gst_iterator_next (it, (GValue*) &element)) {
       case GST_ITERATOR_OK:
-        rv = InspectorateElement (GST_ELEMENT (element));
-        gst_object_unref (element);
+        rv = InspectorateElement (GST_ELEMENT_CAST (&element));
+        gst_object_unref (GST_ELEMENT_CAST (&element));
         if (NS_FAILED (rv)) {
           done = TRUE;
         }
@@ -828,7 +834,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
 
     if (strstr (klass, "Decoder")) {
       // Ok, it really is a decoder! Grab the sink pad to poke at in a bit.
-      mAudioDecoderSink = gst_element_get_pad (audioDecoder, "sink");
+      mAudioDecoderSink = gst_element_get_static_pad(audioDecoder, "sink");
     }
 
     g_object_unref (audioSrcPad);
@@ -843,7 +849,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
 
     if (strstr (klass, "Decoder")) {
       // Ok, it really is a decoder! Grab the sink pad to poke at in a bit.
-      mVideoDecoderSink = gst_element_get_pad (videoDecoder, "sink");
+      mVideoDecoderSink = gst_element_get_static_pad(videoDecoder, "sink");
     }
 
     g_object_unref (videoSrcPad);
@@ -870,7 +876,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
                                         &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    sbGstCaps caps = gst_pad_get_negotiated_caps (mDemuxerSink);
+    sbGstCaps caps = gst_pad_get_current_caps (mDemuxerSink);
     GstStructure *structure = gst_caps_get_structure (caps, 0);
 
     nsCString mimeType;
@@ -1096,7 +1102,7 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 
   // mVideoSrc is the decoded video pad from decodebin. We can process this for
   // information about the output video: resolution, framerate, etc.
-  sbGstCaps caps = gst_pad_get_negotiated_caps (mVideoSrc);
+  sbGstCaps caps = gst_pad_get_current_caps(mVideoSrc);
   rv = ProcessVideoCaps(format, caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
@@ -1109,7 +1115,7 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw video from the demuxer. Alternatively, it means we screwed up
     // somehow.
-    sbGstCaps videoCaps = gst_pad_get_negotiated_caps (mVideoDecoderSink);
+    sbGstCaps videoCaps = gst_pad_get_current_caps(mVideoDecoderSink);
     GstStructure *structure = gst_caps_get_structure (videoCaps, 0);
 
     nsCString mimeType;
@@ -1249,7 +1255,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
 
   // mAudioSrc is the decoded audio pad from decodebin. We can process this for
   // information about the output audio: sample rate, number of channels, etc.
-  sbGstCaps caps = gst_pad_get_negotiated_caps (mAudioSrc);
+  sbGstCaps caps = gst_pad_get_current_caps(mAudioSrc);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
 
   gint rate, channels;
@@ -1269,7 +1275,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw audio from the demuxer. Alternatively, it means we screwed up
     // somehow.
-    sbGstCaps audioCaps = gst_pad_get_negotiated_caps (mAudioDecoderSink);
+    sbGstCaps audioCaps = gst_pad_get_current_caps(mAudioDecoderSink);
     structure = gst_caps_get_structure (audioCaps, 0);
 
     nsCString mimeType;
@@ -1312,7 +1318,7 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
       mTooComplexForCurrentImplementation = PR_TRUE;
     }
     else {
-      mDemuxerSink = gst_element_get_pad (element, "sink");
+      mDemuxerSink = gst_element_get_static_pad(element, "sink");
     }
   }
 
@@ -1320,18 +1326,18 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
 }
 
 /* static */ void
-sbGStreamerMediaInspector::fakesink_audio_event_cb (GstPad * pad,
-        GstEvent * event, sbGStreamerMediaInspector *inspector)
+sbGStreamerMediaInspector::fakesink_audio_event_cb(GstPad *pad,
+        GstPadProbeInfo *info, sbGStreamerMediaInspector *inspector)
 {
-  nsresult rv = inspector->FakesinkEvent(pad, event, PR_TRUE);
+  nsresult rv = inspector->FakesinkEvent(pad, info, PR_TRUE);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
 /* static */ void
-sbGStreamerMediaInspector::fakesink_video_event_cb (GstPad * pad,
-        GstEvent * event, sbGStreamerMediaInspector *inspector)
+sbGStreamerMediaInspector::fakesink_video_event_cb(GstPad * pad,
+        GstPadProbeInfo *info, sbGStreamerMediaInspector *inspector)
 {
-  nsresult rv = inspector->FakesinkEvent(pad, event, PR_FALSE);
+  nsresult rv = inspector->FakesinkEvent(pad, info, PR_FALSE);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 

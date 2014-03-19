@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ */
 
 #include "sbGStreamerMediacoreFactory.h"
 
@@ -81,7 +79,6 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbGStreamerMediacoreFactory,
 
 sbGStreamerMediacoreFactory::sbGStreamerMediacoreFactory()
 {
-
 }
 
 sbGStreamerMediacoreFactory::~sbGStreamerMediacoreFactory()
@@ -231,8 +228,11 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       //   * ogv (all platforms)
       //   * wmv (windows only)
       //   * mp4/m4v/mov (w/ qtvideowrapper plugin)
+
       //   * divx/avi/mkv (w/ ewmpeg4dec plugin)
+
       videoExtensions.AppendElement(NS_LITERAL_STRING("ogv"));
+
 #ifdef XP_WIN
       videoExtensions.AppendElement(NS_LITERAL_STRING("wmv"));
 #endif
@@ -262,7 +262,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
       // Check for the 'qtvideowrapper' plugin to add mp4/m4v extensions.
       PRBool foundQTPlugin = PR_FALSE;
-      GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
+      GstPlugin *plugin = gst_registry_find_plugin(gst_registry_get(),
+                                                   ("qtvideowrapper"));
       if (plugin) {
         foundQTPlugin = PR_TRUE;
         videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
@@ -270,9 +271,9 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
         videoExtensions.AppendElement(NS_LITERAL_STRING("mov"));
         gst_object_unref(plugin);
       }
-
       // Check for the 'ewmpeg4dec' plugin to add divx/avi extensions.
-      plugin = gst_default_registry_find_plugin("ewmpeg4dec");
+      plugin = gst_registry_find_plugin(gst_registry_get(),
+                                        ("ewmpeg4dec"));
       if (plugin) {
         videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
@@ -299,7 +300,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       const gchar* factoryName = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory));
       gboolean isAudioFactory = g_str_has_prefix(factoryName, "audio/");
 
-      gchar **factoryexts = gst_type_find_factory_get_extensions (factory);
+      const gchar* const *factoryexts = gst_type_find_factory_get_extensions (factory);
       if (factoryexts) {
         while (*factoryexts) {
           gboolean isAudioExtension = isAudioFactory;

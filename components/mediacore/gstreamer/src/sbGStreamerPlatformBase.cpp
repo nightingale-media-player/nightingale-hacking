@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ * BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale Media Player.
+ *
+ * Copyright(c) 2013
+ * http://getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the "GPL").
+ *
+ * Software distributed under the License is distributed
+ * on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END NIGHTINGALE GPL
+ */
 
 #include "sbGStreamerPlatformBase.h"
 
@@ -73,6 +71,7 @@ BasePlatformInterface::BasePlatformInterface(sbGStreamerMediacore *aCore)
 ,  mAudioSink(NULL)
 ,  mCore(aCore)
 {
+  TRACE(("BasePlatformInterface -- constructed"));
 }
 
 BasePlatformInterface::~BasePlatformInterface()
@@ -86,12 +85,16 @@ BasePlatformInterface::~BasePlatformInterface()
 bool
 BasePlatformInterface::GetFullscreen()
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- GetFullscreen", this));
+
   return mFullscreen;
 }
 
 void
 BasePlatformInterface::SetFullscreen(bool aFullscreen)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetFullscreen", this));
+
   if (aFullscreen && !mFullscreen) {
     mFullscreen = true;
     FullScreen();
@@ -110,6 +113,8 @@ BasePlatformInterface::SetFullscreen(bool aFullscreen)
 void
 BasePlatformInterface::ResizeToWindow()
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- ResizeToWindow", this));
+
   // Only resize based on our XUL element if we're not in fullscreen mode.
   if (!mFullscreen) {
     LOG(("Resizing video to fit window in non-fullscreen mode"));
@@ -136,6 +141,9 @@ BasePlatformInterface::ResizeToWindow()
 void
 BasePlatformInterface::SetDisplayArea(int x, int y, int width, int height)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetDisplayArea(%d, %d, %d, %d)", 
+                                               this, x, y, width, height));
+
   LOG(("Display area set to %d,%d %d,%d", x, y, width, height));
   mDisplayX = x;
   mDisplayY = y;
@@ -178,6 +186,9 @@ BasePlatformInterface::ResizeVideo()
 void
 BasePlatformInterface::SetDisplayAspectRatio(int aNumerator, int aDenominator)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetDisplayAspectRatio(%d, %d)", 
+                                         this, aNumerator, aDenominator));
+
   mDARNum = aNumerator;
   mDARDenom = aDenominator;
 
@@ -187,28 +198,28 @@ BasePlatformInterface::SetDisplayAspectRatio(int aNumerator, int aDenominator)
 void
 BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
-  GstElement *element = NULL;
-  GstXOverlay *xoverlay = NULL;
+  TRACE(("BasePlatformInterface[0x%.8x] -- PrepareVideoWindow", this));
 
-  if (GST_IS_BIN (mVideoSink)) {
+  GstElement *element = NULL;
+  GstVideoOverlay *videoOverlay = NULL;
+
+  if (GST_IS_BIN(mVideoSink)) {
     /* Get the actual implementing object from the bin */
-    element = gst_bin_get_by_interface(GST_BIN (mVideoSink),
-            GST_TYPE_X_OVERLAY);
-  }
-  else {
+    element = gst_bin_get_by_interface(GST_BIN(mVideoSink),
+                                       GST_TYPE_VIDEO_OVERLAY);
+  } else {
     element = mVideoSink;
   }
 
-  if (GST_IS_X_OVERLAY (element)) {
-    xoverlay = GST_X_OVERLAY (element);
-    LOG(("xoverlay interface found, setting video window"));
-  }
-  else {
-    LOG(("No xoverlay interface found, cannot set video window"));
+  if (GST_IS_VIDEO_OVERLAY(element)) {
+    videoOverlay = GST_VIDEO_OVERLAY(element);
+    LOG(("video overlay interface found, setting video window"));
+  } else {
+    LOG(("No video overlay interface found, cannot set video window"));
     return;
   }
 
-  SetXOverlayWindowID(xoverlay);
+  SetVideoOverlayWindowID(videoOverlay);
 
   ResizeToWindow();
 }
@@ -216,6 +227,8 @@ BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 nsresult
 BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetVideoBox", this));
+
   mVideoBox = aVideoBox;
   mWidget = aWidget;
 
@@ -225,6 +238,8 @@ BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 /*virtual*/ nsresult 
 BasePlatformInterface::SetDocument(nsIDOMDocument *aDocument)
 {
+  TRACE(("BasePlatformInterface[0x%.8x] -- SetDocument", this));
+
   NS_ENSURE_ARG_POINTER(aDocument);
   mDocument = aDocument;
   return NS_OK;
