@@ -41,8 +41,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/prompter/public \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+endif
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   components/moz/threads/src/sbMozThreads \
