@@ -119,6 +119,10 @@ ifeq (windows,$(SB_PLATFORM))
    CPP_EXTRA_FLAGS += "-wd4244"
 endif
 
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
+
 DYNAMIC_LIB = gstmozilla
 IS_GSTLIB = 1
 
