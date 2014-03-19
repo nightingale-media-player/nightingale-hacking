@@ -63,9 +63,9 @@ case $OSTYPE in
 
     #if you have a dep built on a differing date for either arch, just use a conditional to set this
     if [ "$arch" = "i686" ] ; then
-      depdate=20130813
+      depdate=20140302
     else
-      depdate=20130706 # TODO: with gst-1, use 20140214 deps!
+      depdate=20140214 # TODO: with gst-1, use 20140214 deps!
     fi
 
     #export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
@@ -124,7 +124,7 @@ case $OSTYPE in
     # no wget on OSX, use curl
     DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
-    depdate=00000000
+    depdate=20140319
 
     arch_flags="-m32 -arch i386"
     export CFLAGS="$arch_flags" 
