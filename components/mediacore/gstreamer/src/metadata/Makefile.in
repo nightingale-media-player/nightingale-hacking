@@ -48,8 +48,9 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(NULL)
 
-CPP_EXTRA_FLAGS = -std=gnu++0x \
-                  $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 ifdef MEDIA_CORE_GST_SYSTEM
    CPP_EXTRA_FLAGS = -DGST_SYSTEM=1 \
