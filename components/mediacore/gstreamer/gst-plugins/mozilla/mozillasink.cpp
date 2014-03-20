@@ -55,13 +55,6 @@ struct _GstMozillaSinkClass {
 GST_DEBUG_CATEGORY_STATIC (mozilla_sink_debug);
 #define GST_CAT_DEFAULT mozilla_sink_debug
 
-static const GstElementDetails gst_mozilla_sink_details =
-GST_ELEMENT_DETAILS ((gchar *)"Mozilla nsIOutputStream sink",
-    (gchar *)"Sink",
-    (gchar *)"Write data to a hosting mozilla "
-             "application's output stream API",
-    (gchar *)"Pioneers of the Inevitable <songbird@songbirdnest.com");
-
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -87,23 +80,15 @@ static gboolean gst_mozilla_sink_event (GstBaseSink * bsink, GstEvent * event);
 static void gst_mozilla_sink_close_stream (GstMozillaSink * sink);
 static void gst_mozilla_sink_flush_stream (GstMozillaSink * sink);
 
-GST_BOILERPLATE (GstMozillaSink, gst_mozilla_sink, GstBaseSink,
-    GST_TYPE_BASE_SINK);
+// GST_BOILERPLATE (GstMozillaSink, gst_mozilla_sink, GstBaseSink,
+//    GST_TYPE_BASE_SINK);
+#define gst_mozilla_sink_parent_class parent_class
+G_DEFINE_TYPE(GstMozillaSink, gst_mozilla_sink, GST_TYPE_BASE_SINK);
 
 static void
-gst_mozilla_sink_base_init (gpointer g_class)
+gst_mozilla_sink_class_init(GstMozillaSinkClass *klass)
 {
-  GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
-
-  gst_element_class_add_pad_template (element_class,
-      gst_static_pad_template_get (&sink_template));
-
-  gst_element_class_set_details (element_class, &gst_mozilla_sink_details);
-}
-
-static void
-gst_mozilla_sink_class_init (GstMozillaSinkClass * klass)
-{
+  GstElementClass *element_class = GST_ELEMENT_CLASS(klass);
   GObjectClass *gobject_class;
   GstBaseSinkClass *gstbasesink_class;
 
@@ -112,6 +97,15 @@ gst_mozilla_sink_class_init (GstMozillaSinkClass * klass)
 
   gobject_class->set_property = gst_mozilla_sink_set_property;
   gobject_class->get_property = gst_mozilla_sink_get_property;
+
+  gst_element_class_add_pad_template (element_class,
+      gst_static_pad_template_get (&sink_template));
+
+  gst_element_class_set_details_simple (element_class, 
+    (gchar *)"Mozilla nsIOutputStream sink",
+    (gchar *)"Sink",
+    (gchar *)"Write data to a hosting mozilla application's output stream API",
+    (gchar *)"Pioneers of the Inevitable <songbird@songbirdnest.com");
 
   g_object_class_install_property
       (gobject_class, PROP_STREAM,
@@ -127,9 +121,8 @@ gst_mozilla_sink_class_init (GstMozillaSinkClass * klass)
       "Mozilla Sink");
 }
 
-
 static void
-gst_mozilla_sink_init (GstMozillaSink * sink, GstMozillaSinkClass * g_class)
+gst_mozilla_sink_init (GstMozillaSink * sink)
 {
   sink->output_stream = nsnull;
   sink->proxied_output_stream = nsnull;
@@ -210,17 +203,20 @@ static GstFlowReturn
 gst_mozilla_sink_render (GstBaseSink * bsink, GstBuffer * buf)
 {
   GstMozillaSink *sink = GST_MOZILLA_SINK (bsink);
+  GstMapInfo info;
   nsresult rv;
   
   if (!sink->proxied_output_stream) {
     GST_WARNING_OBJECT (sink, "Tried to render without a proxied stream");
-    return GST_FLOW_UNEXPECTED;
+    return GST_FLOW_EOS;
   }
+
+  gst_buffer_map(buf, &info, GST_MAP_READ);
 
   PRUint32 bytesWritten;
   PRUint32 offset = 0;
-  PRUint32 count = GST_BUFFER_SIZE (buf);
-  char * data = (char *) GST_BUFFER_DATA (buf);
+  PRUint32 count = info.size;
+  char * data = (char *) info.data;
   GST_DEBUG_OBJECT (sink, "Writing %u byte buffer", count);
 
   while (offset < count) {
@@ -228,7 +224,7 @@ gst_mozilla_sink_render (GstBaseSink * bsink, GstBuffer * buf)
                                             &bytesWritten);
     if (NS_FAILED (rv)) {
       GST_WARNING_OBJECT (sink, "Failed to write buffer to output stream");
-      return GST_FLOW_UNEXPECTED;
+      return GST_FLOW_EOS;
     }
 
     GST_DEBUG_OBJECT (sink, "Wrote %u bytes to output stream", bytesWritten);

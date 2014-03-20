@@ -66,7 +66,7 @@ struct _GstMozillaSrc {
                          // shouldn't treat the request ending as EOS)
 
   /* URI as a UTF-8 string */
-  const gchar *location;
+  gchar *location;
   /* URI for location */
   nsCOMPtr<nsIURI> uri;
 
@@ -90,13 +90,6 @@ struct _GstMozillaSrcClass {
 
 GST_DEBUG_CATEGORY_STATIC (mozillasrc_debug);
 #define GST_CAT_DEFAULT mozillasrc_debug
-
-static const GstElementDetails gst_mozilla_src_details =
-GST_ELEMENT_DETAILS ((gchar *)"Mozilla nsIInputStream source",
-    (gchar *)"Source/Network",
-    (gchar *)"Receive data from a hosting mozilla "
-             "application Mozilla's I/O APIs",
-    (gchar *)"Pioneers of the Inevitable <songbird@songbirdnest.com");
 
 static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -318,11 +311,6 @@ StreamListener::OnStartRequest(nsIRequest *req, nsISupports *ctxt)
       }
     }
 
-    if (!mSrc->is_seekable) {
-      /* There's no API for this, unfortunately */
-      ((GstBaseSrc *)mSrc)->seekable = FALSE;
-    }
-
     // Handle the metadata interval for non-shoutcast servers that support
     // this (like icecast).
     rv = httpChannel->GetResponseHeader(NS_LITERAL_CSTRING("icy-metaint"),
@@ -364,8 +352,7 @@ StreamListener::OnStartRequest(nsIRequest *req, nsISupports *ctxt)
       GST_DEBUG_OBJECT (mSrc, "Read content length: %" G_GINT64_FORMAT,
               mSrc->content_size);
 
-      gst_segment_set_duration (&((GstBaseSrc *)mSrc)->segment, 
-              GST_FORMAT_BYTES, mSrc->content_size);
+      ((GstBaseSrc *)mSrc)->segment.duration = mSrc->content_size;
       gst_element_post_message (GST_ELEMENT (mSrc), 
               gst_message_new_duration (GST_OBJECT (mSrc), GST_FORMAT_BYTES,
               mSrc->content_size));
@@ -459,7 +446,7 @@ GstBuffer *StreamListener::ScanForHeaders(GstBuffer *buf)
   gst_adapter_push (mAdapter, buf);
 
   len = gst_adapter_available (mAdapter);
-  data = (gchar *)gst_adapter_peek (mAdapter, len);
+  data = (gchar *) gst_adapter_map(mAdapter, len);
 
   end = g_strrstr_len (data, len, "\r\n\r\n");
 
@@ -475,7 +462,7 @@ GstBuffer *StreamListener::ScanForHeaders(GstBuffer *buf)
   ReadHeaders ((gchar *)data);
 
   len = end - data + 4;
-  gst_adapter_flush (mAdapter, len);
+  gst_adapter_unmap(mAdapter);
 
   return gst_adapter_take_buffer (mAdapter, gst_adapter_available (mAdapter));
 }
@@ -500,16 +487,19 @@ StreamListener::OnDataAvailable(nsIRequest *req, nsISupports *ctxt,
   nsresult rv;
   PRUint32 bytesRead=0;
   int len;
+  GstMapInfo info;
 
   GstBuffer *buf = gst_buffer_new_and_alloc (count);
 
-  rv = stream->Read((char *)GST_BUFFER_DATA (buf), count, &bytesRead);
+  gst_buffer_map(buf, &info, GST_MAP_READ);
+
+  rv = stream->Read((char *) info.data, count, &bytesRead);
   if (NS_FAILED(rv)) {
     GST_DEBUG_OBJECT (mSrc, "stream->Read failed with rv=%x", rv);
     return rv;
   }
 
-  GST_BUFFER_SIZE (buf) = bytesRead;
+  info.size = bytesRead;
 
   if (mSrc->is_shoutcast_server && !mSrc->shoutcast_headers_read) {
     GST_DEBUG_OBJECT (mSrc, "Scanning for headers");
@@ -525,10 +515,7 @@ StreamListener::OnDataAvailable(nsIRequest *req, nsISupports *ctxt,
     }
   }
 
-  len = GST_BUFFER_SIZE (buf);
-
-  if (mSrc->icy_caps)
-    gst_buffer_set_caps (buf, mSrc->icy_caps);
+  len = info.size;
 
   g_mutex_lock (mSrc->queue_lock);
 
@@ -574,36 +561,16 @@ done:
   return NS_OK;
 }
 
-static void
-_urihandler_init (GType type)
-{
-  static const GInterfaceInfo urihandler_info = {
-    gst_mozilla_src_uri_handler_init,
-    NULL,
-    NULL
-  };
-
-  g_type_add_interface_static (type, GST_TYPE_URI_HANDLER, &urihandler_info);
-}
-
-GST_BOILERPLATE_FULL (GstMozillaSrc, gst_mozilla_src, GstPushSrc,
-    GST_TYPE_PUSH_SRC, _urihandler_init);
-
-static void
-gst_mozilla_src_base_init (gpointer g_class)
-{
-  GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
-
-  gst_element_class_add_pad_template (element_class,
-      gst_static_pad_template_get (&srctemplate));
-
-  gst_element_class_set_details (element_class, &gst_mozilla_src_details);
-}
+#define gst_mozilla_src_parent_class parent_class
+G_DEFINE_TYPE_WITH_CODE(GstMozillaSrc, gst_mozilla_src, GST_TYPE_PUSH_SRC, 
+    G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, gst_mozilla_src_uri_handler_init););
 
 static void
 gst_mozilla_src_class_init (GstMozillaSrcClass * klass)
 {
+  GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
   GObjectClass *gobject_class;
+
   GstBaseSrcClass *gstbasesrc_class;
   GstPushSrcClass *gstpushsrc_class;
 
@@ -614,6 +581,16 @@ gst_mozilla_src_class_init (GstMozillaSrcClass * klass)
   gobject_class->set_property = gst_mozilla_src_set_property;
   gobject_class->get_property = gst_mozilla_src_get_property;
   gobject_class->finalize = gst_mozilla_src_finalize;
+
+  gst_element_class_add_pad_template (element_class,
+      gst_static_pad_template_get (&srctemplate));
+
+  gst_element_class_set_details_simple(element_class,
+    (gchar *)"Mozilla nsIInputStream source",
+    (gchar *)"Source/Network",
+    (gchar *)"Receive data from a hosting mozilla "
+             "application Mozilla's I/O APIs",
+    (gchar *)"Pioneers of the Inevitable <songbird@songbirdnest.com");
 
   g_object_class_install_property
       (gobject_class, PROP_LOCATION,
@@ -682,7 +659,7 @@ gst_mozilla_src_clear (GstMozillaSrc * src)
 }
 
 static void
-gst_mozilla_src_init (GstMozillaSrc * src, GstMozillaSrcClass * g_class)
+gst_mozilla_src_init (GstMozillaSrc * src)
 {
   gst_mozilla_src_clear (src);
 
@@ -795,18 +772,19 @@ gst_mozilla_src_create (GstPushSrc * psrc, GstBuffer ** outbuf)
   GstMozillaSrc *src;
   GstBaseSrc *basesrc;
   GstFlowReturn ret;
+  GstMapInfo info;
 
   src = GST_MOZILLA_SRC (psrc);
   basesrc = GST_BASE_SRC_CAST (psrc);
 
   if (G_UNLIKELY (src->eos)) {
     GST_DEBUG_OBJECT (src, "Create called at EOS");
-    return GST_FLOW_UNEXPECTED;
+    return GST_FLOW_EOS;
   }
   
   if (G_UNLIKELY (src->flushing)) {
     GST_DEBUG_OBJECT (src, "Create called while flushing");
-    return GST_FLOW_WRONG_STATE;
+    return GST_FLOW_FLUSHING;
   }
 
   /* Pop a buffer from our async queue, if possible. */
@@ -831,20 +809,22 @@ gst_mozilla_src_create (GstPushSrc * psrc, GstBuffer ** outbuf)
      * failure */
     if (g_queue_is_empty (src->queue)) {
       GST_DEBUG_OBJECT (src, "Still no buffer; bailing");
-      ret = GST_FLOW_UNEXPECTED;
+      ret = GST_FLOW_EOS;
       goto done;
     }
   }
 
   /* And otherwise, we're fine: pop the next buffer and return */
   *outbuf = (GstBuffer *)g_queue_pop_head (src->queue);
-  src->queue_size -= GST_BUFFER_SIZE (*outbuf);
+
+  gst_buffer_map(*outbuf, &info, GST_MAP_READ);
+  src->queue_size -= info.size;
 
   GST_BUFFER_OFFSET (*outbuf) = src->current_position;
-  src->current_position += GST_BUFFER_SIZE (*outbuf);
+  src->current_position += info.size;
 
-  GST_DEBUG_OBJECT (src, "Popped %d byte buffer from queue", 
-          GST_BUFFER_SIZE (*outbuf));
+  GST_DEBUG_OBJECT(src, "Popped %lu byte buffer from queue", 
+                  info.size);
   ret = GST_FLOW_OK;
 
 done:
@@ -896,7 +876,7 @@ gst_mozilla_src_create_request (GstMozillaSrc *src, GstSegment *segment)
   if (segment && segment->format == GST_FORMAT_BYTES && segment->start > 0) {
     nsCOMPtr<nsIResumableChannel> resumable(do_QueryInterface(src->channel));
     if (resumable) {
-      GST_DEBUG_OBJECT (src, "Trying to resume at %d bytes", segment->start);
+      GST_DEBUG_OBJECT (src, "Trying to resume at %lu bytes", segment->start);
 
       rv = resumable->ResumeAt(segment->start, EmptyCString());
       // If we failed, just log it and continue; it's not critical.
@@ -1069,15 +1049,15 @@ gst_mozilla_src_do_seek (GstBaseSrc * bsrc, GstSegment * segment)
 
 /* GstURIHandler Interface */
 static GstURIType
-gst_mozilla_src_uri_get_type (void)
+gst_mozilla_src_uri_get_type(GType handler)
 {
   return GST_URI_SRC;
 }
 
 static gchar **_supported_protocols = NULL;
 
-static gchar **
-gst_mozilla_src_uri_get_protocols (void)
+static const gchar * const *
+gst_mozilla_src_uri_get_protocols(GType handler)
 {
   /* Return the cache if we've created it */
   if (_supported_protocols != NULL)
@@ -1143,7 +1123,7 @@ gst_mozilla_src_uri_get_protocols (void)
   return _supported_protocols;
 }
 
-static const gchar *
+static gchar *
 gst_mozilla_src_uri_get_uri (GstURIHandler * handler)
 { 
   GstMozillaSrc *src = GST_MOZILLA_SRC (handler);
@@ -1152,7 +1132,9 @@ gst_mozilla_src_uri_get_uri (GstURIHandler * handler)
 }
 
 static gboolean
-gst_mozilla_src_uri_set_uri (GstURIHandler * handler, const gchar * uri)
+gst_mozilla_src_uri_set_uri(GstURIHandler * handler, 
+                            const gchar * uri, 
+                            GError** error)
 {
   GstMozillaSrc *src = GST_MOZILLA_SRC (handler);
 

@@ -38,6 +38,7 @@ CPP_SRCS = mozillaplugin.cpp \
 
 ifdef MEDIA_CORE_GST_SYSTEM
    CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
+                       $(GLIB_CFLAGS) \
                        $(NULL)
 else
    CPP_EXTRA_INCLUDES += \
@@ -51,6 +52,9 @@ else
        $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
        $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
        $(NULL)
+   else
+      CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
+                          $(NULL)
    endif
 endif
 
@@ -71,9 +75,9 @@ ifneq (, $(filter-out macosx windows, $(SB_PLATFORM)))
   endif
 endif
 
-DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+DYNAMIC_LIB_EXTRA_IMPORTS = xul \
+                            plds4 \
                             gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-                            gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
@@ -132,6 +136,7 @@ else
     ifneq (, $(filter-out macosx windows, $(SB_PLATFORM)))
         # everything else
         DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
+                                   $(GLIB_LIBS) \
                                    -lX11 \
                                    $(NULL)
     endif
@@ -141,6 +146,10 @@ CPP_EXTRA_FLAGS += "-fshort-wchar"
 # The GStreamer headers trigger this warning on MSVC; it's harmless
 ifeq (windows,$(SB_PLATFORM))
    CPP_EXTRA_FLAGS += "-wd4244"
+endif
+
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
 endif
 
 DYNAMIC_LIB = gstmozilla
