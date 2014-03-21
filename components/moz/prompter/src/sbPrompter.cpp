@@ -124,7 +124,7 @@ sbPrompter::OpenDialogImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod6_<nsresult,sbPrompter,
         nsIDOMWindow*,const nsAString&,const nsAString&,const nsAString&,
         nsISupports*,nsIDOMWindow**>(
@@ -215,7 +215,7 @@ sbPrompter::OpenWindowImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod6_<nsresult,sbPrompter,
         nsIDOMWindow*,const nsAString&,const nsAString&,const nsAString&,
         nsISupports*,nsIDOMWindow**>(
@@ -278,7 +278,7 @@ sbPrompter::CancelImpl()
   nsresult rv;
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod0_<nsresult,sbPrompter>(
       *this,&sbPrompter::CancelImpl);
     NS_DispatchToMainThread(job);
@@ -401,7 +401,7 @@ sbPrompter::AlertImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod3_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*>(
           *this,&sbPrompter::AlertImpl,aParent,aDialogTitle,aText);
@@ -487,7 +487,7 @@ sbPrompter::AlertCheckImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod5_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,
         const PRUnichar*,PRBool*>(
@@ -581,7 +581,7 @@ sbPrompter::ConfirmImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod4_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRBool*>(
           *this,&sbPrompter::ConfirmImpl,aParent,aDialogTitle,aText,_retval);
@@ -676,7 +676,7 @@ sbPrompter::ConfirmCheckImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod6_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,const PRUnichar*,
         PRBool*,PRBool*>(
@@ -788,7 +788,7 @@ sbPrompter::ConfirmExImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod10_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUint32,
         const PRUnichar*,const PRUnichar*,const PRUnichar*,const PRUnichar*,
@@ -875,7 +875,7 @@ sbPrompter::PromptImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod7_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUnichar**,
         const PRUnichar*,PRBool*,PRBool*>(
@@ -960,7 +960,7 @@ sbPrompter::PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod8_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,
         PRUnichar**,PRUnichar**,
@@ -1046,7 +1046,7 @@ sbPrompter::PromptPasswordImpl(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod7_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUnichar**,
         const PRUnichar*,PRBool*,PRBool*>(
@@ -1131,7 +1131,7 @@ nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod7_<nsresult,sbPrompter,
         nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUint32,
         const PRUnichar**,PRInt32*,PRBool*>(
@@ -1272,7 +1272,7 @@ sbPrompter::Init()
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
     // Create the job:
-    nsRefPtr<sbRunnable_<nsresult>> job = new sbRunnableMethod0_<nsresult,sbPrompter>(
+    nsRefPtr< sbRunnable_<nsresult> > job = new sbRunnableMethod0_<nsresult,sbPrompter>(
       *this,
       &sbPrompter::InitOnMainThread);
     NS_DispatchToMainThread(job);
