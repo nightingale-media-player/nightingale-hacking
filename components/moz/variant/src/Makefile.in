@@ -39,8 +39,9 @@ CPP_SRCS = sbVariant.cpp \
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 DYNAMIC_LIB = sbMozVariant
 

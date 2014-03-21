@@ -41,7 +41,8 @@ CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/necko \
                      $(topsrcdir)/components/moz/uri/src \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 include $(topsrcdir)/build/rules.mk

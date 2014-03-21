@@ -34,8 +34,9 @@ STATIC_LIB = sbMozVariantUtils
 CPP_SRCS = sbVariantUtilsLib.cpp \
            $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 include $(topsrcdir)/build/rules.mk
 
