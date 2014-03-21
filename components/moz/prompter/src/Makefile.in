@@ -45,9 +45,6 @@ ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
    CPP_EXTRA_FLAGS += -std=gnu++0x
 endif
 
-ifeq (macosx,$(SB_PLATFORM))
-endif
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
   components/moz/threads/src/sbMozThreads \
   $(NULL)
