@@ -134,7 +134,7 @@ sbWindowWatcher::CallWithWindow_Proxy(const nsAString&           aWindowType,
 
   // If not on main thread, call back through a proxy.
   if (!SB_IsMainThread(mThreadManager)) {
-    nsRefPtr<sbRunnable_<nsresult>> job =
+    nsRefPtr< sbRunnable_<nsresult> > job =
       new sbRunnableMethod3_<nsresult,sbWindowWatcher,
       const nsAString&,sbICallWithWindowCallback*,PRBool>(
           *this,&sbWindowWatcher::CallWithWindow_Proxy,
