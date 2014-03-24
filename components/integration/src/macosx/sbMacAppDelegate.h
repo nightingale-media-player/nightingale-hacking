@@ -29,7 +29,6 @@
 
 #include <nsIObserver.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
 #include <nsIFile.h>
 #include <nsCOMPtr.h>
 
@@ -52,11 +51,6 @@ public:
 
   NS_IMETHOD Init();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
 private:
   SBMacAppDelegate *mDelegate;
 };

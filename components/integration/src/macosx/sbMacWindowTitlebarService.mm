@@ -140,68 +140,6 @@ sbMacWindowTitlebarService::~sbMacWindowTitlebarService()
   Finalize();
 }
 
-
-//-------------------------------------
-//
-// RegisterSelf
-//
-
-/* static */ NS_METHOD
-sbMacWindowTitlebarService::
-  RegisterSelf(nsIComponentManager*         aCompMgr,
-               nsIFile*                     aPath,
-               const char*                  aLoaderStr,
-               const char*                  aType,
-               const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the application startup category.
-  rv = categoryManager->AddCategoryEntry
-                          ("app-startup",
-                           SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME,
-                           "service," SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/* static */ NS_METHOD
-sbMacWindowTitlebarService::
-  UnregisterSelf(nsIComponentManager*         aCompMgr,
-                 nsIFile*                     aPath,
-                 const char*                  aLoaderStr,
-                 const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the application startup category.
-  rv = categoryManager->DeleteCategoryEntry
-                          ("app-startup",
-                           SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME,
-                           PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
 //-------------------------------------
 //
 // Initialize

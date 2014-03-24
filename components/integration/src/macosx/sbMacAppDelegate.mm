@@ -32,7 +32,6 @@
 #include <nsICategoryManager.h>
 #include <nsIObserverService.h>
 #include <nsIWindowMediator.h>
-#include <nsIDOMWindowInternal.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
@@ -126,11 +125,11 @@
     do_GetService(NS_WINDOWMEDIATOR_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, NO);
 
-  nsCOMPtr<nsIDOMWindowInternal> domWinInternal;
+  nsCOMPtr<nsIDOMWindow> domWin;
   rv = winMed->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
-                                   getter_AddRefs(domWinInternal));
-  if (NS_SUCCEEDED(rv) && domWinInternal) {
-    NSWindow *window = NativeWindowFromNode::get(domWinInternal);
+                                   getter_AddRefs(domWin));
+  if (NS_SUCCEEDED(rv) && domWin) {
+    NSWindow *window = NativeWindowFromNode::get(domWin);
     if (window && [window isMiniaturized]) {
       [window deminiaturize:self];
     }
@@ -601,31 +600,3 @@ sbMacAppDelegateManager::Observe(nsISupports *aSubject,
 
   return NS_OK;
 }
-
-/* static */ NS_METHOD
-sbMacAppDelegateManager::RegisterSelf(nsIComponentManager *aCompMgr,
-                                      nsIFile *aPath,
-                                      const char *aLoaderStr,
-                                      const char *aType,
-                                      const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> catMgr = 
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME,
-                                "service,"
-                                SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID,
-                                PR_TRUE, PR_TRUE, nsnull);
-
-  return NS_OK;
-}
-

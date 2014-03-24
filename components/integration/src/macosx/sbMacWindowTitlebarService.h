@@ -47,7 +47,7 @@
 //------------------------------------------------------------------------------
 
 // Mozilla imports.
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 // Mac OS/X imports.
 #include <Cocoa/Cocoa.h>
@@ -119,23 +119,6 @@ public:
    * Destroy a Songbird Mac window titlebar service object.
    */
   virtual ~sbMacWindowTitlebarService();
-
-  /**
-   * Register the Songbird Mac window titlebar service component.
-   */
-  static NS_METHOD RegisterSelf(nsIComponentManager*         aCompMgr,
-                                nsIFile*                     aPath,
-                                const char*                  aLoaderStr,
-                                const char*                  aType,
-                                const nsModuleComponentInfo* aInfo);
-
-  /**
-   * Unregister the Songbird Mac window titlebar service component.
-   */
-  static NS_METHOD UnregisterSelf(nsIComponentManager*         aCompMgr,
-                                  nsIFile*                     aPath,
-                                  const char*                  aLoaderStr,
-                                  const nsModuleComponentInfo* aInfo);
 
   /**
    * Initialize the Songbird Mac window titlebar service.
