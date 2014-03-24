@@ -84,7 +84,8 @@ case $OSTYPE in
     
     # the below needs to be nested...in my testing it won't work otherwise
     if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
-		grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
+      grep -q -E 'gstreamer' nightingale.config || echo -e 'ac_add_options --with-media-core=gstreamer\n' >> nightingale.config
+      grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
     fi
     ;;
   msys*)
