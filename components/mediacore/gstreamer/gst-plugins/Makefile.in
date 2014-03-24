@@ -29,7 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
 SUBDIRS = mozilla \
           $(NULL)
+endif
 
 include $(topsrcdir)/build/rules.mk
