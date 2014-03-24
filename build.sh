@@ -165,10 +165,6 @@ esac
 cd ../
 cd $buildir
 
-PKGDEP="$buildir/dependencies/$depdirn"
-
-export PKG_CONFIG_PATH=$PKGDEP/gstreamer/$build/lib/pkgconfig:$PKGDEP/gst-plugins-base/$build/lib/pkgconfig:$PKG_CONFIG_PATH
-
 make clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make
