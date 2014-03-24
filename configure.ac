@@ -1326,27 +1326,6 @@ if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
 fi
 
 #
-# If we're building with MEDIA_CORE_GST, set the PKG_CONFIG_PATH path
-#
-
-if test "$MEDIA_CORE_GST" = "1"; then
-    GST_MAJORMINOR=1.0
-    GST_REQS=1.0.6
-    GSTPLUG_REQS=1.0.6
-
-    GSTPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gstreamer/$SB_CONFIGURATION/lib/pkgconfig"
-    GSTPLUGPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gst-plugins-base/$SB_CONFIGURATION/lib/pkgconfig"
-    export PKG_CONFIG_PATH="$GSTPKG:$GSTPLUGPKG:$PKG_CONFIG_PATH"
-
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
-    AC_SUBST(GSTREAMER_CFLAGS)
-
-    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-    AC_SUBST(GSTREAMER_LIBS)
-
-fi
-
-#
 # Check for --with-searchplugins
 #
 
