@@ -1036,7 +1036,7 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
-    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
+    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
     AC_SUBST(GSTREAMER_LIBS)
     AC_SUBST(GTK_CFLAGS)
     AC_SUBST(GTK_LIBS)
@@ -1316,6 +1316,30 @@ if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
     GST_MAJORMINOR=1.0
     GST_REQS=1.0.6
     GSTPLUG_REQS=1.0.6
+
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
+    AC_SUBST(GSTREAMER_CFLAGS)
+
+    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
+    AC_SUBST(GSTREAMER_LIBS)
+
+fi
+
+#
+# If we're building with MEDIA_CORE_GST, set the PKG_CONFIG_PATH path
+#
+
+if test "$MEDIA_CORE_GST" = "1"; then
+    GST_MAJORMINOR=1.0
+    GST_REQS=1.0.6
+    GSTPLUG_REQS=1.0.6
+
+    GSTPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gstreamer/$SB_CONFIGURATION/lib"
+    GSTPLUGPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gst-plugins-base/$SB_CONFIGURATION/lib"
+    PKG_CONFIG_PATH="$GSTPKG:$GSTPLUGPKG:$PKG_CONFIG_PATH"
+    AC_SUBST(PKG_CONFIG_PATH)
+
+    # echo -e "PKG_CONFIG_PATH: \n$PKG_CONFIG_PATH"
 
     PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
     AC_SUBST(GSTREAMER_CFLAGS)
