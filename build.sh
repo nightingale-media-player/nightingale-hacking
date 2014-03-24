@@ -116,7 +116,7 @@ case $OSTYPE in
     # no wget on OSX, use curl
     DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
-    depdate=20140319
+    depdate=20140324
 
     arch_flags="-m32 -arch i386"
     export CFLAGS="$arch_flags" 
