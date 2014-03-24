@@ -1334,12 +1334,9 @@ if test "$MEDIA_CORE_GST" = "1"; then
     GST_REQS=1.0.6
     GSTPLUG_REQS=1.0.6
 
-    GSTPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gstreamer/$SB_CONFIGURATION/lib"
-    GSTPLUGPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gst-plugins-base/$SB_CONFIGURATION/lib"
-    PKG_CONFIG_PATH="$GSTPKG:$GSTPLUGPKG:$PKG_CONFIG_PATH"
-    AC_SUBST(PKG_CONFIG_PATH)
-
-    # echo -e "PKG_CONFIG_PATH: \n$PKG_CONFIG_PATH"
+    GSTPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gstreamer/$SB_CONFIGURATION/lib/pkgconfig"
+    GSTPLUGPKG="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/gst-plugins-base/$SB_CONFIGURATION/lib/pkgconfig"
+    export PKG_CONFIG_PATH="$GSTPKG:$GSTPLUGPKG:$PKG_CONFIG_PATH"
 
     PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 >= $GST_REQS gstreamer-plugins-base-1.0 >= $GSTPLUG_REQS)
     AC_SUBST(GSTREAMER_CFLAGS)
