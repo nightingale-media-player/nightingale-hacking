@@ -69,8 +69,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                      $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += "-std=gnu++0x" \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 DYNAMIC_LIB = sbDeviceFirmwareTester
 

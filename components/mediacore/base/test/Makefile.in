@@ -58,8 +58,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                      $(topsrcdir)/components/moz/threads/src \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += -std=gnu++0x \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
                
 DYNAMIC_LIB = sbTestMediacoreBase
                

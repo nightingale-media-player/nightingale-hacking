@@ -39,8 +39,9 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/mediacore/playback/gstreamer/src \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(NULL)
 
-CPP_EXTRA_FLAGS = -std=gnu++0x \
-                  $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 # If this a gstreamer system build, tell the stub loader not to load any
 # dependent libraries

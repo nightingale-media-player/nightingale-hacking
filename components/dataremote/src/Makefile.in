@@ -43,8 +43,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
-CPP_EXTRA_FLAGS += "-std=gnu++0x" \
-                   $(NULL)
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
 
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
