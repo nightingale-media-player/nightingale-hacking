@@ -30,7 +30,9 @@
 
 #include "sbIGstPlatformInterface.h"
 #include "sbGStreamerPlatformBase.h"
+#include "sbGStreamerMediacore.h"
 
+#include <a11ygeneric.h>
 #include <nsIBoxObject.h>
 
 class OSXPlatformInterface : public BasePlatformInterface
@@ -70,6 +72,8 @@ protected:
   void *mParentView;         // weak (NSView *)
   void *mVideoView;          // weak (NSView *)
   void *mGstGLViewDelegate;  // strong (NSObject *)
+
+  NS_DECL_RUNNABLEMETHOD(sbGStreamerMediacore, RequestVideoWindow);
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_OSX_H_
