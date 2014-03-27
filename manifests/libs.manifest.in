@@ -9,6 +9,47 @@ binary-component sbGStreamerMediacore.so os=Linux
 #endif
 
 
+# Mac #
+
+binary-component libFLAC.dylib os=Darwin
+binary-component libgettextlib.dylib os=Darwin
+binary-component libgettextpo.dylib os=Darwin
+binary-component libgettextsrc.dylib os=Darwin
+binary-component libglib-2.0.dylib os=Darwin
+binary-component libgmodule-2.0.dylib os=Darwin
+binary-component libgobject-2.0.dylib os=Darwin
+binary-component libgstapp-1.0.dylib os=Darwin
+binary-component libgstaudio-1.0.dylib os=Darwin
+binary-component libgstbase-1.0.dylib os=Darwin
+binary-component libgstcontroller-1.0.dylib os=Darwin
+binary-component libgstfft-1.0.dylib os=Darwin
+binary-component libgstnet-1.0.dylib os=Darwin
+binary-component libgstpbutils-1.0.dylib os=Darwin
+binary-component libgstreamer-1.0.dylib os=Darwin
+binary-component libgstriff-1.0.dylib os=Darwin
+binary-component libgstrtp-1.0.dylib os=Darwin
+binary-component libgstrtsp-1.0.dylib os=Darwin
+binary-component libgstsdp-1.0.dylib os=Darwin
+binary-component libgsttag-1.0.dylib os=Darwin
+binary-component libgstvideo-1.0.dylib os=Darwin
+binary-component libgthread-2.0.dylib os=Darwin
+binary-component libintl.dylib os=Darwin
+binary-component libjpeg.dylib os=Darwin
+binary-component libogg.dylib os=Darwin
+binary-component libs.manifest os=Darwin
+binary-component libtheora.dylib os=Darwin
+binary-component libtheoradec.dylib os=Darwin
+binary-component libtheoraenc.dylib os=Darwin
+binary-component libvorbis.dylib os=Darwin
+binary-component libvorbisenc.dylib os=Darwin
+binary-component libvorbisfile.dylib os=Darwin
+
+#ifdef DEBUG
+binary-component sbGStreamerMediacore_d.dylib os=Darwin
+#else
+binary-component sbGStreamerMediacore.dylib os=Darwin
+#endif
+
 
 # Windows #
 
