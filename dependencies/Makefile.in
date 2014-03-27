@@ -69,10 +69,12 @@ ifeq (windows,$(SB_PLATFORM))
           $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
      endif
   endif
-   # mozcrt doesn't exist anymore
    # Copy these immaterial of whether --disable-jemalloc is specified for 
    # Songbird proper, because XR needs it.
    # MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19$(DEBUG:%=d).dll
+   # MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt.lib
+   # --- we do need mozutils.dll though --- #
+   MOZ_UTILS_DLL = $(SONGBIRD_XULRUNNERDIR)/mozutils.dll
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
@@ -529,10 +531,9 @@ ifeq (windows,$(SB_PLATFORM)) #{
 #		 "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
 #       -OUTPUTRESOURCE:$(SONGBIRD_STUB)\;1
 #   endif # Not-jemalloc and MSVC with manifest tool
-   # On Win32, the stub requires the custom CRT in the same directory now,
-   # if it's enabled; move that along if we find it too...
-#	test -e $(MOZ_WIN32_CUSTOM_CRT) && \
-#	 $(INSTALL_PROG) $(MOZ_WIN32_CUSTOM_CRT) $(SONGBIRD_XR_STUB_DIR)
+	# On win32, copy mozutils.dll into the dist dir
+	test -e $(MOZ_UTILS_DLL) && \
+	  $(INSTALL_PROG) $(MOZ_UTILS_DLL) $(SONGBIRD_XR_STUB_DIR)
 	# Win32 only - munge the stub installer for icons
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)

@@ -141,7 +141,7 @@ AC_SUBST(SB_ENABLE_TEST_HARNESS)
 #  Check for --enable-jemalloc
 #
 
-SB_USE_JEMALLOC=0
+SB_USE_JEMALLOC=1
 
 AC_ARG_ENABLE(jemalloc,
               [  --enable-jemalloc       use the jemalloc memory allocator (default=yes)])
@@ -855,14 +855,7 @@ case "$SB_PLATFORM" in
     fi
 
     if test "$SB_USE_JEMALLOC" == "1"; then
-      # if test "$enable_debug" == "yes"; then
-      #   MOZ_CRT_DLL_NAME="mozcrt19d"
-      # else
-      #   MOZ_CRT_DLL_NAME="mozcrt19"
-      # fi
-
-      # MSVC_DLL_LINKER_FLAGS="-NODEFAULTLIB:MSVCRT -NODEFAULTLIB:MSVCRTD -NODEFAULTLIB:LIBCMT -NODEFAULTLIB:LIBCMTD -DEFAULTLIB:$MOZ_CRT_DLL_NAME"
-      MSVC_DLL_LINKER_FLAGS=""
+      MSVC_DLL_LINKER_FLAGS="-NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -NODEFAULTLIB:msvcprt -NODEFAULTLIB:msvcprtd -DEFAULTLIB:mozcrt"
     fi
 
     CFLAGS="$CFLAGS $MSVC_COMPILER_FLAGS -TC"
