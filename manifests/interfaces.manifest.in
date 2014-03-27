@@ -67,6 +67,6 @@ interfaces sbSQLBuilder.xpt
 interfaces sbUpdate.xpt
 interfaces sbWatchFolderService.xpt
 interfaces sbWebServicesLastFm.xpt
-interfaces sbMetadataHandlerWMA.xpt.xpt os=WINNT
+interfaces sbMetadataHandlerWMA.xpt os=WINNT
 interfaces sbStrings.xpt os=WINNT
 interfaces sbWindowsSystem.xpt os=WINNT

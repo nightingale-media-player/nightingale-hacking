@@ -99,6 +99,7 @@ component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} sbSmartPlaylistPropertyRegistra
 component {2c15f30e-815f-4414-8d18-277d943a2f68} sbSongbirdProtocol.js
 component {cc435d34-f76a-458f-b786-faf897ca69bd} sbURIImportService.js
 component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
+component {3124ec90-1dd2-11b2-8059-c4e994415c12} sbWindowsAutoPlayService.js os=WINNT
 
 
 #############
@@ -358,7 +359,7 @@ contract @songbirdnest.com/tools/disthelper/update/env;1 {6325fde4-f1ee-47f9-a40
 contract @songbirdnest.com/uri-import-service;1 {cc435d34-f76a-458f-b786-faf897ca69bd}
 contract @songbirdnest.com/watch-folder-service;1 {bc4a17b5-4b9d-4a2c-be93-7699cdd6b583}
 contract @songbirdnest.com/watch-folder;1 {11ef8123-666b-4acc-ab17-587a5c44c5b9}
-
+contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2-8059-c4e994415c12} os=WINNT
 
 ##############
 # CATEGORIES #
@@ -409,7 +410,7 @@ category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlforma
 category external-uricontentlisteners application/vnd.songbird.maybe.media @songbirdnest.com/contentlistener/media;1
 category external-uricontentlisteners application/vnd.songbird.maybe.playlist @songbirdnest.com/contentlistener/media;1
 category external-uricontentlisteners sbMediaContentListener @songbirdnest.com/contentlistener/media;1
-category final-ui-startup sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
+category final-ui-startup sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1 os=Linux
 category JavaScript-global-property songbird @songbirdnest.com/remoteapi/remoteplayer;1
 category library-importer iTunesLibraryImporter @songbirdnest.com/Songbird/ITunesImporter;1
 category metadata-lookup sbTestProvider @songbirdnest.com/Songbird/MetadataLookup/testProvider;1
@@ -445,3 +446,4 @@ category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdn
 category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
 category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
 # category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
+category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT

@@ -53,7 +53,7 @@ binary-component sbWindowWatcher_d.so os=Linux
 binary-component sbxpcom_d.so os=Linux
 
 # Windows #
-binary-component sbAlbumArt_d.dll os=WINNT
+# binary-component sbAlbumArt_d.dll os=WINNT
 binary-component sbBrowserAPI_d.dll os=WINNT
 binary-component sbCDDevice_d.dll os=WINNT
 binary-component sbClipboardHelper_d.dll os=WINNT
@@ -162,7 +162,7 @@ binary-component sbWindowWatcher.so os=Linux
 binary-component sbxpcom.so os=Linux
 
 # Windows #
-binary-component sbAlbumArt.dll os=WINNT
+# binary-component sbAlbumArt.dll os=WINNT
 binary-component sbBrowserAPI.dll os=WINNT
 binary-component sbCDDevice.dll os=WINNT
 binary-component sbClipboardHelper.dll os=WINNT
