@@ -74,13 +74,26 @@ ifeq (windows,$(SB_PLATFORM))
    # MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19$(DEBUG:%=d).dll
    # MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt.lib
    # --- we do need mozutils.dll though --- #
+   # TODO: change this to use mozutils$(DLL_SUFFIX)
    MOZ_UTILS_DLL = $(SONGBIRD_XULRUNNERDIR)/mozutils.dll
 endif
 
+# Why is this here?? I don't get why the libogg.0.dylib and libogg.dylib files
+# need to be put into the Contents/MacOS/ dir...
 ifeq (macosx,$(SB_PLATFORM))
 libs::
 	$(MKDIR) $(SONGBIRD_MACOS)
 	$(INSTALL_PROG) $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+    $(SONGBIRD_MACOS) \
+    $(NULL)
+endif
+# We do need libmozutils.dylib in Contents/MacOS/ though
+# TODO: Maybe move this down after SONGBIRD_XR_STUB_DIR gets declared, since
+# that's /probably/ where the file needs to go?
+ifeq (macosx,$(SB_PLATFORM))
+libs::
+	$(MKDIR) $(SONGBIRD_MACOS)
+	$(INSTALL_PROG) $(MOZSDK_LIB_DIR)/libmozutils$(DLL_SUFFIX) \
     $(SONGBIRD_MACOS) \
     $(NULL)
 endif
