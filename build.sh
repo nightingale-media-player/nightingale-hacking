@@ -90,7 +90,7 @@ case $OSTYPE in
     ;;
   msys*)
     depdirn="windows-i686"
-    depdate=20140307
+    depdate=20140331
     msvcver="msvc10"
     
     # Ensure line endings, as git might have converted them
