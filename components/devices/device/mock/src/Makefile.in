@@ -103,6 +103,10 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
                               $(NULL)
 
+ifeq (windows, $(SB_PLATFORM))
+    DYNAMIC_LIB_EXTRA_FLAGS += -NODEFAULTLIB:libcpmt$(DEBUG:%=d)
+endif
+
 ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
