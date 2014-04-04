@@ -98,8 +98,13 @@ ifeq (solaris,$(SB_PLATFORM))
 endif
 
 CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
-					 -frtti \
-					  $(NULL)
+					 $(NULL)
+
+ifneq (windows, $(SB_PLATFORM))
+	CPP_EXTRA_FLAGS += -frtti \
+                       $(NULL)
+endif
+
 ifeq (windows, $(SB_PLATFORM))
     DYNAMIC_LIB_EXTRA_FLAGS += -NODEFAULTLIB:libcmt
 endif
