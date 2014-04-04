@@ -157,7 +157,8 @@ endif
 
 # The dynamic gstreamer libs on windows have "-0" appended to their names
 ifeq (windows,$(SB_PLATFORM))
-   GST_LIB_SUFFIX = -0
+   # GST_LIB_SUFFIX = -0
+   GST_LIB_SUFFIX = .dll
 endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
