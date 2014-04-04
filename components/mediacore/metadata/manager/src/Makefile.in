@@ -99,6 +99,10 @@ ifeq ($(SB_PLATFORM), macosx)
    DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
+ifeq (windows, $(SB_PLATFORM))
+    DYNAMIC_LIB_EXTRA_FLAGS += -NODEFAULTLIB:libcmt
+endif
+
 DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/threads/src/sbMozThreads \
                               $(NULL)

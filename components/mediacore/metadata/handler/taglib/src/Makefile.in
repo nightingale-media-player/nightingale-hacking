@@ -100,6 +100,9 @@ endif
 CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
 					 -frtti \
 					  $(NULL)
+ifeq (windows, $(SB_PLATFORM))
+    DYNAMIC_LIB_EXTRA_FLAGS += -NODEFAULTLIB:libcmt
+endif
 
 ifeq (system,$(SB_TAGLIB))
 	DYNAMIC_LIB_RAW_IMPORTS += $(TAGLIB_LIBS) \

@@ -79,6 +79,10 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/threads/src/sbMozThreads \
 
+ifeq (windows, $(SB_PLATFORM))
+    DYNAMIC_LIB_EXTRA_FLAGS += -NODEFAULTLIB:libcmt
+endif
+
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

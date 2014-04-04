@@ -75,6 +75,10 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
+ifeq (windows, $(SB_PLATFORM))
+    DYNAMIC_LIB_EXTRA_FLAGS += -NODEFAULTLIB:libcmt
+endif
+
 IS_COMPONENT = 1
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/mediacore-base.manifest.in \
