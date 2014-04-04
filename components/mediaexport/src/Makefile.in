@@ -59,6 +59,10 @@ ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
    CPP_EXTRA_FLAGS += -std=gnu++0x
 endif
 
+ifeq (windows, $(SB_PLATFORM))
+    CPP_EXTRA_FLAGS += -MD$(DEBUG:%=d)
+endif
+
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 

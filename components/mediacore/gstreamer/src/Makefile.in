@@ -121,6 +121,10 @@ ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
    CPP_EXTRA_FLAGS += -std=gnu++0x
 endif
 
+ifeq (windows, $(SB_PLATFORM))
+    CPP_EXTRA_FLAGS += -MD$(DEBUG:%=d)
+endif
+
 ifdef MEDIA_CORE_GST_SYSTEM
    CPP_EXTRA_FLAGS = -DGST_SYSTEM=1 \
                      $(NULL)

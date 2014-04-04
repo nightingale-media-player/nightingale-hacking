@@ -50,6 +50,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
+ifeq (windows, $(SB_PLATFORM))
+    CPP_EXTRA_FLAGS += -MD$(DEBUG:%=d)
+endif
+
 DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
                             WMVCORE \
                             wininet \

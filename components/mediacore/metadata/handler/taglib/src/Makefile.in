@@ -66,6 +66,10 @@ ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
                      $(NULL)
 endif
 
+ifeq (windows, $(SB_PLATFORM))
+    CPP_EXTRA_FLAGS += -MD$(DEBUG:%=d)
+endif
+
 DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
                             plds4 \
                             $(NULL)

@@ -38,5 +38,8 @@ ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
    CPP_EXTRA_FLAGS += -std=gnu++0x
 endif
 
-include $(topsrcdir)/build/rules.mk
+ifeq (windows, $(SB_PLATFORM))
+   CPP_EXTRA_FLAGS += -MD$(DEBUG:%=d)
+endif
 
+include $(topsrcdir)/build/rules.mk
