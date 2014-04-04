@@ -236,6 +236,13 @@ ifdef MEDIA_CORE_GST #{
                                gstdshowvideosink \
                                $(NULL)
 
+      GETTEXT_NAMES = libintl-8 \
+                      $(NULL)
+
+      LIBICONV_NAMES = libcharset-1 \
+                       iconv \
+                       $(NULL)
+
       GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
              $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
 

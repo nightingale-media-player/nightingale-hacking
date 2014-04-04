@@ -54,7 +54,6 @@ binary-component sbGStreamerMediacore.dylib os=Darwin
 # Windows #
 
 FLAC-8.dll os=WINNT
-charset.dll os=WINNT
 gettextlib.dll os=WINNT
 gettextpo.dll os=WINNT
 gettextsrc.dll os=WINNT
@@ -77,7 +76,8 @@ gstsdp-0.10-0.dll os=WINNT
 gsttag-0.10-0.dll os=WINNT
 gstvideo-0.10-0.dll os=WINNT
 iconv.dll os=WINNT
-intl.dll os=WINNT
+libcharset-1.dll os=WINNT
+libintl-8.dll os=WINNT
 jpeg-7.dll os=WINNT
 libglib-2.0-0.dll os=WINNT
 libgmodule-2.0-0.dll os=WINNT
