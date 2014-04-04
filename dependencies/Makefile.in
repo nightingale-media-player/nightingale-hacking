@@ -163,7 +163,6 @@ ifdef MEDIA_CORE_GST #{
                             gstaudioresample \
                             gstaudiotestsrc \
                             gstogg \
-                            gsttheora \
                             gsttypefindfunctions \
                             gstvideorate \
                             gstvideoscale \
@@ -171,6 +170,7 @@ ifdef MEDIA_CORE_GST #{
                             gstvolume \
                             gstvorbis \
                             $(NULL)
+                            # gsttheora \ # need to reompile plugins base for win
 
    GST_PLUGINS_GOOD_NAMES = gstalaw \
                             gstalpha \
@@ -187,7 +187,6 @@ ifdef MEDIA_CORE_GST #{
                             gstgoom \
                             gsticydemux \
                             gstid3demux \
-                            gstjpeg \
                             gstlevel \
                             gstmatroska \
                             gstmulaw \
@@ -206,6 +205,7 @@ ifdef MEDIA_CORE_GST #{
                             gstwavenc \
                             gstwavparse \
                             $(NULL)
+                            # gstjpeg \ # need to recompile plugins-good for win
 
    GST_PLUGINS_UGLY_NAMES = gstasf \
                             $(NULL)
@@ -225,16 +225,16 @@ ifdef MEDIA_CORE_GST #{
    endif
 
    ifeq (windows,$(SB_PLATFORM)) #{
-      GST_PLUGINS_GOOD_NAMES += gstdirectsoundsink \
-                                $(NULL)
+      # GST_PLUGINS_GOOD_NAMES += gstdirectsoundsink \ # need this for win? is it in gst-1.0?
+      #                           $(NULL)
 
-      GST_PLUGINS_BAD_NAMES += gstacmmp3dec \
-                               gstdmoenc \
-                               gstqtaudiowrapper \
-                               gstqtvideowrapper \
-                               gstdshowdecwrapper \
-                               gstdshowvideosink \
-                               $(NULL)
+      # GST_PLUGINS_BAD_NAMES += gstacmmp3dec \
+      #                          gstdmoenc \
+      #                          gstqtaudiowrapper \
+      #                          gstqtvideowrapper \
+      #                          gstdshowdecwrapper \
+      #                          gstdshowvideosink \
+      #                          $(NULL)
 
       GETTEXT_NAMES = libintl-8 \
                       $(NULL)
