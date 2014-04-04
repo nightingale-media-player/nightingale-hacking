@@ -90,9 +90,9 @@ case $OSTYPE in
     ;;
   msys*)
     depdirn="windows-i686"
-    depdate=20140331
+    depdate=20140404
     msvcver="msvc10"
-    
+
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
     rm ./components/library/localdatabase/content/schema.sql
