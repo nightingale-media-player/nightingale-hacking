@@ -10,5 +10,7 @@ bluemonday.jar:
 % override chrome://songbird/skin/icons/displaypane-contentpane-bottom.png chrome://songbird/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
 % override chrome://songbird/skin/icons/displaypane-servicepane-bottom.png chrome://songbird/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
 % override chrome://songbird/skin/icons/displaypane-right-sidebar.png chrome://songbird/skin/icons/mac/displaypane-right-sidebar.png os=darwin
+# Native Menu overrides
+% override chrome://songbird-global/skin/menu.css jar:resource:///xulrunner/chrome/classic.jar!/skin/classic/global/menu.css
 #
 @include_all_to feathers/bluemonday/songbird/chrome/

@@ -13,9 +13,17 @@
 menuitem[_moz-menuactive="true"]:not([disabled="true"]) .menu-text,
 menuitem[_moz-menuactive="true"]:not([disabled="true"]) .menu-iconic-text,
 menu[_moz-menuactive="true"]:not([disabled="true"]) > .menu-text {
-  color: -moz-menuhovertext !important;
+  color: -moz-menuhovertext;
 }
 
 .popup-internal-box {
   padding: 0 !important;
+}
+
+/*XXX This rule un-breaks pane's swiching menu icons. */
+.menulist-menupopup > menuitem > .menu-iconic-left,
+menulist > menupopup > menuitem > .menu-iconic-left,
+.menulist-menupopup > menu > .menu-iconic-left,
+menulist > menupopup > menu > .menu-iconic-left {
+  display: block !important;
 }
