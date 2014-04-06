@@ -44,12 +44,12 @@
       }
 
       function populateList() {
-        var tracks = ["http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/mactonite_-_Days_of_April_(Part_1).mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3"];
+        var tracks = ["http:/static.getnightingale.com/unittests/remoteapi/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/mactonite_-_Days_of_April_(Part_1).mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/nyx_-_Undercover.mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/Sawtooth_-_We_Are_Not_Evil_Down_To_Brass_Tacks_Remix.mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/DJBLUE_-_Hear_Me.mp3"];
 
         for ( var index = 0 ; index < tracks.length; index++ ) {
           //alert("foo length: " + tracks.length);
@@ -58,7 +58,7 @@
           // check for existence first to not overwrite the image if it's been changed already
           if (! item.getProperty("http://example.com/custom/downloadImage") ) {
             // idealy this would be an icon indicating a click would download the track.
-            item.setProperty("http://example.com/custom/downloadImage",  "http://getsongbird.com/favicon.ico");
+            item.setProperty("http://example.com/custom/downloadImage",  "http://getnightingale.com/favicon.ico");
           }
           siteList.add(item);
         }
@@ -91,10 +91,10 @@
         // on completion of the download we will succeed or fail. set the image appropriately
         if ( event.status == 0 ) { // 0 means success
           // Ideally this would be an image indicating success
-          item.setProperty("http://example.com/custom/downloadImage",  "http://www.songbirdnest.com/files/images/button_opera.png");
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.example.com/files/images/button_opera.png");
         } else {
           // Ideally this would be an image indicating failure
-          item.setProperty("http://example.com/custom/downloadImage",  "http://www.songbirdnest.com/files/images/15_cartbird.thumbnail.png");
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.example.com/files/images/15_cartbird.thumbnail.png");
         }
       };
 
