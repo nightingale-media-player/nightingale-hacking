@@ -40,7 +40,7 @@ extern "C" {
   GST_PLUGIN_DEFINE (
     GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
-    "mozilla",
+    mozilla,
     "Mozilla source and sink",
     plugin_init,
     GST_MOZ_VERSION,
