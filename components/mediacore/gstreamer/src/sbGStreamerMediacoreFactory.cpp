@@ -189,7 +189,6 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
     nsTArray<nsString> audioExtensions;
     nsTArray<nsString> videoExtensions;
-    nsTArray<nsString> dynamicVideoExtensions;
     
     // XXX Mook: we have a silly list of blacklisted extensions because we don't
     // support them and we're being stupid and guessing things based on them.
@@ -222,6 +221,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     const char *extraWindowsAudioExtensions[] = {"wma" };
 #endif
 
+#ifdef STATIC_VIDEO_EXT_LIST
     { // for scope
 
       // Per bug 19550 -
@@ -290,6 +290,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
         gst_object_unref(plugin);
       }
     }
+#endif // STATIC_VIDEO_EXT_LIST
 
     GList *walker, *list;
 
@@ -302,9 +303,6 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
       gboolean isAudioFactory = g_str_has_prefix(factoryName, "audio/");
       gboolean isVideoFactory = g_str_has_prefix(factoryName, "video/");
-
-      LOG(("")); // spacing
-      LOG(("    factory: %s", factoryName));
 
       const gchar* const *factoryexts = gst_type_find_factory_get_extensions (factory);
       if (factoryexts) {
@@ -319,45 +317,41 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
 
           blacklisted = (blacklistExtensions.Find(delimitedExtension) != -1);
-/*
+
           #if PR_LOGGING
             if (blacklisted) {
+              if (isAudioExtension) {
+                LOG(("sbGStreamerMediacoreFactory: Ignoring (audio) extension '%s'", *factoryexts));
+              } else if (isVideoExtension) {
+                LOG(("sbGStreamerMediacoreFactory: Ignoring (video) extension '%s'", *factoryexts));
+              } else {
                 LOG(("sbGStreamerMediacoreFactory: Ignoring extension '%s'", *factoryexts));
+              }
             }
-*/
-//          #endif /* PR_LOGGING */
-
-
-          LOG(("        extension: %s", *factoryexts));
-          #if PR_LOGGING
-            if (blacklisted) {
-                LOG(("                    in the blacklist: '%s'", *factoryexts));
-            }
-          #endif
+          #endif /* PR_LOGGING */
 
           nsString ext = NS_ConvertUTF8toUTF16(*factoryexts);
 
-//          if (!blacklisted) {
+          if (!blacklisted) {
             if (isAudioExtension && !audioExtensions.Contains(ext)) {
-              audioExtensions.AppendElement(NS_ConvertUTF8toUTF16(*factoryexts));
-/*
+              audioExtensions.AppendElement(ext);
+
               LOG(("sbGStreamerMediacoreFactory: registering audio extension %s\n",
                     *factoryexts));
-*/
-              LOG(("            registering audio extension %s\n",
-                    *factoryexts));
 
+            } else {
 
-            } else if (isVideoExtension && !dynamicVideoExtensions.Contains(ext)) {
-              dynamicVideoExtensions.AppendElement(ext);
-/*
-              LOG(("sbGStreamerMediacoreFactory: registering video extensions %s\n",
-                    *factoryexts));
-*/
-              LOG(("            registering video extensions %s\n",
-                    *factoryexts));
+#ifndef STATIC_VIDEO_EXT_LIST
+              if (isVideoExtension && !videoExtensions.Contains(ext)) {
+                videoExtensions.AppendElement(ext);
+
+                LOG(("sbGStreamerMediacoreFactory: registering video extensions %s\n",
+                      *factoryexts));
+              }
+#endif // STATIC_VIDEO_EXT_LIST
+
             }
-//          }
+          }
 
           factoryexts++;
         }
@@ -393,8 +387,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
                                     &videoDisabled);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!videoDisabled) {
-//      rv = caps->SetVideoExtensions(videoExtensions);
-      rv = caps->SetVideoExtensions(dynamicVideoExtensions);
+      rv = caps->SetVideoExtensions(videoExtensions);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = caps->SetSupportsVideoPlayback(PR_TRUE);
