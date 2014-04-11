@@ -227,6 +227,17 @@ fi
 AC_SUBST(SB_SQLITE_DEBUG)
 
 #
+# Check for --enable-system-sqlite
+#
+
+SYSTEM_SQLITE=
+
+AC_ARG_ENABLE(system-sqlite,
+              [ --enable-system-sqlite    use the system's sqlite instead of bundled version (default=no) ])
+
+  # Don't define anything here, we do it down where we set platform specific things
+
+#
 #  Check for --enable-device-drivers
 #
 
@@ -1043,6 +1054,16 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
+
+    if test "$enable_system_sqlite" == "yes" ; then
+      SYSTEM_SQLITE=1
+      AC_DEFINE(USE_SYSTEM_SQLITE)
+    fi
+    AC_SUBST(SYSTEM_SQLITE)
+
+    PKG_CHECK_MODULES(SQLITE, sqlite3)
+    AC_SUBST(SQLITE_CFLAGS)
+    AC_SUBST(SQLITE_LIBS)
 
     if test "$GNU_CC" = "yes" ; then
       AC_MSG_ERROR([GCC not yet supported])

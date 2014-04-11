@@ -58,7 +58,6 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(MOZSDK_INCLUDE_DIR)/xpcom \
                      $(MOZSDK_IDL_DIR) \
-                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
                      $(NULL)
 
 ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
@@ -67,12 +66,25 @@ endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
-                            
+
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
  $(NULL)
+
+ifeq (1, $(SYSTEM_SQLITE))
+  CPP_RAW_INCLUDES = $(SQLITE_CFLAGS) \
+                     $(NULL)
+
+  DYNAMIC_LIB_RAW_IMPORTS += $(SQLITE_LIBS) \
+                             $(NULL)
+
+else
+
+  DYNAMIC_LIB_STATIC_IMPORTS += \
+   $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
+   $(NULL)
+endif
 
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_STATIC_IMPORTS += \

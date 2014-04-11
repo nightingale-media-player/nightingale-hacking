@@ -38,7 +38,6 @@ CPP_SRCS = sbPlaybackHistoryEntry.cpp \
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(topsrcdir)/components/dbengine/src \
-                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
                      $(topsrcdir)/components/include \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/playback/history/public \
@@ -59,6 +58,11 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
 
 ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
    CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
+
+ifneq (1, $(SYSTEM_SQLITE))
+  CPP_EXTRA_INCLUDES += $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+                        $(NULL)
 endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
