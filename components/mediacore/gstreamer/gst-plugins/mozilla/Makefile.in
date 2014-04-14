@@ -62,10 +62,11 @@ ifeq (windows,$(SB_PLATFORM))
    GST_LIB_SUFFIX += -0
 endif
 
-DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-R,'$$ORIGIN/../xulrunner'
+ifneq (, $(filter-out macosx windows, $(SB_PLATFORM)))
+	DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-R,'$$ORIGIN/../xulrunner'
+endif
 
-DYNAMIC_LIB_EXTRA_IMPORTS = xul \
-                            plds4 \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
@@ -90,27 +91,45 @@ else
     $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib \
     $(NULL)
 
-   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
-      # macosx or windows
-      DYNAMIC_LIB_EXTRA_IMPORTS += intl \
-                                   iconv \
-                                   glib-$(GLIB_VERSION) \
-                                   gmodule-$(GLIB_VERSION) \
-                                   gobject-$(GLIB_VERSION) \
-                                   gthread-$(GLIB_VERSION) \
-                                   $(NULL)
+    ifeq (windows,$(SB_PLATFORM))
+        # windows
+        DYNAMIC_LIB_EXTRA_IMPORTS += intl \
+                                     iconv \
+                                     glib-$(GLIB_VERSION) \
+                                     gmodule-$(GLIB_VERSION) \
+                                     gobject-$(GLIB_VERSION) \
+                                     gthread-$(GLIB_VERSION) \
+                                     $(NULL)
 
-      DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
-       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib \
-       $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib \
-       $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib \
-       $(NULL)
-   else
-       # everything else
-       DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
-                                  -lX11 \
-                                  $(NULL)
-   endif
+        DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+            $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib \
+            $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib \
+            $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib \
+            $(NULL)
+    endif
+
+    # 1.12 deps don't have libiconv
+    ifeq (macosx, $(SB_PLATFORM))
+        # macosx
+        DYNAMIC_LIB_EXTRA_IMPORTS += intl \
+                                     glib-$(GLIB_VERSION) \
+                                     gmodule-$(GLIB_VERSION) \
+                                     gobject-$(GLIB_VERSION) \
+                                     gthread-$(GLIB_VERSION) \
+                                     $(NULL)
+
+        DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+            $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib \
+            $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib \
+            $(NULL)
+    endif
+
+    ifneq (, $(filter-out macosx windows, $(SB_PLATFORM)))
+        # everything else
+        DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
+                                   -lX11 \
+                                   $(NULL)
+    endif
 endif
 
 CPP_EXTRA_FLAGS += "-fshort-wchar"
