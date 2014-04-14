@@ -74,7 +74,7 @@ case $OSTYPE in
     version=1.12
     depdate=20130316
     fname="$depdirn-$version-$depdate-$build-final.tar.lzma"
-    
+
     export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
@@ -82,20 +82,24 @@ case $OSTYPE in
         if [ ! -f "$fname" ] ; then
             # We want the new deps instead of the old ones...
             rm -rf "$depdirn"
-			download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
-	fi
-	if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
+            download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+    fi
+    if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
             if [ -f "$fname.md5" ] ; then
-		md5_verify "$fname"
+        md5_verify "$fname"
             fi
-	    echo "Need to extract $fname"
-	    tar xvf "$fname"
-	fi
-	} ; )
+        echo "Need to extract $fname"
+        tar xvf "$fname"
+    fi
+    } ; )
 
+    # https://en.wikipedia.org/wiki/List_of_Linux_distributions#Debian-based
+    debianbased="buntu|Debian|LMDE|Mint|gNewSense|Fuduntu|Solus|CrunchBang|Peppermint|Deepin|Kali|Trisquel|elementary|Knoppix'"
     # the below needs to be nested...in my testing it won't work otherwise
-    if [[ $(egrep -i 'Ubuntu|Debian' /etc/issue) ]]; then
-		grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
+    if [[ $(grep -i -E $debianbased /etc/issue) ||
+          $(grep -i -E $debianbased /etc/lsb-release) ||
+          $(grep -i -E $debianbased /etc/os-release) ]]; then
+            grep -q -E 'taglib' nightingale.config || echo -e 'ac_add_options --with-taglib-source=packaged\n' >> nightingale.config
     fi
     ;;
   msys*)
@@ -103,22 +107,22 @@ case $OSTYPE in
     # Nightingale version number and dependency version, change if the deps change.
     version=1.12
     depversion="20130121"
-    
+
     # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
     rm ./components/library/localdatabase/content/schema.sql
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
-    
+
     cd dependencies
 
     fname="$depdirn-$version-$depversion-$build.tar.lzma"
-    
+
     if [ ! -f "$fname" ] ; then
       # We want the new deps instead of the old ones...
       rm -rf "$depdirn"
       download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
-    
+
     if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
       if [ -f "$fname.md5" ] ; then
           md5_verify "$fname"
@@ -126,7 +130,7 @@ case $OSTYPE in
       mkdir "$depdirn"
       tar --lzma -xvf "$fname" -C "$depdirn"
     fi
-    cd ../    
+    cd ../
     ;;
   darwin*)
     depdirn="macosx-i686"
@@ -144,7 +148,7 @@ case $OSTYPE in
     echo 'ac_add_options --enable-installer' >> nightingale.config
     echo 'ac_add_options --enable-official' >> nightingale.config
     echo 'ac_add_options --enable-compiler-environment-checks=no' >> nightingale.config
-    
+
     cd dependencies
 
     fname="$depdirn-$version-$depversion-$build.tar.bz2"
@@ -154,7 +158,7 @@ case $OSTYPE in
       rm -rf "$depdirn"
       download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
     fi
-    
+
     if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
       if [ -f "$fname.md5" ] ; then
           md5_verify "$fname"
@@ -181,8 +185,8 @@ if [ ! -f "vendor-$version.zip" ] ; then
 fi
 
 if [ ! -d "vendor" ] ; then
-	rm -rf vendor &> /dev/null
-	unzip "vendor-$version.zip"
+    rm -rf vendor &> /dev/null
+    unzip "vendor-$version.zip"
 fi
 
 cd ../
