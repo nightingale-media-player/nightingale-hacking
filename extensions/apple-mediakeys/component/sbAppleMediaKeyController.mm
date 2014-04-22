@@ -158,10 +158,6 @@ void OnNextPressed()
 
 @end
 
-// Global key states
-static int gLastDownKeyCode = -1;
-static int gLastDownKeyState = -1;
-
 @implementation NSApplication (SongbirdSwizzledEvent)
 
 - (void)sendSongbirdEvent:(NSEvent *)event
@@ -175,7 +171,7 @@ static int gLastDownKeyState = -1;
     // Sadly, the media key events get posted 4 times for a key-up/key-down
     // combo. So to prevent making the call 4 times, simply filter out the
     // event until we get the last 'up' event (keyState == 0).
-    if (gLastDownKeyCode == keyCode && gLastDownKeyState == 0) {
+    if (keyState == 0) {
       switch (keyCode) {
         case NX_KEYTYPE_PLAY:
           OnPlayPausePressed();
@@ -189,12 +185,6 @@ static int gLastDownKeyState = -1;
           OnPreviousPressed();
           break;
       }
-      gLastDownKeyState = -1;
-      gLastDownKeyCode = -1; 
-    }
-    else {
-      gLastDownKeyCode = keyCode;
-      gLastDownKeyState = keyState;
     }
 
     // No need to have the real |NSApplication| process this event.
