@@ -63,172 +63,6 @@ function ngMprisService() {
   XPCOMUtils.defineLazyServiceGetter(this, "_mediacore", '@songbirdnest.com/Songbird/Mediacore/Manager;1', "sbIMediacoreManager");
   XPCOMUtils.defineLazyServiceGetter(this, "_appStartup", '@mozilla.org/toolkit/app-startup;1', "nsIAppStartup");
   XPCOMUtils.defineLazyServiceGetter(this, "_wMediator", '@mozilla.org/appshell/window-mediator;1', "nsIWindowMediator");
-
-  // MPRIS 1
-  var xml_header = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\"><node name=\"/org/mpris/MediaPlayer2/nightingale\"><interface name=\"org.freedesktop.MediaPlayer\">";
-  var xml_footer = "</interface></node>";
-  this.introspect_root = xml_header +"	\
-	<method name=\"Identity\">	\
-	  <arg type=\"s\" direction=\"out\"/>		\
-	</method>					\
-	<method name=\"Quit\" />			\
-	<method name=\"MprisVersion\">		\
-	  <arg type=\"(qq)\" direction=\"out\"/>	\
-	</method>" + xml_footer;
-	
-  this.introspect_player = xml_header + "		\
-	<method name=\"Next\" />		\
-	<method name=\"Prev\" />		\
-	<method name=\"Pause\" />		\
-	<method name=\"Stop\" />		\
-	<method name=\"Play\" />		\
-	<method name=\"Repeat\">			\
-	  <arg type=\"b\" direction=\"in\"/>				\
-	</method>					\
-	<method name=\"GetStatus\">			\
-	  <arg type=\"(iiii)\" direction=\"out\"/>	\
-	</method>					\
-	<method name=\"GetMetadata\">			\
-	  <arg type=\"a{sv}\" direction=\"out\" />	\
-	</method>				\
-	<method name=\"SetMetadata\">			\
-	  <arg type=\"s\" direction=\"in\" />	\
-	  <arg type=\"s\" direction=\"in\" />	\
-	</method>					\
-	<method name=\"GetCaps\">			\
-	  <arg type=\"i\" direction=\"out\" />	\
-	</method>					\
-	<method name=\"VolumeSet\">			\
-	  <arg type=\"i\" direction=\"in\"/>				\
-	</method>					\
-	<method name=\"VolumeGet\">			\
-	  <arg type=\"i\" direction=\"out\"/>		\
-	</method>					\
-	<method name=\"PositionSet\">			\
-	  <arg type=\"i\" direction=\"in\"/>				\
-	</method>					\
-	<method name=\"PositionGet\">			\
-	  <arg type=\"i\" direction=\"out\"/>		\
-	</method>					\
-	<signal name=\"TrackChange\">			\
-	  <arg type=\"a{sv}\"/>			\
-	</signal>					\
-	<signal name=\"StatusChange\">		\
-	 <arg type=\"(iiii)\"/>			\
-	</signal>					\
-	<signal name=\"CapsChange\">			\
-	  <arg type=\"i\" />				\
-	</signal>" + xml_footer;
-
-  this.introspect_tracklist = xml_header + "		\
-	<method name=\"GetLength\">			\
-	  <arg type=\"i\" direction=\"out\" />	\
-	</method>					\
-	<method name=\"GetMetadata\">			\
-	  <arg type=\"i\" direction=\"in\" />		\
-	  <arg type=\"a{sv}\" direction=\"out\" />	\
-	</method>			\
-	<method name=\"SetMetadata\">			\
-	  <arg type=\"i\" direction=\"in\" />		\
-	  <arg type=\"s\" direction=\"in\" />	\
-	  <arg type=\"s\" direction=\"in\" />	\
-	</method>					\
-	<method name=\"GetCurrentTrack\">		\
-	  <arg type=\"i\" direction=\"out\" />	\
-	</method>					\
-	<method name=\"GetLength\">			\
-	  <arg type=\"i\" direction=\"out\" />	\
-	</method>					\
-	<method name=\"AddTrack\">			\
-	  <arg type=\"s\" direction=\"in\" />		\
-	  <arg type=\"b\" direction=\"in\" />		\
-	  <arg type=\"i\" direction=\"out\" />	\
-	</method>					\
-	<method name=\"DelTrack\">			\
-	  <arg type=\"i\"  direction=\"in\"/>				\
-	</method>					\
-	<method name=\"SetLoop\">			\
-	  <arg type=\"b\"  direction=\"in\"/>				\
-	</method>					\
-	<method name=\"SetRandom\">			\
-	  <arg type=\"b\"  direction=\"in\"/>				\
-	</method>					\
-	<signal name=\"TrackListChange\">		\
-	  <arg type=\"i\" />				\
-	</signal>" + xml_footer;
-  
-  // MPRIS 2
-  this.xml = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
-<node name=\"/org/mpris/MediaPlayer2\">	\
-    <interface name=\"org.mpris.MediaPlayer2\">	\
-        <method name=\"Raise\">	\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"Quit\">	\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <property name=\"CanQuit\" type=\"b\" access=\"read\" />	\
-        <property name=\"Fullscreen\" type=\"b\" access=\"readwrite\" />	\
-        <property name=\"CanSetFullscreen\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanRaise\" type=\"b\" access=\"read\" />	\
-        <property name=\"HasTrackList\" type=\"b\" access=\"read\" />	\
-        <property name=\"Identity\" type=\"s\" access=\"read\" />	\
-        <property name=\"DesktopEntry\" type=\"s\" access=\"read\" />	\
-        <property name=\"SupportedUriSchemes\" type=\"as\" access=\"read\" />	\
-        <property name=\"SupportedMimeTypes\" type=\"as\" access=\"read\" />	\
-    </interface>	\
-    <interface name=\"org.mpris.MediaPlayer2.Player\">	\
-        <method name=\"Next\">		\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"Previous\">		\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"Pause\">		\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"Stop\">		\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"Play\">		\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"PlayPause\">	\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"Seek\">	\
-            <arg type=\"x\" direction=\"in\" />	\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <method name=\"SetPosition\">	\
-            <arg type=\"o\" direction=\"in\" />	\
-            <arg type=\"x\" direction=\"in\" />	\
-			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
-        </method>		\
-        <signal name=\"Seeked\">	\
-            <arg type=\"x\" />	\
-        </signal>	\
-        <property name=\"PlaybackStatus\" type=\"s\" access=\"read\" />	\
-        <property name=\"LoopStatus\" type=\"s\" access=\"readwrite\" />	\
-        <property name=\"Rate\" type=\"d\" access=\"readwrite\" />	\
-        <property name=\"Shuffle\" type=\"b\" access=\"readwrite\" />	\
-        <property name=\"Metadata\" type=\"a{sv}\" access=\"read\" />	\
-        <property name=\"Volume\" type=\"d\" access=\"readwrite\" />	\
-        <property name=\"Position\" type=\"x\" access=\"read\">	\
-			<annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"false\"/>		\
-        </property>		\
-        <property name=\"MinimumRate\" type=\"d\" access=\"read\" />	\
-        <property name=\"MaximumRate\" type=\"d\" access=\"read\" />	\
-        <property name=\"CanGoNext\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanGoPrevious\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanPlay\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanPause\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanSeek\" type=\"b\" access=\"read\" />	\
-        <property name=\"CanControl\" type=\"b\" access=\"read\">	\
-			<annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"false\"/>		\
-        </property>		\
-    </interface>	\
-</node>";
 };
 
 ngMprisService.prototype = {
@@ -468,31 +302,199 @@ ngMprisService.prototype.observe = function(subject, topic, data) {
     else if(topic == 'quit-application')
         this.uninit();
 };
+
+ngMprisService.prototype.getInterfaceSpec = function(path) {
+    var mpris1root = "<node name=\"/org/mpris/MediaPlayer2/nightingale\">	\
+<interface name=\"org.freedesktop.MediaPlayer\">	\
+	<method name=\"Identity\">	\
+	  <arg type=\"s\" direction=\"out\"/>		\
+	</method>					\
+	<method name=\"Quit\" />			\
+	<method name=\"MprisVersion\">		\
+	  <arg type=\"(qq)\" direction=\"out\"/>	\
+	</method>  \
+</interface></node>",
+        mpris1player = "<node name=\"/org/mpris/MediaPlayer2/nightingale/Player\">	\
+<interface name=\"org.freedesktop.MediaPlayer\">		\
+	<method name=\"Next\" />		\
+	<method name=\"Prev\" />		\
+	<method name=\"Pause\" />		\
+	<method name=\"Stop\" />		\
+	<method name=\"Play\" />		\
+	<method name=\"Repeat\">			\
+	  <arg type=\"b\" direction=\"in\"/>				\
+	</method>					\
+	<method name=\"GetStatus\">			\
+	  <arg type=\"(iiii)\" direction=\"out\"/>	\
+	</method>					\
+	<method name=\"GetMetadata\">			\
+	  <arg type=\"a{sv}\" direction=\"out\" />	\
+	</method>				\
+	<method name=\"SetMetadata\">			\
+	  <arg type=\"s\" direction=\"in\" />	\
+	  <arg type=\"s\" direction=\"in\" />	\
+	</method>					\
+	<method name=\"GetCaps\">			\
+	  <arg type=\"i\" direction=\"out\" />	\
+	</method>					\
+	<method name=\"VolumeSet\">			\
+	  <arg type=\"i\" direction=\"in\"/>				\
+	</method>					\
+	<method name=\"VolumeGet\">			\
+	  <arg type=\"i\" direction=\"out\"/>		\
+	</method>					\
+	<method name=\"PositionSet\">			\
+	  <arg type=\"i\" direction=\"in\"/>				\
+	</method>					\
+	<method name=\"PositionGet\">			\
+	  <arg type=\"i\" direction=\"out\"/>		\
+	</method>					\
+	<signal name=\"TrackChange\">			\
+	  <arg type=\"a{sv}\"/>			\
+	</signal>					\
+	<signal name=\"StatusChange\">		\
+	 <arg type=\"(iiii)\"/>			\
+	</signal>					\
+	<signal name=\"CapsChange\">			\
+	  <arg type=\"i\" />				\
+	</signal>   \
+</interface></node>",
+    mpris1tracklist = "<node name=\"/org/mpris/MediaPlayer2/nightingale/TrackList\">	\
+<interface name=\"org.freedesktop.MediaPlayer\">	\
+    <method name=\"GetLength\"> \
+        <arg type=\"i\" direction=\"out\" /> \
+    </method> \
+    <method name=\"GetMetadata\"> \
+        <arg type=\"i\" direction=\"in\" /> \
+        <arg type=\"a{sv}\" direction=\"out\" /> \
+    </method> \
+    <method name=\"SetMetadata\"> \
+        <arg type=\"i\" direction=\"in\" /> \
+        <arg type=\"s\" direction=\"in\" /> \
+        <arg type=\"s\" direction=\"in\" /> \
+    </method> \
+    <method name=\"GetCurrentTrack\"> \
+        <arg type=\"i\" direction=\"out\" /> \
+    </method> \
+    <method name=\"GetLength\"> \
+        <arg type=\"i\" direction=\"out\" /> \
+    </method> \
+    <method name=\"AddTrack\"> \
+        <arg type=\"s\" direction=\"in\" /> \
+        <arg type=\"b\" direction=\"in\" /> \
+        <arg type=\"i\" direction=\"out\" /> \
+    </method> \
+    <method name=\"DelTrack\"> \
+        <arg type=\"i\" direction=\"in\"/> \
+    </method> \
+    <method name=\"SetLoop\"> \
+        <arg type=\"b\" direction=\"in\"/> \
+    </method> \
+    <method name=\"SetRandom\"> \
+        <arg type=\"b\" direction=\"in\"/> \
+    </method> \
+    <signal name=\"TrackListChange\"> \
+        <arg type=\"i\" /> \
+    </signal> \
+</interface></node>",
+    mpris2root = "<node name=\"/org/mpris/MediaPlayer2\">	\
+    <interface name=\"org.mpris.MediaPlayer2\">	\
+        <method name=\"Raise\">	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Quit\">	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <property name=\"CanQuit\" type=\"b\" access=\"read\" />	\
+        <property name=\"Fullscreen\" type=\"b\" access=\"readwrite\" />	\
+        <property name=\"CanSetFullscreen\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanRaise\" type=\"b\" access=\"read\" />	\
+        <property name=\"HasTrackList\" type=\"b\" access=\"read\" />	\
+        <property name=\"Identity\" type=\"s\" access=\"read\" />	\
+        <property name=\"DesktopEntry\" type=\"s\" access=\"read\" />	\
+        <property name=\"SupportedUriSchemes\" type=\"as\" access=\"read\" />	\
+        <property name=\"SupportedMimeTypes\" type=\"as\" access=\"read\" />	\
+    </interface>	\
+    <interface name=\"org.mpris.MediaPlayer2.Player\">	\
+        <method name=\"Next\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Previous\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Pause\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Stop\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Play\">		\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"PlayPause\">	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"Seek\">	\
+            <arg type=\"x\" direction=\"in\" />	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <method name=\"SetPosition\">	\
+            <arg type=\"o\" direction=\"in\" />	\
+            <arg type=\"x\" direction=\"in\" />	\
+			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
+        </method>		\
+        <signal name=\"Seeked\">	\
+            <arg type=\"x\" />	\
+        </signal>	\
+        <property name=\"PlaybackStatus\" type=\"s\" access=\"read\" />	\
+        <property name=\"LoopStatus\" type=\"s\" access=\"readwrite\" />	\
+        <property name=\"Rate\" type=\"d\" access=\"readwrite\" />	\
+        <property name=\"Shuffle\" type=\"b\" access=\"readwrite\" />	\
+        <property name=\"Metadata\" type=\"a{sv}\" access=\"read\" />	\
+        <property name=\"Volume\" type=\"d\" access=\"readwrite\" />	\
+        <property name=\"Position\" type=\"x\" access=\"read\">	\
+			<annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"false\"/>		\
+        </property>		\
+        <property name=\"MinimumRate\" type=\"d\" access=\"read\" />	\
+        <property name=\"MaximumRate\" type=\"d\" access=\"read\" />	\
+        <property name=\"CanGoNext\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanGoPrevious\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanPlay\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanPause\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanSeek\" type=\"b\" access=\"read\" />	\
+        <property name=\"CanControl\" type=\"b\" access=\"read\">	\
+			<annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"false\"/>		\
+        </property>		\
+    </interface>	\
+</node>",
+    head = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
+";
+    switch(path) {
+        case "/":
+        case "/org":
+        case "/org/mpris/":
+        case "/org/mpris/MediaPlayer2":
+            return head + mpris2root + mpris1root + mpris1player + mpris1tracklist;
+        case "/org/mpris/MediaPlayer2/nightingale":
+            return head + mpris1root + mpris1player + mpris1tracklist;
+        case "/org/mpris/MediaPlayer2/nightingale/Player":
+            return head + mpris1player;
+        case "/org/mpris/MediaPlayer2/nightingale/TrackList":
+            return head + mpris1tracklist;
+        default:
+            return head;
+    }
+};
   
   //Callback called my DBusConnection for each method call received
 ngMprisService.prototype.handleMethod = function(inter, path, member) {
+    //Components.utils.reportError(inter+" "+path+" "+member);
     this.play = this._mediacore.playbackControl;
   
     switch(inter) {
       case "org.freedesktop.DBus.Introspectable":
 	    if(member == "Introspect") {
-            switch(path) {
-                case "/":
-                case"org/mpris/MediaPlayer2/nightingale":
-                    this._dbus.setStringArg(this.introspect_root);
-	                break;
-	            case "/Player":
-              case"org/mpris/MediaPlayer2/nightingale/Player":
-	                this._dbus.setStringArg(this.introspect_player);
-	                break;
-	            case "/TrackList":
-              case"org/mpris/MediaPlayer2/nightingale/TrackList":
-	                this._dbus.setStringArg(this.introspect_tracklist);
-	                break;
-                case "/org/mpris/MediaPlayer2":
-    	            this._dbus.setStringArg(this.xml);
-                    break;
-            }
+            this.setDBusArg(this.getInterfaceSpec(path));
 	    }
 	    break;
       case "org.mpris.MediaPlayer2":
@@ -628,12 +630,12 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
         break;
     case "org.freedesktop.MediaPlayer":
         switch(path) {
+            case "/":
             case "/org/mpris/MediaPlayer2/nightingale":
-	        case "/":
 	            switch(member) {
 	                case "Identity":
                         var infoObj = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULAppInfo);
-		                this._dbus.setStringArg(infoObj.name+" "+infoObj.version);
+		                this.setDBusArg(infoObj.name+" "+infoObj.version);
 		                break;
 	                case "Quit":
 		                this._appStartup.quit(Ci.nsIAppStartup.eForceQuit);
@@ -646,8 +648,8 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                 		break;
 	            }
 	            break;
+            case "/Player":
 	        case "/org/mpris/MediaPlayer2/nightingale/Player":
-	        case "/Player":
 	            switch(member){
                     case "Next":
                         this._mediacore.sequencer.next();
@@ -709,8 +711,8 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                         break;
                 }
                 break;
-            case "/org/mpris/MediaPlayer2/nightingale/TrackList":
             case "/TrackList":
+            case "/org/mpris/MediaPlayer2/nightingale/TrackList":
                 switch(member){
                     case "GetLength":
                         if(this.play != null){
