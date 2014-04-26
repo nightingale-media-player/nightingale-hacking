@@ -49,31 +49,29 @@ namespace TagLib {
      */
     TagUnion(Tag *first = 0, Tag *second = 0, Tag *third = 0);
 
-    virtual ~TagUnion() {};
+    virtual ~TagUnion();
 
     Tag *operator[](int index) const;
     Tag *tag(int index) const;
 
-    virtual Tag *tag(int index) = 0;
-
     void set(int index, Tag *tag);
 
-    virtual String title() const = 0;
-    virtual String artist() const = 0;
-    virtual String album() const = 0;
-    virtual String comment() const = 0;
-    virtual String genre() const = 0;
-    virtual uint year() const = 0;
-    virtual uint track() const = 0;
+    virtual String title() const;
+    virtual String artist() const;
+    virtual String album() const;
+    virtual String comment() const;
+    virtual String genre() const;
+    virtual uint year() const;
+    virtual uint track() const;
 
-    virtual void setTitle(const String &s) = 0;
-    virtual void setArtist(const String &s) = 0;
-    virtual void setAlbum(const String &s) = 0;
-    virtual void setComment(const String &s) = 0;
-    virtual void setGenre(const String &s) = 0;
-    virtual void setYear(uint i) = 0;
-    virtual void setTrack(uint i) = 0;
-    virtual bool isEmpty() const = 0;
+    virtual void setTitle(const String &s);
+    virtual void setArtist(const String &s);
+    virtual void setAlbum(const String &s);
+    virtual void setComment(const String &s);
+    virtual void setGenre(const String &s);
+    virtual void setYear(uint i);
+    virtual void setTrack(uint i);
+    virtual bool isEmpty() const;
 
     template <class T> T *access(int index, bool create)
     {
