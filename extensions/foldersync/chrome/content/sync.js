@@ -1048,7 +1048,7 @@ foldersync.sync={
                 try {
                   if (!pFile.exists()){
                     pFile.create(Components.interfaces.nsIFile.
-                                 NORMAL_FILE_TYPE, 0x664);
+                                 NORMAL_FILE_TYPE, 0664);
                   }
                   
                   // Open (and empty) file for writing and init a converter
