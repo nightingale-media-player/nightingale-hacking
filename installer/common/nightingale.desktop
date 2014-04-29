@@ -28,3 +28,7 @@ Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpri
 [Desktop Action Stop]
 Name=Stop
 Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop
+
+[Desktop Action Mute]
+Name=Mute
+Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Set string:org.mpris.MediaPlayer2.Player string:Volume double:0
