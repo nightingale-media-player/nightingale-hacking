@@ -70,7 +70,9 @@ endif
 
 # MPRIS
 ifeq (linux,$(SB_PLATFORM))
-    DEFAULT_EXTENSIONS += mpris
+    DEFAULT_EXTENSIONS += mpris \
+                          hide-on-close \
+                          $(NULL)
 endif
 
 SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
