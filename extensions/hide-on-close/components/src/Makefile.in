@@ -65,7 +65,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                              plc4 \
                              pthread \
                              dl \
-                             unity \
                              $(NULL)
 
 DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \

@@ -35,8 +35,8 @@ IS_EXTENSION = 1
 XPIDL_SRCS = ngIHideOnClose.idl \
              $(NULL)
 
-XPIDL_MODULE = ngIHideOnClose.xpt \
-               $(NULL)
+XPIDL_TYPELIBS = ngIHideOnClose.xpt \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
