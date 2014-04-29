@@ -68,7 +68,7 @@ ifeq (1,$(NIGHTINGALE_UNITY))
     DEFAULT_EXTENSIONS += unity-integration
 endif
 
-# MPRIS
+# MPRIS & GTK Window Hiding
 ifeq (linux,$(SB_PLATFORM))
     DEFAULT_EXTENSIONS += mpris \
                           hide-on-close \
