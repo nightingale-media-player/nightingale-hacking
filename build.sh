@@ -65,7 +65,7 @@ case $OSTYPE in
     if [ "$arch" = "i686" ] ; then
       depdate=20140302
     else
-      depdate=20140214 # TODO: with gst-1, use 20140214 deps!
+      depdate=20140214
     fi
 
     #export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
