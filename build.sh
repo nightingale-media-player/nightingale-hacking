@@ -135,7 +135,7 @@ case $OSTYPE in
         ;;
     darwin*)
         depdirn="macosx-i686"
-        depversion="20130130"
+        depversion="20140419"
         arch_flags="-m32 -arch i386"
         export CFLAGS="$arch_flags"
         export CXXFLAGS="$arch_flags"
@@ -152,7 +152,8 @@ case $OSTYPE in
 
         cd dependencies
 
-        fname="$depdirn-$version-$depversion-$build.tar.bz2"
+        # TODO: Change this back to "$depdirn-$version-$depversion-$build.tar.bz2" with new deps
+        fname="$depdirn-$depversion.tar.bz2"
 
         if [ ! -f "$fname" ] ; then
             # We want the new deps instead of the old ones...
