@@ -81,6 +81,7 @@
                    menu:(NSMenu *)aParentMenu;
 - (BOOL)_isPlaybackMuted;
 - (BOOL)_isPlaybackPlaying;
+- (BOOL)_isPlaybackStoppable;
 - (NSString *)_stringForLocalizedKey:(const PRUnichar *)aBuffer;
 
 @end
@@ -329,12 +330,10 @@
                    menu:aMenu];
 
   // Stop menu item
-  if ([self _isPlaybackStoppable]) {
-    nsString stopLabel(NS_LITERAL_STRING("playback.label.stop"));
-    [self _appendMenuItem:[self _stringForLocalizedKey:stopLabel.get()]
-                   action:@selector(onStopSelected:)
-                     menu:aMenu];
-  }
+  nsString stopLabel(NS_LITERAL_STRING("playback.label.stop"));
+  [self _appendMenuItem:[self _stringForLocalizedKey:stopLabel.get()]
+                 action:@selector(onStopSelected:)
+                   menu:aMenu];
 
   // Mute menu item
   nsString muteLabel(NS_LITERAL_STRING("playback.label.mute"));
@@ -456,7 +455,7 @@
     return;
   }
 
-  sequencer->stop(PR_FALSE);
+  sequencer->Stop(PR_FALSE);
 
   NS_OBJC_END_TRY_ABORT_BLOCK;
 }
