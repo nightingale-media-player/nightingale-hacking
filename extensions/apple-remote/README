@@ -1,0 +1,45 @@
+== Apple Media Key Support for Nightingale
+== Author: Nick Kreeger <nick.kreeger@gmail.com> 
+== Ported to Nightingale by zjays <zjays@outlook.com>
+
+This README was adopted from the the Apple Media Key Support extension README, source here:
+https://bitbucket.org/nkreeger/whitedragon
+
+== About
+
+This extension provides the ability to control Nightingale via the apple media remote that ships with iMacs and MacBooks.
+
+== Building
+
+Setup a copy of the Nightingale source code using the steps here:
+http://wiki.getnightingale.com/doku.php?id=build:mac
+
+1.) Clone this project in the "/nightingale-hacking/extensions/" directory.
+
+2.) Edit the 'DEFAULT_EXTENSIONS' target in the Makefile at
+    "/nightingale-hacking/extensions/Makefile.in" to include the 'mac-remote-control' folder:
+    
+      DEFAULT_EXTENSIONS = AlbumArt \
+                           concerts \
+                           xpcom_helloworld \
+    +                      mac-remote-control \
+                           $(NULL)
+                         
+4.) Build Nightingale following the instructions at:
+http://wiki.getnightingale.com/doku.php?id=build:mac
+
+5.) Locate the XPI file installed in the "xpi-stage" directory, which is usually around:
+    "/nightingale-hacking/compiled/xpi-stage/mac-remote-control/mac-remote-control-*.xpi"
+
+== NOTES
+
+* The "extension-config.mk" file has been tweaked to hard-code the compatability of Nightingale from version 1.4.* to 2.0.*
+  since the publicsvn repo was never updated past Songbird1.8b3. If you're working with a newer version,
+  be sure to update the EXTENSION_MIN_VER/EXTENSION_MAX_VER targets to point at the Nightingale
+  version you're building against.
+
+* Apple always launches iTunes via the RCD daemon process that ships with the OS. To disable this
+  by default, either leave Quicktime running or install this:
+  http://lifehacker.com/5651055/free-your-macs-media-keys-from-itunes-no-manual-hacking-required
+  OR
+  http://www.thebitguru.com/projects/iTunesPatch

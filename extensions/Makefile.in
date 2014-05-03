@@ -75,6 +75,11 @@ ifeq (linux,$(SB_PLATFORM))
                           $(NULL)
 endif
 
+ifeq (macosx, $(SB_PLATFORM))
+    DEFAULT_EXTENSIONS += apple-mediakeys \
+                          apple-remote
+endif
+
 SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
           $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
 

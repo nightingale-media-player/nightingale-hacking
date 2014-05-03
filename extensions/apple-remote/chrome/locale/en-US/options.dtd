@@ -1,0 +1,7 @@
+<!ENTITY apple-remote-overlay-enable.label "Enable Apple Remote">
+<!ENTITY apple-remote-prefs-overlay.label "Mac Remote Control">
+<!ENTITY apple-remote-prefs-autoenable-option-caption.label "Automatic Remote Enabling">
+<!ENTITY apple-remote-prefs-autoenable-option-description.label "Enable Apple Remote support when Nightingale starts">
+<!ENTITY apple-remote-prefs-autoenable-option-checkbox.label "Enable remote at startup">
+
+

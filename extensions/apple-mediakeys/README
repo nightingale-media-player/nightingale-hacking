@@ -1,0 +1,41 @@
+== Apple Media Key Support for Songbird (aka 'whitedragon')
+== Author: Nick Kreeger <nick.kreeger@gmail.com>
+
+== About
+
+This extension provides the ability to control Songbird via the apple media keys that ship with
+newer Apple keyboards.
+
+== Building
+
+Setup a copy of the Songbird source code using the steps here:
+http://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Client_Trunk
+
+1.) Clone this project in the "/path/to/svncheckout/Songbird1.8/extensions/" directory.
+(NOTE: The 'Songbird1.8' directory is the branch name of the latest release)
+
+3.) Edit the 'DEFAULT_EXTENSIONS' target in the Makefile at
+    "/path/to/svncheckout/Songbird1.8/extensions/Makefile.in" to include the 'whitedragon' folder:
+    
+      DEFAULT_EXTENSIONS = AlbumArt \
+                           concerts \
+                           xpcom_helloworld \
+    +                      whitedragon \
+                           $(NULL)
+                         
+4.) Build Songbird following the instructions at:
+http://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Building_Songbird#MacOSX
+
+5.) Locate the XPI file installed in the "xpi-stage" directory, which is usually around:
+    "/path/to/svncheckout/Songbird1.8/compiled/xpi-state/whitedragon/whitedragon-*.xpi"
+
+== NOTES
+
+* The "extension-config.mk" file has been tweaked to hard-code the compatability of Songbird to 1.8
+  since the publicsvn repo was never updated past Songbird1.8b3. If you're working with trunk,
+  be sure to update the EXTENSION_MIN_VER/EXTENSION_MAX_VER targets to point at the Songbird
+  version you're building against.
+
+* Apple always launches iTunes via the RCD daemon process that ships with the OS. To disable this
+  by default, either leave Quicktime running or install this:
+  http://lifehacker.com/5651055/free-your-macs-media-keys-from-itunes-no-manual-hacking-required
