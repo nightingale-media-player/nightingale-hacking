@@ -686,8 +686,8 @@ gst_mozilla_src_init (GstMozillaSrc * src, GstMozillaSrcClass * g_class)
 {
   gst_mozilla_src_clear (src);
 
-  src->queue_lock = g_mutex_new ();
-  src->queue_cond = g_cond_new ();
+  g_mutex_init(src->queue_lock);
+  g_cond_init(src->queue_cond);
   src->queue = g_queue_new ();
 
   src->iradio_mode = FALSE;
@@ -703,9 +703,9 @@ gst_mozilla_src_finalize (GObject * gobject)
   gst_mozilla_src_flush (src);
   gst_mozilla_src_clear (src);
 
-  g_mutex_free (src->queue_lock);
-  g_cond_free (src->queue_cond);
-  g_queue_free (src->queue);
+  g_mutex_clear(src->queue_lock);
+  g_cond_clear(src->queue_cond);
+  g_queue_free(src->queue);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
