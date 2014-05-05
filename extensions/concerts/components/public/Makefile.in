@@ -38,14 +38,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+
 IS_EXTENSION = 1
 
-# compile these IDL files
 XPIDL_SRCS = Songkick.idl \
              $(NULL)
 
-# into this xpt (an xpt is like a compiled IDL read at runtime)
-XPIDL_MODULE = Songkick.xpt
+XPIDL_TYPELIBS = Songkick.xpt \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-

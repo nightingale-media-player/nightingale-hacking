@@ -39,4 +39,3 @@ XPIDL_TYPELIBS = ngIHideOnClose.xpt \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-
