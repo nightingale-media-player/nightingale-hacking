@@ -34,7 +34,7 @@ IS_EXTENSION = 1
 XPIDL_SRCS = ngIMpris.idl \
              $(NULL)
 
-XPIDL_MODULE = ngIMpris.xpt \
-               $(NULL)
+XPIDL_TYPELIBS = ngIMpris.xpt \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk

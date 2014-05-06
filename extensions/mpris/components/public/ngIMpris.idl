@@ -32,6 +32,8 @@
 
 #include "nsISupports.idl"
 
+interface ngIDbusConnection;
+
 [scriptable, uuid(bc3f9c62-9a5f-47e8-a00f-49d80f3bb6c9)]
 interface ngIMethodHandler : nsISupports
 {
