@@ -686,6 +686,9 @@ gst_mozilla_src_init (GstMozillaSrc * src, GstMozillaSrcClass * g_class)
 {
   gst_mozilla_src_clear (src);
 
+  src->queue_lock = new GMutex;
+  src->queue_cond = new GCond;
+
   g_mutex_init(src->queue_lock);
   g_cond_init(src->queue_cond);
   src->queue = g_queue_new ();
