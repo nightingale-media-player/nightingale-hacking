@@ -415,6 +415,8 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
   NS_ENSURE_ARG_POINTER(aHandler);
   nsresult rv;
 
+  char libvisual[10] = "libvisual";
+
   GList *plugins, *orig_plugins;
 
   rv = aHandler->BeginInspect();
@@ -426,47 +428,54 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
     plugin = (GstPlugin *) (plugins->data);
     plugins = g_list_next (plugins);
 
-    nsCString filename;
-    if (plugin->filename) {
-      filename = plugin->filename;
-    }
-    else {
-      filename.SetIsVoid(PR_TRUE);
-    }
+    if (g_strcmp0(plugin->desc.name, libvisual) != 0) {
 
-    rv = aHandler->BeginPluginInfo(nsDependentCString(plugin->desc.name),
-                                   nsDependentCString(plugin->desc.description),
-                                   filename,
-                                   nsDependentCString(plugin->desc.version),
-                                   nsDependentCString(plugin->desc.license),
-                                   nsDependentCString(plugin->desc.source),
-                                   nsDependentCString(plugin->desc.package),
-                                   nsDependentCString(plugin->desc.origin));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    GList *features, *orig_features;
-    orig_features = features =
-      gst_registry_get_feature_list_by_plugin(gst_registry_get_default(),
-                                              plugin->desc.name);
-    while (features) {
-      GstPluginFeature *feature;
-      feature = GST_PLUGIN_FEATURE(features->data);
-
-      if (GST_IS_ELEMENT_FACTORY(feature)) {
-        GstElementFactory *factory;
-        factory = GST_ELEMENT_FACTORY(feature);
-
-        rv = InspectFactory(factory, aHandler);
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "InspectFactory failed");
+      nsCString filename;
+      if (plugin->filename) {
+        filename = plugin->filename;
+      }
+      else {
+        filename.SetIsVoid(PR_TRUE);
       }
 
-      features = g_list_next(features);
+      rv = aHandler->BeginPluginInfo(nsDependentCString(plugin->desc.name),
+                                     nsDependentCString(plugin->desc.description),
+                                     filename,
+                                     nsDependentCString(plugin->desc.version),
+                                     nsDependentCString(plugin->desc.license),
+                                     nsDependentCString(plugin->desc.source),
+                                     nsDependentCString(plugin->desc.package),
+                                     nsDependentCString(plugin->desc.origin));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      GList *features, *orig_features;
+      orig_features = features =
+        gst_registry_get_feature_list_by_plugin(gst_registry_get_default(),
+                                                plugin->desc.name);
+      while (features) {
+        GstPluginFeature *feature;
+        feature = GST_PLUGIN_FEATURE(features->data);
+
+        if (g_strcmp0(feature->plugin_name, libvisual) != 0) {
+          if (GST_IS_ELEMENT_FACTORY(feature)) {
+            GstElementFactory *factory;
+            factory = GST_ELEMENT_FACTORY(feature);
+
+            rv = InspectFactory(factory, aHandler);
+            NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "InspectFactory failed");
+          }
+        } else {
+          LOG(("sbGStreamerService[0x%.8x] - Caught libvisual", this));
+        }
+
+        features = g_list_next(features);
+      }
+
+      gst_plugin_feature_list_free(orig_features);
+
+      rv = aHandler->EndPluginInfo();
+      NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    gst_plugin_feature_list_free(orig_features);
-
-    rv = aHandler->EndPluginInfo();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   gst_plugin_list_free(orig_plugins);
