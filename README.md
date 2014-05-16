@@ -36,11 +36,7 @@ libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
 Also note that because of Ubuntu and Debian's incompatible taglib,
-you'll want to use 
-```
-ac_add_options --with-taglib-source=packaged
-```
-option to your nightingale.config
+you'll want to add `ac_add_options --with-taglib-source=packaged` to your nightingale.config
 
 More information can be gleaned from the Nightingale wiki:
 
@@ -51,24 +47,24 @@ More information can be gleaned from the Nightingale wiki:
 Configure Options
 =================
 
-  `ac_add_options (option here)`
-  
-  * `--with-taglib-source=[system,packaged]` use system taglib or not  
-  * `--enable-debug`                        whether or not to compile debug  
-  * `--enable-jars`                         whether or not to create jars  
-  * `--enable-installer`                    whether or not to make installer  
-  * `--enable-official`                     whether or not to official build  
-  * `--enable-nightly`                      whether or not to nightly build  
-  * `--enable-tests`                        whether or not to build tests  
-  * `--enable-update-channel=CHANNEL`       which update channel to use  
-  * `--enable-breakpad`                     whether or not to enable breakpad  
-  * `--enable-static`                       single-component static build  
-  * `--enable-compiler-environment-checks`  only allow supported compilers  
-  * `--enable-libnotify`                    Optionally enable libnotify  
-  * `--enable-unity-integration`            Optional support for Unity's sound menu
-  * `--enable-system-nspr`                  Optionally use your system's NSPR
-                                        instead of the bundled one form
-                                        Mozilla
+`ac_add_options (option here)`
+
+ option                                  | description 
+-----------------------------------------|-------------
+`--with-taglib-source=[system,packaged]` | use system taglib or not
+`--enable-debug`                         | whether or not to compile debug
+`--enable-jars`                          | whether or not to create jars
+`--enable-installer`                     | whether or not to make installer
+`--enable-official`                      | whether or not to official build
+`--enable-nightly`                       | whether or not to nightly build
+`--enable-tests`                         | whether or not to build tests
+`--enable-update-channel=CHANNEL`        | which update channel to use
+`--enable-breakpad`                      | whether or not to enable breakpad
+`--enable-static`                        | single-component static build
+`--enable-compiler-environment-checks`   | only allow supported compilers  
+`--enable-libnotify`                     | Optionally enable libnotify
+`--enable-unity-integration`             | Optional support for Unity's sound menu
+`--enable-system-nspr`                   | Optionally use your system's NSPR instead of the bundled one form Mozilla
 
 Notes for Configurable Options
 ==============================
