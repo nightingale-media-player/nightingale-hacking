@@ -33,5 +33,5 @@ include $(topsrcdir)/build/rules.mk
 
 libs:: $(SONGBIRD_JSMODULESDIR)/Distribution.jsm
 
-$(SONGBIRD_JSMODULESDIR)/Distribution.jsm: $(topsrcdir)/dependencies/vendor/mozbrowser/components/distribution.js
+$(SONGBIRD_JSMODULESDIR)/Distribution.jsm: $(MOZBROWSER_DIR)/components/distribution.js
 	$(INSTALL_FILE) $< $@
