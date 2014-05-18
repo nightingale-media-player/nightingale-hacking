@@ -135,8 +135,8 @@ MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
 
 # Boo for hardcoding this; this appears in nightingale.mk as well; so make
 # changes there, too.
-MOZBROWSER_DIR = $(topsrcdir)/dependencies/vendor/mozbrowser
-MOZJSHTTPD_DIR = $(topsrcdir)/dependencies/vendor/mozjshttpd
+MOZBROWSER_DIR = $(topsrcdir)/dependencies/vendor-xul9.0.1/mozbrowser
+MOZJSHTTPD_DIR = $(topsrcdir)/dependencies/vendor-xul9.0.1/mozjshttpd
 
 PLUGINS_DIR = $(DEPS_DIR)/plugins
 

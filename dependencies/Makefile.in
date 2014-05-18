@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = vendor/mozbrowser
+SUBDIRS = vendor-xul9.0.1/mozbrowser
 
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
    SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/nightingale-bin
