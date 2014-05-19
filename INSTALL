@@ -26,7 +26,7 @@ A. On Updating
 ========================================================================
 
 By installing Nightingale to your system, Nightingale can no longer
-update itself. This is most likely deserved, as updates would replace
+update itself. This is most likely desired, as updates would replace
 self-built binaries with pre-built binaries. You will still receive a
 notification if an update is available, but applying it will fail.
 

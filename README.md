@@ -64,7 +64,7 @@ Configure Options
 `--enable-compiler-environment-checks`   | only allow supported compilers  
 `--enable-libnotify`                     | Optionally enable libnotify
 `--enable-unity-integration`             | Optional support for Unity's sound menu
-`--enable-system-nspr`                   | Optionally use your system's NSPR instead of the bundled one form Mozilla
+`--enable-system-nspr`                   | Optionally use your system's NSPR instead of the bundled one from Mozilla
 
 Notes for Configurable Options
 ==============================

@@ -734,16 +734,8 @@ NS_IMETHODIMP ngDbusConnection::SetInt64Arg(PRInt64 val)
 
 /* void setArrayStringArg (in string key, in long val); */
 NS_IMETHODIMP ngDbusConnection::SetArrayStringArg(const char* val)
-{
-    if(DEBUG || debug_mode) cout << "Setting array S " << val << endl;
- 
-    DBusMessageIter* array_obj = outgoing_args.back();
-
-	dbus_message_iter_append_basic(array_obj, DBUS_TYPE_STRING, &val);
-    
-    if(DEBUG || debug_mode) cout << "Set array S entry" << endl;
-  
-    return NS_OK;
+{  
+    return this->SetStringArg(val);
 }
 
 /* void setObjectPathArg (in string val); */
