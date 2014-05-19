@@ -715,7 +715,9 @@ case "$SB_PLATFORM" in
     AC_DEFINE(XP_WIN)
     AC_DEFINE(XP_WIN32)
     AC_DEFINE(WIN32_LEAN_AND_MEAN)
-    AC_DEFINE(SB_USE_JEMALLOC)
+    if test "$SB_USE_JEMALLOC" = "1" ; then
+      AC_DEFINE(SB_USE_JEMALLOC)
+    fi
   ;;
   macosx)
     BIN_SUFFIX=
