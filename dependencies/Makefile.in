@@ -240,7 +240,7 @@ ifdef MEDIA_CORE_GST #{
                       $(NULL)
 
       LIBICONV_NAMES = libcharset-1 \
-                       iconv \
+                       libiconv-2 \
                        $(NULL)
 
       GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
@@ -262,9 +262,6 @@ ifdef MEDIA_CORE_GST #{
 
       OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/bin/, \
             $(addsuffix -0$(DLL_SUFFIX), $(OGG_NAMES)))
-
-      LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
-                 $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
 
       # XXX We need to append the version numbers of the libraries
       VORBIS_VERSIONED_NAMES = $(join $(VORBIS_NAMES), -0 -2 -3)
