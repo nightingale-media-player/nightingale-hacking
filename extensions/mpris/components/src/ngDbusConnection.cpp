@@ -693,16 +693,12 @@ NS_IMETHODIMP ngDbusConnection::OpenDictSAEntryArg(const char *key, PRInt16 aTyp
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, entry_obj);
     dbus_message_iter_append_basic(entry_obj, DBUS_TYPE_STRING, &key);
 
-    LOG(("Combining types"));
     char combinedType[strlen(DBUS_TYPE_ARRAY_AS_STRING) + strlen(this->ngTypeToDBusType(aType)) + 1];
     combinedType[0] = '\0';
     strcat(combinedType, DBUS_TYPE_ARRAY_AS_STRING);
     strcat(combinedType, this->ngTypeToDBusType(aType));
-    LOG(("%s",combinedType));
-    LOG(("%s%s", DBUS_TYPE_ARRAY_AS_STRING, this->ngTypeToDBusType(aType)));
 
     dbus_message_iter_open_container(entry_obj, DBUS_TYPE_VARIANT, combinedType, new_val);
-    LOG(("Set combined types"));
 
     outgoing_args.push_back(entry_obj);
     outgoing_args.push_back(new_val);
