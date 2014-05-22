@@ -36,17 +36,13 @@ CPP_SRCS = ngDbusConnection.cpp \
            ngDbusConnectionModule.cpp \
            $(NULL)
 
-CPP_DEFS = -DXPCOM_GLUE \
-           -DXPCOM_GLUE_USE_NSPR \
-           $(NULL)
-
 CPP_EXTRA_FLAGS += -fno-rtti \
                     -fno-exceptions \
                     -shared \
                     $(NULL)
 
 CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/mpris/components/public \
-                      $(MOZSDK_DIR) \
+                      $(MOZSDK_IDL_DIR) \
                       $(NULL)
 
 CPP_RAW_INCLUDES += $(GTK_CFLAGS) \

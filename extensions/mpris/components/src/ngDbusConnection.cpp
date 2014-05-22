@@ -5,10 +5,10 @@
 // This file is part of the Nightingale web player.
 //
 // http://getnightingale.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
+//
 // Software distributed under the License is distributed
 // on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
@@ -20,6 +20,7 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 // END NIGHTINGALE GPL
+
 //
 */
 
@@ -29,12 +30,31 @@
  * me@logansmyth.com
  */
 
+#include <cstring>
+
+#include <nsXPCOM.h>
+#include <nsCOMPtr.h>
+#include <nsComponentManagerUtils.h>
+#include <nsStringAPI.h>
+
+#include <nsIMutableArray.h>
+#include <nsISupportsPrimitives.h>
 
 #include "ngDbusConnection.h"
 
+#include "prlog.h"
+#include "prprf.h"
 
-#define DEBUG false
-#define DEBUG_CERR false
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=ngDbusConnection:5
+ */
+#ifdef PR_LOGGING
+  static PRLogModuleInfo* gDBusConnectionLog = nsnull;
+  #define LOG(args) PR_LOG(gDBusConnectionLog, PR_LOG_WARN, args)
+#else
+  #define LOG(args) /* nothing */
+#endif /* PR_LOGGING */
 
 using namespace std;
 
@@ -43,8 +63,15 @@ using namespace std;
 NS_IMPL_ISUPPORTS1(ngDbusConnection, ngIDbusConnection)
 
 ngDbusConnection::ngDbusConnection()
+: conn(0)
+, signal_msg(0)
+, handler(0)
 {
   /* member initializers and constructor code */
+    #ifdef PR_LOGGING
+        if(!gDBusConnectionLog)
+            gDBusConnectionLog = PR_NewLogModule("ngDbusConnection");
+    #endif
 }
 
 ngDbusConnection::~ngDbusConnection()
@@ -52,93 +79,77 @@ ngDbusConnection::~ngDbusConnection()
   /* destructor code */
 }
 
-
-/* attribute boolean debug_mode; */
-NS_IMETHODIMP ngDbusConnection::GetDebug_mode(PRBool *aDebug_mode)
-{
-    *aDebug_mode = debug_mode;
-    return NS_OK;
-}
-NS_IMETHODIMP ngDbusConnection::SetDebug_mode(PRBool aDebug_mode)
-{
-    debug_mode = aDebug_mode;
-    
-    if(debug_mode) cout << "MPRIS: DEBUG MODE Set" << endl;
-    else cout << "MPRIS: DEBUG MODE Unset" << endl;
-    return NS_OK;
-}
-
-
 /* long init (in string name); */
 NS_IMETHODIMP ngDbusConnection::Init(const char *name, PRInt32 *_retval)
 {
-    if(debug_mode) cout << "-----------MPRIS: DEBUG MODE------------" << endl;
-
-    *_retval = 0;
+    NS_ENSURE_ARG_POINTER(name);
+    *_retval = nsnull;
     DBusError error;
-    
-    if(DEBUG || debug_mode) cout << "Initializing DBus" << endl;
-    
+
+    LOG(("Initializing DBus"));
+
     dbus_error_init (&error);
     conn = dbus_bus_get (DBUS_BUS_SESSION, &error);
     if (!conn) {
-      if(DEBUG_CERR || debug_mode) cerr <<  "Mpris Module: " << error.name << ": " << error.message; 
+      NS_ERROR(("Error initializing DBus connection: %s:%s", error.name, error.message));
       dbus_error_free(&error);
       *_retval = 1;
     }
 
-    if(DEBUG || debug_mode) cout << "Requesting Name on DBus" << endl;
+    LOG(("Requesting Name on DBus"));
     dbus_bus_request_name(conn, name, 0, &error);
     if (dbus_error_is_set (&error)) {
-      if(DEBUG_CERR || debug_mode) cerr <<  "Mpris Module: " << error.name << ": " << error.message;
-      dbus_error_free(&error); 
+      NS_ERROR(("Error requesting DBus name: %s:%s", error.name, error.message));
+      dbus_error_free(&error);
       *_retval = 1;
     }
-    
-    if(DEBUG || debug_mode) cout << "Flushing" << endl;
-    
+
+    LOG(("Flushing"));
+
     dbus_connection_flush(conn);
-    if(DEBUG || debug_mode) cout << "End Init()" << endl;
-    
+    LOG(("End Init()"));
+
     return NS_OK;
 }
 
 /* long setMatch (in string match); */
 NS_IMETHODIMP ngDbusConnection::SetMatch(const char *match)
 {
+    NS_ENSURE_ARG_POINTER(match);
+
     DBusError error;
     dbus_error_init (&error);
-    if(DEBUG || debug_mode) cout << "Setting match " << match << endl;
-  
+    LOG(("Setting match %s", match));
+
       /* listening to messages from all objects as no path is specified */
     dbus_bus_add_match (conn, match, &error);
     //~ dbus_bus_add_match (conn, match, NULL);
-    
+
     if (dbus_error_is_set (&error)) {
-      if(DEBUG_CERR || debug_mode) cerr <<  "Match Error: " << error.name << ": " << error.message;
-      dbus_error_free(&error); 
+      NS_ERROR(("Match Error: %s: %s", error.name, error.message));
+      dbus_error_free(&error);
     }
-    
-    
+
+
     dbus_connection_flush(conn);
-  
-    if(DEBUG || debug_mode) cout << "DBus Connection Init" << endl;
-    
+
+    LOG(("DBus Connection Init"));
+
     return NS_OK;
 }
 
 /* void check (); */
 NS_IMETHODIMP ngDbusConnection::Check()
 {
-    if(conn == NULL) return NS_OK;
- 
+    if(conn == nsnull) return NS_OK;
+
     //~ int i;
     //~ for(i = 0; i < 30; i++){
-	//~ cout << NS_ConvertUTF16toUTF8("Flamboyant").get() << endl;
+	//~ LOG(NS_ConvertUTF16toUTF8("Flamboyant").get());
     //~ }
 
 
-    
+
     DBusMessage* msg;
     DBusMessage* reply;
     DBusMessageIter *reply_iter;
@@ -147,59 +158,55 @@ NS_IMETHODIMP ngDbusConnection::Check()
     dbus_connection_read_write(conn, 0);
     msg = dbus_connection_pop_message(conn);
 
-    if(msg != NULL){
+    if(msg != nsnull){
       if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL || dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL){
-	    if(DEBUG || debug_mode) cout << "*****Calling " << dbus_message_get_member(msg) << endl;
-	
-	    reply_iter = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-	
+	    LOG(("*****Calling %s", dbus_message_get_member(msg)));
+
+	    reply_iter = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
 	    dbus_message_iter_init(msg, &incoming_args);
-	
+
 	    reply = dbus_message_new_method_return(msg);
 	    dbus_message_iter_init_append(reply, reply_iter);
-	
+
 	    outgoing_args.push_back(reply_iter);
-	
-	
+
+
 	    const char* interface = dbus_message_get_interface(msg);
 	    const char* path = dbus_message_get_path(msg);
 	    const char* member = dbus_message_get_member(msg);
-	      
-	    if(DEBUG || debug_mode){
-	        
-	        if(interface != NULL) cout << "Interface: " << interface << endl;
-	        if(path != NULL) cout << "Path: " << path << endl;
-	        if(member != NULL) cout << "Member: " << member << endl;
-	    }
-	
-	    handler->HandleMethod(interface, path, member); 
-	
-	    if(DEBUG || debug_mode) cout << "Just after Handler call" << endl;
-	
+
+        #if PR_LOGGING
+            if(interface != nsnull) LOG(("Interface: %s", interface));
+            if(path != nsnull) LOG(("Path: %s", path));
+            if(member != nsnull) LOG(("Member: %s", member));
+        #endif
+
+	    handler->HandleMethod(interface, path, member);
+
+	    LOG(("Just after Handler call"));
+
 	    dbus_uint32_t serial = 0;
 
 	    // send the reply && flush the connection
-	    if (!dbus_connection_send(conn, reply, &serial)) { 
-	      if(DEBUG_CERR || debug_mode) cerr << "Out Of Memory!" << endl; 
-	      return NS_OK;
-	    }
-	
+	    NS_ENSURE_TRUE(dbus_connection_send(conn, reply, &serial), NS_ERROR_OUT_OF_MEMORY);
+
 	    while(!outgoing_args.empty()){
-	        free(outgoing_args.back());
+	        NS_Free(outgoing_args.back());
 	        outgoing_args.pop_back();
 	    }
-	
+
 	    dbus_connection_flush(conn);
 	    dbus_message_unref(reply);
-	
-	
-	    if(DEBUG || debug_mode) cout << "Done Handler call" << endl;
+
+
+	    LOG(("Done Handler call"));
       }
 
       dbus_message_unref(msg);
-      
+
     }
-  
+
     return NS_OK;
 }
 
@@ -212,8 +219,13 @@ NS_IMETHODIMP ngDbusConnection::End(PRInt32 *_retval)
 /* vois prepareMethodCall(in string dest, in string path, in string inter, in string name); */
 NS_IMETHODIMP ngDbusConnection::PrepareMethodCall(const char* dest, const char* path,  const char* inter, const char* name)
 {
-  if(DEBUG || debug_mode) cout << "*****Preparing method call " << path << ", " << inter << ", " << name << endl;
-  DBusMessageIter* reply_iter = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
+    NS_ENSURE_ARG_POINTER(dest);
+    NS_ENSURE_ARG_POINTER(path);
+    NS_ENSURE_ARG_POINTER(inter);
+    NS_ENSURE_ARG_POINTER(name);
+
+  LOG(("*****Preparing method call %s, %s, %s", path, inter, name));
+  DBusMessageIter* reply_iter = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
 
   // Create a D-Bus method call message.
   signal_msg = dbus_message_new_method_call(dest,
@@ -229,66 +241,70 @@ NS_IMETHODIMP ngDbusConnection::PrepareMethodCall(const char* dest, const char* 
 /* void sendMethodCall (); */
 NS_IMETHODIMP ngDbusConnection::SendMethodCall()
 {
-    if(DEBUG || debug_mode) cout <<  "Starting to send method call" << endl;
-    
-    dbus_connection_send(conn, signal_msg, NULL);
-  
+    LOG(("Starting to send method call"));
+
+    dbus_connection_send(conn, signal_msg, nsnull);
+
     dbus_message_unref(signal_msg);
-  
-    if(DEBUG || debug_mode) cout <<  "Freeing args" << endl;
+
+    LOG(("Freeing args"));
     while(!outgoing_args.empty()){
-	free(outgoing_args.back());
+	NS_Free(outgoing_args.back());
 	outgoing_args.pop_back();
     }
 
     dbus_connection_flush(conn);
-    
-    if(DEBUG || debug_mode) cout <<  "*****Method Call Sent" << endl;
-    
+
+    LOG(("*****Method Call Sent"));
+
     return NS_OK;
 }
 
 /* void sprepareSignal (in string path, in string inter, in string name); */
 NS_IMETHODIMP ngDbusConnection::PrepareSignal(const char *path, const char *inter, const char *name)
 {
-    
-    if(DEBUG || debug_mode) cout << "*****Preparing signal " << path << ", " << inter << ", " << name << endl;
+    NS_ENSURE_ARG_POINTER(path);
+    NS_ENSURE_ARG_POINTER(inter);
+    NS_ENSURE_ARG_POINTER(name);
+
+    LOG(("*****Preparing signal %s, %s, %s", path, inter, name));
     signal_msg = dbus_message_new_signal(path, inter, name);
-    
-    DBusMessageIter* reply_iter = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-    
+
+    DBusMessageIter* reply_iter = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
     dbus_message_iter_init_append(signal_msg, reply_iter);
     outgoing_args.push_back(reply_iter);
-    
-    if(DEBUG || debug_mode) cout << "Signal prepared" << endl;
-  
+
+    LOG(("Signal prepared"));
+
     return NS_OK;
 }
 
 /* void sendSignal (); */
 NS_IMETHODIMP ngDbusConnection::SendSignal()
 {
-    if(DEBUG || debug_mode) cout <<  "Starting to send signal" << endl;
-    
-    dbus_connection_send(conn, signal_msg, NULL);
-  
+    LOG(("Starting to send signal"));
+
+    dbus_connection_send(conn, signal_msg, nsnull);
+
     dbus_message_unref(signal_msg);
-  
-    if(DEBUG || debug_mode) cout <<  "Freeing args" << endl;
+
+    LOG(("Freeing args"));
     while(!outgoing_args.empty()){
-	free(outgoing_args.back());
+	NS_Free(outgoing_args.back());
 	outgoing_args.pop_back();
     }
 
     dbus_connection_flush(conn);
-    
-    if(DEBUG || debug_mode) cout <<  "*****Signal Sent" << endl;
-    
+
+    LOG(("*****Signal Sent"));
+
     return NS_OK;
 }
 /* long setMethodHandler (in ngIMethodHandler handler); */
 NS_IMETHODIMP ngDbusConnection::SetMethodHandler(ngIMethodHandler *handler)
 {
+    NS_ENSURE_ARG_POINTER(handler);
     NS_ADDREF(handler);	//not sure if this is needed
     this->handler = handler;
     return NS_OK;
@@ -303,13 +319,15 @@ NS_IMETHODIMP ngDbusConnection::GetInt64Arg(PRInt64 *_retval)
       dbus_int64_t data;
       dbus_message_iter_get_basic(&incoming_args, &data);
       dbus_message_iter_next(&incoming_args);
-      
+
       *_retval = data;
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a Int64" << endl;
+      char* msg = PR_smprintf("WARNING: %i received but expecting a Int64", type);
+      NS_WARNING(msg);
+      PR_smprintf_free(msg);
     }
-  
+
     return NS_OK;
 }
 
@@ -317,73 +335,77 @@ NS_IMETHODIMP ngDbusConnection::GetInt64Arg(PRInt64 *_retval)
 NS_IMETHODIMP ngDbusConnection::GetBoolArg(PRBool *_retval)
 {
     int type = dbus_message_iter_get_arg_type(&incoming_args);
-    
+
     if(type == DBUS_TYPE_BOOLEAN){
       dbus_bool_t data;
       dbus_message_iter_get_basic(&incoming_args, &data);
       dbus_message_iter_next(&incoming_args);
-      
+
       *_retval = data;
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a Boolean" << endl;
+      char* msg = PR_smprintf("WARNING: %i received but expecting a Bool", type);
+      NS_WARNING(msg);
+      PR_smprintf_free(msg);
     }
-  
+
     return NS_OK;
 }
 
 /* long getStringArg (); */
 NS_IMETHODIMP ngDbusConnection::GetStringArg(char **_retval)
 {
-  
+
     int type = dbus_message_iter_get_arg_type(&incoming_args);
-  
+
     if(type == DBUS_TYPE_STRING){
       const char* dat;
       dbus_message_iter_get_basic(&incoming_args, &dat);
-      
+
       //this is going to leak
       //not sure if the garbage collector will get this or not...
-      *_retval = (char*)malloc(sizeof(char)*(strlen(dat) + 1));
-      
+      *_retval = (char*)NS_Alloc(sizeof(char)*(strlen(dat) + 1));
+
       strcpy(*_retval, dat);
-      if(DEBUG_CERR || debug_mode) cout << "String contained " << *_retval << endl;
-      
+      LOG(("String contained %s", *_retval));
+
       dbus_message_iter_next(&incoming_args);
-      
+
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a String" << endl;
-      
+      char* msg = PR_smprintf("WARNING: %i received but expecting a String", type);
+      NS_WARNING(msg);
+      PR_smprintf_free(msg);
     }
-  
+
     return NS_OK;
 }
 
 /* long getObjectPathArg (); */
 NS_IMETHODIMP ngDbusConnection::GetObjectPathArg(char **_retval)
 {
-  
+
     int type = dbus_message_iter_get_arg_type(&incoming_args);
-  
+
     if(type == DBUS_TYPE_OBJECT_PATH){
       const char* dat;
       dbus_message_iter_get_basic(&incoming_args, &dat);
-      
+
       //this is going to leak
       //not sure if the garbage collector will get this or not...
-      *_retval = (char*)malloc(sizeof(char)*(strlen(dat) + 1));
-      
+      *_retval = (char*)NS_Alloc(sizeof(char)*(strlen(dat) + 1));
+
       strcpy(*_retval, dat);
-      
+
       dbus_message_iter_next(&incoming_args);
-      
+
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting an Object" << endl;
-      
+      char* msg = PR_smprintf("WARNING: %i received but expecting a Object", type);
+      NS_WARNING(msg);
+      PR_smprintf_free(msg);
     }
-  
+
     return NS_OK;
 }
 
@@ -396,54 +418,106 @@ NS_IMETHODIMP ngDbusConnection::GetDoubleArg(PRFloat64 *_retval)
       double data;
       dbus_message_iter_get_basic(&incoming_args, &data);
       dbus_message_iter_next(&incoming_args);
-      
+
       *_retval = data;
     }
     else{
-      if(DEBUG_CERR || debug_mode) cerr << "WARNING: '" << (char)type << "' received but expecting a Double" << endl;
+      char* msg = PR_smprintf("WARNING: %i received but expecting a Double", type);
+      NS_WARNING(msg);
+      PR_smprintf_free(msg);
     }
-  
+
     return NS_OK;
+}
+
+/* nsIArray getArrayArg (); */
+NS_IMETHODIMP ngDbusConnection::GetArrayArg(nsIArray** _retval)
+{
+    LOG(("Getting array argument"));
+
+    nsCOMPtr<nsIMutableArray> array = do_CreateInstance("@mozilla.org/array;1");
+    int type = dbus_message_iter_get_arg_type(&incoming_args);
+    nsresult rv = NS_OK;
+
+    if(type == DBUS_TYPE_ARRAY){
+      DBusMessageIter data;
+      DBusBasicValue value;
+      int type;
+      dbus_message_iter_recurse(&incoming_args, &data);
+      while(dbus_message_iter_has_next(&data)) {
+        dbus_message_iter_get_basic(&data, &value);
+        type = dbus_message_iter_get_arg_type(&data);
+        dbus_message_iter_next(&data);
+
+        if(type == DBUS_TYPE_STRING || type == DBUS_TYPE_OBJECT_PATH) {
+            // Convert the DBusBasicValue to something that implements nsISupports
+            nsCOMPtr<nsISupportsString> stringVal = do_CreateInstance("@mozilla.org/supports-string;1");
+            rv = stringVal->SetData(NS_ConvertUTF8toUTF16(NS_LITERAL_CSTRING(value.string)));
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = array->AppendElement(stringVal, false);
+            NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else {
+            rv = NS_ERROR_NOT_IMPLEMENTED;
+        }
+      }
+
+      dbus_message_iter_next(&incoming_args);
+
+      *_retval = array;
+      NS_ADDREF(*_retval);
+    }
+    else{
+      char* msg = PR_smprintf("WARNING: %i received but expecting an Array", type);
+      NS_WARNING(msg);
+      PR_smprintf_free(msg);;
+    }
+
+    LOG(("Array argument got"));
+
+    return rv;
 }
 
 /* void setInt32Arg (in long val); */
 NS_IMETHODIMP ngDbusConnection::SetInt32Arg(PRInt32 val)
 {
-    if(DEBUG || debug_mode) cout << "Setting Int32 " << val << endl;
+    LOG(("Setting Int32 %d", val));
     DBusMessageIter* args = outgoing_args.back();
-  
+
     dbus_int32_t data = val;
     dbus_message_iter_append_basic(args, DBUS_TYPE_INT32, &data);
-  
-    if(DEBUG || debug_mode) cout << "Set Int32" << endl;
-  
+
+    LOG(("Set Int32"));
+
     return NS_OK;
 }
+
 
 /* void setUInt32Arg (in long val); */
 NS_IMETHODIMP ngDbusConnection::SetUInt32Arg(PRUint32 val)
 {
-    if(DEBUG || debug_mode) cout << "Setting uInt32 " << val << endl;
-    
+    LOG(("Setting uInt32 %d", val));
+
     DBusMessageIter* args = outgoing_args.back();
-  
+
     dbus_message_iter_append_basic(args, DBUS_TYPE_UINT32, &val);
-  
-    if(DEBUG || debug_mode) cout << "Set uInt32" << endl;
-  
+
+    LOG(("Set uInt32"));
+
     return NS_OK;
 }
 
 /* void setUInt16Arg (in long val); */
 NS_IMETHODIMP ngDbusConnection::SetUInt16Arg(PRUint16 val)
 {
-    if(DEBUG || debug_mode) cout <<"Set uInt16 " << val << endl;
+    LOG(("Set uInt16 %d", val));
     DBusMessageIter* args = outgoing_args.back();
-  
+
     dbus_uint16_t data = val;
     dbus_message_iter_append_basic(args, DBUS_TYPE_UINT16, &data);
-  
-    if(DEBUG || debug_mode) cout <<"Set uInt16" << endl;
+
+    LOG(("Set uInt16"));
     return NS_OK;
 }
 
@@ -451,228 +525,249 @@ NS_IMETHODIMP ngDbusConnection::SetUInt16Arg(PRUint16 val)
 //NS_IMETHODIMP ngDbusConnection::SetStringArg(const nsAString &data)
 NS_IMETHODIMP ngDbusConnection::SetStringArg(const char *data)
 {
-    if(DEBUG || debug_mode) cout << "Setting string " << data << endl;
+    NS_ENSURE_ARG_POINTER(data);
+    LOG(("Setting string %s", data));
     DBusMessageIter* args = outgoing_args.back();
-    
+
     dbus_message_iter_append_basic(args, DBUS_TYPE_STRING, &data);
-  
-    if(DEBUG || debug_mode) cout << "Set string" << endl;
+
+    LOG(("Set string"));
     return NS_OK;
 }
 
 /* void setDictSSEntryArg (in string key, in AString val, [optional] in boolean escape); */
 NS_IMETHODIMP ngDbusConnection::SetDictSSEntryArg(const char *key, const nsAString &val)
 {
-    
-    
+    NS_ENSURE_ARG_POINTER(key);
+
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
-    
-    char* data = ToNewUTF8String(val);
-    
-    if(DEBUG || debug_mode) cout << "Setting dict SS " << key << ":" << data << endl;
 
-    dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);  
+    char* data = ToNewUTF8String(val);
+
+    LOG(("Setting dict SS %s:%s", key, data));
+
+    dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_STRING_AS_STRING, &var_obj);
 	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_STRING, &data);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
-  
-    if(DEBUG || debug_mode) cout << "Set dict SS entry" << endl;
-    
+
+    LOG(("Set dict SS entry"));
+
     return NS_OK;
 }
 
 /* void setDictSOEntryArg (in string key, in AString val, [optional] in boolean escape); */
 NS_IMETHODIMP ngDbusConnection::SetDictSOEntryArg(const char *key, const char* data)
 {
+    NS_ENSURE_ARG_POINTER(key);
+    NS_ENSURE_ARG_POINTER(data);
+
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
-    
-    if(DEBUG || debug_mode) cout << "Setting dict SO " << key << ":" << data << endl;
 
-    dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);  
+    LOG(("Setting dict SO %s:%s", key, data));
+
+    dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_OBJECT_PATH_AS_STRING, &var_obj);
 	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_OBJECT_PATH, &data);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
-  
-    if(DEBUG || debug_mode) cout << "Set dict SO entry" << endl;
-    
+
+    LOG(("Set dict SO entry"));
+
     return NS_OK;
 }
 
 /* void setDictSIEntryArg (in string key, in long long val); */
 NS_IMETHODIMP ngDbusConnection::SetDictSI64EntryArg(const char *key, PRInt64 val)
 {
-    if(DEBUG || debug_mode) cout << "Setting dict SI64 " << key << ":" << val << endl;
-    
+    NS_ENSURE_ARG_POINTER(key);
+    LOG(("Setting dict SI64 %s:%d", key, val));
+
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
-  
+
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_INT64_AS_STRING, &var_obj);
 	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_INT64, &val);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
-    
-    if(DEBUG || debug_mode) cout << "Set dict SI64 entry" << endl;
-  
+
+    LOG(("Set dict SI64 entry"));
+
     return NS_OK;
 }
 
 /* void setDictSIEntryArg (in string key, in long val); */
 NS_IMETHODIMP ngDbusConnection::SetDictSIEntryArg(const char *key, PRUint32 val)
 {
-    if(DEBUG || debug_mode) cout << "Setting dict SI " << key << ":" << val << endl;
-    
+    NS_ENSURE_ARG_POINTER(key);
+    LOG(("Setting dict SI %s:%d", key, val));
+
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
-  
+
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_UINT32_AS_STRING, &var_obj);
 	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_UINT32, &val);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
-    
-    if(DEBUG || debug_mode) cout << "Set dict SI entry" << endl;
-  
+
+    LOG(("Set dict SI entry"));
+
     return NS_OK;
 }
 
 /* void setDictSBEntryArg (in string key, in boolean val); */
 NS_IMETHODIMP ngDbusConnection::SetDictSBEntryArg(const char *key, PRBool val)
 {
-    if(DEBUG || debug_mode) cout << "Setting dict SB " << key << ":" << val << endl;
-    
+    NS_ENSURE_ARG_POINTER(key);
+    LOG(("Setting dict SB %s:%i", key, val));
+
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
-  
+
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_BOOLEAN_AS_STRING, &var_obj);
 	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_BOOLEAN, &val);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
-    
-    if(DEBUG || debug_mode) cout << "Set dict SB entry" << endl;
-  
+
+    LOG(("Set dict SB entry"));
+
     return NS_OK;
 }
 
 /* void setDictSDEntryArg (in string key, in double val); */
 NS_IMETHODIMP ngDbusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val)
 {
-    if(DEBUG || debug_mode) cout << "Setting dict SD " << key << ":" << val << endl;
-    
+    NS_ENSURE_ARG_POINTER(key);
+    LOG(("Setting dict SD %s:%s", key, val));
+
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
-  
+
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_DOUBLE_AS_STRING, &var_obj);
 	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_DOUBLE, &val);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
-    
-    if(DEBUG || debug_mode) cout << "Set dict SD entry" << endl;
-  
+
+    LOG(("Set dict SD entry"));
+
     return NS_OK;
 }
 
 /* void openDictSAEntryArg (in string key); */
-NS_IMETHODIMP ngDbusConnection::OpenDictSAEntryArg(const char *key)
+NS_IMETHODIMP ngDbusConnection::OpenDictSAEntryArg(const char *key, PRInt16 aType = TYPE_STRING)
 {
-    if(DEBUG || debug_mode) cout << "Opening dict SA :" << key << endl;
-    
-    DBusMessageIter* array_obj = outgoing_args.back();
-    DBusMessageIter* entry_obj = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
+    NS_ENSURE_ARG_POINTER(key);
+    LOG(("Opening dict SA : %s", key));
 
-    DBusMessageIter* new_val = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-    DBusMessageIter* new_arr = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-  
+    nsresult rv;
+    DBusMessageIter* array_obj = outgoing_args.back();
+    DBusMessageIter* entry_obj = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
+    DBusMessageIter* new_val = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));;
+
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, entry_obj);
-      dbus_message_iter_append_basic(entry_obj, DBUS_TYPE_STRING, &key);
-      
-      dbus_message_iter_open_container(entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_ARRAY_AS_STRING DBUS_TYPE_STRING_AS_STRING, new_val);
-    dbus_message_iter_open_container(new_val, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, new_arr);
+    dbus_message_iter_append_basic(entry_obj, DBUS_TYPE_STRING, &key);
+
+    LOG(("Combining types"));
+    char combinedType[strlen(DBUS_TYPE_ARRAY_AS_STRING) + strlen(this->ngTypeToDBusType(aType)) + 1];
+    combinedType[0] = '\0';
+    strcat(combinedType, DBUS_TYPE_ARRAY_AS_STRING);
+    strcat(combinedType, this->ngTypeToDBusType(aType));
+    LOG(("%s",combinedType));
+    LOG(("%s%s", DBUS_TYPE_ARRAY_AS_STRING, this->ngTypeToDBusType(aType)));
+
+    dbus_message_iter_open_container(entry_obj, DBUS_TYPE_VARIANT, combinedType, new_val);
+    LOG(("Set combined types"));
 
     outgoing_args.push_back(entry_obj);
     outgoing_args.push_back(new_val);
-    outgoing_args.push_back(new_arr);
-    
-    if(DEBUG || debug_mode) cout << "Opened dict SA entry" << endl;
-  
-    return NS_OK;
+
+    rv = this->OpenArray(aType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG(("Opened dict SA entry"));
+
+    return rv;
 }
 
 /* void closeDictSAEntryArg (); */
 NS_IMETHODIMP ngDbusConnection::CloseDictSAEntryArg()
 {
-    if(DEBUG || debug_mode) cout << "Closing dict SA " << endl;
+    LOG(("Closing dict SA "));
 
-    DBusMessageIter* new_arr = outgoing_args.back();
-    outgoing_args.pop_back();
+    nsresult rv;
+    rv = this->CloseArray();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     DBusMessageIter* new_val = outgoing_args.back();
     outgoing_args.pop_back();
     DBusMessageIter* entry_obj = outgoing_args.back();
     outgoing_args.pop_back();
     DBusMessageIter* array_obj = outgoing_args.back();
 
-    dbus_message_iter_close_container(new_val, new_arr);
-      dbus_message_iter_close_container(entry_obj, new_val);
+    dbus_message_iter_close_container(entry_obj, new_val);
     dbus_message_iter_close_container(array_obj, entry_obj);
-    
-    if(DEBUG || debug_mode) cout << "Closed dict SA entry" << endl;
-  
-    return NS_OK;
+
+    LOG(("Closed dict SA entry"));
+
+    return rv;
 }
 /* void openDictSDEntryArg (in string key); */
 NS_IMETHODIMP ngDbusConnection::OpenDictSDEntryArg(const char *key)
 {
-    if(DEBUG || debug_mode) cout << "Opening dict SD :" << key << endl;
-    
-    DBusMessageIter* array_obj = outgoing_args.back();
-    DBusMessageIter* entry_obj = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
+    NS_ENSURE_ARG_POINTER(key);
+    LOG(("Opening dict SD :%s", key));
 
-    DBusMessageIter* new_val = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-    DBusMessageIter* new_arr = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-  
+    DBusMessageIter* array_obj = outgoing_args.back();
+    DBusMessageIter* entry_obj = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
+    DBusMessageIter* new_val = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+    DBusMessageIter* new_arr = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, entry_obj);
       dbus_message_iter_append_basic(entry_obj, DBUS_TYPE_STRING, &key);
-      
+
       dbus_message_iter_open_container(entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_ARRAY_AS_STRING DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING DBUS_TYPE_STRING_AS_STRING DBUS_TYPE_VARIANT_AS_STRING DBUS_DICT_ENTRY_END_CHAR_AS_STRING, new_val);
     dbus_message_iter_open_container(new_val, DBUS_TYPE_ARRAY, DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING DBUS_TYPE_STRING_AS_STRING DBUS_TYPE_VARIANT_AS_STRING DBUS_DICT_ENTRY_END_CHAR_AS_STRING, new_arr);
 
     outgoing_args.push_back(entry_obj);
     outgoing_args.push_back(new_val);
     outgoing_args.push_back(new_arr);
-    
-    if(DEBUG || debug_mode) cout << "Opened dict SD entry" << endl;
-  
+
+    LOG(("Opened dict SD entry"));
+
     return NS_OK;
 }
 
 /* void closeDictSDEntryArg (); */
 NS_IMETHODIMP ngDbusConnection::CloseDictSDEntryArg()
 {
-    if(DEBUG || debug_mode) cout << "Closing dict SD " << endl;
+    LOG(("Closing dict SD "));
 
     DBusMessageIter* new_arr = outgoing_args.back();
     outgoing_args.pop_back();
@@ -685,9 +780,9 @@ NS_IMETHODIMP ngDbusConnection::CloseDictSDEntryArg()
     dbus_message_iter_close_container(new_val, new_arr);
       dbus_message_iter_close_container(entry_obj, new_val);
     dbus_message_iter_close_container(array_obj, entry_obj);
-    
-    if(DEBUG || debug_mode) cout << "Closed dict SD entry" << endl;
-  
+
+    LOG(("Closed dict SD entry"));
+
     return NS_OK;
 }
 
@@ -695,46 +790,47 @@ NS_IMETHODIMP ngDbusConnection::CloseDictSDEntryArg()
 /* void setBoolArg (in bool val); */
 NS_IMETHODIMP ngDbusConnection::SetBoolArg(PRBool val)
 {
-    if(DEBUG || debug_mode) cout << "Setting Bool " << val << endl;
+    LOG(("Setting Bool %s", val));
     DBusMessageIter* args = outgoing_args.back();
-  
+
     dbus_bool_t data = val;
     dbus_message_iter_append_basic(args, DBUS_TYPE_BOOLEAN, &data);
-  
-    if(DEBUG || debug_mode) cout << "Set Bool" << endl;
-  
+
+    LOG(("Set Bool"));
+
     return NS_OK;
 }
 
 /* void setDoubleArg (in double val); */
 NS_IMETHODIMP ngDbusConnection::SetDoubleArg(PRFloat64 val)
 {
-    if(DEBUG || debug_mode) cout <<"Set Double " << val << endl;
+    LOG(("Set Double %d", val));
     DBusMessageIter* args = outgoing_args.back();
-  
+
     double data = val;
     dbus_message_iter_append_basic(args, DBUS_TYPE_DOUBLE, &data);
-  
-    if(DEBUG || debug_mode) cout <<"Set Double" << endl;
+
+    LOG(("Set Double"));
     return NS_OK;
 }
 
 /* void setInt64Arg (in long long val); */
 NS_IMETHODIMP ngDbusConnection::SetInt64Arg(PRInt64 val)
 {
-    if(DEBUG || debug_mode) cout <<"Set Int64 " << val << endl;
+    LOG(("Set Int64 %d", val));
     DBusMessageIter* args = outgoing_args.back();
-  
+
     dbus_int64_t data = val;
     dbus_message_iter_append_basic(args, DBUS_TYPE_INT64, &data);
-  
-    if(DEBUG || debug_mode) cout <<"Set Int64" << endl;
+
+    LOG(("Set Int64"));
     return NS_OK;
 }
 
 /* void setArrayStringArg (in string key, in long val); */
 NS_IMETHODIMP ngDbusConnection::SetArrayStringArg(const char* val)
-{  
+{
+    NS_ENSURE_ARG_POINTER(val);
     return this->SetStringArg(val);
 }
 
@@ -742,104 +838,114 @@ NS_IMETHODIMP ngDbusConnection::SetArrayStringArg(const char* val)
 //NS_IMETHODIMP ngDbusConnection::SetObjectPathArg(const nsAString &val)
 NS_IMETHODIMP ngDbusConnection::SetObjectPathArg(const char *data)
 {
+    NS_ENSURE_ARG_POINTER(data);
     DBusMessageIter* args = outgoing_args.back();
 
-    if(DEBUG || debug_mode) cout << "Setting object path " << data << endl;
-    
+    LOG(("Setting object path %s", data));
+
     dbus_message_iter_append_basic(args, DBUS_TYPE_OBJECT_PATH, &data);
-  
-    if(DEBUG || debug_mode) cout << "Set object path" << endl;
+
+    LOG(("Set object path"));
     return NS_OK;
 }
 
 /* void openDictEntryArray (); */
 NS_IMETHODIMP ngDbusConnection::OpenDictEntryArray()
 {
-    if(DEBUG || debug_mode) cout << "Opening dict entry" << endl;
-    
+    LOG(("Opening dict entry"));
+
     DBusMessageIter* args = outgoing_args.back();
-    DBusMessageIter* new_args = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-  
+    DBusMessageIter* new_args = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
     dbus_message_iter_open_container(args, DBUS_TYPE_ARRAY, DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING DBUS_TYPE_STRING_AS_STRING DBUS_TYPE_VARIANT_AS_STRING DBUS_DICT_ENTRY_END_CHAR_AS_STRING, new_args);
-  
+
     outgoing_args.push_back(new_args);
-    
-    if(DEBUG || debug_mode) cout << "Dict entry open" << endl;
+
+    LOG(("Dict entry open"));
     return NS_OK;
 }
 
 /* void closeDictEntryArray (); */
 NS_IMETHODIMP ngDbusConnection::CloseDictEntryArray()
 {
-    if(DEBUG || debug_mode) cout << "Closing dict entry" << endl;
-    
+    LOG(("Closing dict entry"));
+
     DBusMessageIter* new_args = outgoing_args.back();
     outgoing_args.pop_back();
     DBusMessageIter* args = outgoing_args.back();
-    
+
     dbus_message_iter_close_container(args, new_args);
-  
-    if(DEBUG || debug_mode) cout << "Dict entry closed" << endl;
+
+    LOG(("Dict entry closed"));
     return NS_OK;
 }
 
 /* void openArray (); */
-NS_IMETHODIMP ngDbusConnection::OpenArray()
+NS_IMETHODIMP ngDbusConnection::OpenArray(PRInt16 aType = TYPE_STRING)
 {
-    if(DEBUG || debug_mode) cout << "Opening array" << endl;
+    LOG(("Opening array"));
 
     DBusMessageIter* args = outgoing_args.back();
-    DBusMessageIter* new_args = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-  
-    dbus_message_iter_open_container(args, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, new_args);
-  
+    DBusMessageIter* new_args = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
+    dbus_message_iter_open_container(args, DBUS_TYPE_ARRAY, this->ngTypeToDBusType(aType), new_args);
+
     outgoing_args.push_back(new_args);
-    
-    if(DEBUG || debug_mode) cout << "Array open" << endl;
+
+    LOG(("Array open"));
     return NS_OK;
 }
 
 /* void closeArray (); */
 NS_IMETHODIMP ngDbusConnection::CloseArray()
 {
-    if(DEBUG || debug_mode) cout << "Closing array" << endl;
+    LOG(("Closing array"));
 
     DBusMessageIter* new_args = outgoing_args.back();
     outgoing_args.pop_back();
     DBusMessageIter* args = outgoing_args.back();
-    
+
     dbus_message_iter_close_container(args, new_args);
 
-    if(DEBUG || debug_mode) cout << "Array closed" << endl;
+    LOG(("Array closed"));
     return NS_OK;
 }
 
 /* void openStruct (); */
 NS_IMETHODIMP ngDbusConnection::OpenStruct()
 {
-    if(DEBUG || debug_mode) cout << "Opening struct" << endl;
-    
+    LOG(("Opening struct"));
+
     DBusMessageIter* args = outgoing_args.back();
-    DBusMessageIter* new_args = (DBusMessageIter*)malloc(sizeof(DBusMessageIter));
-  
+    DBusMessageIter* new_args = (DBusMessageIter*)NS_Alloc(sizeof(DBusMessageIter));
+
     dbus_message_iter_open_container(args, DBUS_TYPE_STRUCT, NULL, new_args);
-    
+
     outgoing_args.push_back(new_args);
-    if(DEBUG || debug_mode) cout << "Struct opened" << endl;
-  
+    LOG(("Struct opened"));
+
     return NS_OK;
 }
 
 /* void closeStruct (); */
 NS_IMETHODIMP ngDbusConnection::CloseStruct()
 {
-    if(DEBUG || debug_mode) cout << "Closing struct" << endl;
+    LOG(("Closing struct"));
     DBusMessageIter* new_args = outgoing_args.back();
     outgoing_args.pop_back();
     DBusMessageIter* args = outgoing_args.back();
-    
+
     dbus_message_iter_close_container(args, new_args);
-    if(DEBUG || debug_mode) cout << "Struct closed" << endl;
-  
+    LOG(("Struct closed"));
+
     return NS_OK;
+}
+
+const char* ngDbusConnection::ngTypeToDBusType(const int ngType) const
+{
+    if(ngType == TYPE_OBJECT_PATH) {
+        return DBUS_TYPE_OBJECT_PATH_AS_STRING;
+    }
+
+    return DBUS_TYPE_STRING_AS_STRING;
 }

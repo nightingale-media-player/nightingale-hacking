@@ -5,10 +5,10 @@
 // This file is part of the Nightingale web player.
 //
 // http://getnightingale.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
+//
 // Software distributed under the License is distributed
 // on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
@@ -34,18 +34,14 @@
 #ifndef __DEFINE_NGMPRIS_H__
 #define __DEFINE_NGMPRIS_H__
 
-#include <iostream>
-//#include <string>
 //#include <cstring>
 #include <deque>
-
-#include <cstdlib>
 
 #include <dbus/dbus.h>
 
 #include "ngIMpris.h"
-#include "nsStringAPI.h"
 
+union DBusBasicValue { char* string; unsigned char bytes[8]; };
 
 /* Header file */
 class ngDbusConnection : public ngIDbusConnection
@@ -58,6 +54,7 @@ public:
 
 private:
   ~ngDbusConnection();
+  const char* ngTypeToDBusType(const int ngType) const;
 
 protected:
   DBusConnection *conn;
@@ -65,7 +62,6 @@ protected:
   ngIMethodHandler *handler;
   std::deque<DBusMessageIter*> outgoing_args;
   DBusMessageIter incoming_args;
-  PRBool debug_mode;
   /* additional members */
 };
 

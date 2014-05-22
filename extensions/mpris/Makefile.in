@@ -32,11 +32,9 @@ IS_EXTENSION = 1
 INSTALL_EXTENSION = 1
 
 SUBDIRS = components \
-          defaults \
           $(NULL)
 
 CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
              $(NULL)
 
 include $(topsrcdir)/build/rules.mk
