@@ -80,7 +80,7 @@ ngDBusConnection::~ngDBusConnection()
 NS_IMETHODIMP ngDBusConnection::Observe(nsISupports* aSubject, const char* aTopic, const PRUnichar* aData)
 {
     nsresult rv = NS_OK;
-    if(!strcmp(aTopic, "timer-callback")) {
+    if(!strcmp(aTopic, NS_TIMER_CALLBACK_TOPIC)) {
         rv = this->Check();
         NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -144,11 +144,6 @@ NS_IMETHODIMP ngDBusConnection::SetMatch(const char *match)
 NS_IMETHODIMP ngDBusConnection::Check()
 {
     NS_ENSURE_TRUE(mConn, NS_OK);
-
-    //~ int i;
-    //~ for(i = 0; i < 30; i++){
-	//~ LOG(NS_ConvertUTF16toUTF8("Flamboyant").get());
-    //~ }
 
     nsresult rv = NS_OK;
 
