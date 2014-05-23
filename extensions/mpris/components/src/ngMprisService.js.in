@@ -83,7 +83,6 @@ ngMprisService.prototype = {
   _Root:            null,
   _TrackList:       null,
   _lastItem:        null,
-  _timer:           null,
   _isInitialized:   false,
   _observerService: null,
 
@@ -106,21 +105,6 @@ ngMprisService.prototype.initDBus = function() {
     this._dbus.setStringArg("nightingale");
     this._dbus.setUInt32Arg(0);
     this._dbus.sendMethodCall();
-
-    var TimerCallback = function(dbus) {
-      this.dbus = dbus;
-    };
-    TimerCallback.prototype = {
-      dbus: null,
-      handler: null,
-      QueryInterface: XPCOMUtils.generateQI([Ci.nsITimerCallback]),
-      notify: function(timer){
-    	this.dbus.check();
-      }
-    };
-
-    this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-    this._timer.initWithCallback(new TimerCallback(this._dbus), 100, this._timer.TYPE_REPEATING_SLACK);
 
     var mediacore = this._mediacore;
     var dbus = this._dbus;
@@ -268,7 +252,6 @@ ngMprisService.prototype.initDBus = function() {
 //Unload the Service
 ngMprisService.prototype.uninit = function() {
     if(this._isInitialized) {
-        this._timer.cancel();
         this._dbus.end();
     }
 };

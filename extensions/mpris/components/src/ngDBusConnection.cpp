@@ -36,11 +36,11 @@
 #include <cstring>
 
 #include <nsXPCOM.h>
-#include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsStringAPI.h>
 #include <nsIMutableArray.h>
 #include <nsISupportsPrimitives.h>
+#include <nsITimer.h>
 
 #include "prlog.h"
 #include "prprf.h"
@@ -58,9 +58,8 @@
 
 using namespace std;
 
-
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(ngDBusConnection, ngIDBusConnection)
+NS_IMPL_ISUPPORTS2(ngDBusConnection, ngIDBusConnection, nsIObserver)
 
 ngDBusConnection::ngDBusConnection()
 : signal_msg(NULL)
@@ -76,6 +75,16 @@ ngDBusConnection::ngDBusConnection()
 ngDBusConnection::~ngDBusConnection()
 {
     NS_IF_RELEASE(mHandler);
+}
+
+NS_IMETHODIMP ngDBusConnection::Observe(nsISupports* aSubject, const char* aTopic, const PRUnichar* aData)
+{
+    nsresult rv = NS_OK;
+    if(!strcmp(aTopic, "timer-callback")) {
+        rv = this->Check();
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
+    return rv;
 }
 
 /* long init (in string name); */
@@ -98,6 +107,14 @@ NS_IMETHODIMP ngDBusConnection::Init(const char *aName)
     LOG(("Flushing"));
 
     dbus_connection_flush(mConn->get());
+    
+    LOG(("Setting up Timer"));
+    
+    mTimer = do_CreateInstance("@mozilla.org/timer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTimer->Init(this, 100, nsITimer::TYPE_REPEATING_SLACK);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
     LOG(("End Init()"));
 
     return rv;
@@ -126,7 +143,7 @@ NS_IMETHODIMP ngDBusConnection::SetMatch(const char *match)
 /* void check (); */
 NS_IMETHODIMP ngDBusConnection::Check()
 {
-    if(mConn == nsnull) return NS_OK;
+    NS_ENSURE_TRUE(mConn, NS_OK);
 
     //~ int i;
     //~ for(i = 0; i < 30; i++){
@@ -201,6 +218,7 @@ NS_IMETHODIMP ngDBusConnection::Check()
 /* long end (); */
 NS_IMETHODIMP ngDBusConnection::End(PRInt32 *_retval)
 {
+    mTimer->Cancel();
     return NS_OK;
 }
 
