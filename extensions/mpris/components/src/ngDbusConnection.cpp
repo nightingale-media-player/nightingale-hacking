@@ -441,7 +441,7 @@ NS_IMETHODIMP ngDbusConnection::GetArrayArg(nsIArray** _retval)
 
     if(type == DBUS_TYPE_ARRAY){
       DBusMessageIter data;
-      DBusBasicValue value;
+      ngDBusBasicValue value;
       int type;
       dbus_message_iter_recurse(&incoming_args, &data);
       while(dbus_message_iter_has_next(&data)) {

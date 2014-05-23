@@ -41,7 +41,7 @@
 
 #include "ngIMpris.h"
 
-union DBusBasicValue { char* string; unsigned char bytes[8]; };
+union ngDBusBasicValue { char* string; unsigned char bytes[8]; };
 
 /* Header file */
 class ngDbusConnection : public ngIDbusConnection
