@@ -34,32 +34,33 @@
 #ifndef __DEFINE_NGMPRIS_H__
 #define __DEFINE_NGMPRIS_H__
 
-//#include <cstring>
 #include <deque>
-
 #include <dbus/dbus.h>
+#include <nsAutoPtr.h>
 
 #include "ngIMpris.h"
+
+class sbDBusConnection;
 
 union ngDBusBasicValue { char* string; unsigned char bytes[8]; };
 
 /* Header file */
-class ngDbusConnection : public ngIDbusConnection
+class ngDBusConnection : public ngIDBusConnection
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NGIDBUSCONNECTION
 
-  ngDbusConnection();
+  ngDBusConnection();
+  virtual ~ngDBusConnection();
 
 private:
-  ~ngDbusConnection();
   const char* ngTypeToDBusType(const int ngType) const;
 
 protected:
-  DBusConnection *conn;
+  nsAutoPtr<sbDBusConnection> mConn;
   DBusMessage *signal_msg;
-  ngIMethodHandler *handler;
+  ngIMethodHandler* mHandler;
   std::deque<DBusMessageIter*> outgoing_args;
   DBusMessageIter incoming_args;
   /* additional members */

@@ -31,21 +31,20 @@
 
 
 #include "nsIGenericFactory.h"
-#include "ngDbusConnection.h"
+#include "ngDBusConnection.h"
 
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(ngDbusConnection)
+NS_GENERIC_FACTORY_CONSTRUCTOR(ngDBusConnection)
 
 
 static nsModuleComponentInfo components[] =
 {
 	{
-		"Dbus Protocol plugin", 
+		"DBus Protocol handler", 
 		{ 0x939381dc, 0x1747, 0x4d3e, { 0xb2, 0xf7, 0x50, 0x53, 0xe5, 0xfb, 0x7d, 0xa4 } },
-		"@getnightingale.com/Nightingale/DbusConnection;1",
-		ngDbusConnectionConstructor,
+		"@getnightingale.com/Nightingale/DBusConnection;1",
+		ngDBusConnectionConstructor,
 	}
 };
 
-NS_IMPL_NSGETMODULE("ngDbusConnectionModule", components)
-
+NS_IMPL_NSGETMODULE("ngDBusConnectionModule", components)

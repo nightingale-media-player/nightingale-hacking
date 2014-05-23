@@ -30,24 +30,24 @@
  * me@logansmyth.com
  */
 
+#include "ngDBusConnection.h"
+#include <sbDBus.h>
+
 #include <cstring>
 
 #include <nsXPCOM.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsStringAPI.h>
-
 #include <nsIMutableArray.h>
 #include <nsISupportsPrimitives.h>
-
-#include "ngDbusConnection.h"
 
 #include "prlog.h"
 #include "prprf.h"
 
 /**
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=ngDbusConnection:5
+ *   NSPR_LOG_MODULES=ngDBusConnection:5
  */
 #ifdef PR_LOGGING
   static PRLogModuleInfo* gDBusConnectionLog = nsnull;
@@ -60,78 +60,63 @@ using namespace std;
 
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(ngDbusConnection, ngIDbusConnection)
+NS_IMPL_ISUPPORTS1(ngDBusConnection, ngIDBusConnection)
 
-ngDbusConnection::ngDbusConnection()
-: conn(0)
-, signal_msg(0)
-, handler(0)
+ngDBusConnection::ngDBusConnection()
+: signal_msg(NULL)
+, mHandler(nsnull)
 {
   /* member initializers and constructor code */
     #ifdef PR_LOGGING
         if(!gDBusConnectionLog)
-            gDBusConnectionLog = PR_NewLogModule("ngDbusConnection");
+            gDBusConnectionLog = PR_NewLogModule("ngDBusConnection");
     #endif
 }
 
-ngDbusConnection::~ngDbusConnection()
+ngDBusConnection::~ngDBusConnection()
 {
-  /* destructor code */
+    NS_IF_RELEASE(mHandler);
 }
 
 /* long init (in string name); */
-NS_IMETHODIMP ngDbusConnection::Init(const char *name, PRInt32 *_retval)
+NS_IMETHODIMP ngDBusConnection::Init(const char *aName)
 {
-    NS_ENSURE_ARG_POINTER(name);
-    *_retval = nsnull;
-    DBusError error;
-
+    NS_ENSURE_ARG_POINTER(aName);
+    nsresult rv = nsnull;
+    
     LOG(("Initializing DBus"));
+    
+    rv = sbDBusConnection::New(getter_Transfers(mConn), DBUS_BUS_SESSION, NULL, NULL, NULL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    sbDBusError error;
 
-    dbus_error_init (&error);
-    conn = dbus_bus_get (DBUS_BUS_SESSION, &error);
-    if (!conn) {
-      NS_ERROR(("Error initializing DBus connection: %s:%s", error.name, error.message));
-      dbus_error_free(&error);
-      *_retval = 1;
-    }
-
-    LOG(("Requesting Name on DBus"));
-    dbus_bus_request_name(conn, name, 0, &error);
-    if (dbus_error_is_set (&error)) {
-      NS_ERROR(("Error requesting DBus name: %s:%s", error.name, error.message));
-      dbus_error_free(&error);
-      *_retval = 1;
-    }
+    // Get a bus connection.
+    dbus_bus_request_name(mConn->get(), aName, 0, &error);
+    SB_DBUS_ENSURE_SUCCESS(error, NS_ERROR_FAILURE);
 
     LOG(("Flushing"));
 
-    dbus_connection_flush(conn);
+    dbus_connection_flush(mConn->get());
     LOG(("End Init()"));
 
-    return NS_OK;
+    return rv;
 }
 
 /* long setMatch (in string match); */
-NS_IMETHODIMP ngDbusConnection::SetMatch(const char *match)
+NS_IMETHODIMP ngDBusConnection::SetMatch(const char *match)
 {
     NS_ENSURE_ARG_POINTER(match);
 
-    DBusError error;
-    dbus_error_init (&error);
+    sbDBusError error;
     LOG(("Setting match %s", match));
 
       /* listening to messages from all objects as no path is specified */
-    dbus_bus_add_match (conn, match, &error);
-    //~ dbus_bus_add_match (conn, match, NULL);
-
-    if (dbus_error_is_set (&error)) {
-      NS_ERROR(("Match Error: %s: %s", error.name, error.message));
-      dbus_error_free(&error);
-    }
+    dbus_bus_add_match (mConn->get(), match, &error);
+    SB_DBUS_ENSURE_SUCCESS(error, NS_ERROR_FAILURE);
 
 
-    dbus_connection_flush(conn);
+    dbus_connection_flush(mConn->get());
 
     LOG(("DBus Connection Init"));
 
@@ -139,26 +124,26 @@ NS_IMETHODIMP ngDbusConnection::SetMatch(const char *match)
 }
 
 /* void check (); */
-NS_IMETHODIMP ngDbusConnection::Check()
+NS_IMETHODIMP ngDBusConnection::Check()
 {
-    if(conn == nsnull) return NS_OK;
+    if(mConn == nsnull) return NS_OK;
 
     //~ int i;
     //~ for(i = 0; i < 30; i++){
 	//~ LOG(NS_ConvertUTF16toUTF8("Flamboyant").get());
     //~ }
 
-
+    nsresult rv = NS_OK;
 
     DBusMessage* msg;
     DBusMessage* reply;
     DBusMessageIter *reply_iter;
 
     // non blocking read of the next available message
-    dbus_connection_read_write(conn, 0);
-    msg = dbus_connection_pop_message(conn);
+    dbus_connection_read_write(mConn->get(), 0);
+    msg = dbus_connection_pop_message(mConn->get());
 
-    if(msg != nsnull){
+    if(msg != NULL){
       if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_CALL || dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL){
 	    LOG(("*****Calling %s", dbus_message_get_member(msg)));
 
@@ -176,27 +161,30 @@ NS_IMETHODIMP ngDbusConnection::Check()
 	    const char* path = dbus_message_get_path(msg);
 	    const char* member = dbus_message_get_member(msg);
 
-        #if PR_LOGGING
+        #ifdef PR_LOGGING
             if(interface != nsnull) LOG(("Interface: %s", interface));
             if(path != nsnull) LOG(("Path: %s", path));
             if(member != nsnull) LOG(("Member: %s", member));
         #endif
 
-	    handler->HandleMethod(interface, path, member);
+        NS_ENSURE_TRUE(mHandler, NS_ERROR_FAILURE);
+	    
+	    rv = mHandler->HandleMethod(interface, path, member);
+        NS_ENSURE_SUCCESS(rv, rv);
 
 	    LOG(("Just after Handler call"));
 
 	    dbus_uint32_t serial = 0;
 
 	    // send the reply && flush the connection
-	    NS_ENSURE_TRUE(dbus_connection_send(conn, reply, &serial), NS_ERROR_OUT_OF_MEMORY);
+	    NS_ENSURE_TRUE(dbus_connection_send(mConn->get(), reply, &serial), NS_ERROR_OUT_OF_MEMORY);
 
 	    while(!outgoing_args.empty()){
 	        NS_Free(outgoing_args.back());
 	        outgoing_args.pop_back();
 	    }
 
-	    dbus_connection_flush(conn);
+	    dbus_connection_flush(mConn->get());
 	    dbus_message_unref(reply);
 
 
@@ -207,17 +195,17 @@ NS_IMETHODIMP ngDbusConnection::Check()
 
     }
 
-    return NS_OK;
+    return rv;
 }
 
 /* long end (); */
-NS_IMETHODIMP ngDbusConnection::End(PRInt32 *_retval)
+NS_IMETHODIMP ngDBusConnection::End(PRInt32 *_retval)
 {
     return NS_OK;
 }
 
 /* vois prepareMethodCall(in string dest, in string path, in string inter, in string name); */
-NS_IMETHODIMP ngDbusConnection::PrepareMethodCall(const char* dest, const char* path,  const char* inter, const char* name)
+NS_IMETHODIMP ngDBusConnection::PrepareMethodCall(const char* dest, const char* path,  const char* inter, const char* name)
 {
     NS_ENSURE_ARG_POINTER(dest);
     NS_ENSURE_ARG_POINTER(path);
@@ -239,11 +227,11 @@ NS_IMETHODIMP ngDbusConnection::PrepareMethodCall(const char* dest, const char* 
 }
 
 /* void sendMethodCall (); */
-NS_IMETHODIMP ngDbusConnection::SendMethodCall()
+NS_IMETHODIMP ngDBusConnection::SendMethodCall()
 {
     LOG(("Starting to send method call"));
 
-    dbus_connection_send(conn, signal_msg, nsnull);
+    dbus_connection_send(mConn->get(), signal_msg, NULL);
 
     dbus_message_unref(signal_msg);
 
@@ -253,7 +241,7 @@ NS_IMETHODIMP ngDbusConnection::SendMethodCall()
 	outgoing_args.pop_back();
     }
 
-    dbus_connection_flush(conn);
+    dbus_connection_flush(mConn->get());
 
     LOG(("*****Method Call Sent"));
 
@@ -261,7 +249,7 @@ NS_IMETHODIMP ngDbusConnection::SendMethodCall()
 }
 
 /* void sprepareSignal (in string path, in string inter, in string name); */
-NS_IMETHODIMP ngDbusConnection::PrepareSignal(const char *path, const char *inter, const char *name)
+NS_IMETHODIMP ngDBusConnection::PrepareSignal(const char *path, const char *inter, const char *name)
 {
     NS_ENSURE_ARG_POINTER(path);
     NS_ENSURE_ARG_POINTER(inter);
@@ -281,37 +269,39 @@ NS_IMETHODIMP ngDbusConnection::PrepareSignal(const char *path, const char *inte
 }
 
 /* void sendSignal (); */
-NS_IMETHODIMP ngDbusConnection::SendSignal()
+NS_IMETHODIMP ngDBusConnection::SendSignal()
 {
     LOG(("Starting to send signal"));
 
-    dbus_connection_send(conn, signal_msg, nsnull);
+    dbus_connection_send(mConn->get(), signal_msg, NULL);
 
     dbus_message_unref(signal_msg);
 
     LOG(("Freeing args"));
     while(!outgoing_args.empty()){
-	NS_Free(outgoing_args.back());
-	outgoing_args.pop_back();
+	    NS_Free(outgoing_args.back());
+	    outgoing_args.pop_back();
     }
 
-    dbus_connection_flush(conn);
+    dbus_connection_flush(mConn->get());
 
     LOG(("*****Signal Sent"));
 
     return NS_OK;
 }
 /* long setMethodHandler (in ngIMethodHandler handler); */
-NS_IMETHODIMP ngDbusConnection::SetMethodHandler(ngIMethodHandler *handler)
+NS_IMETHODIMP ngDBusConnection::SetMethodHandler(ngIMethodHandler* handler)
 {
     NS_ENSURE_ARG_POINTER(handler);
-    NS_ADDREF(handler);	//not sure if this is needed
-    this->handler = handler;
+    // we shouldn't need to addref, nor are we allowed, as handler is our parent
+    // by design, but else the pointer gets freed by XPCOM.
+    handler->AddRef();
+    this->mHandler = handler;
     return NS_OK;
 }
 
 /* long getInt64Arg (); */
-NS_IMETHODIMP ngDbusConnection::GetInt64Arg(PRInt64 *_retval)
+NS_IMETHODIMP ngDBusConnection::GetInt64Arg(PRInt64 *_retval)
 {
     int type = dbus_message_iter_get_arg_type(&incoming_args);
 
@@ -332,7 +322,7 @@ NS_IMETHODIMP ngDbusConnection::GetInt64Arg(PRInt64 *_retval)
 }
 
 /* long getBoolArg (); */
-NS_IMETHODIMP ngDbusConnection::GetBoolArg(PRBool *_retval)
+NS_IMETHODIMP ngDBusConnection::GetBoolArg(PRBool *_retval)
 {
     int type = dbus_message_iter_get_arg_type(&incoming_args);
 
@@ -353,7 +343,7 @@ NS_IMETHODIMP ngDbusConnection::GetBoolArg(PRBool *_retval)
 }
 
 /* long getStringArg (); */
-NS_IMETHODIMP ngDbusConnection::GetStringArg(char **_retval)
+NS_IMETHODIMP ngDBusConnection::GetStringArg(char **_retval)
 {
 
     int type = dbus_message_iter_get_arg_type(&incoming_args);
@@ -382,7 +372,7 @@ NS_IMETHODIMP ngDbusConnection::GetStringArg(char **_retval)
 }
 
 /* long getObjectPathArg (); */
-NS_IMETHODIMP ngDbusConnection::GetObjectPathArg(char **_retval)
+NS_IMETHODIMP ngDBusConnection::GetObjectPathArg(char **_retval)
 {
 
     int type = dbus_message_iter_get_arg_type(&incoming_args);
@@ -410,7 +400,7 @@ NS_IMETHODIMP ngDbusConnection::GetObjectPathArg(char **_retval)
 }
 
 /* double getInt64Arg (); */
-NS_IMETHODIMP ngDbusConnection::GetDoubleArg(PRFloat64 *_retval)
+NS_IMETHODIMP ngDBusConnection::GetDoubleArg(PRFloat64 *_retval)
 {
     int type = dbus_message_iter_get_arg_type(&incoming_args);
 
@@ -431,13 +421,14 @@ NS_IMETHODIMP ngDbusConnection::GetDoubleArg(PRFloat64 *_retval)
 }
 
 /* nsIArray getArrayArg (); */
-NS_IMETHODIMP ngDbusConnection::GetArrayArg(nsIArray** _retval)
+NS_IMETHODIMP ngDBusConnection::GetArrayArg(nsIArray** _retval)
 {
     LOG(("Getting array argument"));
 
-    nsCOMPtr<nsIMutableArray> array = do_CreateInstance("@mozilla.org/array;1");
+    nsresult rv;
+    nsCOMPtr<nsIMutableArray> array = do_CreateInstance("@mozilla.org/array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     int type = dbus_message_iter_get_arg_type(&incoming_args);
-    nsresult rv = NS_OK;
 
     if(type == DBUS_TYPE_ARRAY){
       DBusMessageIter data;
@@ -451,7 +442,9 @@ NS_IMETHODIMP ngDbusConnection::GetArrayArg(nsIArray** _retval)
 
         if(type == DBUS_TYPE_STRING || type == DBUS_TYPE_OBJECT_PATH) {
             // Convert the DBusBasicValue to something that implements nsISupports
-            nsCOMPtr<nsISupportsString> stringVal = do_CreateInstance("@mozilla.org/supports-string;1");
+            nsCOMPtr<nsISupportsString> stringVal = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
+            NS_ENSURE_SUCCESS(rv, rv);
+            
             rv = stringVal->SetData(NS_ConvertUTF8toUTF16(NS_LITERAL_CSTRING(value.string)));
             NS_ENSURE_SUCCESS(rv, rv);
 
@@ -480,7 +473,7 @@ NS_IMETHODIMP ngDbusConnection::GetArrayArg(nsIArray** _retval)
 }
 
 /* void setInt32Arg (in long val); */
-NS_IMETHODIMP ngDbusConnection::SetInt32Arg(PRInt32 val)
+NS_IMETHODIMP ngDBusConnection::SetInt32Arg(PRInt32 val)
 {
     LOG(("Setting Int32 %d", val));
     DBusMessageIter* args = outgoing_args.back();
@@ -495,7 +488,7 @@ NS_IMETHODIMP ngDbusConnection::SetInt32Arg(PRInt32 val)
 
 
 /* void setUInt32Arg (in long val); */
-NS_IMETHODIMP ngDbusConnection::SetUInt32Arg(PRUint32 val)
+NS_IMETHODIMP ngDBusConnection::SetUInt32Arg(PRUint32 val)
 {
     LOG(("Setting uInt32 %d", val));
 
@@ -509,7 +502,7 @@ NS_IMETHODIMP ngDbusConnection::SetUInt32Arg(PRUint32 val)
 }
 
 /* void setUInt16Arg (in long val); */
-NS_IMETHODIMP ngDbusConnection::SetUInt16Arg(PRUint16 val)
+NS_IMETHODIMP ngDBusConnection::SetUInt16Arg(PRUint16 val)
 {
     LOG(("Set uInt16 %d", val));
     DBusMessageIter* args = outgoing_args.back();
@@ -522,8 +515,8 @@ NS_IMETHODIMP ngDbusConnection::SetUInt16Arg(PRUint16 val)
 }
 
 /* void setStringArg (in string val); */
-//NS_IMETHODIMP ngDbusConnection::SetStringArg(const nsAString &data)
-NS_IMETHODIMP ngDbusConnection::SetStringArg(const char *data)
+//NS_IMETHODIMP ngDBusConnection::SetStringArg(const nsAString &data)
+NS_IMETHODIMP ngDBusConnection::SetStringArg(const char *data)
 {
     NS_ENSURE_ARG_POINTER(data);
     LOG(("Setting string %s", data));
@@ -536,7 +529,7 @@ NS_IMETHODIMP ngDbusConnection::SetStringArg(const char *data)
 }
 
 /* void setDictSSEntryArg (in string key, in AString val, [optional] in boolean escape); */
-NS_IMETHODIMP ngDbusConnection::SetDictSSEntryArg(const char *key, const nsAString &val)
+NS_IMETHODIMP ngDBusConnection::SetDictSSEntryArg(const char *key, const nsAString &val)
 {
     NS_ENSURE_ARG_POINTER(key);
 
@@ -562,7 +555,7 @@ NS_IMETHODIMP ngDbusConnection::SetDictSSEntryArg(const char *key, const nsAStri
 }
 
 /* void setDictSOEntryArg (in string key, in AString val, [optional] in boolean escape); */
-NS_IMETHODIMP ngDbusConnection::SetDictSOEntryArg(const char *key, const char* data)
+NS_IMETHODIMP ngDBusConnection::SetDictSOEntryArg(const char *key, const char* data)
 {
     NS_ENSURE_ARG_POINTER(key);
     NS_ENSURE_ARG_POINTER(data);
@@ -587,7 +580,7 @@ NS_IMETHODIMP ngDbusConnection::SetDictSOEntryArg(const char *key, const char* d
 }
 
 /* void setDictSIEntryArg (in string key, in long long val); */
-NS_IMETHODIMP ngDbusConnection::SetDictSI64EntryArg(const char *key, PRInt64 val)
+NS_IMETHODIMP ngDBusConnection::SetDictSI64EntryArg(const char *key, PRInt64 val)
 {
     NS_ENSURE_ARG_POINTER(key);
     LOG(("Setting dict SI64 %s:%d", key, val));
@@ -610,7 +603,7 @@ NS_IMETHODIMP ngDbusConnection::SetDictSI64EntryArg(const char *key, PRInt64 val
 }
 
 /* void setDictSIEntryArg (in string key, in long val); */
-NS_IMETHODIMP ngDbusConnection::SetDictSIEntryArg(const char *key, PRUint32 val)
+NS_IMETHODIMP ngDBusConnection::SetDictSIEntryArg(const char *key, PRUint32 val)
 {
     NS_ENSURE_ARG_POINTER(key);
     LOG(("Setting dict SI %s:%d", key, val));
@@ -633,7 +626,7 @@ NS_IMETHODIMP ngDbusConnection::SetDictSIEntryArg(const char *key, PRUint32 val)
 }
 
 /* void setDictSBEntryArg (in string key, in boolean val); */
-NS_IMETHODIMP ngDbusConnection::SetDictSBEntryArg(const char *key, PRBool val)
+NS_IMETHODIMP ngDBusConnection::SetDictSBEntryArg(const char *key, PRBool val)
 {
     NS_ENSURE_ARG_POINTER(key);
     LOG(("Setting dict SB %s:%i", key, val));
@@ -656,7 +649,7 @@ NS_IMETHODIMP ngDbusConnection::SetDictSBEntryArg(const char *key, PRBool val)
 }
 
 /* void setDictSDEntryArg (in string key, in double val); */
-NS_IMETHODIMP ngDbusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val)
+NS_IMETHODIMP ngDBusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val)
 {
     NS_ENSURE_ARG_POINTER(key);
     LOG(("Setting dict SD %s:%s", key, val));
@@ -679,7 +672,7 @@ NS_IMETHODIMP ngDbusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val
 }
 
 /* void openDictSAEntryArg (in string key); */
-NS_IMETHODIMP ngDbusConnection::OpenDictSAEntryArg(const char *key, PRInt16 aType = TYPE_STRING)
+NS_IMETHODIMP ngDBusConnection::OpenDictSAEntryArg(const char *key, PRInt16 aType = TYPE_STRING)
 {
     NS_ENSURE_ARG_POINTER(key);
     LOG(("Opening dict SA : %s", key));
@@ -712,7 +705,7 @@ NS_IMETHODIMP ngDbusConnection::OpenDictSAEntryArg(const char *key, PRInt16 aTyp
 }
 
 /* void closeDictSAEntryArg (); */
-NS_IMETHODIMP ngDbusConnection::CloseDictSAEntryArg()
+NS_IMETHODIMP ngDBusConnection::CloseDictSAEntryArg()
 {
     LOG(("Closing dict SA "));
 
@@ -734,7 +727,7 @@ NS_IMETHODIMP ngDbusConnection::CloseDictSAEntryArg()
     return rv;
 }
 /* void openDictSDEntryArg (in string key); */
-NS_IMETHODIMP ngDbusConnection::OpenDictSDEntryArg(const char *key)
+NS_IMETHODIMP ngDBusConnection::OpenDictSDEntryArg(const char *key)
 {
     NS_ENSURE_ARG_POINTER(key);
     LOG(("Opening dict SD :%s", key));
@@ -761,7 +754,7 @@ NS_IMETHODIMP ngDbusConnection::OpenDictSDEntryArg(const char *key)
 }
 
 /* void closeDictSDEntryArg (); */
-NS_IMETHODIMP ngDbusConnection::CloseDictSDEntryArg()
+NS_IMETHODIMP ngDBusConnection::CloseDictSDEntryArg()
 {
     LOG(("Closing dict SD "));
 
@@ -784,7 +777,7 @@ NS_IMETHODIMP ngDbusConnection::CloseDictSDEntryArg()
 
 
 /* void setBoolArg (in bool val); */
-NS_IMETHODIMP ngDbusConnection::SetBoolArg(PRBool val)
+NS_IMETHODIMP ngDBusConnection::SetBoolArg(PRBool val)
 {
     LOG(("Setting Bool %s", val));
     DBusMessageIter* args = outgoing_args.back();
@@ -798,7 +791,7 @@ NS_IMETHODIMP ngDbusConnection::SetBoolArg(PRBool val)
 }
 
 /* void setDoubleArg (in double val); */
-NS_IMETHODIMP ngDbusConnection::SetDoubleArg(PRFloat64 val)
+NS_IMETHODIMP ngDBusConnection::SetDoubleArg(PRFloat64 val)
 {
     LOG(("Set Double %d", val));
     DBusMessageIter* args = outgoing_args.back();
@@ -811,7 +804,7 @@ NS_IMETHODIMP ngDbusConnection::SetDoubleArg(PRFloat64 val)
 }
 
 /* void setInt64Arg (in long long val); */
-NS_IMETHODIMP ngDbusConnection::SetInt64Arg(PRInt64 val)
+NS_IMETHODIMP ngDBusConnection::SetInt64Arg(PRInt64 val)
 {
     LOG(("Set Int64 %d", val));
     DBusMessageIter* args = outgoing_args.back();
@@ -824,15 +817,15 @@ NS_IMETHODIMP ngDbusConnection::SetInt64Arg(PRInt64 val)
 }
 
 /* void setArrayStringArg (in string key, in long val); */
-NS_IMETHODIMP ngDbusConnection::SetArrayStringArg(const char* val)
+NS_IMETHODIMP ngDBusConnection::SetArrayStringArg(const char* val)
 {
     NS_ENSURE_ARG_POINTER(val);
     return this->SetStringArg(val);
 }
 
 /* void setObjectPathArg (in string val); */
-//NS_IMETHODIMP ngDbusConnection::SetObjectPathArg(const nsAString &val)
-NS_IMETHODIMP ngDbusConnection::SetObjectPathArg(const char *data)
+//NS_IMETHODIMP ngDBusConnection::SetObjectPathArg(const nsAString &val)
+NS_IMETHODIMP ngDBusConnection::SetObjectPathArg(const char *data)
 {
     NS_ENSURE_ARG_POINTER(data);
     DBusMessageIter* args = outgoing_args.back();
@@ -846,7 +839,7 @@ NS_IMETHODIMP ngDbusConnection::SetObjectPathArg(const char *data)
 }
 
 /* void openDictEntryArray (); */
-NS_IMETHODIMP ngDbusConnection::OpenDictEntryArray()
+NS_IMETHODIMP ngDBusConnection::OpenDictEntryArray()
 {
     LOG(("Opening dict entry"));
 
@@ -862,7 +855,7 @@ NS_IMETHODIMP ngDbusConnection::OpenDictEntryArray()
 }
 
 /* void closeDictEntryArray (); */
-NS_IMETHODIMP ngDbusConnection::CloseDictEntryArray()
+NS_IMETHODIMP ngDBusConnection::CloseDictEntryArray()
 {
     LOG(("Closing dict entry"));
 
@@ -877,7 +870,7 @@ NS_IMETHODIMP ngDbusConnection::CloseDictEntryArray()
 }
 
 /* void openArray (); */
-NS_IMETHODIMP ngDbusConnection::OpenArray(PRInt16 aType = TYPE_STRING)
+NS_IMETHODIMP ngDBusConnection::OpenArray(PRInt16 aType = TYPE_STRING)
 {
     LOG(("Opening array"));
 
@@ -893,7 +886,7 @@ NS_IMETHODIMP ngDbusConnection::OpenArray(PRInt16 aType = TYPE_STRING)
 }
 
 /* void closeArray (); */
-NS_IMETHODIMP ngDbusConnection::CloseArray()
+NS_IMETHODIMP ngDBusConnection::CloseArray()
 {
     LOG(("Closing array"));
 
@@ -908,7 +901,7 @@ NS_IMETHODIMP ngDbusConnection::CloseArray()
 }
 
 /* void openStruct (); */
-NS_IMETHODIMP ngDbusConnection::OpenStruct()
+NS_IMETHODIMP ngDBusConnection::OpenStruct()
 {
     LOG(("Opening struct"));
 
@@ -924,7 +917,7 @@ NS_IMETHODIMP ngDbusConnection::OpenStruct()
 }
 
 /* void closeStruct (); */
-NS_IMETHODIMP ngDbusConnection::CloseStruct()
+NS_IMETHODIMP ngDBusConnection::CloseStruct()
 {
     LOG(("Closing struct"));
     DBusMessageIter* new_args = outgoing_args.back();
@@ -937,7 +930,7 @@ NS_IMETHODIMP ngDbusConnection::CloseStruct()
     return NS_OK;
 }
 
-const char* ngDbusConnection::ngTypeToDBusType(const int ngType) const
+const char* ngDBusConnection::ngTypeToDBusType(const int ngType) const
 {
     if(ngType == TYPE_OBJECT_PATH) {
         return DBUS_TYPE_OBJECT_PATH_AS_STRING;

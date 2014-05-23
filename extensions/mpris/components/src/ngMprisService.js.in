@@ -96,11 +96,11 @@ ngMprisService.prototype.initialize = function() {
 
 ngMprisService.prototype.initDBus = function() {
 
-    this._dbus = Cc['@getnightingale.com/Nightingale/DbusConnection;1'].createInstance(Ci.ngIDbusConnection);
+    this._dbus = Cc['@getnightingale.com/Nightingale/DBusConnection;1'].createInstance(Ci.ngIDBusConnection);
+    this._dbus.setMethodHandler(this);
     this._dbus.init("org.mpris.MediaPlayer2.nightingale");
 
     this._dbus.setMatch("type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'");
-    this._dbus.setMethodHandler(this);
 
     this._dbus.prepareMethodCall("org.gnome.SettingsDaemon","/org/gnome/SettingsDaemon/MediaKeys","org.gnome.SettingsDaemon.MediaKeys","GrabMediaPlayerKeys");
     this._dbus.setStringArg("nightingale");
@@ -119,7 +119,7 @@ ngMprisService.prototype.initDBus = function() {
       }
     };
 
-    this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer)
+    this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     this._timer.initWithCallback(new TimerCallback(this._dbus), 100, this._timer.TYPE_REPEATING_SLACK);
 
     var mediacore = this._mediacore;
@@ -268,7 +268,7 @@ ngMprisService.prototype.initDBus = function() {
 //Unload the Service
 ngMprisService.prototype.uninit = function() {
     if(this._isInitialized) {
-        this._timer.stop();
+        this._timer.cancel();
         this._dbus.end();
     }
 };
@@ -597,12 +597,17 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
             case "AddTrack":
                 break;
             case "RemoveTrack":
-                var list = ComponentContainer.mediacore.sequencer.view.mediaList;
-                list.remove(list.getItemByGuid(getOItem(this._dbus.getStringArg())));
+                var seq = ComponentContainer.mediacore.sequencer,
+                    list = seq.view.mediaList,
+                    trackGUID = getOItem(this._dbus.getStringArg());
+                if(trackGUID == seq.currentItem.getProperty(SBProperties.GUID)) {
+                    seq.next();
+                }
+                list.remove(list.getItemByGuid(track));
                 break;
             case "GoTo":
                 var seq = ComponentContainer.mediacore.sequencer,
-                    mediaItem = seq.view.mediaList.getItemByGuid(getOItem(this._dbus.getStringArg());
+                    mediaItem = seq.view.mediaList.getItemByGuid(getOItem(this._dbus.getStringArg()));
                     viewIndex = seq.view.getIndexForItem(mediaItem),
                     currentSeq = seq.currentSequence.enumerate(),
                     item;

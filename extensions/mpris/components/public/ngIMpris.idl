@@ -50,13 +50,13 @@ interface ngIMprisService : ngIMethodHandler
 
 
 [scriptable, uuid(4c809340-0f6f-4122-b242-d4e900bed92b)]
-interface ngIDbusConnection : nsISupports
+interface ngIDBusConnection : nsISupports
 {
   
   const unsigned short TYPE_STRING = 0;
   const unsigned short TYPE_OBJECT_PATH = 1;
 
-  long init(in string name);
+  void init(in string aName);
   void setMatch(in string match);
   void check();
   long end();

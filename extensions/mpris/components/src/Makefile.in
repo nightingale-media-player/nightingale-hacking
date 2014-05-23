@@ -32,8 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-CPP_SRCS = ngDbusConnection.cpp \
-           ngDbusConnectionModule.cpp \
+CPP_SRCS = ngDBusConnection.cpp \
+           ngDBusConnectionModule.cpp \
            $(NULL)
 
 CPP_EXTRA_FLAGS += -fno-rtti \
@@ -43,6 +43,7 @@ CPP_EXTRA_FLAGS += -fno-rtti \
 
 CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/mpris/components/public \
                       $(MOZSDK_IDL_DIR) \
+                      $(topsrcdir)/components/integration/src/linux/ \
                       $(NULL)
 
 CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
@@ -52,11 +53,14 @@ CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
 # Build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
 
-# Build the library - ngDbusConnection.so
-DYNAMIC_LIB = ngDbusConnection
+# Build the library - ngDBusConnection.so
+DYNAMIC_LIB = ngDBusConnection
 
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(MOZSDK_LIB_DIR) \
                                   $(NULL)
+
+DYNAMIC_LIB_EXTRA_OBJS = $(topsrcdir)/compiled/components/integration/src/linux/sbDBus.o \
+                         $(NULL)
 
 DYNAMIC_LIB_EXTRA_FLAGS += -Wall \
                            -O2 \
