@@ -36,3 +36,7 @@ thumbs.db
 .directory
 documentation/api/*
 .bzr
+.cproject
+.project
+.settings
+*.sublime-*
