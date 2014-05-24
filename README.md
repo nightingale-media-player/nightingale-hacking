@@ -27,16 +27,14 @@ rerun nightingale. It should then play music.
 
 Building
 ========
-If on Linux, simply run the [build.sh](build.sh) script. It will download the deps
-and build the app for you. You'll generally need the usual build deps
-for most software packages, though.
+If you're on Linux, simply run the [build.sh](build.sh) script. It will
+download the deps and build the app for you. You'll generally need the
+usual build deps for most software packages, though.
 
-Ubuntu and Debian users should note you'll need (and a few more, checkout the build article for a full list):
-libdbus-glib-1-dev
-libgstreamer-plugins-base0.10-dev
-
-Also note that because of Ubuntu and Debian's incompatible taglib,
-you'll want to add `ac_add_options --with-taglib-source=packaged` to your nightingale.config
+Ubuntu and Debian users should note you'll need:
+  * libdbus-glib-1-dev
+  * libgstreamer-plugins-base0.10-dev
+  * and a few more (checkout the build article for a full list)
 
 More information can be gleaned from the Nightingale wiki:
 
