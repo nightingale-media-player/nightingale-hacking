@@ -28,7 +28,7 @@
 .SH NAME
 nightingale \- Desktop Media Player
 .SH SYNOPSIS
-.B nightingale \fR[ \fIoptions \fR... ] [\fIurl\fR\fB|\fR\fIpath\fR\fB]
+.B nightingale [\fR \fIoptions \fR... \fB] [\fR\fIurl\fR\fB|\fR\fIpath\fR\fB]
 
 .SH DESCRIPTION
 \fBnightingale\fR is a desktop media player, a digital jukebox and web browser mash-up.
@@ -41,7 +41,7 @@ command line syntax:
 .IP
 .PP
 
-X11 options:
+.SS "X11 options:"
 .TP
 .B \-\-display\fR=\fIDISPLAY
 X display to use
@@ -61,7 +61,7 @@ Don't use X shared memory extension
 Make all warnings fatal
 .PP
 
-Nightingale options:
+.SS "Nightingale options:"
 .TP
 .B \-h \fRor\fB \-help
 Print a list of available commands.
