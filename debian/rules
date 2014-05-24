@@ -26,12 +26,6 @@ override_dh_auto_build:
 	$(foreach SIZE,$(SIZES),mkdir -p $(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ; \
 	$(INSTALL_DATA) app/branding/nightingale-$(SIZE).png $(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
 
-	# Workaround (remove when fixed in deps)
-	# correct permissions of files that were incorrectly marked as executable
-	chmod a-x compiled/dist/icons/updater.png
-	chmod a-x `find compiled/dist/xulrunner/ -name "*.*"`
-	chmod a+x compiled/dist/xulrunner/run-mozilla.sh
-
 override_dh_auto_test:
 	# This isn't a build with enabled tests.
 	# dh_auto_test would make the build stop with an error warning.
