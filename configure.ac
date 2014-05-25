@@ -993,6 +993,9 @@ case "$SB_PLATFORM" in
       GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
     fi
 
+    if test "$LD" == "gold" ; then
+      GCC_LINKER_FLAGS="$GCC_LINKER_FLAGS -fuse-ld=gold"
+    fi
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"
