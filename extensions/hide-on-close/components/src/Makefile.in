@@ -56,8 +56,12 @@ DYNAMIC_LIB = ngHideOnClose
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(MOZSDK_LIB_DIR) \
                                   $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS += -Wall \
-                           -O2 \
+ifeq (, $(filter-out $(wildcard clang), $(CC)))
+  DYNAMIC_LIB_EXTRA_FLAGS += -Wall \
+                             $(NULL)
+endif
+
+DYNAMIC_LIB_EXTRA_FLAGS += -O2 \
                            $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS += xul \

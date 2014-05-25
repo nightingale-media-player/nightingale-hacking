@@ -79,7 +79,11 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
   # Search in xulrunner directory at runtime for shared libraries.
-  DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
+  ifeq (, $(filter-out $(wildcard clang), $(CC)))
+    DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
+  else
+    DYNAMIC_LIB_EXTRA_FLAGS += -R,'$$ORIGIN/../xulrunner'
+  endif
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
