@@ -86,7 +86,7 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
-   ifeq (, $(filter-out $(wildcard clang), $(CC)))
+   ifneq (, $(filter $(wildcard clang), $(CC)))
       DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver
    else
       DYNAMIC_LIB_EXTRA_FLAGS += -version-script,$(srcdir)/hide-sqlite.ver

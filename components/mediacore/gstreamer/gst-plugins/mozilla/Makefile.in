@@ -64,7 +64,7 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 ifneq (, $(filter-out macosx windows, $(SB_PLATFORM)))
-  ifeq (, $(filter-out $(wildcard clang), $(CC)))
+  ifneq (, $(filter $(wildcard clang), $(CC)))
     DYNAMIC_LIB_EXTRA_FLAGS = -Wl,-R,'$$ORIGIN/../xulrunner'
   else
     DYNAMIC_LIB_EXTRA_FLAGS = -R,'$$ORIGIN/../xulrunner'
