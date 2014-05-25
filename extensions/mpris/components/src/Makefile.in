@@ -62,7 +62,7 @@ DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(MOZSDK_LIB_DIR) \
 DYNAMIC_LIB_EXTRA_OBJS = $(topsrcdir)/compiled/components/integration/src/linux/sbDBus.o \
                          $(NULL)
 
-ifneq (, $(filter $(wildcard clang), $(CC)))
+ifeq (, $(findstring clang, $(CC)))
   DYNAMIC_LIB_EXTRA_FLAGS += -Wall \
                              $(NULL)
 endif

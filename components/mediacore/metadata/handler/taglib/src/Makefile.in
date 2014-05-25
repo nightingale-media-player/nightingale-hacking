@@ -79,10 +79,10 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
   # Search in xulrunner directory at runtime for shared libraries.
-  ifneq (, $(filter $(wildcard clang), $(CC)))
-    DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
-  else
+  ifneq (, $(findstring clang, $(CC)))
     DYNAMIC_LIB_EXTRA_FLAGS += -R,'$$ORIGIN/../xulrunner'
+  else
+    DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
   endif
 endif
 
