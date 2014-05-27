@@ -77,7 +77,7 @@ NS_DEFINE_NAMED_CID(SB_CHARSETDETECTOR_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbCharsetDetector);
 
 static const mozilla::Module::CIDEntry kStringBundleCIDs[] = {
-  { &kSB_STRINGBUNDLESERVICE_CID, false, NULL, sbStringBundleServiceConstructor },
+  { &kSB_STRINGBUNDLESERVICE_CID, true, NULL, sbStringBundleServiceConstructor },
   { &kSB_STRINGMAP_CID, false, NULL, sbStringMapConstructor },
   { &kSB_CHARSETDETECTOR_CID, false, NULL, sbCharsetDetectorConstructor },
   { NULL }
@@ -91,7 +91,7 @@ static const mozilla::Module::ContractIDEntry kStringBundleContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kStringBundleCategories[] = {
-  { "xpcom-startup", "service,@songbirdnest.com/Songbird/stringbundle;1", SB_STRINGBUNDLESERVICE_CONTRACTID },
+  { "xpcom-startup", SB_STRINGBUNDLESERVICE_CLASSNAME, SB_STRINGBUNDLESERVICE_CONTRACTID },
   { NULL }
 };
 
