@@ -29,9 +29,13 @@
 
 #include "mozilla/ModuleUtils.h"
 
-#include "WindowCloak.h"
-
 #include "sbNativeWindowManagerCID.h"
+
+#include "GlobalHotkeys.h"
+#include "WindowCloak.h"
+#include "WindowMinMax.h"
+#include "WindowResizeHook.h"
+#include "WindowRegion.h"
 
 #ifdef XP_MACOSX
 #include "macosx/sbNativeWindowManager.h"
@@ -51,12 +55,8 @@
 #include "win32/sbKnownFolderManager.h"
 #include "win32/sbNativeWindowManager.h"
 #include "win32/sbScreenSaverSuppressor.h"
+#include "win32/sbWindowChromeService.h"
 #include "win32/sbWindowMoveService.h"
-#include "GlobalHotkeys.h"
-#include "WindowMinMax.h"
-#include "WindowResizeHook.h"
-#include "WindowRegion.h"
-#include "sbWindowChromeService.h"
 #endif
 
 
@@ -136,6 +136,8 @@ NS_DEFINE_NAMED_CID(SB_WINDOWMOVE_SERVICE_CID);
   };
 
   static const mozilla::Module::CategoryEntry kIntegrationCategories[] = {
+    { "app-startup", SB_WINDOWMOVE_SERVICE_CLASSNAME, "service," SB_WINDOWMOVE_SERVICE_CONTRACTID },
+    { "app-startup", SONGBIRD_WINDOW_CHROME_SERVICE_CLASSNAME, "service," SONGBIRD_WINDOW_CHROME_SERVICE_CONTRACTID },
     { NULL }
   };
 #endif
@@ -160,8 +162,8 @@ NS_DEFINE_NAMED_CID(SB_WINDOWMOVE_SERVICE_CID);
   };
 
   static const mozilla::Module::CategoryEntry kIntegrationCategories[] = {
-    { SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME, "final-ui-startup", "service," SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID },
-    { SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME, "app-startup", "service," SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID },
+    { "final-ui-startup", SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME, "service," SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID },
+    { "app-startup", SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME, "service," SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID },
     { NULL }
   };
 #endif
