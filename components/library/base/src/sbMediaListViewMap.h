@@ -76,12 +76,6 @@ public:
 
   sbMediaListViewMap();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
   nsresult Init();
 
 private:

@@ -97,6 +97,7 @@ static const mozilla::Module::ContractIDEntry kSongbirdLibraryManagerContracts[]
 
 static const mozilla::Module::CategoryEntry kSongbirdLibraryManagerCategories[] = {
   { "app-startup", SONGBIRD_LIBRARYMANAGER_NAME, SONGBIRD_LIBRARYMANAGER_CONTRACTID },
+  { "app-startup", SONGBIRD_MEDIALISTVIEWMAP_CLASSNAME, SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID },
   { NULL }
 };
 
