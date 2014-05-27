@@ -414,7 +414,8 @@ FaceplateManager.prototype = {
   _xpcom_categories: [{
     category: 'app-startup',
     entry: 'faceplate-pane-manager',
-    value: 'service,@songbirdnest.com/faceplate/manager;1'
+    value: '@songbirdnest.com/faceplate/manager;1',
+    service: true
   }]
 }; // FaceplateManager.prototype
 

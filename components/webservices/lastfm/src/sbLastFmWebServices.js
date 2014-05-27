@@ -142,7 +142,8 @@ sbLastFmWebServices.prototype = {
   [{
     category: "app-startup",
     entry: "webservices-lastfm",
-    value: "service," + CONTRACTID
+    value: CONTRACTID,
+    service: true
   }],
 
   // Error reporting

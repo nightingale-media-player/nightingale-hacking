@@ -98,7 +98,8 @@ sbLibraryImporterManagerCfg.categoryList = [
   {
     category: "app-startup",
     entry:    sbLibraryImporterManagerCfg.className,
-    value:    "service," + sbLibraryImporterManagerCfg.contractID
+    value:    sbLibraryImporterManagerCfg.contractID,
+    service: true
   }
 ];
 

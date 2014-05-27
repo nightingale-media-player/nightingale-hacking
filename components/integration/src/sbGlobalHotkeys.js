@@ -534,7 +534,7 @@ sbHotkeyService.prototype =
     {
       category: "final-ui-startup",
       entry:    SB_HOTKEY_SERVICE_DESC,
-      value:    "service," + SB_HOTKEY_SERVICE_CONTRACTID,
+      value:    SB_HOTKEY_SERVICE_CONTRACTID,
       service:  true
     }
   ],

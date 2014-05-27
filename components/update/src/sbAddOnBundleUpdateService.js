@@ -115,7 +115,7 @@ sbAddOnBundleUpdateServiceCfg.categoryList = [
   {
     category: "app-startup",
     entry:    sbAddOnBundleUpdateServiceCfg.className,
-    value:    "service," + sbAddOnBundleUpdateServiceCfg.contractID,
+    value:    sbAddOnBundleUpdateServiceCfg.contractID,
     service: true
   }
 ];
