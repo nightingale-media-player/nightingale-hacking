@@ -140,7 +140,7 @@ sbLastFmWebServices.prototype = {
   contractID:        CONTRACTID,
   _xpcom_categories:
   [{
-    category: "app-startup",
+    category: "profile-after-change",
     entry: "webservices-lastfm",
     value: CONTRACTID,
     service: true

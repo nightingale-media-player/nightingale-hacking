@@ -63,7 +63,7 @@ var deviceErrorMonitorConfig = {
   categoryList:
   [
     {
-      category: 'app-startup',
+      category: 'profile-after-change',
       entry: 'service-device-error-monitor',
       value: 'service,@songbirdnest.com/device/error-monitor-service;1',
       service: true
