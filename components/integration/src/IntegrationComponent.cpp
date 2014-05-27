@@ -31,11 +31,7 @@
 
 #include "sbNativeWindowManagerCID.h"
 
-#include "GlobalHotkeys.h"
 #include "WindowCloak.h"
-#include "WindowMinMax.h"
-#include "WindowResizeHook.h"
-#include "WindowRegion.h"
 
 #ifdef XP_MACOSX
 #include "macosx/sbNativeWindowManager.h"
@@ -57,6 +53,10 @@
 #include "win32/sbScreenSaverSuppressor.h"
 #include "win32/sbWindowChromeService.h"
 #include "win32/sbWindowMoveService.h"
+#include "win32/GlobalHotkeys.h"
+#include "win32/WindowMinMax.h"
+#include "win32/WindowResizeHook.h"
+#include "win32/WindowRegion.h"
 #endif
 
 
