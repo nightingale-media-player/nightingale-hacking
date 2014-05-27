@@ -69,6 +69,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 //------------------------------------------------------------------------------
 
 //
+// className                    Component class name.
 // classDescription             Description of component class.
 // classID                      Component class ID.
 // contractID                   Component contract ID.
@@ -77,6 +78,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 //
 
 var sbWindowsAutoPlayServiceCfg = {
+  className: "sbWindowsAutoPlayService",
   classDescription: "Songbird Windows AutoPlay Service",
   classID: Components.ID("{3124ec90-1dd2-11b2-8059-c4e994415c12}"),
   contractID: "@songbirdnest.com/Songbird/WindowsAutoPlayService;1",
@@ -87,9 +89,10 @@ var sbWindowsAutoPlayServiceCfg = {
 
 sbWindowsAutoPlayServiceCfg._xpcom_categories = [
   {
-    category: "app-startup",
+    category: "profile-after-change",
     entry:    sbWindowsAutoPlayServiceCfg.className,
-    value:    "service," + sbWindowsAutoPlayServiceCfg.contractID
+    value:    sbWindowsAutoPlayServiceCfg.contractID,
+    service: true
   }
 ];
 
@@ -117,6 +120,7 @@ sbWindowsAutoPlayService.prototype = {
   //
   // Windows AutoPlay service fields.
   //
+  //   className                Component class name.
   //   classDescription         Description of component class.
   //   classID                  Component class ID.
   //   contractID               Component contract ID.
@@ -130,6 +134,7 @@ sbWindowsAutoPlayService.prototype = {
   //                            action handlers.
   //
 
+  className: sbWindowsAutoPlayServiceCfg.className,
   classDescription: sbWindowsAutoPlayServiceCfg.classDescription,
   classID: sbWindowsAutoPlayServiceCfg.classID,
   contractID: sbWindowsAutoPlayServiceCfg.contractID,
@@ -669,8 +674,5 @@ sbWindowsAutoPlayService.prototype = {
 //
 //------------------------------------------------------------------------------
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbWindowsAutoPlayService]);
-}
-
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbWindowsAutoPlayService]);
 
