@@ -365,45 +365,45 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # CATEGORIES #
 ##############
 
-category app-startup AddonBundleUpdateService service,@songbirdnest.com/AddOnBundleUpdateService;1
-category app-startup DynamicPlaylistService service,@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
-category app-startup faceplate-pane-manager service,@songbirdnest.com/faceplate/manager;1
-category app-startup feathers-manager service,@songbirdnest.com/songbird/feathersmanager;1
-##### REG AS SRVC IN MOD ##### category app-startup LocalDatabaseLibraryFactory service,@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
-##### REG AS SRVC IN MOD ##### category app-startup sbAlbumArtService service,@songbirdnest.com/Songbird/album-art-service;1
+category app-startup AddonBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
+category app-startup DynamicPlaylistService @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
+category app-startup faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
+category app-startup feathers-manager @songbirdnest.com/songbird/feathersmanager;1
+##### REG AS SRVC IN MOD ##### category app-startup LocalDatabaseLibraryFactory @songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
+##### REG AS SRVC IN MOD ##### category app-startup sbAlbumArtService @songbirdnest.com/Songbird/album-art-service;1
 category app-startup sbDistHelperEnvWriter @songbirdnest.com/tools/disthelper/update/env;1
-category app-startup sbMediaItemControllerCleanup service,@songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1
-category app-startup sbMediaItemDownloadService service,@songbirdnest.com/Songbird/MediaItemDownloadService;1
-category app-startup sbStringTransform service,@songbirdnest.com/Songbird/Intl/StringTransform;1
-category app-startup sbTemporaryFileService service,@songbirdnest.com/Songbird/TemporaryFileService;1
-##### REG AS SRVC IN MOD ##### category app-startup sbWindowWatcher service,@songbirdnest.com/Songbird/window-watcher;1
-category app-startup service-device-error-monitor service,@songbirdnest.com/device/error-monitor-service;1
-category app-startup service-device-event-monitor service,@songbirdnest.com/device/event-monitor-service;1
-category app-startup smartplaylist-property-registrar service,@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
-category app-startup smartplaylists-updater service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1
-category app-startup SongbirdAdd-onBundleUpdateService service,@songbirdnest.com/AddOnBundleUpdateService;1
-category app-startup sbAppStartupService service,@songbirdnest.com/app-startup-service;1
-# category app-startup SongbirdAutoDownloaderService service,@songbirdnest.com/autodownloader;1
-# category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate service,@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
-# category app-startup SongbirdDeviceFirmwareUpdater service,@songbirdnest.com/Songbird/Device/Firmware/Updater;1
-# category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Songbird/DeviceManager;2
-# DEL ? # category profile-after-change SongbirdGlobalHotkeyService service,@songbirdnest.com/Songbird/HotkeyService;1
-##### REG AS SRVC IN MOD ##### category app-startup sbLibraryDiffingService service,@songbirdnest.com/Songbird/Library/DiffingService;1
-category app-startup sbLibraryImporterManagerService service,@songbirdnest.com/Songbird/LibraryImporterManager;1
-##### REG AS SRVC IN MOD ##### category profile-after-change sbLibraryManager service,@songbirdnest.com/Songbird/library/Manager;1
-category app-startup SongbirdMediaExportAgentService service,@songbirdnest.com/media-export-service;1
-category app-startup SongbirdMediacoreManager service,@songbirdnest.com/Songbird/Mediacore/Manager;1
-category app-startup SongbirdMediaListViewMap service,@songbirdnest.com/Songbird/library/MediaListViewMap;1
-# category app-startup SongbirdObsoleteDeviceManagerService service,@songbirdnest.com/Songbird/DeviceManager;1
-category app-startup ParserErrorHandler service,@songbirdnest.com/Songbird/ParserErrorHandler;1
-## Causes a hang right now ## category app-startup SbPlaybackHistoryService service,@songbirdnest.com/Songbird/PlaybackHistoryService;1
-category profile-after-change sbPlayQueueService service,@songbirdnest.com/Songbird/playqueue/service;1
-category app-startup sbPublicPlaylistCommands service,@songbirdnest.com/Songbird/PublicPlaylistCommands;1
-category app-startup sbScreenSaverSuppressor service,@songbirdnest.com/Songbird/ScreenSaverSuppressor;1
-category app-startup sbShutdownService service,@songbirdnest.com/shutdown-service;1
-category app-startup sbWatchFolderService service,@songbirdnest.com/watch-folder-service;1
-category app-startup webservices-lastfm service,@songbirdnest.com/Songbird/webservices/last-fm;1
-category sb-command-line-startup sbAppStartupService service,@songbirdnest.com/app-startup-service;1
+category app-startup sbMediaItemControllerCleanup @songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1
+category app-startup sbMediaItemDownloadService @songbirdnest.com/Songbird/MediaItemDownloadService;1
+category app-startup sbStringTransform @songbirdnest.com/Songbird/Intl/StringTransform;1
+category app-startup sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
+##### REG AS SRVC IN MOD ##### category app-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+category app-startup service-device-error-monitor @songbirdnest.com/device/error-monitor-service;1
+category app-startup service-device-event-monitor @songbirdnest.com/device/event-monitor-service;1
+category app-startup smartplaylist-property-registrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
+category app-startup smartplaylists-updater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
+category app-startup SongbirdAdd-onBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
+category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
+# category app-startup SongbirdAutoDownloaderService @songbirdnest.com/autodownloader;1
+# category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
+# category app-startup SongbirdDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
+# category app-startup SongbirdDeviceManager2Service @songbirdnest.com/Songbird/DeviceManager;2
+# DEL ? # category profile-after-change SongbirdGlobalHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
+##### REG AS SRVC IN MOD ##### category app-startup sbLibraryDiffingService @songbirdnest.com/Songbird/Library/DiffingService;1
+category app-startup sbLibraryImporterManagerService @songbirdnest.com/Songbird/LibraryImporterManager;1
+##### REG AS SRVC IN MOD ##### category profile-after-change sbLibraryManager @songbirdnest.com/Songbird/library/Manager;1
+category app-startup SongbirdMediaExportAgentService @songbirdnest.com/media-export-service;1
+category app-startup SongbirdMediacoreManager @songbirdnest.com/Songbird/Mediacore/Manager;1
+category app-startup SongbirdMediaListViewMap @songbirdnest.com/Songbird/library/MediaListViewMap;1
+# category app-startup SongbirdObsoleteDeviceManagerService @songbirdnest.com/Songbird/DeviceManager;1
+category app-startup ParserErrorHandler @songbirdnest.com/Songbird/ParserErrorHandler;1
+## Causes a hang right now ## category app-startup SbPlaybackHistoryService @songbirdnest.com/Songbird/PlaybackHistoryService;1
+category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
+category app-startup sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
+category app-startup sbScreenSaverSuppressor @songbirdnest.com/Songbird/ScreenSaverSuppressor;1
+category app-startup sbShutdownService @songbirdnest.com/shutdown-service;1
+category app-startup sbWatchFolderService @songbirdnest.com/watch-folder-service;1
+category app-startup webservices-lastfm @songbirdnest.com/Songbird/webservices/last-fm;1
+category sb-command-line-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
 category command-line-handler m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
 category display-pane-provider play-queue @songbirdnest.com/Songbird/playqueue/contentInfo;1
 category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
@@ -422,7 +422,7 @@ category playlist-reader m3u @songbirdnest.com/Songbird/Playlist/Reader/M3U;1
 category playlist-reader pls @songbirdnest.com/Songbird/Playlist/Reader/PLS;1
 category playlist-writer m3u @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
 category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
-# REGISTERED IN MODULE # category profile-after-change sbStringBundleService service,@songbirdnest.com/Songbird/stringbundle;1
+# REGISTERED IN MODULE # category profile-after-change sbStringBundleService @songbirdnest.com/Songbird/stringbundle;1
 category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
 category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActions;1
 category quit-application sbServicePaneService @songbirdnest.com/servicepane/service;1
@@ -432,8 +432,8 @@ category service-pane 0library @songbirdnest.com/servicepane/library;1
 # category service-pane device @songbirdnest.com/servicepane/device;1
 category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
 # category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
-category service-pane DeviceServicePaneService service,@songbirdnest.com/servicepane/device;1
-category service-pane ServicePaneService service,@songbirdnest.com/servicepane/service;1
+category service-pane DeviceServicePaneService @songbirdnest.com/servicepane/device;1
+category service-pane ServicePaneService @songbirdnest.com/servicepane/service;1
 category songbird-album-art-fetcher sbFileAlbumArtFetcher @songbirdnest.com/Songbird/album-art/file-fetcher;1
 category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
 # category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
@@ -445,5 +445,5 @@ category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.
 category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
 category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
 category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
-# category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
-category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
+# category xpcom-startup SongbirdThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
+category app-startup sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
