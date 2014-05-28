@@ -127,6 +127,7 @@ ngMprisService.prototype.initDBus = function() {
 
     var wasInFS = this._Root.Fullscreen;
     function _ngMprisCheckFullscreen(event) {
+        dump("FS");
         if(plugin._Root.Fullscreen != wasInFS) {
             wasInFS = plugin._Root.Fullscreen;
 
@@ -142,7 +143,7 @@ ngMprisService.prototype.initDBus = function() {
 	        dbus.sendSignal();
         }
     }
-    ComponentContainer.controller.activeMainWindow.addEventListener("resize", _ngMprisCheckFullscreen, false);
+    ComponentContainer.controller.activeMainWindow.addEventListener("fullscreen", _ngMprisCheckFullscreen, false);
 
     var mediaListListener = {
         onItemAdded: NULL,
@@ -200,6 +201,14 @@ ngMprisService.prototype.initDBus = function() {
 	        dbus.sendSignal();
 
 	        break;
+          case Ci.sbIMediacoreEvent.STREAM_HAS_VIDEO:
+            //TODO send fullscreen change signal when video window goes/leaves fs
+            var videoWindow = mediacore.getPrimaryVideoWindow(false);
+            if(videoWindow!= null) {
+                dump("Video window!");
+                videoWindow.QueryInterface(Ci.sbIMediacoreVideoWindow).videoWindow.QueryInterface(Ci.nsIDOMXULElement).addEventListener("fullscreen", _ngMprisCheckFullscreen, false);
+            }
+            break;
           case Ci.sbIMediacoreEvent.SEQUENCE_CHANGE:
           case Ci.sbIMediacoreEvent.SEQUENCE_END:
             args.CanGoNext = false;
@@ -210,14 +219,7 @@ ngMprisService.prototype.initDBus = function() {
             plugin.setDBusArg(plugin._Player.Metadata["mpris:trackid"]);
             dbus.sendSignal();
             if(event.type == Ci.sbIMediacoreEvent.SEQUENCE_CHANGE) break;
-
           case Ci.sbIMediacoreEvent.STREAM_START:
-          /*TODO send fullscreen change signal when video window changes size
-            var videoWindow = plugin._mediacore.getPrimaryVideoWindow(false);
-            if(videoWindow!= null) {
-                dump("Video window!");
-                videoWindow.QueryInterface(Ci.sbIMediacoreVideoWindow).videoWindow.QueryInterface(Ci.nsIDOMXULElement).addEventListener("resize", _ngMprisCheckFullscreen, false);
-            }*/
 	      case Ci.sbIMediacoreEvent.STREAM_PAUSE:
 	      case Ci.sbIMediacoreEvent.STREAM_STOP:
 	      case Ci.sbIMediacoreEvent.STREAM_END:
@@ -594,11 +596,11 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                     this.play.pause();
                     break;
                 case "Stop":
-                    ComponentContainer.mediacore.sequencer.stop();
+                    this.play.stop();
                     break;
                 case "Play":
                     if(ComponentContainer.mediacore.sequencer.currentItem != null)
-                        ComponentContainer.mediacore.sequencer.play();
+                        this.play.play();
                     else
                         ComponentContainer.controller.playDefault();
                     break;
@@ -621,7 +623,7 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
                     break;
                 case "SetPosition":
                     var currItem = ComponentContainer.mediacore.sequencer.currentItem,
-                        trackPath = "/com/getnightingale/Nightingale/" + getTrackO(currItem.getProperty(SBProperties.GUID)),
+                        trackPath = getTrackO(currItem.getProperty(SBProperties.GUID)),
                         pathArg = this._dbus.getObjectPathArg(),
                         pos = this._dbus.getInt64Arg();
                     if(pathArg == trackPath && this.play != null && pos >= 0 && pos <= parseInt(currItem.getProperty(SBProperties.duration),10))
@@ -1375,7 +1377,7 @@ Root.prototype = {
         return ComponentContainer.controller.activeMainWindow != ComponentContainer.focusM.activeWindow;
     },
     get HasTrackList() {
-        return "false";
+        return true;
     },
     get Identity() {
         return ComponentContainer.appInfo.name;
