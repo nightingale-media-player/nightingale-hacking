@@ -99,6 +99,34 @@ Local path/filename to media items to import and play, or URL to load in the bro
 .TP
 .B \-register\-extensions
 Registers extensions and then quits.
+.TP
+.B \-play
+Start or resume playback at the current position.
+.TP
+.B \-stop
+Stop playback.
+.TP
+.B \-pause
+Pause playback.
+.TP
+.B \-toggle-playback
+Starts playback, if there is none and pauses it if media is currently playing.
+.TP
+.B \-next
+Skips to the next item in the sequence.
+.TP
+.B \-previous
+Goes back to the previous item in the sequence.
+.TP
+.B \-mute
+Mute the volume if it's not yet, else unmute it.
+.TP
+.B \-volumeup
+Raise the volume by 10%.
+.TP
+.B \-volumedown
+Lower the volume by 10%.
+.TP
 
 .SH BUGS
 1. Post on the forum (\fIhttp://forum.getnightingale.com/\fR) or reach us on IRC.

@@ -15,20 +15,20 @@ Actions=PlayPause;Next;Previous;Stop
 
 [Desktop Action PlayPause]
 Name=Play/Pause
-Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
+Exec=nightingale -toggle-playback
 
 [Desktop Action Next]
 Name=Next
-Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
+Exec=nightingale -next
 
 [Desktop Action Previous]
 Name=Previous
-Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
+Exec=nightingale -previous
 
 [Desktop Action Stop]
 Name=Stop
-Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop
+Exec=nightingale -stop
 
 [Desktop Action Mute]
 Name=Mute
-Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.nightingale /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Set string:org.mpris.MediaPlayer2.Player string:Volume double:0
+Exec=nightingale -mute

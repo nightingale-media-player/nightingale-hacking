@@ -1,5 +1,5 @@
 Source: nightingale
-Section: sound 
+Section: sound
 Priority: optional
 Maintainer: Martin Giger <zm.redaktion@gmail.com>
 Build-Depends:
@@ -36,8 +36,7 @@ Suggests:
  gstreamer0.10-plugins-ugly,
  gstreamer0.10-ffmpeg,
  gtk2-engines-pixbuf,
- gnome-settings-daemon,
- dbus
+ gnome-settings-daemon
 Provides: nightingale
 Replaces: nightingale, nightingale-nounity
 Description: Play, manage and organize digital media
