@@ -27,7 +27,6 @@
 /**
  * \file sbCommandLine.js
  * \brief Implementation of the interface nsICommandLine
- * \todo Implement the -play functionality
  */
 
 const Cc = Components.classes;
