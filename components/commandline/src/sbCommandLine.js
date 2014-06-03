@@ -155,11 +155,13 @@ sbCommandLineHandler.prototype = {
         cmdLine.preventDefault = true;
     }
     if(cmdLine.handleFlag("stop", false)) {
-        this.gMM.playbackControl.stop();
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.stop();
         cmdLine.preventDefault = true;
     }
     if(cmdLine.handleFlag("pause", false)) {
-        this.gMM.playbackControl.pause();
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.pause();
         cmdLine.preventDefault = true;
     }
     if(cmdLine.handleFlag("toggle-playback", false)) {
@@ -172,11 +174,13 @@ sbCommandLineHandler.prototype = {
         cmdLine.preventDefault = true;
     }
     if(cmdLine.handleFlag("next", false)) {
-        this.gMM.playbackControl.next();
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.next();
         cmdLine.preventDefault = true;
     }
     if(cmdLine.handleFlag("previous", false)) {
-        this.gMM.playbackControl.previous();
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.previous();
         cmdLine.preventDefault = true;
     }
     if(cmdLine.handleFlag("mute", false)) {
