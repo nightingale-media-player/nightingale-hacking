@@ -34,7 +34,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_CLH_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
 const SONGBIRD_CLH_CID = Components.ID("{128badd1-aa05-4508-87cc-f3cb3e9b5499}");
