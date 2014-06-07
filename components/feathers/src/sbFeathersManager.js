@@ -486,7 +486,7 @@ FeathersManager.prototype = {
   [{
     category: "app-startup",
     entry: "feathers-manager",
-    value: "service," + CONTRACTID,
+    value: CONTRACTID,
     service: true
   }],
   constructor: FeathersManager,
