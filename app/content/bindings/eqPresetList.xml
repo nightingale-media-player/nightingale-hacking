@@ -55,6 +55,8 @@
         <implementation>
             <field name="_observer">null</field>
             <field name="_presetList">document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-list")</field>
+            <field name="_pName">null</field>
+            <field name="_mode">false</field>
             <property name="_preset">
                 <getter>
                     <![CDATA[
@@ -122,19 +124,15 @@
                     this._presetList.label = this._mm.equalizer.currentPresetName;
                     
                     this._commandListener = function(e) {
-                        Components.utils.reportError("onCommand");
                         that.onCommand(e);
                     };
                     this._saveListener = function(e) {
-                        Components.utils.reportError("onSave");
                         that.onSave(e);
                     };
                     this._deleteListener = function(e) {
-                        Components.utils.reportError("onDelete");
                         that.onDelete(e);
                     };
                     this._textFieldListener = function(e) {
-                        Components.utils.reportError("keys!");
                         that.onFieldChange(e);
                     }
                     this._presetList.addEventListener("command", this._commandListener, false);
@@ -145,7 +143,6 @@
                     document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-reset")
                         .addEventListener("command", this._deleteListener, false);
                     this._presetList.inputField.addEventListener("input", this._textFieldListener, false);
-                    Components.utils.reportError("construction done");
                 ]]>
             </constructor>
             <destructor>
@@ -165,12 +162,18 @@
             <method name="loadPresets">
                 <body>
                     <![CDATA[
-                        var presets = this.ArrayConverter.JSArray(this._pm.presets);
+                        var presets = this.ArrayConverter.JSArray(this._pm.presets),
+                            lastPresetIndex = presets.length - 1;
 
-                        presets.forEach(function(preset) {
-                            this._presetList.appendItem(preset
-                                .QueryInterface(Components.interfaces.ngIEqualizerPreset)
-                                    .name);
+                        presets.forEach(function(preset, i, array) {
+                            var name = preset.QueryInterface(Components.interfaces.ngIEqualizerPreset)
+                                            .name;
+                            this._presetList.appendItem(name);
+
+                            if(i == lastPresetIndex && this._mode) {
+                                this._mode = false;
+                                this.onPresetChange(that._pName, true);
+                            }
                         }, this);
                     ]]>
                 </body>
@@ -187,10 +190,7 @@
                 <parameter name="preset" />
                 <parameter name="updateBackend" />
                 <body>
-                    <![CDATA[
-                        Components.utils.reportError("onPresetChange");
-                        this._presetList.select(preset);
-                        
+                    <![CDATA[                        
                         var deleteButton = document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-delete");
                         var resetButton  = document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-reset");
                         var mpCollection = this._mp.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection);
@@ -213,8 +213,9 @@
                             resetButton.setAttribute("disabled", true);
                         }
 
+                        this._presetList.select(preset);
+
                         if(updateBackend) {
-                            Components.utils.reportError("Telling EQ to change to "+preset);
                             this._mm.equalizer.currentPresetName = preset;
                         }
                     ]]>
@@ -224,7 +225,6 @@
                 <parameter name="event" />
                 <body>
                     <![CDATA[
-                        Components.utils.reportError("Changing preset");
                         this.onPresetChange(this._preset, true);
                     ]]>
                 </body>
@@ -233,21 +233,20 @@
                 <parameter name="event" />
                 <body>
                     <![CDATA[
-                        var name = this._preset,
-                            values = [],
-                            existed = this._pm.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection)
-                                        .hasPresetNamed(name);
+                        var values = [],
+                            Ci = Components.interfaces;
                         
+                        this._mode = true;
+                        this._pName = this._preset;
+
                         for(var i = 0; i < 10; ++i) { // can't use bandCount here either.
                             var double = Components.classes["@mozilla.org/supports-double;1"]
-                                .createInstance(Components.interfaces.nsISupportsDouble);
-                            double.data = this._mm.equalizer.getBand(i).gain;
+                                .createInstance(Ci.nsISupportsDouble);
+                            double.data = this._mm.equalizer.getBand(i)
+                                .QueryInterface(Ci.sbIMediacoreEqualizerBand).gain;
                             values.push(double);
                         }
-                        this._mp.savePreset(name, this.ArrayConverter.nsIArray(values));
-
-                        if(!existed)
-                            this.onPresetChange(name, true);
+                        this._mp.savePreset(this._pName, this.ArrayConverter.nsIArray(values));                        
                     ]]>
                 </body>
             </method>
@@ -255,7 +254,10 @@
                 <parameter name="event" />
                 <body>
                     <![CDATA[
-                        this._mp.deletePreset(this._preset);
+                        this._mode = true;
+                        this._pName = this._preset;
+                        
+                        this._mp.deletePreset(this._pName);
                     ]]>
                 </body>
             </method>

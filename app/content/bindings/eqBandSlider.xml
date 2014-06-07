@@ -138,6 +138,8 @@
           } catch (err) {
             dump("bandSlider.xml - onRemoteGainChange - " + err + "\n");
           }
+          if (this.onchange != null) 
+            this.onchange(this.bandIndex);
         ]]>
       </body>
     </method>

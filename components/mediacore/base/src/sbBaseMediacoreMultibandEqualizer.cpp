@@ -410,11 +410,6 @@ sbBaseMediacoreMultibandEqualizer::SetCurrentPresetName(const nsAString& aCurren
 
     nsresult rv;
 
-    if(aCurrentPresetName == mCurrentPresetName)
-    {
-        return NS_OK;
-    }
-
     NS_ENSURE_TRUE(mPrefs, NS_ERROR_NOT_INITIALIZED);
     NS_ENSURE_TRUE(mPresets, NS_ERROR_NOT_INITIALIZED);
 
@@ -422,14 +417,16 @@ sbBaseMediacoreMultibandEqualizer::SetCurrentPresetName(const nsAString& aCurren
     NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
     nsAutoMonitor mon(mMonitor);*/
-
-    LOG(("Updating currentPreset pref"));
-    nsCOMPtr<nsISupportsString> data (do_CreateInstance("@mozilla.org/supports-string;1", &rv));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = data->SetData(mCurrentPresetName);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mPrefs->SetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsISupportsString), data);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(mCurrentPresetName != aCurrentPresetName)
+    {
+        LOG(("Updating currentPreset pref"));
+        nsCOMPtr<nsISupportsString> data (do_CreateInstance("@mozilla.org/supports-string;1", &rv));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = data->SetData(mCurrentPresetName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mPrefs->SetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsISupportsString), data);
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     // don't continue to apply a preset if we've no preset to apply.
     // In theory this shortcut shouldn't be needed, but it for sure is
