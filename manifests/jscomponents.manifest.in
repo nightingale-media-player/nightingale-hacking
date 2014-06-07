@@ -121,7 +121,6 @@ contract @songbirdnest.com/faceplate/manager;1 {eb5c665a-bfe2-49f0-a747-cd3554e5
 contract @songbirdnest.com/filesystem/watcher;1 {a433a0c9-c350-421a-aaa0-a25ea2bfbe64}
 contract @songbirdnest.com/integration/native-window-manager;1 {3ec4c167-4dee-45c5-b7f1-5091cc81928e}
 contract @songbirdnest.com/integration/window-move-resize-service;1 {4f8fecc6-1dd2-11b2-903a-f3471bfd3a60}
-contract @songbirdnest.com/media-export-service;1 {7dd185b9-f91e-473d-82dc-65060802d091}
 contract @songbirdnest.com/mediacore/osd-control-service;1 {03f78779-fcb7-4442-9a0c-e8547b4f1368}
 contract @songbirdnest.com/mediacore/sbTestDummyMediacoreManager;1 {00831a9c-1d9d-4515-8620-5ef8c85355a4}
 contract @songbirdnest.com/mediacore/sbTestMediacoreEventCreator;1 {77cf73e7-fc6b-458b-969a-97945f4160b7}
@@ -141,19 +140,19 @@ contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58
 contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
 contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
 contract @songbirdnest.com/shutdown-service;1 {594137ed-db4a-4530-8635-2573c018b4fb}
-contract @songbirdnest.com/Songbird/album-art-fetcher-set;1 {5da41a79-0ed6-4876-bbd7-348a447c784f}
-contract @songbirdnest.com/Songbird/album-art-service;1 {8df4920b-89ac-49a3-8552-d74d313c62b6}
-contract @songbirdnest.com/Songbird/album-art/file-fetcher;1 {5fdeaf80-1a91-4970-8cba-c016cd6edc82}
-contract @songbirdnest.com/Songbird/album-art/metadata-fetcher;1 {61f7f510-abef-4b04-9ebf-078976f1bef1}
-contract @songbirdnest.com/Songbird/album-art/scanner;1 {06c6e812-ca0d-4632-8e2d-2b0a8c9b0675}
+# binary components/albumart # contract @songbirdnest.com/Songbird/album-art-fetcher-set;1 {5da41a79-0ed6-4876-bbd7-348a447c784f}
+# binary components/albumart # contract @songbirdnest.com/Songbird/album-art-service;1 {8df4920b-89ac-49a3-8552-d74d313c62b6}
+# binary components/albumart # contract @songbirdnest.com/Songbird/album-art/file-fetcher;1 {5fdeaf80-1a91-4970-8cba-c016cd6edc82}
+# binary components/albumart # contract @songbirdnest.com/Songbird/album-art/metadata-fetcher;1 {61f7f510-abef-4b04-9ebf-078976f1bef1}
+# binary components/albumart # contract @songbirdnest.com/Songbird/album-art/scanner;1 {06c6e812-ca0d-4632-8e2d-2b0a8c9b0675}
 contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
 contract @songbirdnest.com/Songbird/Bundle;1 {ff29ec35-1294-42ae-a341-63d0303df969}
 contract @songbirdnest.com/Songbird/CDDeviceController;1 {45684bb8-1dd2-11b2-acb3-95cc54818717}
 contract @songbirdnest.com/Songbird/CDDeviceMarshall;1 {1115bc18-1dd2-11b2-b441-aa8a5f59751d}
 contract @songbirdnest.com/Songbird/CharsetDetector;1 {32f9b560-4830-11df-9879-0800200c9a66}
-contract @songbirdnest.com/Songbird/DatabaseEngine;1 {67d9edfd-9a76-4d60-9d76-59181801e193}
-contract @songbirdnest.com/Songbird/DatabaseQuery;1 {377a6592-64bd-4a6b-a941-d488abb5a8aa}
-contract @songbirdnest.com/Songbird/DatabaseResult;1 {9079e1b1-01e9-4cb8-9f2a-08fdf69597cf}
+# binary components/dbengine # contract @songbirdnest.com/Songbird/DatabaseEngine;1 {67d9edfd-9a76-4d60-9d76-59181801e193}
+# binary components/dbengine # contract @songbirdnest.com/Songbird/DatabaseQuery;1 {377a6592-64bd-4a6b-a941-d488abb5a8aa}
+# binary components/dbengine # contract @songbirdnest.com/Songbird/DatabaseResult;1 {9079e1b1-01e9-4cb8-9f2a-08fdf69597cf}
 contract @songbirdnest.com/Songbird/DataRemote;1 {1cb891b0-e9c5-11dd-ba2f-d1080200c966}
 contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {76512c09-7f02-48f5-86c0-c3a8670ead3f}
 contract @songbirdnest.com/Songbird/Device/Base/Helper;1 {ebe6e08a-0604-44fd-a3d7-2be556b96b24}
@@ -190,7 +189,6 @@ contract @songbirdnest.com/Songbird/DownloadDeviceHelper;1 {576b6833-15d8-483a-8
 contract @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 {ee93796b-090e-4703-982a-1d27bea552c3}
 contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0800200c9a66}
 contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
-contract @songbirdnest.com/Songbird/FileMetadataService;1 {183c63a5-8195-4294-8d41-a21fe16a0d7c}
 contract @songbirdnest.com/Songbird/FileScan;1 {411dd545-ead0-41c4-8ba1-697dbe5c67ea}
 contract @songbirdnest.com/Songbird/FileScanQuery;1 {7bb22470-e03d-4220-ac93-ac70700af6ab}
 contract @songbirdnest.com/Songbird/FileUtils;1 {88d4bc8a-1dd2-11b2-a227-d746b1d00458}
@@ -249,42 +247,77 @@ contract @songbirdnest.com/Songbird/library/MediaListViewMap;1 {16ea057c-d4c2-49
 contract @songbirdnest.com/Songbird/Library/Sort;1 {ac85b1e9-c3e1-456a-af0f-4161d36938df}
 contract @songbirdnest.com/Songbird/Library/TemporaryMediaItem;1 {f1ea940e-1dd1-11b2-a9a6-cbcc44d9500d}
 contract @songbirdnest.com/Songbird/LibraryImporterManager;1 {0ed2a7e0-78ac-4574-8554-b1e422b02642}
-contract @songbirdnest.com/Songbird/media-manager/file;1 {7b901232-1dd2-11b2-8d6a-e1784dbd2d89}
-contract @songbirdnest.com/Songbird/Mediacore/Capabilities;1 {938bbc3d-5c03-4744-ac2f-2022bddb0219}
-contract @songbirdnest.com/Songbird/Mediacore/equalizerband;1 {2133a879-337b-4f64-924a-2ad85130ae6c}
-contract @songbirdnest.com/Songbird/Mediacore/event;1 {edf0959d-21bf-411f-8d3d-859a76e71412}
-contract @songbirdnest.com/Songbird/Mediacore/FactoryWrapper;1 {fd7bc5aa-a1b1-4765-b778-cacedb318e2b}
-# contract @songbirdnest.com/Songbird/Mediacore/GStreamer/AudioProcessor;1 {490fef6b-fed9-4243-a280-6bb18a283dfa}
-# contract @songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1 {8cfebfa9-7cd3-4dd8-bf13-6ddc666d3629}
-# contract @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1 {fa5a05ab-77df-44a5-bbcc-7c4a5df36c03}
-contract @songbirdnest.com/Songbird/Mediacore/Manager;1 {47bb93c8-dba7-464b-8f93-8d71659ab127}
-# contract @songbirdnest.com/Songbird/Mediacore/mediacontainer;1 {4da451c0-a11a-42bc-85ed-a24c04bddda5}
-contract @songbirdnest.com/Songbird/Mediacore/mediaformat;1 {6f12ea87-5c0e-4a39-8879-52abfa475c01}
-contract @songbirdnest.com/Songbird/Mediacore/mediaformataudio;1 {d301cef6-4200-4aab-aa08-1a3ea27168f7}
-contract @songbirdnest.com/Songbird/Mediacore/mediaformatcontainer;1 {cc3e80f3-9dc4-4f4f-ac17-a77ec3e648c2}
-contract @songbirdnest.com/Songbird/Mediacore/mediaformatvideo;1 {4b2257a8-b60b-4f5b-abf1-667506303e9f}
-# contract @songbirdnest.com/Songbird/Mediacore/mediainspector;1 {200782a4-07c6-4ec7-a331-b888873680a6}
-# contract @songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Audio/GStreamer;1 {b61e78ec-9aa1-4505-b16c-e33819bca705}
-# contract @songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1 {8d5d04f8-2060-4e82-a25b-c7d67a6b5292}
-# contract @songbirdnest.com/Songbird/Mediacore/Transcode/GStreamer;1 {67623837-fea5-4005-b475-e34b738635c4}
-# contract @songbirdnest.com/Songbird/Mediacore/Transcode/GStreamerVideo;1 {227551a3-24dc-42e7-9ab6-9525e989edfd}
-contract @songbirdnest.com/Songbird/Mediacore/TranscodeAlbumArt;1 {1f9e8770-0fa8-4a40-abd0-ba9202216d3e}
-contract @songbirdnest.com/Songbird/Mediacore/TranscodeError;1 {9b0cdbf9-e4fa-4a5e-9e8a-c87ab37aa187}
-contract @songbirdnest.com/Songbird/Mediacore/TranscodeManager;1 {5aa13c5f-2ee9-45f4-95ea-53d985693baf}
-contract @songbirdnest.com/Songbird/Mediacore/TranscodingConfigurator;1 {f40ea6ad-4a39-464f-9e94-9f240e0a05ee}
-contract @songbirdnest.com/Songbird/Mediacore/TypeSniffer;1 {eba99588-f058-4b6e-9706-9f9bb293dac0}
-contract @songbirdnest.com/Songbird/Mediacore/Wrapper;1 {b244213a-3eed-42f8-a2ab-8c2122c81fef}
-contract @songbirdnest.com/Songbird/MediacoreErrorHandler;1 {8bb6de60-a11b-11de-8a39-0800200c9a66}
-contract @songbirdnest.com/Songbird/MediaItemDownloadService;1 {35443420-1dd2-11b2-8d65-fef3918182cf}
-contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-db670ee1b7f2}
-contract @songbirdnest.com/Songbird/MetadataChannel;1 {37595d88-f49e-4309-89a1-376749a4b285}
-# contract @songbirdnest.com/Songbird/MetadataHandler/GStreamer;1 {58cc7fbd-dfa3-4e36-95d6-b36d677a6eab}
-contract @songbirdnest.com/Songbird/MetadataHandler/Taglib;1 {62f2be31-54cf-4728-84e8-923f5215b92a}
+
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/Capabilities;1 {938bbc3d-5c03-4744-ac2f-2022bddb0219}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/equalizerband;1 {2133a879-337b-4f64-924a-2ad85130ae6c}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/event;1 {edf0959d-21bf-411f-8d3d-859a76e71412}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/FactoryWrapper;1 {fd7bc5aa-a1b1-4765-b778-cacedb318e2b}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/Wrapper;1 {b244213a-3eed-42f8-a2ab-8c2122c81fef}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/mediaformatcontainer;1 {cc3e80f3-9dc4-4f4f-ac17-a77ec3e648c2}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/mediaformatvideo;1 {4b2257a8-b60b-4f5b-abf1-667506303e9f}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/mediaformataudio;1 {d301cef6-4200-4aab-aa08-1a3ea27168f7}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/mediaformat;1 {6f12ea87-5c0e-4a39-8879-52abfa475c01}
+# binary components/mediacore/base # contract @songbirdnest.com/Songbird/Mediacore/mediainspector;1 {200782a4-07c6-4ec7-a331-b888873680a6}
+# binary components/mediacore/base/public # contract @songbirdnest.com/Songbird/Mediacore/mediacontainer;1 {4da451c0-a11a-42bc-85ed-a24c04bddda5}
+
+contract @mozilla.org/network/protocol/about;1?what=gstreamer {ea82983c-4e22-43e0-8942-ae5f31d3671a}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1 {8cfebfa9-7cd3-4dd8-bf13-6ddc666d3629}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1 {fa5a05ab-77df-44a5-bbcc-7c4a5df36c03}
+# binary components/mediacore/gstreamer/src # SB_GSTREAMER_MEDIAINSPECTOR_CONTRACTID
+# binary components/mediacore/gstreamer/src # SB_GSTREAMER_MEDIACONTAINER_CONTRACTID
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Playback/GStreamer/RTPStreamer;1 {fa712427-ac13-449f-ac5c-c2e8fefebc48}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/Transcode/GStreamer;1 {67623837-fea5-4005-b475-e34b738635c4}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/Transcode/GStreamerVideo;1 {227551a3-24dc-42e7-9ab6-9525e989edfd}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Audio/GStreamer;1 {b61e78ec-9aa1-4505-b16c-e33819bca705}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1 {8d5d04f8-2060-4e82-a25b-c7d67a6b5292}
+# binary components/mediacore/gstreamer/src # contract @songbirdnest.com/Songbird/Mediacore/GStreamer/AudioProcessor;1 {490fef6b-fed9-4243-a280-6bb18a283dfa}
+# binary components/mediacore/gstreamer/src/metadata # contract @songbirdnest.com/Songbird/MetadataHandler/GStreamer;1 {58cc7fbd-dfa3-4e36-95d6-b36d677a6eab}
+
+# binary components/mediacore/manager # contract @songbirdnest.com/Songbird/Mediacore/Manager;1 {47bb93c8-dba7-464b-8f93-8d71659ab127}
+# binary components/mediacore/manager # contract @songbirdnest.com/Songbird/Mediacore/TypeSniffer;1 {eba99588-f058-4b6e-9706-9f9bb293dac0}
+
+
+# components/mediacore/metadata
+
+# components/mediacore/metadata/lookup/manager
 contract @songbirdnest.com/Songbird/MetadataLookup/albumdetail;1 {84dd6e90-1dd2-11b2-bad9-c6f63b798098}
 contract @songbirdnest.com/Songbird/MetadataLookup/job;1 {e4fd9496-1dd1-11b2-93ca-d33e8cc507ba}
 contract @songbirdnest.com/Songbird/MetadataLookup/manager;1 {46733000-1dd2-11b2-8022-ba2da8a6a950}
+# components/mediacore/metadata/lookup/testprovider
 contract @songbirdnest.com/Songbird/MetadataLookup/testProvider;1 {9e599632-1dd1-11b2-ab82-e0952e7285ce}
-contract @songbirdnest.com/Songbird/MetadataManager;1 {32bfdede-854d-448f-bada-7a3b4b192034}
+
+# components/mediacore/metadata/handler/taglib
+# binary components/mediacore/metadata/handler/taglib # contract @songbirdnest.com/Songbird/MetadataHandler/Taglib;1 {62f2be31-54cf-4728-84e8-923f5215b92a}
+# binary components/mediacore/metadata/handler/taglib # contract @songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1 {ed17756d-deaf-437e-8e51-ad6d1c63b714}
+# binary components/mediacore/metadata/handler/taglib # contract @songbirdnest.com/Songbird/SeekableChannel;1 {2030739b-5e60-492b-a1a7-747067475bfd}
+
+# components/mediacore/metadata/handler/wma
+
+# binary components/mediacore/metadata/manager # contract @songbirdnest.com/Songbird/MetadataManager;1 {32bfdede-854d-448f-bada-7a3b4b192034}
+# binary components/mediacore/metadata/manager # contract @songbirdnest.com/Songbird/MetadataChannel;1 {37595d88-f49e-4309-89a1-376749a4b285}
+# binary components/mediacore/metadata/manager # contract @songbirdnest.com/Songbird/FileMetadataService;1 {183c63a5-8195-4294-8d41-a21fe16a0d7c}
+
+# binary components/mediacore/playback/history # contract @songbirdnest.com/Songbird/PlaybackHistoryEntry;1 {64abdd62-3481-4ce9-89c6-e02398a4aa5c}
+# binary components/mediacore/playback/history # contract @songbirdnest.com/Songbird/PlaybackHistoryService;1 {e4f7838e-9672-453e-818d-a0da84e64365}
+
+# binary components/mediacore/transcode # contract @songbirdnest.com/Songbird/Mediacore/TranscodeManager;1 {5aa13c5f-2ee9-45f4-95ea-53d985693baf}
+# binary components/mediacore/transcode # contract @songbirdnest.com/Songbird/Mediacore/TranscodeAlbumArt;1 {1f9e8770-0fa8-4a40-abd0-ba9202216d3e}
+# binary components/mediacore/transcode # contract @songbirdnest.com/Songbird/Mediacore/TranscodeError;1 {9b0cdbf9-e4fa-4a5e-9e8a-c87ab37aa187}
+# binary components/mediacore/transcode # contract @songbirdnest.com/Songbird/Transcode/Profile;1 {dc50c9ab-63ec-4d6a-a9d1-7907bce33324}
+# binary components/mediacore/transcode # contract @songbirdnest.com/Songbird/Transcode/ProfileLoader;1 {c64f3bc9-263f-4c2a-8e4c-c6bfbd9ae1f0}
+# binary components/mediacore/transcode # contract @songbirdnest.com/Songbird/Mediacore/TranscodingConfigurator;1 {f40ea6ad-4a39-464f-9e94-9f240e0a05ee}
+
+# components/mediaexport
+# components/mediaexport/agent
+# components/mediaexport/src
+# binary components/mediaexport/src # contract @songbirdnest.com/media-export-service;1 {7dd185b9-f91e-473d-82dc-65060802d091}
+
+# binary components/mediamanger # contract @songbirdnest.com/Songbird/media-manager/file;1 {7b901232-1dd2-11b2-8d6a-e1784dbd2d89}
+
+
+contract @songbirdnest.com/Songbird/MediacoreErrorHandler;1 {8bb6de60-a11b-11de-8a39-0800200c9a66}
+contract @songbirdnest.com/Songbird/MediaItemDownloadService;1 {35443420-1dd2-11b2-8d65-fef3918182cf}
+contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-db670ee1b7f2}
 contract @songbirdnest.com/Songbird/Metrics;1 {1066527d-b135-4e0c-9ea4-f6109ae97d02}
 contract @songbirdnest.com/Songbird/MockCDDevice;1 {cf0c112e-a2f9-4ca2-9013-a3de6bcc6b85}
 contract @songbirdnest.com/Songbird/MockCDTOC;1 {136f8b3a-8747-4a2c-9db8-741a6c798034}
@@ -292,9 +325,6 @@ contract @songbirdnest.com/Songbird/MoveRenameHelper;1 {02ba1ba0-fee5-11dd-87af-
 contract @songbirdnest.com/Songbird/NetworkProxyImport;1 {caece57b-6634-491e-a858-9c99ab873dc4}
 contract @songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1 {961da3f4-5ef1-4ad0-818d-622c7bd17447}
 contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
-# contract @songbirdnest.com/Songbird/Playback/GStreamer/RTPStreamer;1 {fa712427-ac13-449f-ac5c-c2e8fefebc48}
-contract @songbirdnest.com/Songbird/PlaybackHistoryEntry;1 {64abdd62-3481-4ce9-89c6-e02398a4aa5c}
-contract @songbirdnest.com/Songbird/PlaybackHistoryService;1 {e4f7838e-9672-453e-818d-a0da84e64365}
 contract @songbirdnest.com/Songbird/Playlist/Reader/ASX;1 {e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}
 contract @songbirdnest.com/Songbird/Playlist/Reader/Feed;1 {fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}
 contract @songbirdnest.com/Songbird/Playlist/Reader/HTML;1 {75c8f646-e75a-4743-89cd-412fa083ce07}
@@ -333,9 +363,7 @@ contract @songbirdnest.com/Songbird/PublicPlaylistCommands;1 {1126ee77-2d85-4f79
 contract @songbirdnest.com/Songbird/RemoveHelper;1 {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4}
 contract @songbirdnest.com/Songbird/sbiTunesXMLParser;1 {f0ebf580-c5fb-4efc-960a-50bef0bcedcc}
 contract @songbirdnest.com/Songbird/sbstringmap;1 {56a00dd5-cfae-4910-ae12-ef53935dcf3e}
-contract @songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1 {ed17756d-deaf-437e-8e51-ad6d1c63b714}
 contract @songbirdnest.com/Songbird/ScreenSaverSuppressor;1 {0e3247f9-a111-4d2a-869a-043966108d98}
-contract @songbirdnest.com/Songbird/SeekableChannel;1 {2030739b-5e60-492b-a1a7-747067475bfd}
 contract @songbirdnest.com/Songbird/ServiceManager;1 {f162173e-1dd1-11b2-ac46-96108118919e}
 contract @songbirdnest.com/Songbird/SmartMediaListsUpdater;1 {35af253e-c7b0-40d6-a1a2-c747de924639}
 contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
@@ -348,8 +376,6 @@ contract @songbirdnest.com/Songbird/stringbundle;1 {04134658-9cf9-4fea-90c0-bc15
 contract @songbirdnest.com/Songbird/TemporaryFileFactory;1 {33ecad26-1dd2-11b2-b11b-84c215c310a5}
 contract @songbirdnest.com/Songbird/TemporaryFileService;1 {a73256d2-1dd1-11b2-9faa-b9709834174c}
 contract @songbirdnest.com/Songbird/ThreadPoolService;1 {f3980a5a-39da-4e1b-bb63-c3e26e85d3c6}
-contract @songbirdnest.com/Songbird/Transcode/Profile;1 {dc50c9ab-63ec-4d6a-a9d1-7907bce33324}
-contract @songbirdnest.com/Songbird/Transcode/ProfileLoader;1 {c64f3bc9-263f-4c2a-8e4c-c6bfbd9ae1f0}
 contract @songbirdnest.com/Songbird/Variant;1 {b522c2e8-826f-477f-86b7-4a143cd1a188}
 contract @songbirdnest.com/Songbird/webservices/last-fm;1 {6582d596-95dd-4449-be8b-7793a15bdfa2}
 contract @songbirdnest.com/Songbird/window-watcher;1 {4d83ab89-f909-4e71-8d5d-d0884d0cb788}
