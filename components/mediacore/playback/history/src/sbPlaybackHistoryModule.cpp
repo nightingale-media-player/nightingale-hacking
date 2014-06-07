@@ -47,6 +47,7 @@ static const mozilla::Module::ContractIDEntry kPlaybackHistoryComponentContracts
 };
 
 static const mozilla::Module::CategoryEntry kPlaybackHistoryComponentCategories[] = {
+  { "profile-after-change", SB_PLAYBACKHISTORYSERVICE_CLASSNAME, SB_PLAYBACKHISTORYSERVICE_CONTRACTID },
   { NULL }
 };
 

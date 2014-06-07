@@ -59,6 +59,8 @@ static const mozilla::Module::ContractIDEntry kDatabaseEngineContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kDatabaseEngineCategories[] = {
+  { "profile-after-change", SONGBIRD_DATABASEENGINE_CLASSNAME, SONGBIRD_DATABASEENGINE_CONTRACTID },
+  // { "final-ui-startup", SONGBIRD_DATABASEENGINE_CLASSNAME, SONGBIRD_DATABASEENGINE_CONTRACTID },
   { NULL }
 };
 

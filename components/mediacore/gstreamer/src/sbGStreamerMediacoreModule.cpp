@@ -103,6 +103,8 @@ static const mozilla::Module::ContractIDEntry kGstreamerMediacoreContacts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kGstreamerMediacoreCategories[] = {
+  { "profile-after-change", SB_GSTREAMERMEDIACOREFACTORY_CLASSNAME, SB_GSTREAMERMEDIACOREFACTORY_CONTRACTID },
+  // { "quit-application", SB_GSTREAMERMEDIACOREFACTORY_CLASSNAME, SB_GSTREAMERMEDIACOREFACTORY_CONTRACTID },
   { NULL }
 };
 
