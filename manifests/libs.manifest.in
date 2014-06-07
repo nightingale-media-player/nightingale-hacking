@@ -1,7 +1,5 @@
 
 # Linux #
-# system gstreamer
-
 #ifdef DEBUG
 binary-component sbGStreamerMediacore_d.so os=Linux
 #else
@@ -10,40 +8,6 @@ binary-component sbGStreamerMediacore.so os=Linux
 
 
 # Mac #
-
-binary-component libFLAC.dylib os=Darwin
-binary-component libgettextlib.dylib os=Darwin
-binary-component libgettextpo.dylib os=Darwin
-binary-component libgettextsrc.dylib os=Darwin
-binary-component libglib-2.0.dylib os=Darwin
-binary-component libgmodule-2.0.dylib os=Darwin
-binary-component libgobject-2.0.dylib os=Darwin
-binary-component libgstapp-1.0.dylib os=Darwin
-binary-component libgstaudio-1.0.dylib os=Darwin
-binary-component libgstbase-1.0.dylib os=Darwin
-binary-component libgstcontroller-1.0.dylib os=Darwin
-binary-component libgstfft-1.0.dylib os=Darwin
-binary-component libgstnet-1.0.dylib os=Darwin
-binary-component libgstpbutils-1.0.dylib os=Darwin
-binary-component libgstreamer-1.0.dylib os=Darwin
-binary-component libgstriff-1.0.dylib os=Darwin
-binary-component libgstrtp-1.0.dylib os=Darwin
-binary-component libgstrtsp-1.0.dylib os=Darwin
-binary-component libgstsdp-1.0.dylib os=Darwin
-binary-component libgsttag-1.0.dylib os=Darwin
-binary-component libgstvideo-1.0.dylib os=Darwin
-binary-component libgthread-2.0.dylib os=Darwin
-binary-component libintl.dylib os=Darwin
-binary-component libjpeg.dylib os=Darwin
-binary-component libogg.dylib os=Darwin
-binary-component libs.manifest os=Darwin
-binary-component libtheora.dylib os=Darwin
-binary-component libtheoradec.dylib os=Darwin
-binary-component libtheoraenc.dylib os=Darwin
-binary-component libvorbis.dylib os=Darwin
-binary-component libvorbisenc.dylib os=Darwin
-binary-component libvorbisfile.dylib os=Darwin
-
 #ifdef DEBUG
 binary-component sbGStreamerMediacore_d.dylib os=Darwin
 #else
@@ -52,43 +16,6 @@ binary-component sbGStreamerMediacore.dylib os=Darwin
 
 
 # Windows #
-
-binary-component FLAC-8.dll os=WINNT
-binary-component gettextlib.dll os=WINNT
-binary-component gettextpo.dll os=WINNT
-binary-component gettextsrc.dll os=WINNT
-binary-component gstapp-1.0-0.dll os=WINNT
-binary-component gstaudio-1.0-0.dll os=WINNT
-binary-component gstbase-1.0-0.dll os=WINNT
-binary-component gstcontroller-1.0-0.dll os=WINNT
-binary-component gstfft-1.0-0.dll os=WINNT
-binary-component gstnet-1.0-0.dll os=WINNT
-binary-component gstpbutils-1.0-0.dll os=WINNT
-binary-component gstreamer-1.0-0.dll os=WINNT
-binary-component gstriff-1.0-0.dll os=WINNT
-binary-component gstrtp-1.0-0.dll os=WINNT
-binary-component gstrtsp-1.0-0.dll os=WINNT
-binary-component gstsdp-1.0-0.dll os=WINNT
-binary-component gsttag-1.0-0.dll os=WINNT
-binary-component gstvideo-1.0-0.dll os=WINNT
-binary-component iconv.dll os=WINNT
-binary-component libcharset-1.dll os=WINNT
-binary-component libintl-8.dll os=WINNT
-binary-component jpeg-7.dll os=WINNT
-binary-component libglib-2.0-0.dll os=WINNT
-binary-component libgmodule-2.0-0.dll os=WINNT
-binary-component libgobject-2.0-0.dll os=WINNT
-binary-component libgthread-2.0-0.dll os=WINNT
-binary-component libs.manifest os=WINNT
-binary-component ogg-0.dll os=WINNT
-binary-component sbWindowsFormatter.dll os=WINNT
-binary-component theora-0.dll os=WINNT
-binary-component theoradec-1.dll os=WINNT
-binary-component theoraenc-1.dll os=WINNT
-binary-component vorbis-0.dll os=WINNT
-binary-component vorbisenc-2.dll os=WINNT
-binary-component vorbisfile-3.dll os=WINNT
-
 #ifdef DEBUG
 binary-component sbGStreamerMediacore_d.dll os=WINNT
 #else
