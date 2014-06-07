@@ -33,7 +33,7 @@ function ngLocalizableEqualizerPreset() {
 ngLocalizableEqualizerPreset.prototype = {
     classDescription: "Basic mutable equalizer preset with localizable name",
     classID:          Components.ID("{1c4b8b2c-a2c1-4652-9fb3-523face810b9}"),
-    contractID:       "@getnightingale.com/Nightingale/equalizer-presets/localizable;1",
+    contractID:       "@getnightingale.com/equalizer-presets/localizable;1",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngILocalizableEqualizerPreset]),
 
     _gMM: null,

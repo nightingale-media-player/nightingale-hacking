@@ -32,7 +32,7 @@ if (typeof(Ci) == "undefined")
   this.Ci = Components.interfaces;
 
 function runTest() {
-    var mainProvider = Cc["@getnightingale.com/Nightingale/equalizer-presets/main-provider;1"]
+    var mainProvider = Cc["@getnightingale.com/equalizer-presets/main-provider;1"]
                         .getService(Ci.ngIMainEqualizerPresetProvider);
 
     assertTrue(mainProvider.presets instanceof Ci.nsIArray, "Presets aren't an nsIArray"); 

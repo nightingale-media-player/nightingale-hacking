@@ -34,7 +34,7 @@ if(!Cr)
     this.Cr = Components.results;
 
 function runTest() {
-    var localizablePreset = Cc["@getnightingale.com/Nightingale/equalizer-presets/localizable;1"]
+    var localizablePreset = Cc["@getnightingale.com/equalizer-presets/localizable;1"]
                         .createInstance(Ci.ngILocalizableEqualizerPreset);
 
     assertEqual(localizablePreset.values, null, "Values are already defined");

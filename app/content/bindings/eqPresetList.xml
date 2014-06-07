@@ -113,9 +113,9 @@
                                     .getService(Ci.nsIPrefBranch2);
                     this._prefs.addObserver("songbird.eq.currentPreset", this._observer, false);
 
-                    this._pm = Cc["@getnightingale.com/Nightingale/equalizer-presets/manager;1"]
+                    this._pm = Cc["@getnightingale.com/equalizer-presets/manager;1"]
                                     .getService(Ci.ngIEqualizerPresetProviderManager);
-                    this._mp = Cc["@getnightingale.com/Nightingale/equalizer-presets/main-provider;1"]
+                    this._mp = Cc["@getnightingale.com/equalizer-presets/main-provider;1"]
                                     .getService(Ci.ngIMainEqualizerPresetProvider);
 
                     // initialize the prefs list

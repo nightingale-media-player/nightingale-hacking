@@ -34,7 +34,7 @@ function ngMutableEqualizerPreset() {
 ngMutableEqualizerPreset.prototype = {
     classDescription: "Basic mutable equalizer preset",
     classID:          Components.ID("{f87e3ba3-c3fe-437a-8b2f-3aeb48536a9b}"),
-    contractID:       "@getnightingale.com/Nightingale/equalizer-presets/mutable;1",
+    contractID:       "@getnightingale.com/equalizer-presets/mutable;1",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.ngIMutableEqualizerPreset]),
 
     _gMM: null,

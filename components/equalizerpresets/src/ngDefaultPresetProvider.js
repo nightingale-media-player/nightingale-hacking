@@ -63,14 +63,14 @@ function ngDefaultPresetProvider() {
 ngDefaultPresetProvider.prototype = {
     classDescription: "Preset provider that provides the default equalizer presets",
     classID:          Components.ID("{1f3b39da-c169-49df-af70-eaec9c10640a}"),
-    contractID:       "@getnightingale.com/Nightingale/equalizer-presets/defaults;1",
+    contractID:       "@getnightingale.com/equalizer-presets/defaults;1",
     QueryInterface:   XPCOMUtils.generateQI([Ci.ngIEqualizerPresetProvider]),
 
     _presets: null,
 
     _createPreset: function(property, strBundle, values) {
         LOG("_createPreset("+property+", "+strBundle+", "+values+")");
-        var preset = Cc["@getnightingale.com/Nightingale/equalizer-presets/localizable;1"]
+        var preset = Cc["@getnightingale.com/equalizer-presets/localizable;1"]
                         .createInstance(Ci.ngILocalizableEqualizerPreset);
         preset.stringBundle = strBundle;
         preset.property = property;

@@ -32,7 +32,7 @@ if (typeof(Ci) == "undefined")
   this.Ci = Components.interfaces;
 
 function runTest() {
-    var providerManager = Cc["@getnightingale.com/Nightingale/equalizer-presets/manager;1"]
+    var providerManager = Cc["@getnightingale.com/equalizer-presets/manager;1"]
                         .getService(Ci.ngIEqualizerPresetProviderManager);
 
     assertTrue(providerManager.providers.length >= 2, "Not all providers were registered");

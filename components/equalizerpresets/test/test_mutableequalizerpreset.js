@@ -32,7 +32,7 @@ if (typeof(Ci) == "undefined")
   this.Ci = Components.interfaces;
 
 function runTest() {
-    var mutablePreset = Cc["@getnightingale.com/Nightingale/equalizer-presets/mutable;1"]
+    var mutablePreset = Cc["@getnightingale.com/equalizer-presets/mutable;1"]
                         .createInstance(Ci.ngIMutableEqualizerPreset);
     assertEqual(mutablePreset.name, null, "Name is already defined");
     assertEqual(mutablePreset.values, null, "Values are already defined");
