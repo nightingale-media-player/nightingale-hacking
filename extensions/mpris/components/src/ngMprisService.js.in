@@ -145,9 +145,9 @@ ngMprisService.prototype.initDBus = function() {
     ComponentContainer.controller.activeMainWindow.addEventListener("fullscreen", _ngMprisCheckFullscreen, false);
 
     var mediaListListener = {
-        onItemAdded: NULL,
-        onBeforeItemRemoved: NULL,
-        onAfterItemRemoved: NULL,
+        onItemAdded: null,
+        onBeforeItemRemoved: null,
+        onAfterItemRemoved: null,
         onItemUpdated: function(aList, aItem) {
             var viewIndex = mediacore.sequencer.view.getIndexForItem(aItem),
                 isInSequence = mediacore.sequencer.currentSequence.indexOf(0, viewIndex) >= 0;
@@ -161,11 +161,11 @@ ngMprisService.prototype.initDBus = function() {
                 dbus.sendSignal();
             }
         },
-        onItemMoved: NULL,
-        onBeforeListCleared: NULL,
-        onListClreared: NULL,
-        onBatchBegin: NULL,
-        onBatchEnd: NULL
+        onItemMoved: null,
+        onBeforeListCleared: null,
+        onListClreared: null,
+        onBatchBegin: null,
+        onBatchEnd: null
     };
 
     ComponentContainer.mediacore.addListener({

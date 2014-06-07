@@ -38,7 +38,7 @@ const LOG = DebugUtils.generateLogFunction("ngInternalSearchService", 2);
  */
 function ngInternalSearchService()
 {    
-    XPCOMUtils.defineLazyServiceGetter(this, "searchService", "@mozilla.org/browser/search-service;1", Components.interfaces.nsIBrowserSearchService);
+    XPCOMUtils.defineLazyServiceGetter(this, "searchService", "@mozilla.org/browser/search-service;1", "nsIBrowserSearchService");
 }
 
 ngInternalSearchService.prototype = {
