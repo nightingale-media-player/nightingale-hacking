@@ -517,3 +517,7 @@ pref("feedback.disabled", true);
 // import all video formats, not just ogv
 //
 pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,mp4,m4v,webm,wmv,ogx");
+
+// By defualt the eq is on the "flat" preset.
+//TODO l10n issues?
+pref("songbird.eq.currentPreset", "flat");

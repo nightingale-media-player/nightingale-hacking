@@ -28,10 +28,15 @@ songbird.jar:
 #else
   content/songbird/html/aboutDRM.xhtml  (aboutDRM.xhtml)
 #endif
+#ifdef NG_USER_ABOUTMOZ_FILE
+  content/songbird/html/aboutMozilla.html (@NG_USER_ABOUTMOZ_FILE@)
+#else
+  content/songbird/html/aboutMozilla.html (aboutMozilla.html)
+#endif
 # Keyboard help
   content/songbird/html/keyboardHelp.xhtml (keyboardHelp.xhtml)
   content/songbird/html/keyboardHelp.css   (keyboardHelp.css)
 % override chrome://global/content/aboutAbout.html chrome://songbird/content/html/eula.html
 % override chrome://global/content/about.xhtml chrome://songbird/content/html/aboutColon.xhtml
 % override chrome://global/content/license.html chrome://songbird/content/html/eula.html
-
+% override chrome://global/content/mozilla.xhtml chrome://songbird/content/html/aboutMozilla.html

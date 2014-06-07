@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<!-- 
+#
+#=BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# http://getnightingale.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+# 
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END NIGHTINGALE GPL
+#
+-->
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+  
+    <binding id="eq-preset-list">
+        <content flex="1">
+            <xul:hbox xbl:inherits="flex">
+                <xul:menulist anonid="eq-preset-list"
+                              editable="true"
+                              flex="8">
+                    <xul:menupopup>
+                    </xul:menupopup>
+                </xul:menulist>
+                <xul:button anonid="eq-preset-save"
+                            label="&equalizer.savepreset;"
+                            flex="1"/>
+                <xul:button anonid="eq-preset-delete"
+                            label="&equalizer.deletepreset;"
+                            flex="1"
+                            disabled="true"/>
+                <xul:button anonid="eq-preset-reset"
+                            label="&equalizer.resetpreset;"
+                            flex="1"
+                            disabled="true"
+                            hidden="true"/>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <field name="_observer">null</field>
+            <field name="_presetList">document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-list")</field>
+            <field name="_preset">this._presetList.getAttribute("value")</field>
+            <property name="preset">
+                <getter>
+                    <![CDATA[
+                        return this._preset;
+                    ]]>
+                </getter>
+                <setter>
+                    <![CDATA[
+                        this.onPresetChange(val, true);
+                    ]]>
+                </setter>
+            </property>
+
+            <constructor>
+                <![CDATA[
+                    Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+
+                    var Cc = Components.classes;
+                    var Ci = Components.interfaces;
+                    this._mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                                    .getService(Ci.sbIMediacoreManager);
+
+                    var that = this;
+                    this._observer = {
+                        observe: function(subject, topic, data) {
+                            if(topic == "equalizer-presets-changed") {
+                                that.updatePresets();
+                            }
+                            else { // can't find the observer topic of prefBranch2
+                                that.onPresetChange(subject.getComplexValue(data,
+                                       Components.interfaces.nsISupportsString),
+                                       false);
+                            }
+                        },
+                        QueryInterface: function(iid) {
+                            if(iid.equals(Ci.nsIObserver))
+                                return this;
+                            throw Components.results.NS_ERROR_NO_INTERFACE;
+                        }
+                    };
+
+                    this._os = Cc["@mozilla.org/observer-service;1"]
+                                    .getService(Ci.nsIObserverService);
+                    this._os.addObserver(this._observer, "equalizer-presets-changed", false);
+
+                    this._prefs = Cc["@mozilla.org/preferences-service;1"]
+                                    .getService(Ci.nsIPrefBranch2);
+                    this._prefs.addObserver("songbird.eq.currentPreset", this._observer, false);
+
+                    this._pm = Cc["@getnightingale.com/Nightingale/equalizer-presets/manager;1"]
+                                    .getService(Ci.ngIEqualizerPresetProviderManager);
+                    this._mp = Cc["@getnightingale.com/Nightingale/equalizer-presets/main-provider;1"]
+                                    .getService(Ci.ngIMainEqualizerPresetProvider);
+
+                    // initialize the prefs list
+                    this.loadPresets();
+                    this.onPresetChange(this._mm.equalizer.currentPresetName, false);
+                    this._presetList.label = this._mm.equalizer.currentPresetName;
+                    
+                    this._commandListener = function(e) {
+                        that.onCommand(e);
+                    };
+                    this._saveListener = function(e) {
+                        that.onSave(e);
+                    };
+                    this._deleteListener = function(e) {
+                        that.onDelete(e);
+                    };
+                    this._textFieldListener = function(e) {
+                        that.onFieldChange(e);
+                    }
+                    this._presetList.addEventListener("command", this._commandListener, false);
+                    document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-save")
+                        .addEventListener("command", this._saveListener, false);
+                    document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-delete")
+                        .addEventListener("command", this._deleteListener, false);
+                    document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-reset")
+                        .addEventListener("command", this._deleteListener, false);
+                    this._presetList.inputField.addEventListener("input", this._textFieldListener, false);
+                ]]>
+            </constructor>
+            <destructor>
+                <![CDATA[
+                    this._os.removeObserver(this._observer, "equalizer-presets-changed");
+                    this._prefs.removeObserver("songbird.eq.currentPreset", this._observer);
+                    this._presetList.removeEventListener("command", this._commandListener, false);
+                    document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-save")
+                        .removeEventListener("command", this._saveListener, false);
+                    document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-delete")
+                        .removeEventListener("command", this._deleteListener, false);
+                    document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-delete")
+                        .removeEventListener("command", this._deleteListener, false);
+                    this._presetList.inputField.removeEventListener("input", this._textFieldListener, false);
+                ]]>
+            </destructor>
+            <method name="loadPresets">
+                <body>
+                    <![CDATA[
+                        var presets = this.ArrayConverter.JSArray(this._pm.presets);
+
+                        presets.forEach(function(preset) {
+                            this._presetList.appendItem(preset
+                                .QueryInterface(Components.interfaces.ngIEqualizerPreset)
+                                    .name);
+                        }, this);
+                    ]]>
+                </body>
+            </method>
+            <method name="updatePresets">
+                <body>
+                    <![CDATA[
+                        this._presetList.removeAllItems();
+                        this.loadPresets();
+                    ]]>
+                </body>
+            </method>
+            <method name="onPresetChange">
+                <parameter name="preset" />
+                <parameter name="updateBackend" />
+                <body>
+                    <![CDATA[
+                        this._presetList.select(preset);
+                        
+                        var deleteButton = document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-delete");
+                        var resetButton  = document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-reset");
+                        var mpCollection = this._mp.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection);
+                        if(mpCollection.hasPresetNamed(preset)) {
+                            deleteButton.setAttribute("hidden", true);
+                            resetButton.removeAttribute("hidden");
+                            resetButton.removeAttribute("disabled");
+
+                            /*TODO
+                                if(preset is has no default)
+                                    deleteButton.label = "&equalizer.deletepreset;";
+                                else
+                                    deleteButton.label = "&equalizer.resetpreset;";
+                             */
+                        }
+                        else {
+                            deleteButton.removeAttribute("hidden");
+                            deleteButton.setAttribute("disabled", true);
+                            resetButton.setAttribute("hidden", true);
+                            resetButton.setAttribute("disabled", true);
+                        }
+
+                        if(updateBackend) {
+                            this._mm.equalizer.currentPresetName = preset;
+                        }
+                    ]]>
+                </body>
+            </method>
+            <method name="onCommand">
+                <parameter name="event" />
+                <body>
+                    <![CDATA[
+                        this.onPresetChange(this._preset, true);
+                    ]]>
+                </body>
+            </method>
+            <method name="onSave">
+                <parameter name="event" />
+                <body>
+                    <![CDATA[
+                        var name = this._preset,
+                            values = [],
+                            existed = this._pm.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection)
+                                        .hasPresetNamed(name);
+                        
+                        for(var i = 0; i < 10; ++i) { // can't use bandCount here either.
+                            var double = Components.classes["@mozilla.org/supports-double;1"]
+                                .createInstance(Components.interfaces.nsISupportsDouble);
+                            double.data = this._mm.equalizer.getBand(i).gain;
+                            values.push(double);
+                        }
+                        this._mp.savePreset(name, this.ArrayConverter.nsIArray(values));
+
+                        if(!existed)
+                            this.onPresetChange(name, true);
+                    ]]>
+                </body>
+            </method>
+            <method name="onDelete">
+                <parameter name="event" />
+                <body>
+                    <![CDATA[
+                        this._mp.deletePreset(this._preset);
+                    ]]>
+                </body>
+            </method>
+            <method name="onFieldChange">
+                <parameter name="event" />
+                <body>
+                    <![CDATA[
+                        var presetCollection = this._pm.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection);
+                        if(!presetCollection.hasPresetNamed(this._preset))
+                            this._mm.equalizer.currentPresetName = "";
+                        else
+                            this._mm.equalizer.currentPresetName = this._preset;
+                    ]]>
+                </body>
+            </method>
+        </implementation>
+    </binding>
+</bindings>

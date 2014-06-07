@@ -159,6 +159,7 @@
 	      <label value="0" id="eq-label-band9" class="sb-eq-label" />
       </vbox>
     </hbox>
+    <xul:ng-eq-preset-list id="equalizer-pesets"/>
   </vbox>
 
   <script type="application/x-javascript" 
@@ -176,13 +177,10 @@
         
       var check_eq = document.getElementById("equalizer-check");
       check_eq.checked = this.mm.equalizer.eqEnabled;
-
-      //var presetList = document.getElementById("equalizer_preset_list");
-      //presetList.value = this.mm.equalizer.equalizerPreset;
 	
       //BUG #240
       //force a label update onload
-      for (i = 0; i < 10; i++)
+      for (var i = 0; i < 10; i++)
       {
         onSliderChange(i); 
       }
@@ -193,9 +191,9 @@
     //Added for BUG #240
     function onSliderChange(band)
     {
-        labelName = "eq-label-band" + band;
-        label = document.getElementById(labelName);
-        gainValue = this.mm.equalizer.getBand(band).gain;
+        var labelName = "eq-label-band" + band;
+        var label = document.getElementById(labelName);
+        var gainValue = this.mm.equalizer.getBand(band).gain;
         
         gainValue = Math.floor(gainValue * 100.0);
         if (gainValue > 0) 

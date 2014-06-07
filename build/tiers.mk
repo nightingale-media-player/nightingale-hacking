@@ -56,6 +56,7 @@ tier_componentsbase_dirs = \
    components/property \
    components/library \
    components/integration \
+   components/equalizerpresets \
    components/mediacore \
    components/albumart \
    components/dbengine \
@@ -72,7 +73,6 @@ tier_componentsbase_dirs = \
    components/mediamanager \
    components/feathers \
    components/playqueue \
-   components/internalsearch \
    $(NULL)
 else
 tier_componentsbase_dirs = \
@@ -81,6 +81,7 @@ tier_componentsbase_dirs = \
    components/property \
    components/library \
    components/integration \
+   components/equalizerpresets \
    components/mediacore \
    components/albumart \
    components/dbengine \
@@ -96,7 +97,6 @@ tier_componentsbase_dirs = \
    components/mediamanager \
    components/feathers \
    components/playqueue \
-   components/internalsearch \
    $(NULL)
 endif
 
@@ -122,6 +122,7 @@ tier_componentsall_dirs = \
    components/mediaexport \
    components/appstartup \
    components/networkproxy \
+   components/internalsearch \
    $(NULL)
 
 tier_appbase_dirs = \

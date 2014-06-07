@@ -98,6 +98,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/property/src \
                      $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/equalizerpresets/public \
                      $(topsrcdir)/components/moz/errorconsole/src \
                      $(MOZSDK_INCLUDE_DIR)/layout \
                      $(MOZSDK_INCLUDE_DIR)/gfx \

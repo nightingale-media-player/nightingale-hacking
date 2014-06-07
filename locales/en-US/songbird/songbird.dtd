@@ -211,25 +211,9 @@
 <!ENTITY equalizer.band7.label    "4K" >
 <!ENTITY equalizer.band8.label    "8K" >
 <!ENTITY equalizer.band9.label    "16K" >
-<!ENTITY equalizer.preset.custom      "Custom" >
-<!ENTITY equalizer.preset.flat        "Flat" >
-<!ENTITY equalizer.preset.rock        "Rock" >
-<!ENTITY equalizer.preset.soft_rock   "Soft Rock" >
-<!ENTITY equalizer.preset.techno      "Techno" >
-<!ENTITY equalizer.preset.ska         "Ska" >
-<!ENTITY equalizer.preset.reggae      "Reggae" >
-<!ENTITY equalizer.preset.live        "Live" >
-<!ENTITY equalizer.preset.club        "Club" >
-<!ENTITY equalizer.preset.party       "Party" >
-<!ENTITY equalizer.preset.classical   "Classical" >
-<!ENTITY equalizer.preset.large_hall  "Large Hall" >
-<!ENTITY equalizer.preset.dance       "Dance" >
-<!ENTITY equalizer.preset.pop         "Pop" >
-<!ENTITY equalizer.preset.soft        "Soft" >
-<!ENTITY equalizer.preset.small_speakers   "Laptop/Headphones" >
-<!ENTITY equalizer.preset.full_bass_treble "Full Bass and Treble" >
-<!ENTITY equalizer.preset.full_treble "Full treble" >
-<!ENTITY equalizer.preset.full_bass   "Full bass" >
+<!ENTITY equalizer.savepreset   "Save" >
+<!ENTITY equalizer.deletepreset "Delete" >
+<!ENTITY equalizer.resetpreset  "Reset" >
 
 
 <!ENTITY setupprogress.pleasewait "Please wait…" >

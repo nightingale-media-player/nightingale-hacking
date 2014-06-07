@@ -69,6 +69,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/moz/xpcom/src \
                $(DEPTH)/components/moz/windowwatcher/public \
+               $(DEPTH)/components/equalizerpresets/public \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/docshell \
