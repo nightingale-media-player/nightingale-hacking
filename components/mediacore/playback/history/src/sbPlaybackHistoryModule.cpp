@@ -25,7 +25,6 @@
 */
 
 #include <mozilla/ModuleUtils.h>
-#include <nsIServiceManager.h>
 
 #include "sbPlaybackHistoryEntry.h"
 #include "sbPlaybackHistoryService.h"

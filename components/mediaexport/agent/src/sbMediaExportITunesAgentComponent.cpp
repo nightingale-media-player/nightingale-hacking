@@ -46,7 +46,6 @@ static const mozilla::Module::ContractIDEntry kMediaExportITunesAgentContracts[]
 };
 
 static const mozilla::Module::CategoryEntry kMediaExportITunesAgentCategories[] = {
-  // { "app-startup", SB_MEDIAEXPORTAGENTSERVICE_CLASSNAME, SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID },
   { NULL }
 };
 

@@ -50,7 +50,7 @@ public:
   nsresult SetContractID(const nsAString &aContractID);
   nsresult SetName(const nsAString &aName);
 
-  //Override me, see cpp file for implementation notes.
+  // Override me, see cpp file for implementation notes.
   virtual nsresult OnInitBaseMediacoreFactory();
 
   // Override me, see cpp file for implementation notes.

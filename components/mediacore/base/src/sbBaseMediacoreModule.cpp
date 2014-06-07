@@ -28,9 +28,6 @@
 * \brief Songbird Mediacore Base Component Factory and Main Entry Point.
 */
 
-#include <nsCOMPtr.h>
-#include <nsServiceManagerUtils.h>
-#include <nsICategoryManager.h>
 #include <mozilla/ModuleUtils.h>
 
 #include "sbMediacoreCapabilities.h"

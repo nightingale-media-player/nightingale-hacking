@@ -52,8 +52,8 @@ static PRLogModuleInfo* gGStreamerPipeline = PR_NewLogModule("sbGStreamerPipelin
 #define TRACE(args) /* nothing */
 #endif /* PR_LOGGING */
 
+// XXX Wait, is this even needed? Need to check later
 // XXX CID for sbGStreamerPipeline?
-//NS_IMPL_CLASSINFO(sbGStreamerPipeline, NULL, nsIClassInfo::THREADSAFE, sbGStreamerPipeline);
 NS_IMPL_CLASSINFO(sbGStreamerPipeline, NULL, nsIClassInfo::THREADSAFE, SB_GSTREAMER_PIPELINE_CID);
 
 NS_IMPL_ISUPPORTS2_CI(sbGStreamerPipeline, sbIMediacoreEventTarget, nsIClassInfo);

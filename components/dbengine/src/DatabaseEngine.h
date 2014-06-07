@@ -68,6 +68,8 @@
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
   "@songbirdnest.com/Songbird/DatabaseEngine;1"
 #define SONGBIRD_DATABASEENGINE_CLASSNAME                 \
+  "sbDatabaseEngineInterface"
+#define SONGBIRD_DATABASEENGINE_DESCRIPTION               \
   "Songbird Database Engine Interface"
 #define SONGBIRD_DATABASEENGINE_CID                       \
 { /* 67d9edfd-9a76-4d60-9d76-59181801e193 */              \
