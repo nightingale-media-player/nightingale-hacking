@@ -55,7 +55,13 @@
         <implementation>
             <field name="_observer">null</field>
             <field name="_presetList">document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-list")</field>
-            <field name="_preset">this._presetList.getAttribute("value")</field>
+            <property name="_preset">
+                <getter>
+                    <![CDATA[
+                        return this._presetList.inputField.value
+                    ]]>
+                </getter>
+            </property>
             <property name="preset">
                 <getter>
                     <![CDATA[
@@ -116,15 +122,19 @@
                     this._presetList.label = this._mm.equalizer.currentPresetName;
                     
                     this._commandListener = function(e) {
+                        Components.utils.reportError("onCommand");
                         that.onCommand(e);
                     };
                     this._saveListener = function(e) {
+                        Components.utils.reportError("onSave");
                         that.onSave(e);
                     };
                     this._deleteListener = function(e) {
+                        Components.utils.reportError("onDelete");
                         that.onDelete(e);
                     };
                     this._textFieldListener = function(e) {
+                        Components.utils.reportError("keys!");
                         that.onFieldChange(e);
                     }
                     this._presetList.addEventListener("command", this._commandListener, false);
@@ -135,6 +145,7 @@
                     document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-reset")
                         .addEventListener("command", this._deleteListener, false);
                     this._presetList.inputField.addEventListener("input", this._textFieldListener, false);
+                    Components.utils.reportError("construction done");
                 ]]>
             </constructor>
             <destructor>
@@ -177,6 +188,7 @@
                 <parameter name="updateBackend" />
                 <body>
                     <![CDATA[
+                        Components.utils.reportError("onPresetChange");
                         this._presetList.select(preset);
                         
                         var deleteButton = document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-delete");
@@ -202,6 +214,7 @@
                         }
 
                         if(updateBackend) {
+                            Components.utils.reportError("Telling EQ to change to "+preset);
                             this._mm.equalizer.currentPresetName = preset;
                         }
                     ]]>
@@ -211,6 +224,7 @@
                 <parameter name="event" />
                 <body>
                     <![CDATA[
+                        Components.utils.reportError("Changing preset");
                         this.onPresetChange(this._preset, true);
                     ]]>
                 </body>
