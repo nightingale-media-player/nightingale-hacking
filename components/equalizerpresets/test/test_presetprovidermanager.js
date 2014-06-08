@@ -37,7 +37,47 @@ function runTest() {
 
     assertTrue(providerManager.providers.length >= 2, "Not all providers were registered");
     assertTrue(providerManager.presets.length >= 17, "Not all presets are offered by the manager");
+    
+    var presetName = providerManager.presets.enumerate().getNext()
+                        .QueryInterface(Ci.ngIEqualizerPreset).name;
 
     var collection = providerManager.QueryInterface(Ci.ngIEqualizerPresetCollection);
+    assertTrue(collection.hasPresetNamed(presetName),
+               "Preset wasn't found even though it is in the presets array");
+    assertTrue(collection.getPresetByName(presetName) instanceof Ci.ngIEqualizerPreset,
+               "Preset returned by getPresetByName isn't actually a preset");
+               
+    var mainProvider = Cc["@getnightingale.com/equalizer-presets/main-provider;1"]
+                        .getService(Ci.ngIMainEqualizerPresetProvider);
+    // test regeneration of presets list when saving a preset
+    var array = [0,0.1,0.2,-0.3,0.4,0.5,0.6,0.7,0.8,0.9];
+    mainProvider.savePreset("test", convertArrayToSupportsDouble(array));
+    assertTrue(collection.hasPresetNamed("test"),
+                    "Presets list was not regenerated after a preset was saved");
+                   
+    var otherArray = [-0.1,0,0,0,0,0,0,0,0,0];
+    mainProvider.savePreset("test", convertArrayToSupportsDouble(otherArray));
+    
+    var presetValues = ArrayConverter.JSArray(collection.getPresetByName("test").values);
+    presetValues.forEach(function(item, i) {
+        var value = item.QueryInterface(Ci.nsISupportsDouble).data;
+        assertEqual(value, otherArray[i], "Preset was not overwritten correctly");
+    });
+    
+    mainProvider.deletePreset("test");
+    assertTrue(!collection.hasPresetNamed("test"),
+                    "Delete preset was not removed from collection");
+    
     return;
+}
+
+
+function convertArrayToSupportsDouble(array) {
+    var ret = array.map(function(item) {
+        var double = Cc["@mozilla.org/supports-double;1"]
+                        .createInstance(Ci.nsISupportsDouble);
+        double.data = item;
+        return double;
+    });
+    return ArrayConverter.nsIArray(ret);
 }

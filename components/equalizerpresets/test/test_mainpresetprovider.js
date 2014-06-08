@@ -37,26 +37,43 @@ function runTest() {
 
     assertTrue(mainProvider.presets instanceof Ci.nsIArray, "Presets aren't an nsIArray"); 
     var initialLength = mainProvider.presets.length;
-    var array = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9];
-    array = array.map(function(item) {
-                var double = Cc["@mozilla.org/supports-double;1"]
-                                .createInstance(Ci.nsISupportsDouble);
-                double.data = item;
-                return double;
-            });
-    mainProvider.savePreset("test", ArrayConverter.nsIArray(array));
-    assertEqual(initialLength + 1, mainProvider.presets.length, "Preset isn't in the presets list after saving");
+    var array = [0,0.1,0.2,-0.3,0.4,0.5,0.6,0.7,0.8,0.9];
 
-    // check if overwriting a preset works...
-    mainProvider.savePreset("test", ArrayConverter.nsIArray(array));
+    mainProvider.savePreset("test", convertArrayToSupportsDouble(array));
+    assertEqual(initialLength + 1,
+                mainProvider.presets.length,
+                "Preset isn't in the presets list after saving");
 
     var collection = mainProvider.QueryInterface(Ci.ngIEqualizerPresetCollection);
+    // verify that the collection functions work as intended
     assertTrue(collection.hasPresetNamed("test"), "Preset isn't in the collection");
-    assertTrue(collection.getPresetByName("test") instanceof Ci.ngIEqualizerPreset, "Returned preset doesn't implement ngIEqualizerPreset");
+    assertTrue(collection.getPresetByName("test") instanceof Ci.ngIEqualizerPreset,
+               "Returned preset doesn't implement ngIEqualizerPreset");
+               
+    // check if overwriting a preset works...
+    var otherArray = [-0.1,0,0,0,0,0,0,0,0,0];
+    mainProvider.savePreset("test", convertArrayToSupportsDouble(otherArray));
+    
+    var presetValues = ArrayConverter.JSArray(collection.getPresetByName("test").values);
+    presetValues.forEach(function(item, i) {
+        var value = item.QueryInterface(Ci.nsISupportsDouble).data;
+        assertEqual(value, otherArray[i], "Preset was not overwritten correctly");
+    });
+    
 
     mainProvider.deletePreset("test");
     assertTrue(!collection.hasPresetNamed("test"), "Preset wasn't deleted");
 
     // test persistency accross restarts?
     return;
+}
+
+function convertArrayToSupportsDouble(array) {
+    var ret = array.map(function(item) {
+        var double = Cc["@mozilla.org/supports-double;1"]
+                        .createInstance(Ci.nsISupportsDouble);
+        double.data = item;
+        return double;
+    });
+    return ArrayConverter.nsIArray(ret);
 }
