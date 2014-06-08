@@ -41,16 +41,6 @@ CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreTypeSniffer.cpp \
            $(NULL)
 
-# From components/mediacore/base/src
-CPP_SRCS += sbMediacoreVotingChain.cpp \
-            sbMediacoreEvent.cpp \
-            sbMediacoreError.cpp \
-            sbBaseMediacoreEventTarget.cpp \
-            sbBaseMediacoreMultibandEqualizer.cpp \
-            sbBaseMediacoreVolumeControl.cpp \
-            sbMediacoreEqualizerBand.cpp \
-            $(NULL)
-            
 # From components/moz/xpcom/src
 CPP_SRCS += sbWeakReference.cpp \
             $(NULL)
@@ -88,6 +78,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 # MSVC has 'deprecated' std::copy, etc. This is remarkably unhelpful, so define
 # this to suppress the warning.
 CPP_EXTRA_FLAGS += "-D_SCL_SECURE_NO_WARNINGS"
+
+DYNAMIC_LIB_RAW_IMPORTS = $(DEPTH)/components/mediacore/base/src/sbMediacoreBase$(DEBUG:%=_d)$(DLL_SUFFIX) \
+                          $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)

@@ -52,20 +52,6 @@ CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerTranscodeDeviceConfigurator.cpp \
            $(NULL)
 
-# from /components/mediacore/base/src
-CPP_SRCS += sbBaseMediacore.cpp \
-            sbBaseMediacoreEventTarget.cpp \
-            sbBaseMediacoreFactory.cpp \
-            sbBaseMediacorePlaybackControl.cpp \
-            sbBaseMediacoreVolumeControl.cpp \
-            sbBaseMediacoreMultibandEqualizer.cpp \
-            sbMediacoreCapabilities.cpp \
-            sbMediacoreEvent.cpp \
-            sbMediacoreEqualizerBand.cpp \
-            sbMediacoreError.cpp \
-            sbVideoBox.cpp \
-            $(NULL)
-
 # from /components/mediacore/transcode/src
 CPP_SRCS += sbTranscodingConfigurator.cpp \
             $(NULL)
@@ -170,6 +156,9 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/errorconsole/src/sbErrorConsole \
  $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d)$(LIB_SUFFIX) \
  $(NULL)
+
+DYNAMIC_LIB_RAW_IMPORTS = $(DEPTH)/components/mediacore/base/src/sbMediacoreBase$(DEBUG:%=_d)$(DLL_SUFFIX) \
+                          $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only
 ifdef MEDIA_CORE_GST_SYSTEM
