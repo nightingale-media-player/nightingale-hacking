@@ -32,7 +32,7 @@ if (typeof(Ci) == "undefined")
   this.Ci = Components.interfaces;
 
 function runTest() {
-    var defaultProvider = Cc["@getnightingale.com/Nightingale/equalizer-presets/defaults;1"]
+    var defaultProvider = Cc["@getnightingale.com/equalizer-presets/defaults;1"]
                         .getService(Ci.ngIEqualizerPresetProvider);
 
     var presets = defaultProvider.presets;
