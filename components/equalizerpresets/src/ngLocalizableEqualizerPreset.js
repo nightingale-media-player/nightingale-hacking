@@ -30,6 +30,12 @@ function ngLocalizableEqualizerPreset() {
     XPCOMUtils.defineLazyServiceGetter(this, "_gMM", "@songbirdnest.com/Songbird/Mediacore/Manager;1", "sbIMediacoreManager");
 }
 
+/**
+ * \class ngLocalizableEqualizerPreset
+ * \cid {1c4b8b2c-a2c1-4652-9fb3-523face810b9}
+ * \contractid @getnightingale.com/equalizer-presets/localizable;1
+ * \implements ngILocalizableEqualizerPreset
+ */
 ngLocalizableEqualizerPreset.prototype = {
     classDescription: "Basic mutable equalizer preset with localizable name",
     classID:          Components.ID("{1c4b8b2c-a2c1-4652-9fb3-523face810b9}"),

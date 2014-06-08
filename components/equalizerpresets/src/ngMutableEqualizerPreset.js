@@ -27,6 +27,12 @@
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
+/**
+ * \class ngMutableEqualizerPreset
+ * \cid {f87e3ba3-c3fe-437a-8b2f-3aeb48536a9b}
+ * \contractid @getnightingale.com/equalizer-presets/mutable;1
+ * \implements ngIMutableEqualizerPreset
+ */
 function ngMutableEqualizerPreset() {
     XPCOMUtils.defineLazyServiceGetter(this, "_gMM", "@songbirdnest.com/Songbird/Mediacore/Manager;1", "sbIMediacoreManager");
 }

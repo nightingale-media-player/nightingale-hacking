@@ -33,6 +33,12 @@ Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const LOG = DebugUtils.generateLogFunction("ngDefaultPresetProvider", 2);
 
+/**
+ * \class ngDefaultPresetProvider
+ * \cid {1f3b39da-c169-49df-af70-eaec9c10640a}
+ * \contractid @getnightingale.com/equalizer-presets/defaults;1
+ " \implements ngIEqualizerPresetProvider
+ */
 function ngDefaultPresetProvider() {
     LOG("Constructing");
 

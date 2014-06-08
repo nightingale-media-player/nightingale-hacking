@@ -71,7 +71,6 @@ interface ngIEqualizerPresetCollection : nsISupports
  * \note Emits "equalizer-preset-saved" and "equalizer-preset-deleted" observer 
  *       notifications.
  * \note Is a service.
- * \note Also implements ngIEqualizerPresetCollection.
  */
 [scriptable, uuid(24e07f0f-8715-4768-a2fc-6ef171f4aabd)]
 interface ngIMainEqualizerPresetProvider : ngIEqualizerPresetProvider
@@ -109,7 +108,6 @@ interface ngIMainEqualizerPresetProvider : ngIEqualizerPresetProvider
  * \note Is a service.
  * \note Emits "equalizer-presets-changed" when the presets list changes.
  *       Subject is the new list and no data is supplied.
- * \note Also implements ngIEqualizerPresetCollection.
  */
 [scriptable, uuid(28fd6696-89ac-4895-8a62-27039473d98d)]
 interface ngIEqualizerPresetProviderManager : nsISupports
