@@ -38,6 +38,13 @@ Cu.import("resource://app/jsmodules/DebugUtils.jsm");
  */
 const LOG = DebugUtils.generateLogFunction("ngEqualizerPresetProviderManager", 2);
 
+/**
+ * \class ngEqualizerPresetProviderManager
+ * \cid {5e503ed9-1c8c-4135-8d25-61b0835475b4}
+ * \contractid @getnightingale.com/equalizer-presets/manager;1
+ * \implements ngIEqualizerPresetProviderManager
+ * \implements ngIEqualizerPresetCollection
+ */
 function ngEqualizerPresetProviderManager() {
     LOG("Initializing equalizer preset provider manager");
     this._providers = [];
@@ -73,7 +80,6 @@ ngEqualizerPresetProviderManager.prototype = {
             LOG("Adding the default presets");
             var dProvider = Cc["@getnightingale.com/equalizer-presets/defaults;1"]
                                 .getService(Ci.ngIEqualizerPresetProvider);
-            LOG(this._providers.length);
             if(!this._providers.length)
                 this.registerPresetProvider(dProvider);
             else
@@ -86,9 +92,8 @@ ngEqualizerPresetProviderManager.prototype = {
             this._observerService.addObserver(this, "equalizer-preset-saved", false);
             this._observerService.addObserver(this, "equalizer-preset-deleted", false);
         }
-        else if((aTopic == "equalizer-preset-saved" &&
-                  !this.hasPresetNamed(aData)) ||
-                 aTopic == "equalizer-preset-deleted") {
+        else if(aTopic == "equalizer-preset-saved"
+                 || aTopic == "equalizer-preset-deleted") {
             this._regeneratePresetsList();
         }
     },
@@ -167,7 +172,6 @@ ngEqualizerPresetProviderManager.prototype = {
         var providerPresets = aProvider.presets.enumerate(),
             preset;
         while(providerPresets.hasMoreElements()) {
-            try{
             preset = providerPresets.getNext().QueryInterface(Ci.ngIEqualizerPreset);
             // Add a preset if there is no user set one.
             if(aProvider instanceof Ci.ngIMainEqualizerPresetProvider ||
@@ -175,7 +179,6 @@ ngEqualizerPresetProviderManager.prototype = {
                 !this._mainProvider.QueryInterface(Ci.ngIEqualizerPresetCollection)
                     .hasPresetNamed(preset.name)))
                 this._presets.push(preset);
-            }catch(e){LOG(e)}
         }
         LOG("Presets added");
     }

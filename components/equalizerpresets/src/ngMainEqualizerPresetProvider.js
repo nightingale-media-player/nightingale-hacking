@@ -37,6 +37,13 @@ const LOG = DebugUtils.generateLogFunction("ngMainEqualizerPresetProvider", 2);
 
 const PRESETS_STORAGE_FILE_PATH = "equalizer_presets.xml";
 
+/**
+ * \class ngMainEqualizerPresetProvider
+ * \cid {5e503ed9-1c8c-4135-8d25-61b0835475b4}
+ * \contractid @getnightingale.com/equalizer-presets/main-provider;1
+ * \implements ngIMainEqualizerPresetProvider
+ * \implements ngIEqualizerPresetCollection
+ */
 function ngMainEqualizerPresetProvider() {
     if(this._createStorageIfNotExisting())
         this._presets = this._getPresets();
@@ -188,7 +195,7 @@ ngMainEqualizerPresetProvider.prototype = {
     _presetToXML: function(aPresetName, aBands) {
 		var data = "<preset name='" + DOMUtils.encodeTextForXML(aPresetName) + "'>\n";
 		aBands.forEach(function(band) {
-			data +="<band>" + DOMUtil.sencodeTextForXML(band) + "</band>\n";
+			data +="<band>" + DOMUtils.encodeTextForXML(band) + "</band>\n";
 		});
 		data += "</preset>\n";
 		return data;
@@ -199,7 +206,8 @@ ngMainEqualizerPresetProvider.prototype = {
 
         aBands.forEach(function(band) {
             var bandNode = this._xml.createElement("band"),
-                bandValue = this._xml.createTextNode(band.data);
+                bandValue = this._xml.createTextNode(band
+                                .QueryInterface(Ci.nsISupportsDouble).data);
             bandNode.appendChild(bandValue);
             presetNode.appendChild(bandNode);
         }, this)
@@ -210,7 +218,7 @@ ngMainEqualizerPresetProvider.prototype = {
 	},
     _getXMLPresetByName: function(aName, aDocument) {
         LOG("Getting the XML preset node for the preset named " + aName);
-        var presetArr = DOMUtils.getElementsByAttribute(this._xml, "name", aName);
+        var presetArr = DOMUtils.getElementsByAttribute(aDocument, "name", aName);
         if(presetArr.length > 0) {
             return presetArr[0];
         }
