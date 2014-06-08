@@ -43,7 +43,7 @@ function ngEqualizerPresetProviderManager() {
     this._providers = [];
     this._presets = [];
     XPCOMUtils.defineLazyServiceGetter(this, "_mainProvider",
-             "@getnightingale.com/Nightingale/equalizer-presets/main-provider;1",
+             "@getnightingale.com/equalizer-presets/main-provider;1",
              "ngIMainEqualizerPresetProvider");
     XPCOMUtils.defineLazyServiceGetter(this, "_observerService",
                     "@mozilla.org/observer-service;1", "nsIObserverService");
@@ -52,7 +52,7 @@ function ngEqualizerPresetProviderManager() {
 ngEqualizerPresetProviderManager.prototype = {
     classDescription: "Manages equalizer preset providers",
     classID:          Components.ID("{fead9fed-346b-49f1-94ca-21edd9e5fbf8}"),
-    contractID:       "@getnightingale.com/Nightingale/equalizer-presets/manager;1",
+    contractID:       "@getnightingale.com/equalizer-presets/manager;1",
     QueryInterface:   XPCOMUtils.generateQI([Ci.ngIEqualizerPresetProviderManager,
                                              Ci.ngIEqualizerPresetCollection,
                                              Ci.nsIObserver]),
@@ -71,7 +71,7 @@ ngEqualizerPresetProviderManager.prototype = {
             this._observerService.removeObserver(this, "profile-after-change");
 
             LOG("Adding the default presets");
-            var dProvider = Cc["@getnightingale.com/Nightingale/equalizer-presets/defaults;1"]
+            var dProvider = Cc["@getnightingale.com/equalizer-presets/defaults;1"]
                                 .getService(Ci.ngIEqualizerPresetProvider);
             LOG(this._providers.length);
             if(!this._providers.length)

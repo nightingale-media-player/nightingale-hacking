@@ -50,7 +50,7 @@ function ngMainEqualizerPresetProvider() {
 ngMainEqualizerPresetProvider.prototype = {
     classDescription: "Main provider responsible for saving user set presets",
     classID:          Components.ID("{5e503ed9-1c8c-4135-8d25-61b0835475b4}"),
-    contractID:       "@getnightingale.com/Nightingale/equalizer-presets/main-provider;1",
+    contractID:       "@getnightingale.com/equalizer-presets/main-provider;1",
     QueryInterface:   XPCOMUtils.generateQI([Ci.ngIMainEqualizerPresetProvider,
                                              Ci.ngIEqualizerPresetCollection]),
 
@@ -122,7 +122,7 @@ ngMainEqualizerPresetProvider.prototype = {
         return index;
     },
     _createPreset: function(aName, aValues) {
-        var mutablePreset = Cc["@getnightingale.com/Nightingale/equalizer-presets/mutable;1"]
+        var mutablePreset = Cc["@getnightingale.com/equalizer-presets/mutable;1"]
                             .createInstance(Ci.ngIMutableEqualizerPreset);
         mutablePreset.setName(aName);
         mutablePreset.setValues(aValues);
@@ -227,7 +227,7 @@ ngMainEqualizerPresetProvider.prototype = {
         return presets;
     },
     _getPresetFromXML: function(aPreset) {
-        var mutablePreset = Cc["@getnightingale.com/Nightingale/equalizer-presets/mutable;1"]
+        var mutablePreset = Cc["@getnightingale.com/equalizer-presets/mutable;1"]
                             .createInstance(Ci.ngIMutableEqualizerPreset);
 
         mutablePreset.setName(aPreset.getAttribute("name"));
