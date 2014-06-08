@@ -157,8 +157,20 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d)$(LIB_SUFFIX) \
  $(NULL)
 
-DYNAMIC_LIB_RAW_IMPORTS = $(DEPTH)/components/mediacore/base/src/sbMediacoreBase$(DEBUG:%=_d)$(DLL_SUFFIX) \
-                          $(NULL)
+# from /components/mediacore/base/src
+DYNAMIC_LIB_EXTRA_OBJS +=  \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacore$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreEventTarget$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreFactory$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacorePlaybackControl$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreVolumeControl$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreMultibandEqualizer$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreCapabilities$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEvent$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEqualizerBand$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreError$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbVideoBox$(OBJ_SUFFIX) \
+  $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only
 ifdef MEDIA_CORE_GST_SYSTEM

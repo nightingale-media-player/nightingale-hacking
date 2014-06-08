@@ -79,8 +79,17 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 # this to suppress the warning.
 CPP_EXTRA_FLAGS += "-D_SCL_SECURE_NO_WARNINGS"
 
-DYNAMIC_LIB_RAW_IMPORTS = $(DEPTH)/components/mediacore/base/src/sbMediacoreBase$(DEBUG:%=_d)$(DLL_SUFFIX) \
-                          $(NULL)
+# From components/mediacore/base/src
+DYNAMIC_LIB_EXTRA_OBJS += \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreVotingChain$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEvent$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreError$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreEventTarget$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreMultibandEqualizer$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreVolumeControl$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEqualizerBand$(OBJ_SUFFIX) \
+  $(NULL)
+
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
