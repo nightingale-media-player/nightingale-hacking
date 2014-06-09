@@ -52,10 +52,6 @@ CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerTranscodeDeviceConfigurator.cpp \
            $(NULL)
 
-# from /components/mediacore/transcode/src
-CPP_SRCS += sbTranscodingConfigurator.cpp \
-            $(NULL)
-
 ifeq (windows,$(SB_PLATFORM))
    CPP_SRCS += sbGStreamerPlatformWin32.cpp
 endif
@@ -158,6 +154,7 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  $(NULL)
 
 # from /components/mediacore/base/src
+# from /components/mediacore/transcode/src
 DYNAMIC_LIB_EXTRA_OBJS +=  \
   $(DEPTH)/components/mediacore/base/src/sbBaseMediacore$(OBJ_SUFFIX) \
   $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreEventTarget$(OBJ_SUFFIX) \
@@ -170,6 +167,7 @@ DYNAMIC_LIB_EXTRA_OBJS +=  \
   $(DEPTH)/components/mediacore/base/src/sbMediacoreEqualizerBand$(OBJ_SUFFIX) \
   $(DEPTH)/components/mediacore/base/src/sbMediacoreError$(OBJ_SUFFIX) \
   $(DEPTH)/components/mediacore/base/src/sbVideoBox$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/transcode/src/sbTranscodingConfigurator$(OBJ_SUFFIX) \
   $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only

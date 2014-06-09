@@ -35,17 +35,6 @@ CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            sbMockDevice.cpp \
            $(NULL)
 
-# From components/devices/base/src/
-CPP_SRCS += sbBaseDeviceEventTarget.cpp \
-            sbDeviceEvent.cpp \
-            sbDeviceLibrary.cpp \
-            sbDeviceLibraryHelpers.cpp \
-            sbDeviceLibraryMediaSyncSettings.cpp \
-            sbDeviceLibrarySyncSettings.cpp \
-            sbDeviceContent.cpp \
-            sbDeviceProperties.cpp \
-            $(NULL)
-
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/device/public \
@@ -73,6 +62,19 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(NULL)
 
 DYNAMIC_LIB = sbDeviceDeviceTester
+
+# From components/devices/base/src/
+DYNAMIC_LIB_EXTRA_OBJS +=  \
+    $(DEPTH)/components/devices/base/src/sbBaseDeviceEventTarget$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceEvent$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibrary$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibraryHelpers$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibraryMediaSyncSettings$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibrarySyncSettings$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceContent$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceProperties$(OBJ_SUFFIX) \
+    $(NULL)
+
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
