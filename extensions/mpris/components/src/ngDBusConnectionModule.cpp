@@ -42,7 +42,7 @@ static nsModuleComponentInfo components[] =
 	{
 		"DBus Protocol handler", 
 		{ 0x939381dc, 0x1747, 0x4d3e, { 0xb2, 0xf7, 0x50, 0x53, 0xe5, 0xfb, 0x7d, 0xa4 } },
-		"@getnightingale.com/Nightingale/DBusConnection;1",
+		"@getnightingale.com/dbus-connection;1",
 		ngDBusConnectionConstructor,
 	}
 };

@@ -46,7 +46,7 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 const CLASS_ID = Components.ID("{03638fa0-5327-11de-8a39-0800200c9a66}");
 const CLASS_NAME = "ngMprisService";
-const CONTRACT_ID = "@getnightingale.com/Mpris;1";
+const CONTRACT_ID = "@getnightingale.com/mpris;1";
 
 var ComponentContainer = {};
 
@@ -107,7 +107,7 @@ ngMprisService.prototype.initialize = function() {
 
 ngMprisService.prototype.initDBus = function() {
 
-    this._dbus = Cc['@getnightingale.com/Nightingale/DBusConnection;1'].createInstance(Ci.ngIDBusConnection);
+    this._dbus = Cc['@getnightingale.com/dbus-connection;1'].createInstance(Ci.ngIDBusConnection);
     this._dbus.setMethodHandler(this);
     this._dbus.init("org.mpris.MediaPlayer2.nightingale");
 
