@@ -11,10 +11,12 @@
       An extension to enable Apple media key support (for Apple keyboards).
     </em:description>
     <em:creator>POTI</em:creator>
+    <em:contributor>bensch</em:contributor>
+    <em:contributor>johnmurrayvi</em:contributor>
     <em:homepageURL>http://www.getsongbird.com/</em:homepageURL>
     <em:version>@EXTENSION_VER@</em:version>
 
-    <!-- Songbird --> 
+    <!-- Songbird -->
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
@@ -24,7 +26,7 @@
     </em:targetApplication>
 
 
-    <!-- Nightingale --> 
+    <!-- Nightingale -->
     <em:targetApplication>
       <Description>
         <em:id>nightingale@getnightingale.com</em:id>
@@ -33,7 +35,7 @@
       </Description>
     </em:targetApplication>
 
-    <!-- extensions are type 2 --> 
+    <!-- extensions are type 2 -->
     <em:type>2</em:type>
     <!-- the architecture (operating system and CPU type) of the extension.
          it will be filled in by the build system -->

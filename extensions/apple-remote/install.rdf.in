@@ -5,8 +5,27 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:name>Mac Remote Control Support</em:name>
+    <em:description>
+      An extension that enables the use of the Apple remote control
+    </em:description>
+    <em:creator>POTI</em:creator>
+    <em:contributor>zjays</em:contributor>
+    <em:contributor>johnmurrayvi</em:contributor>
+    <em:homepageURL>http://www.getsongbird.com/</em:homepageURL>
+    <em:version>@EXTENSION_VER@</em:version>
 
-    <!-- Nightingale --> 
+    <!-- Songbird -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <!-- Nightingale -->
     <em:targetApplication>
       <Description>
         <em:id>nightingale@getnightingale.com</em:id>
@@ -15,16 +34,7 @@
       </Description>
     </em:targetApplication>
 
-    <em:id>@EXTENSION_UUID@</em:id>
-    <em:name>Mac Remote Control Support</em:name>
-    <em:description>
-	  An extension that enables the use of the Apple remote control
-	</em:description>
-    <em:creator>POTI</em:creator>
-    <em:homepageURL>http://www.getsongbird.com/</em:homepageURL>
-    <em:version>@EXTENSION_VER@</em:version>
-
-    <!-- extensions are type 2 --> 
+    <!-- extensions are type 2 -->
     <em:type>2</em:type>
     <!-- the architecture (operating system and CPU type) of the extension.
          it will be filled in by the build system -->
