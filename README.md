@@ -10,6 +10,8 @@ fact.
 This git tree is the Songbird trunk, rebranded for Nightingale. It's a 
 reflection of what our Xul 6+ releases will be like.
 
+[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=230233)](https://www.bountysource.com/trackers/230233-nightingale-media-player-nightingale-hacking?utm_source=230233&utm_medium=shield&utm_campaign=TRACKER_BADGE)
+
 Notes
 =====
 
