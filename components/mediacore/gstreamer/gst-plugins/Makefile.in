@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (macosx, $(SB_PLATFORM))
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
 SUBDIRS = mozilla \
           $(NULL)
 endif
