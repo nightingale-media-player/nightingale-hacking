@@ -49,8 +49,9 @@ static PRLogModuleInfo* gBaseScreenSaverSuppressor = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_ISUPPORTS1(sbBaseScreenSaverSuppressor, 
-                   sbIScreenSaverSuppressor)
+NS_IMPL_ISUPPORTS2(sbBaseScreenSaverSuppressor,
+                   sbIScreenSaverSuppressor,
+                   nsIObserver)
 
 sbBaseScreenSaverSuppressor::sbBaseScreenSaverSuppressor()
 : mSuppress(0)
