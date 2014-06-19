@@ -127,10 +127,10 @@
                         that.onCommand(e);
                     };
                     this._saveListener = function(e) {
-                        that.onSave(e);
+                        that.save(e);
                     };
                     this._deleteListener = function(e) {
-                        that.onDelete(e);
+                        that.delete(e);
                     };
                     this._textFieldListener = function(e) {
                         that.onFieldChange(e);
@@ -229,7 +229,7 @@
                     ]]>
                 </body>
             </method>
-            <method name="onSave">
+            <method name="save">
                 <parameter name="event" />
                 <body>
                     <![CDATA[
@@ -250,7 +250,7 @@
                     ]]>
                 </body>
             </method>
-            <method name="onDelete">
+            <method name="delete">
                 <parameter name="event" />
                 <body>
                     <![CDATA[
