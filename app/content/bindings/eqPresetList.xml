@@ -197,16 +197,18 @@
                         var resetButton  = document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-reset");
                         var mpCollection = this._mp.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection);
                         if(mpCollection.hasPresetNamed(preset)) {
-                            deleteButton.setAttribute("hidden", true);
-                            resetButton.removeAttribute("hidden");
-                            resetButton.removeAttribute("disabled");
-
-                            /*TODO
-                                if(preset has no default)
-                                    deleteButton.label = "&equalizer.deletepreset;";
-                                else
-                                    deleteButton.label = "&equalizer.resetpreset;";
-                             */
+                            if(this._presetHasDefault(preset)) {
+                                deleteButton.setAttribute("hidden", true);
+                                deleteButton.setAttribute("disabled", true);
+                                resetButton.removeAttribute("hidden");
+                                resetButton.removeAttribute("disabled");
+                            }
+                            else {
+                                deleteButton.removeAttribute("hidden");
+                                deleteButton.removeAttribute("disabled");
+                                resetButton.setAttribute("hidden", true);
+                                resetButton.setAttribute("disabled", true);
+                            }
                         }
                         else {
                             deleteButton.removeAttribute("hidden");
@@ -221,6 +223,35 @@
                         if(updateBackend) {
                             this._mm.equalizer.currentPresetName = preset;
                         }
+                    ]]>
+                </body>
+            </method>
+            <method name="_getSetPresets">
+                <body>
+                    <![CDATA[
+                        var providers = this._pm.providers.enumerate(),
+                            ret       = [],
+                            Ci        = Components.interfaces;
+                        while(providers.hasMoreElements()) {
+                            var presets = providers.getNext().QueryInterface(Ci.ngIEqualizerPresetProvider)
+                                                        .presets.enumerate();
+                            while(presets.hasMoreElements()) {
+                                var preset = presets.getNext().QueryInterface(Ci.ngIEqualizerPreset)
+                                                        .name;
+                                if(ret.indexOf(preset) == -1)
+                                    ret.push(preset);
+                            }
+                        }
+                        return ret;
+                    ]]>
+                </body>
+            </method>
+            <method name="_presetHasDefault">
+                <parameter name="preset" />
+                <body>
+                    <![CDATA[
+                        var presets = this._getSetPresets();
+                        return presets.indexOf(preset) > -1;
                     ]]>
                 </body>
             </method>
