@@ -43,10 +43,10 @@ function runTest() {
                        .getService(Ci.nsIStringBundleService)
                        .createBundle("chrome://songbird/locale/songbird.properties");
 
-    localizablePreset.property = "equalizer.preset.flat"
+    localizablePreset.property = "equalizer.preset.rock"
     localizablePreset.stringBundle = stringBundle;
     assertEqual(localizablePreset.name,
-                stringBundle.GetStringFromName("equalizer.preset.flat"),
+                stringBundle.GetStringFromName("equalizer.preset.rock"),
                 "Name not set correctly");
 
     localizablePreset.setValues(ArrayConverter.nsIArray([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]));
