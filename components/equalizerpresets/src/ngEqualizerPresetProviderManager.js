@@ -168,7 +168,7 @@ ngEqualizerPresetProviderManager.prototype = {
         }, this);
         this._addPresetsFromProvider(this._mainProvider);
         this._presets.sort(function(a, b) {
-            return a.localeCompare(b);
+            return a.name.localeCompare(b.name);
         });
         
         this._observerService.notifyObservers(this.presets, PRESETS_CHANGED_TOPIC, null);

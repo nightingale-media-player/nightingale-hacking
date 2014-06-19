@@ -53,16 +53,18 @@
             </xul:hbox>
         </content>
         <implementation>
-            <field name="_observer">null</field>
             <field name="_presetList">document.getAnonymousElementByAttribute(this, "anonid", "eq-preset-list")</field>
-            <field name="_pName">null</field>
-            <field name="_mode">false</field>
             <property name="_preset">
                 <getter>
                     <![CDATA[
-                        return this._presetList.inputField.value
+                        return this._presetList.inputField.value;
                     ]]>
                 </getter>
+                <setter>
+                    <![CDATA[
+                        this._presetList.inputField.value = val;
+                    ]]>
+                </setter>
             </property>
             <property name="preset">
                 <getter>
@@ -94,7 +96,7 @@
                             }
                             else { // can't find the observer topic of prefBranch2
                                 that.onPresetChange(subject.getComplexValue(data,
-                                       Components.interfaces.nsISupportsString),
+                                          Components.interfaces.nsISupportsString),
                                        false);
                             }
                         },
@@ -164,14 +166,16 @@
                     <![CDATA[
                         var presets = this._pm.presets.enumerate();
 
-                        while(presets.hasMoreElements) {
+                        while(presets.hasMoreElements()) {
                             var name = presets.getNext().QueryInterface(Components.interfaces.ngIEqualizerPreset)
                                             .name;
                             this._presetList.appendItem(name);
                         }
+                        
                         if(this._mode) {
                             this._mode = false;
-                            this.onPresetChange(this._pName, false);
+                            // we need to update the backend, in case the user saves a new preset
+                            this.onPresetChange(this._pName, true);
                         }
                     ]]>
                 </body>
@@ -211,7 +215,8 @@
                             resetButton.setAttribute("disabled", true);
                         }
 
-                        this._presetList.select(preset);
+                        this._preset = preset;
+                        //this._presetList.select(preset);
 
                         if(updateBackend) {
                             this._mm.equalizer.currentPresetName = preset;
