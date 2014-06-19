@@ -38,6 +38,8 @@ Cu.import("resource://app/jsmodules/DebugUtils.jsm");
  */
 const LOG = DebugUtils.generateLogFunction("ngEqualizerPresetProviderManager", 2);
 
+const PRESETS_CHANGED_TOPIC = "equalizer-presets-changed";
+
 /**
  * \class ngEqualizerPresetProviderManager
  * \cid {5e503ed9-1c8c-4135-8d25-61b0835475b4}
@@ -142,7 +144,7 @@ ngEqualizerPresetProviderManager.prototype = {
 
             this._addPresetsFromProvider(aNewProvider);
             LOG("Nearly done adding the provider, just need to notify observers!");
-            this._observerService.notifyObservers(this.presets, "equalizer-presets-changed", null);
+            this._observerService.notifyObservers(this.presets, PRESETS_CHANGED_TOPIC, null);
         }
         else {
             LOG("Provider already registered");
@@ -165,7 +167,11 @@ ngEqualizerPresetProviderManager.prototype = {
             this._addPresetsFromProvider(provider);
         }, this);
         this._addPresetsFromProvider(this._mainProvider);
-        this._observerService.notifyObservers(this.presets, "equalizer-presets-changed", null);
+        this._presets.sort(function(a, b) {
+            return a.localeCompare(b);
+        });
+        
+        this._observerService.notifyObservers(this.presets, PRESETS_CHANGED_TOPIC, null);
     },
     _addPresetsFromProvider: function(aProvider) {
         LOG("Adding presets from provider");

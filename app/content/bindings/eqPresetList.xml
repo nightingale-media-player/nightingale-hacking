@@ -162,19 +162,17 @@
             <method name="loadPresets">
                 <body>
                     <![CDATA[
-                        var presets = this.ArrayConverter.JSArray(this._pm.presets),
-                            lastPresetIndex = presets.length - 1;
+                        var presets = this._pm.presets.enumerate();
 
-                        presets.forEach(function(preset, i, array) {
-                            var name = preset.QueryInterface(Components.interfaces.ngIEqualizerPreset)
+                        while(presets.hasMoreElements) {
+                            var name = presets.getNext().QueryInterface(Components.interfaces.ngIEqualizerPreset)
                                             .name;
                             this._presetList.appendItem(name);
-
-                            if(i == lastPresetIndex && this._mode) {
-                                this._mode = false;
-                                this.onPresetChange(that._pName, true);
-                            }
-                        }, this);
+                        }
+                        if(this._mode) {
+                            this._mode = false;
+                            this.onPresetChange(this._pName, false);
+                        }
                     ]]>
                 </body>
             </method>
@@ -200,7 +198,7 @@
                             resetButton.removeAttribute("disabled");
 
                             /*TODO
-                                if(preset is has no default)
+                                if(preset has no default)
                                     deleteButton.label = "&equalizer.deletepreset;";
                                 else
                                     deleteButton.label = "&equalizer.resetpreset;";
