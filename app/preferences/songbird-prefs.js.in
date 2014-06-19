@@ -519,5 +519,4 @@ pref("feedback.disabled", true);
 pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,mp4,m4v,webm,wmv,ogx");
 
 // By defualt the eq is on the "Flat" preset.
-//TODO l10n issues?
-pref("songbird.eq.currentPreset", "Flat");
+pref("songbird.eq.currentPreset", "chrome://songbird/locale/songbird.properties");

@@ -218,7 +218,6 @@
                         }
 
                         this._preset = preset;
-                        //this._presetList.select(preset);
 
                         if(updateBackend) {
                             this._mm.equalizer.currentPresetName = preset;

@@ -137,7 +137,7 @@ ngEqualizerPresetProviderManager.prototype = {
     },
     registerPresetProvider: function(aNewProvider) {
         if(this._providers.indexOf(aNewProvider) == -1 ) {
-            //TODO check that we're not getting the main provider.
+            /** \todo check that we're not getting the main provider. */
 
             LOG("Adding a new equalizer provider");            
             this._providers.push(aNewProvider);

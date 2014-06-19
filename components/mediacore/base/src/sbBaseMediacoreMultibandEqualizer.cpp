@@ -34,6 +34,7 @@
 #include <nsISimpleEnumerator.h>
 #include <nsIPrefBranch.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIPrefLocalizedString.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsAutoPtr.h>
@@ -189,10 +190,10 @@ sbBaseMediacoreMultibandEqualizer::InitBaseMediacoreMultibandEqualizer()
 
   mPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
-  nsCOMPtr<nsISupportsString> data;
-  rv = mPrefs->GetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsISupportsString), getter_AddRefs(data));
+  nsCOMPtr<nsIPrefLocalizedString> data;
+  rv = mPrefs->GetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsIPrefLocalizedString), getter_AddRefs(data));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = data->GetData(mCurrentPresetName);
+  rv = data->GetData(getter_Copies(mCurrentPresetName));
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPresets = do_ProxiedGetService("@getnightingale.com/equalizer-presets/manager;1", &rv);
@@ -420,11 +421,11 @@ sbBaseMediacoreMultibandEqualizer::SetCurrentPresetName(const nsAString& aCurren
     if(mCurrentPresetName != aCurrentPresetName)
     {
         LOG(("Updating currentPreset pref"));
-        nsCOMPtr<nsISupportsString> data (do_CreateInstance("@mozilla.org/supports-string;1", &rv));
+        nsCOMPtr<nsIPrefLocalizedString> data (do_CreateInstance("@mozilla.org/pref-localizedstring;1", &rv));
         NS_ENSURE_SUCCESS(rv, rv);
-        rv = data->SetData(mCurrentPresetName);
+        rv = data->SetDataWithLength(aCurrentPresetName.Length(), aCurrentPresetName.BeginReading());
         NS_ENSURE_SUCCESS(rv, rv);
-        rv = mPrefs->SetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsISupportsString), data);
+        rv = mPrefs->SetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsIPrefLocalizedString), data);
         NS_ENSURE_SUCCESS(rv, rv);
     }
 
