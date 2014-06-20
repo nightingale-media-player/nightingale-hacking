@@ -1,0 +1,199 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+searchbar {
+  -moz-binding: url("chrome://browser/content/search/search.xml#searchbar");
+}
+
+tabbrowser {
+  -moz-binding: url("chrome://browser/content/tabbrowser.xml#tabbrowser");
+}
+
+toolbar[printpreview="true"] {
+  -moz-binding: url("chrome://global/content/printPreviewBindings.xml#printpreviewtoolbar");
+}
+
+toolbarpaletteitem[place="palette"] > toolbaritem > hbox[type="places"] {
+  display: none;
+}
+
+#main-window:-moz-lwtheme {
+  background-repeat: no-repeat;
+  background-position: top right;
+}
+
+#browser-bottombox[lwthemefooter="true"] {
+  background-repeat: no-repeat;
+  background-position: bottom left;
+}
+
+/* ::::: location bar ::::: */
+#urlbar {
+  -moz-binding: url(chrome://browser/content/urlbarBindings.xml#urlbar);
+}
+
+#wrapper-urlbar-container > #urlbar-container > #urlbar {
+  -moz-user-input: disabled;
+  cursor: -moz-grab;
+}
+
+#PopupAutoComplete {
+  -moz-binding: url("chrome://browser/content/urlbarBindings.xml#browser-autocomplete-result-popup");
+}
+
+#PopupAutoCompleteRichResult {
+  -moz-binding: url("chrome://browser/content/urlbarBindings.xml#urlbar-rich-result-popup");
+}
+
+#urlbar-throbber:not([busy="true"]),
+#urlbar-throbber[busy="true"] + #page-proxy-favicon {
+  display: none;
+}
+
+#feed-button > .button-box > .box-inherit > .button-text,
+#feed-button > .button-box > .button-menu-dropmarker {
+  display: none;
+}
+
+#feed-menu > .feed-menuitem:-moz-locale-dir(rtl) {
+  direction: rtl;
+}
+
+#urlbar[pageproxystate="invalid"] > #urlbar-icons > .urlbar-icon:not(#go-button),
+#urlbar[pageproxystate="valid"] > #urlbar-icons > #go-button ,
+#urlbar[isempty="true"] > #urlbar-icons > #go-button {
+  visibility: collapse;
+}
+
+#identity-box-inner {
+  max-width: 22em;
+  min-width: 1px;
+}
+
+#wrapper-search-container > #search-container > #searchbar > .searchbar-textbox > .autocomplete-textbox-container > .textbox-input-box > html|*.textbox-input {
+  visibility: hidden;
+}
+
+/* ::::: Unified Back-/Forward Button ::::: */
+#back-button > .toolbarbutton-menu-dropmarker,
+#forward-button > .toolbarbutton-menu-dropmarker,
+#back-forward-dropmarker > .toolbarbutton-icon,
+#back-forward-dropmarker > .toolbarbutton-text {
+  display: none;
+}
+.unified-nav-current {
+  font-weight: bold;
+}
+
+%ifdef MOZ_WIDGET_GTK2
+/* Bookmarks override the "images-in-menus" metric in xul.css */
+.bookmark-item > .menu-iconic-left,
+.searchbar-engine-menuitem > .menu-iconic-left {
+  visibility: inherit;
+}
+%endif
+
+#editBMPanel_tagsSelector {
+  /* override default listbox width from xul.css */
+  width: auto;
+}
+
+menuitem.spell-suggestion {
+  font-weight: bold;
+}
+
+#sidebar-box toolbarbutton.tabs-closebutton {
+  -moz-user-focus: normal;
+}
+
+/* apply Fitts' law to the notification bar's close button */
+window[sizemode="maximized"] #content .notification-inner {
+  border-right: 0px !important;
+}
+
+/* Hide extension toolbars that neglected to set the proper class */
+window[chromehidden~="location"][chromehidden~="toolbar"] toolbar:not(.chromeclass-menubar),
+window[chromehidden~="toolbar"] toolbar:not(.toolbar-primary):not(.chromeclass-menubar) {
+  display: none;
+}
+
+#navigator-toolbox ,
+#status-bar ,
+#mainPopupSet {
+  min-width: 1px;
+}
+
+/* Identity UI */
+#identity-popup-content-box.unknownIdentity > #identity-popup-connectedToLabel ,
+#identity-popup-content-box.unknownIdentity > #identity-popup-runByLabel ,
+#identity-popup-content-box.unknownIdentity > #identity-popup-content-host ,
+#identity-popup-content-box.unknownIdentity > #identity-popup-content-owner ,
+#identity-popup-content-box.verifiedIdentity > #identity-popup-connectedToLabel2 ,
+#identity-popup-content-box.verifiedDomain > #identity-popup-connectedToLabel2 {
+  display: none;
+}
+
+/*  Full Screen UI */
+#fullscr-toggler {
+  display: none;
+  min-height: 5px;
+  height: 5px;
+}
+
+#navigator-toolbox[inFullscreen="true"] > #fullscr-toggler,
+#nav-bar[mode="text"] > #window-controls > toolbarbutton > .toolbarbutton-icon {
+ display: -moz-box;
+}
+
+#nav-bar[mode="text"] > #window-controls > toolbarbutton > .toolbarbutton-text {
+ display: none;
+}
+
+/* ::::: Keyboard UI Panel ::::: */
+.KUI-panel-closebutton {
+  -moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image");
+}
+
+.ctrlTab-preview > html|canvas,
+.allTabs-preview > html|canvas {
+  min-width: inherit;
+  max-width: inherit;
+  min-height: inherit;
+  max-height: inherit;
+}
+
+.ctrlTab-favicon-container,
+.allTabs-favicon-container {
+  -moz-box-align: start;
+%ifdef XP_MACOSX
+  -moz-box-pack: end;
+%else
+  -moz-box-pack: start;
+%endif
+}
+
+.ctrlTab-favicon,
+.allTabs-favicon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ::::: Ctrl-Tab Panel ::::: */
+.ctrlTab-preview {
+  -moz-binding: url("chrome://browser/content/browser-tabPreviews.xml#ctrlTab-preview");
+}
+
+/* ::::: All Tabs Panel ::::: */
+.allTabs-preview {
+  -moz-binding: url("chrome://browser/content/browser-tabPreviews.xml#allTabs-preview");
+  vertical-align: top;
+}
+
+#allTabs-tab-close-button {
+  -moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image");
+  margin: 0;
+}
+
+#allTabs-container {
+  display: block;
+}
