@@ -47,11 +47,7 @@ XPIDL_SRCS =  \
 	$(NULL)
 
 XPIDL_MODULE = browsercompsbase.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-SONGBIRD_COMPONENTS = \
-	$(XPIDL_MODULE) \
-	$(NULL)
 
 SONGBIRD_PP_RESOURCES = \
 	$(srcdir)/nsBrowserGlue.js \
