@@ -306,6 +306,7 @@ pref("songbird.trackeditor.enableAdvancedTab", false);
 pref("privacy.sanitize.promptOnSanitize", true);
 pref("privacy.sanitize.sanitizeOnShutdown", false);
 pref("privacy.sanitize.didShutdownSanitize", false);
+pref("privacy.cpd.mediaHistory", false);
 pref("privacy.item.mediaHistory", true);
 pref("privacy.item.history", true);
 pref("privacy.item.formdata", true);

@@ -63,7 +63,7 @@
             title="&sanitizeDialog2.title;"
             noneverythingtitle="&sanitizeDialog2.title;"
             style="width: &dialog.width;;"
-            ondialogaccept="gSanitizePromptDialog.sanitize();">
+            ondialogaccept="gSanitizePromptDialog.updatePrefs();gSanitizePromptDialog.sanitize();">
 
   <prefpane id="SanitizeDialogPane" onpaneload="gSanitizePromptDialog.init();">
     <stringbundle id="bundleBrowser"
@@ -92,6 +92,7 @@
       <preference id="privacy.cpd.cache"                 name="privacy.cpd.cache"                 type="bool"/>
       <preference id="privacy.cpd.sessions"              name="privacy.cpd.sessions"              type="bool"/>
       <preference id="privacy.cpd.siteSettings"          name="privacy.cpd.siteSettings"          type="bool"/>
+      <preference id="privacy.cpd.mediaHistory"          name="privacy.cpd.mediaHistory"          type="bool"/>
     </preferences>
     
     <preferences id="nonItemPreferences">
@@ -206,6 +207,14 @@
                 preference="privacy.cpd.siteSettings"
                 noduration="true"
                 onsyncfrompreference="return gSanitizePromptDialog.onReadGeneric();"/>
+      <!-- TODO make the media playback history item translateable -->
+      <listitem label="Media Playback History"
+                type="checkbox"
+                accesskey="M"
+                preference="privacy.cpd.mediaHistory"
+                noduration="true"
+                onsyncfrompreference="return gSanitizePromptDialog.onReadGeneric();"
+                id="sanitize.mediaHistory"/>
     </listbox>
 
   </prefpane>

@@ -61,7 +61,7 @@ if (typeof(Sanitizer) != "undefined") {
       if (typeof(gSanitizePromptDialog) != "undefined") {
         var oldfn = gSanitizePromptDialog.sanitize;
         gSanitizePromptDialog.sanitize = function() {
-          oldfn();
+          oldfn.call(gSanitizePromptDialog);
           if (document.getElementById("sanitize.mediaHistory").checked) {
             Sanitizer.prototype.items["mediaHistory"].clear();
           }
@@ -89,4 +89,3 @@ if (typeof(Sanitizer) != "undefined") {
 
   window.addEventListener('load', gSongbirdSanitize.onLoad, false);
 }
-
