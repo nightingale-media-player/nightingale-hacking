@@ -198,6 +198,13 @@ sbBaseMediacoreMultibandEqualizer::InitBaseMediacoreMultibandEqualizer()
 
   mPresets = do_ProxiedGetService("@getnightingale.com/equalizer-presets/manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool hasPreset;
+  rv = mPresets->HasPresetNamed(mCurrentPresetName, &hasPreset);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if(!hasPreset) {
+    mCurrentPresetName = NO_PRESET;
+  }
 
   return rv;
 }
