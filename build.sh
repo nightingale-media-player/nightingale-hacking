@@ -177,22 +177,6 @@ case $OSTYPE in
         ;;
 esac
 
-# get the vendor build deps...
-cd dependencies
-
-if [ ! -f "vendor-$version.zip" ] ; then
-    #We want the new deps instead of the old ones...
-    rm -rf "vendor"
-    download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
-    md5_verify "vendor-$version.zip"
-fi
-
-if [ ! -d "vendor" ] ; then
-    rm -rf vendor &> /dev/null
-    unzip "vendor-$version.zip"
-fi
-
-cd ../
 cd $buildir
 
 make clobber
