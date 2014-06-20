@@ -266,20 +266,22 @@
                 <parameter name="event" />
                 <body>
                     <![CDATA[
-                        var values = [],
-                            Ci = Components.interfaces;
-                        
-                        this._mode = true;
-                        this._pName = this._preset;
-
-                        for(var i = 0; i < 10; ++i) { // can't use bandCount here either.
-                            var double = Components.classes["@mozilla.org/supports-double;1"]
-                                .createInstance(Ci.nsISupportsDouble);
-                            double.data = this._mm.equalizer.getBand(i)
-                                .QueryInterface(Ci.sbIMediacoreEqualizerBand).gain;
-                            values.push(double);
+                        if(this._preset.length > 0) {
+                            var values = [],
+                                Ci = Components.interfaces;
+                            
+                            this._mode = true;
+                            this._pName = this._preset;
+    
+                            for(var i = 0; i < 10; ++i) { // can't use bandCount here either.
+                                var double = Components.classes["@mozilla.org/supports-double;1"]
+                                    .createInstance(Ci.nsISupportsDouble);
+                                double.data = this._mm.equalizer.getBand(i)
+                                    .QueryInterface(Ci.sbIMediacoreEqualizerBand).gain;
+                                values.push(double);
+                            }
+                            this._mp.savePreset(this._pName, this.ArrayConverter.nsIArray(values));
                         }
-                        this._mp.savePreset(this._pName, this.ArrayConverter.nsIArray(values));                        
                     ]]>
                 </body>
             </method>

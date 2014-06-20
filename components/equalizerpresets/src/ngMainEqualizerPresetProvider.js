@@ -83,6 +83,10 @@ ngMainEqualizerPresetProvider.prototype = {
     },
 
     deletePreset: function(aName) {
+        if(aName.length == 0) {
+            throw Cr.NS_ERROR_ILLEGAL_VALUE;
+        }
+        
         if(this._presetExists(aName)) {
             this._presets.splice(this._getPresetIndex(aName), 1);
 
@@ -93,8 +97,10 @@ ngMainEqualizerPresetProvider.prototype = {
             this._observerService.notifyObservers(this, "equalizer-preset-deleted", aName);
         }
     },
-
     savePreset: function(aName, aValues) {
+        if(aName.length == 0 || aValues.length != 10)
+            throw Cr.NS_ERROR_ILLEGAL_VALUE;
+    
         if(this._presetExists(aName))
             this._overwritePreset(aName, aValues);
         else
