@@ -39,14 +39,14 @@
                     </xul:menupopup>
                 </xul:menulist>
                 <xul:button anonid="eq-preset-save"
-                            label="&equalizer.savepreset;"
+                            label="&equalizer.presets.save;"
                             flex="1"/>
                 <xul:button anonid="eq-preset-delete"
-                            label="&equalizer.deletepreset;"
+                            label="&equalizer.presets.delete;"
                             flex="1"
                             disabled="true"/>
                 <xul:button anonid="eq-preset-reset"
-                            label="&equalizer.resetpreset;"
+                            label="&equalizer.presets.reset;"
                             flex="1"
                             disabled="true"
                             hidden="true"/>
@@ -82,6 +82,7 @@
             <constructor>
                 <![CDATA[
                     Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+                    Components.utils.import("resource://app/jsmodules/WindowUtils.jsm", this);
 
                     var Cc = Components.classes;
                     var Ci = Components.interfaces;
@@ -94,10 +95,9 @@
                             if(topic == "equalizer-presets-changed") {
                                 that.updatePresets();
                             }
-                            else { // can't find the observer topic of prefBranch2
-                                that.onPresetChange(subject.getComplexValue(data,
-                                          Components.interfaces.nsISupportsString),
-                                       false);
+                            else { // can't find the observer topic of prefBranch2)
+                                that.onPresetChange(that._mm.equalizer.currentPresetName,
+                                        false);
                             }
                         },
                         QueryInterface: function(iid) {
@@ -281,6 +281,14 @@
                                 values.push(double);
                             }
                             this._mp.savePreset(this._pName, this.ArrayConverter.nsIArray(values));
+                        }
+                        else {
+                            this.WindowUtils.openModalDialog(
+                                                document.ownerWindow,
+                                                "chrome://songbird/content/xul/eqPresetSaveErrorDialog.xul",
+                                                "eqPresetSaveErrorDialog",
+                                                ""
+                                            );
                         }
                     ]]>
                 </body>

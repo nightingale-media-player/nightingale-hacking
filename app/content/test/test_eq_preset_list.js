@@ -89,6 +89,10 @@ function test_change(aPresetList) {
     }), "No eq preset with a different name than the current name was found");
     aPresetList.preset = newPreset;
     assertEqual(aPresetList.preset, newPreset, "EQ preset was not applied successfully");
+
+    Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        .getService(Ci.sbIMediacoreManager).equalizer.currentPresetName = preset;
+    assertEqual(aPresetList.preset, preset, "EQ preset change did not populate to GUI");
     
     endWindowTest();
 }

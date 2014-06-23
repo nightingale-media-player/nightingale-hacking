@@ -104,6 +104,7 @@ protected:
 
 private:
   nsEmbedString                          mCurrentPresetName;
+  bool                                   mSettingPreset;
   nsCOMPtr<nsIPrefBranch>                mPrefs;
   nsCOMPtr<ngIEqualizerPresetCollection> mPresets;
 };

@@ -211,9 +211,11 @@
 <!ENTITY equalizer.band7.label    "4K" >
 <!ENTITY equalizer.band8.label    "8K" >
 <!ENTITY equalizer.band9.label    "16K" >
-<!ENTITY equalizer.savepreset   "Save" >
-<!ENTITY equalizer.deletepreset "Delete" >
-<!ENTITY equalizer.resetpreset  "Reset" >
+<!ENTITY equalizer.presets.save   "Save" >
+<!ENTITY equalizer.presets.delete "Delete" >
+<!ENTITY equalizer.presets.reset  "Reset" >
+<!ENTITY equalizer.presets.saveerror "No Preset Name Set" >
+<!ENTITY equalizer.presets.saveerror.description "Please enter a name before saving the preset." >
 
 
 <!ENTITY setupprogress.pleasewait "Please wait…" >
