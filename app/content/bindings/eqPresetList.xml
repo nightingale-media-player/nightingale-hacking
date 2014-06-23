@@ -96,8 +96,10 @@
                                 that.updatePresets();
                             }
                             else { // can't find the observer topic of prefBranch2)
-                                that.onPresetChange(that._mm.equalizer.currentPresetName,
-                                        false);
+                                if(!that._mode)
+                                    that.onPresetChange(that._mm.equalizer.currentPresetName, false);
+                                else
+                                    that._mode = false;
                             }
                         },
                         QueryInterface: function(iid) {
@@ -173,7 +175,6 @@
                         }
                         
                         if(this._mode) {
-                            this._mode = false;
                             // we need to update the backend, in case the user saves a new preset
                             this.onPresetChange(this._pName, true);
                         }
@@ -308,11 +309,9 @@
                 <parameter name="event" />
                 <body>
                     <![CDATA[
-                        var presetCollection = this._pm.QueryInterface(Components.interfaces.ngIEqualizerPresetCollection);
-                        if(!presetCollection.hasPresetNamed(this._preset))
-                            this._mm.equalizer.currentPresetName = "";
-                        else
-                            this._mm.equalizer.currentPresetName = this._preset;
+                        this._mode = true;
+
+                        this._mm.equalizer.currentPresetName = "";
                     ]]>
                 </body>
             </method>
