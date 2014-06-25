@@ -1447,7 +1447,8 @@ TrackList.prototype = {
         if(ComponentContainer.mediacore.sequencer.view) {
             var ret = [],
                 view = ComponentContainer.mediacore.sequencer.view,
-                sequence = ComponentContainer.mediacore.sequencer.currentSequence.enumerate();
+                sequence = ComponentContainer.mediacore.sequencer.currentSequence.enumerate(),
+                item;
 
                 while(sequence.hasMoreElements()) {
                     item = sequence.getNext().QueryInterface(Ci.nsISupportsPRUint32).data;
