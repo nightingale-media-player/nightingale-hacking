@@ -1,5 +1,5 @@
 /*
- * This file contains information proprietary to Nullsoft and AOL.  For
+ * This file contains information proprietary to Nullsoft and Radionomy.  For
  * further information on rules and restrictions governing the use of the
  * SHOUTcast API, the SHOUTcast Directory and other related SHOUTcast
  * services, please visit: http://www.shoutcast.com/TermsOfService
