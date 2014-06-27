@@ -224,8 +224,8 @@ installdirs:
 	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ;)
 
 # "ln -s --relative" is not available in Ubuntu 12.04
-# so let's get the relative path with perl
-RELPATH = $(shell perl -MFile::Spec -e 'print File::Spec->abs2rel("$(libdir)/nightingale","$(bindir)"),"\n"')
+# so let's get the relative path via python
+RELPATH = $$(python -c "import os; print os.path.relpath('$(DESTDIR)$(libdir)/nightingale', '$(DESTDIR)$(bindir)')")
 
 install-linux:
 	$(MAKE) installdirs
