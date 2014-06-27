@@ -142,6 +142,7 @@ psdir ?= $(docdir)
 infodir ?= $(datarootdir)/info
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = ${INSTALL} -m 644
+ICONS_DESTDIR = $(datarootdir)/icons/hicolor
 ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
 ifneq (Windows_NT,$(OS))
@@ -150,17 +151,7 @@ ifneq (Windows_NT,$(OS))
     endif
     ifeq (Linux, $(UNAME_S))
         INSTALL_CMD = $(MAKE) install-linux
-
-        UNINSTALL_CMD = $(RM) -r $(DESTDIR)$(libdir)/nightingale &&\
-                        $(RM) $(DESTDIR)$(bindir)/nightingale &&\
-                        $(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
-        ifndef DESTDIR
-            POST_INSTALL_CMD = $(foreach SIZE,$(ICON_SIZES),xdg-icon-resource install --novendor --size $(SIZE) $(TOPSRCDIR)/app/branding/nightingale-$(SIZE).png nightingale ;) \
-                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/installer/common/nightingale.desktop
-
-            POST_UNINSTALL_CMD = $(foreach SIZE,$(ICON_SIZES),xdg-icon-resource uninstall --size $(SIZE) nightingale ;) \
-                                 xdg-desktop-menu uninstall $(TOPSRCDIR)/installer/common/nightingale.desktop
-        endif
+        UNINSTALL_CMD = $(MAKE) uninstall-linux
     endif
 else
     INSTALL_CMD = @echo Please use the installer located in compiled/dist.
@@ -226,11 +217,35 @@ uninstall:
 installdirs:
 	$(MKDIR) $(DESTDIR)$(bindir)
 	$(MKDIR) $(DESTDIR)$(libdir)/nightingale
+	$(MKDIR) $(DESTDIR)$(docdir)
+	$(MKDIR) $(DESTDIR)$(man1dir)
+	$(MKDIR) $(DESTDIR)$(datarootdir)/applications
+	$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ;)
+
+# "ln -s --relative" is not available in Ubuntu 12.04
+# so let's get the relative path with perl
+RELPATH = $(shell perl -MFile::Spec -e 'print File::Spec->abs2rel("$(libdir)/nightingale","$(bindir)"),"\n"')
 
 install-linux:
 	$(MAKE) installdirs
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
-	$(LN) -fs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
-	-$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+	$(LN) -fs $(RELPATH)/nightingale $(DESTDIR)$(bindir)/nightingale
+	# $(LN) -frs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(INSTALL_DATA) $(CURDIR)/README.md $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+	$(INSTALL_DATA) $(CURDIR)/installer/common/nightingale.desktop $(DESTDIR)$(datarootdir)/applications
+	$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale.svg $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale-$(SIZE).png \
+		$(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+
+uninstall-linux:
+	$(RM) -r $(DESTDIR)$(libdir)/nightingale
+	$(RM) $(DESTDIR)$(bindir)/nightingale
+	$(RM) -r $(DESTDIR)$(docdir)
+	$(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
+	$(RM) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps/nightingale.svg
+	$(RM) $(DESTDIR)$(datarootdir)/applications/nightingale.desktop
+	$(foreach SIZE,$(ICON_SIZES),$(RM) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
 
 .PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux
