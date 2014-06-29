@@ -100,7 +100,6 @@ RM ?= rm
 CP ?= cp
 LN ?= ln
 INSTALL ?= install
-SED ?= sed
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
