@@ -968,7 +968,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     mPlayingGaplessly = PR_TRUE;
 
     /* Ideally we wouldn't dispatch this until actual audio output of this new
-     * file has started, but playbin2 doesn't tell us about that yet */
+     * file has started, but playbin doesn't tell us about that yet */
     DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_START);
   }
 
