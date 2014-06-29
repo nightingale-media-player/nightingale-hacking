@@ -597,15 +597,15 @@ sbGStreamerMediaInspector::BuildPipeline()
   /* Build pipeline looking roughly like this (though either the audio or video
      sides of this might be missing)
      The audio/video parts are create and connected only after appropriate pads
-     are exposed by decodebin2 (if they exist at all), so initially our
-     pipeline contains only the source and the decodebin2.
+     are exposed by decodebin (if they exist at all), so initially our
+     pipeline contains only the source and the decodebin.
 
      [-----------------------------------------------------------]
      [media-inspector-pipeline                                   ]
-     [                           /[audio-queue]-[audio-fakesink] ]
-     [ [----------] [----------]/                                ]
-     [ [uri-source]-[decodebin2]\                                ]
-     [ [----------] [----------] \[video-queue]-[video-fakesink] ]
+     [                          /[audio-queue]-[audio-fakesink]  ]
+     [ [----------] [---------]/                                 ]
+     [ [uri-source]-[decodebin]\                                 ]
+     [ [----------] [---------] \[video-queue]-[video-fakesink]  ]
      [                                                           ]
      [-----------------------------------------------------------]
    */
@@ -621,7 +621,7 @@ sbGStreamerMediaInspector::BuildPipeline()
     return NS_ERROR_FAILURE;
   }
 
-  mDecodeBin = gst_element_factory_make ("decodebin2", NULL);
+  mDecodeBin = gst_element_factory_make ("decodebin", NULL);
   // Take ownership of mDecodeBin via ref/sink
   gst_object_ref(mDecodeBin);
   gst_object_ref_sink(mDecodeBin);

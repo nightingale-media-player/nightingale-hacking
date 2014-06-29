@@ -331,6 +331,9 @@ sbGStreamerService::Init()
 
     // 5. Add /usr/lib/gstreamer-1.0 to system plugin path
 
+    // TODO: The following doesn't seem to be an issue in gst-1.0,
+    // but 'decodebin2' got renamed to 'decodebin' either way.      
+
     // There's a bug in GStreamer which can cause registry problems with
     // renamed plugins. Older versions of decodebin2 were in 
     // 'libgsturidecodebin.so' rather than the current 'libgstdecodebin2.so'.
