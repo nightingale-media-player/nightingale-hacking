@@ -34,7 +34,7 @@ DISTDIRNAME = dist
 OBJDIR_DEPTH = ..
 
 CWD := $(shell pwd)
-ifeq "$(CWD)" "/"
+ifeq ("$(CWD)","/")
   CWD := /.
 endif
 
@@ -100,6 +100,7 @@ RM ?= rm
 CP ?= cp
 LN ?= ln
 INSTALL ?= install
+SED ?= sed
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -140,8 +141,9 @@ dvidir ?= $(docdir)
 pdfdir ?= $(docdir)
 psdir ?= $(docdir)
 infodir ?= $(datarootdir)/info
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = ${INSTALL} -m 644
+rellibdir = $(shell echo $(libdir) | sed 's@$(exec_prefix)@@;' - )
+INSTALL_PROGRAM = $(INSTALL) -m 755
+INSTALL_DATA = $(INSTALL) -m 644
 ICONS_DESTDIR = $(datarootdir)/icons/hicolor
 ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
@@ -149,7 +151,7 @@ ifneq (Windows_NT,$(OS))
     ifeq (Darwin,$(UNAME_S))
         INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
     endif
-    ifeq (Linux, $(UNAME_S))
+    ifeq (Linux,$(UNAME_S))
         INSTALL_CMD = $(MAKE) install-linux
         UNINSTALL_CMD = $(MAKE) uninstall-linux
     endif
@@ -223,14 +225,10 @@ installdirs:
 	$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
 	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ;)
 
-# "ln -s --relative" is not available in Ubuntu 12.04
-# so let's get the relative path via python
-RELPATH = $$(python -c "import os; print os.path.relpath('$(DESTDIR)$(libdir)/nightingale', '$(DESTDIR)$(bindir)')")
-
 install-linux:
 	$(MAKE) installdirs
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
-	$(LN) -fs $(RELPATH)/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(LN) -fs ..$(rellibdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
 	# $(LN) -frs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
 	$(INSTALL_DATA) $(CURDIR)/README.md $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
