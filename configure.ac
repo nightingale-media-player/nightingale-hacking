@@ -745,7 +745,7 @@ case "$SB_PLATFORM" in
     _CC_SUPPORTED_MAJOR_VERSION=14
 
     changequote(,)
-    _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+    _MSVC_VER_FILTER='s|.*[^!-~]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
 
     # Determine compiler version
