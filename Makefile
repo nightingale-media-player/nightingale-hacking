@@ -34,7 +34,7 @@ DISTDIRNAME = dist
 OBJDIR_DEPTH = ..
 
 CWD := $(shell pwd)
-ifeq ("$(CWD)","/")
+ifeq ("$(CWD)", "/")
   CWD := /.
 endif
 
@@ -113,7 +113,7 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
 #
 # Prepare tests command
 #
-ifeq (,$(filter --enable-tests, $(CONFIGURE_ARGS)))
+ifeq (, $(filter --enable-tests, $(CONFIGURE_ARGS)))
     TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
 else
     TEST_COMMAND = $(DISTDIR)/nightingale -test
@@ -147,10 +147,10 @@ ICONS_DESTDIR = $(datarootdir)/icons/hicolor
 ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
 ifneq (Windows_NT,$(OS))
-    ifeq (Darwin,$(UNAME_S))
+    ifeq (Darwin, $(UNAME_S))
         INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
     endif
-    ifeq (Linux,$(UNAME_S))
+    ifeq (Linux, $(UNAME_S))
         INSTALL_CMD = $(MAKE) install-linux
         UNINSTALL_CMD = $(MAKE) uninstall-linux
     endif
