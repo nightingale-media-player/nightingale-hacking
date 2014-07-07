@@ -485,17 +485,21 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
 # category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActions;1
  category quit-application sbServicePaneService @songbirdnest.com/servicepane/service;1
  category quit-application feathers-manager @songbirdnest.com/songbird/feathersmanager;1
- category service-pane 0library @songbirdnest.com/servicepane/library;1
-# # category service-pane cdrip-device @songbirdnest.com/servicepane/cdDevice;1
-# # category service-pane device @songbirdnest.com/servicepane/device;1
-# category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
-# # category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
-# category service-pane DeviceServicePaneService service,@songbirdnest.com/servicepane/device;1
- category service-pane ServicePaneService @songbirdnest.com/servicepane/service;1
-# # category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
-# # category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
-# # category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
-# category songbird-library-manager-before-shutdown LibraryServicePaneService @songbirdnest.com/servicepane/library;1
+
+category service-pane 0library @songbirdnest.com/servicepane/library;1
+# JScomp components/devices/cd/src #
+category service-pane cdrip-device @songbirdnest.com/servicepane/cdDevice;1
+# JScomp components/devicesobsolete/download #
+category service-pane device @songbirdnest.com/servicepane/device;1
+category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
+category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 
+category service-pane ServicePaneService @songbirdnest.com/servicepane/service;1
+category quit-application ServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
+
+
+ category songbird-library-manager-before-shutdown LibraryServicePaneService @songbirdnest.com/servicepane/library;1
 # category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
  category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
  category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
