@@ -91,7 +91,7 @@ static const mozilla::Module::ContractIDEntry kStringBundleContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kStringBundleCategories[] = {
-  { "xpcom-startup", SB_STRINGBUNDLESERVICE_CLASSNAME, SB_STRINGBUNDLESERVICE_CONTRACTID },
+  { "app-startup", SB_STRINGBUNDLESERVICE_CLASSNAME, SB_STRINGBUNDLESERVICE_CONTRACTID },
   { NULL }
 };
 
