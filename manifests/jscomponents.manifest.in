@@ -416,19 +416,14 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
  category profile-after-change DynamicPlaylistService @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
  category app-startup faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
  category app-startup feathers-manager @songbirdnest.com/songbird/feathersmanager;1
-# ##### REG AS SRVC IN MOD ##### category app-startup LocalDatabaseLibraryFactory service,@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
-# ##### REG AS SRVC IN MOD ##### category app-startup sbAlbumArtService service,@songbirdnest.com/Songbird/album-art-service;1
+
  category app-startup sbDistHelperEnvWriter @songbirdnest.com/tools/disthelper/update/env;1
-# category profile-after-change sbMediaItemControllerCleanup @songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1
-# category profile-after-change sbMediaItemDownloadService @songbirdnest.com/Songbird/MediaItemDownloadService;1
 # # category app-startup sbStringTransform @songbirdnest.com/Songbird/Intl/StringTransform;1
 # ### doesn't implement nsiobserver ### category profile-after-change smartplaylist-property-registrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
  category profile-after-change smartplaylists-updater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
 # # DEL ? # category profile-after-change SongbirdGlobalHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
-# ##### REG AS SRVC IN MOD ##### category app-startup sbLibraryDiffingService @songbirdnest.com/Songbird/Library/DiffingService;1
+
 # category profile-after-change sbLibraryImporterManagerService @songbirdnest.com/Songbird/LibraryImporterManager;1
-# ##### REG AS SRVC IN MOD ##### category profile-after-change sbLibraryManager @songbirdnest.com/Songbird/library/Manager;1
-# category profile-after-change SongbirdMediaListViewMap @songbirdnest.com/Songbird/library/MediaListViewMap;1
  category app-startup ParserErrorHandler @songbirdnest.com/Songbird/ParserErrorHandler;1
 # ## Causes a hang right now ## category app-startup SbPlaybackHistoryService @songbirdnest.com/Songbird/PlaybackHistoryService;1
  category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
@@ -522,6 +517,13 @@ category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbir
 # binary components/devices/firmware/src # category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
 # binary components/devices/firmware/src # category app-startup SongbirdDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
 # binary components/devicesobsolete/manager # category app-startup SongbirdObsoleteDeviceManagerService @songbirdnest.com/Songbird/DeviceManager;1
+
+# binary components/library/base # category profile-after-change sbMediaItemControllerCleanup @songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1
+# binary components/library/base # category profile-after-change sbLibraryManager @songbirdnest.com/Songbird/library/Manager;1
+# binary components/library/base # category profile-after-change SongbirdMediaListViewMap @songbirdnest.com/Songbird/library/MediaListViewMap;1
+# binary components/library/download # category profile-after-change sbMediaItemDownloadService @songbirdnest.com/Songbird/MediaItemDownloadService;1
+# binary components/library/localdatabase # category app-startup sbLibraryDiffingService @songbirdnest.com/Songbird/Library/DiffingService;1
+# binary components/library/localdatabase # category app-startup LocalDatabaseLibraryFactory @songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
 
 # binary components/mediacore/gstreamer/src # category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
 # binary components/mediacore/manager # category profile-after-change SongbirdMediacoreManager @songbirdnest.com/Songbird/Mediacore/Manager;1
