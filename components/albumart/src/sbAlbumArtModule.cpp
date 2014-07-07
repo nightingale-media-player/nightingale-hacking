@@ -138,7 +138,7 @@ static const mozilla::Module::ContractIDEntry kAlbumArtContacts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kAlbumArtCategories[] = {
-  { "profile-after-change", SB_ALBUMARTSERVICE_CLASSNAME, SB_ALBUMARTSERVICE_CONTRACTID },
+  { "app-startup", SB_ALBUMARTSERVICE_CLASSNAME, SB_ALBUMARTSERVICE_CONTRACTID },
   { NULL }
 };
 
