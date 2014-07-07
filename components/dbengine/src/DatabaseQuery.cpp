@@ -85,9 +85,6 @@ NS_INTERFACE_MAP_BEGIN(CDatabaseQuery)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDatabaseQuery)
 NS_INTERFACE_MAP_END
 
-//NS_IMPL_ISUPPORTS1(CDatabaseQuery,
-//                   sbIDatabaseQuery);
-
 NS_IMPL_CI_INTERFACE_GETTER1(CDatabaseQuery,
                              sbIDatabaseQuery);
 
