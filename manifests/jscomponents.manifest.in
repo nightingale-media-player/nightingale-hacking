@@ -459,7 +459,7 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
 # # category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1
 # category service-pane DeviceServicePaneService service,@songbirdnest.com/servicepane/device;1
- category service-pane ServicePaneService s@songbirdnest.com/servicepane/service;1
+ category service-pane ServicePaneService @songbirdnest.com/servicepane/service;1
 # # category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
 # # category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
 # # category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
