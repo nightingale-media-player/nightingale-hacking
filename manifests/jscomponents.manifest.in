@@ -429,9 +429,13 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
  category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
 # GOOD? # category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
 # category profile-after-change sbScreenSaverSuppressor @songbirdnest.com/Songbird/ScreenSaverSuppressor;1
+
+
+category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
 category app-startup sbShutdownService @songbirdnest.com/shutdown-service;1
+category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
+
 # category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
- category sb-command-line-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
 # category profile-after-change webservices-lastfm @songbirdnest.com/Songbird/webservices/last-fm;1
 # Don't register at all? doesn't have observer? category xpcom-startup m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
  category command-line-handler m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
@@ -470,12 +474,12 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
  category library-importer iTunesLibraryImporter @songbirdnest.com/Songbird/ITunesImporter;1
 # category metadata-lookup sbTestProvider @songbirdnest.com/Songbird/MetadataLookup/testProvider;1
 # category net-content-sniffers SongbirdMediaSniffer @songbirdnest.com/contentsniffer/manager;1
-# category playlist-reader asx @songbirdnest.com/Songbird/Playlist/Reader/ASX;1
-# category playlist-reader feed @songbirdnest.com/Songbird/Playlist/Reader/Feed;1
-# category playlist-reader html @songbirdnest.com/Songbird/Playlist/Reader/HTML;1
-# category playlist-reader m3u @songbirdnest.com/Songbird/Playlist/Reader/M3U;1
-# category playlist-reader pls @songbirdnest.com/Songbird/Playlist/Reader/PLS;1
-# category playlist-writer m3u @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
+ category playlist-reader asx @songbirdnest.com/Songbird/Playlist/Reader/ASX;1
+ category playlist-reader feed @songbirdnest.com/Songbird/Playlist/Reader/Feed;1
+ category playlist-reader html @songbirdnest.com/Songbird/Playlist/Reader/HTML;1
+ category playlist-reader m3u @songbirdnest.com/Songbird/Playlist/Reader/M3U;1
+ category playlist-reader pls @songbirdnest.com/Songbird/Playlist/Reader/PLS;1
+ category playlist-writer m3u @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
 # category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
 # category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
 # category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActions;1
@@ -501,8 +505,6 @@ category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servi
 
  category songbird-library-manager-before-shutdown LibraryServicePaneService @songbirdnest.com/servicepane/library;1
 # category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
-# # category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
-category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 
 
 
