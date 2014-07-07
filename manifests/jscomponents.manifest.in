@@ -394,18 +394,18 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # Registering for app-startup is pretty problematic
 
  category profile-after-change AddonBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
- category profile-after-change DynamicPlaylistService service,@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
- category profile-after-change faceplate-pane-manager service,@songbirdnest.com/faceplate/manager;1
+ category profile-after-change DynamicPlaylistService @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
+ category app-startup faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
  category app-startup feathers-manager @songbirdnest.com/songbird/feathersmanager;1
 # ##### REG AS SRVC IN MOD ##### category app-startup LocalDatabaseLibraryFactory service,@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1
 # ##### REG AS SRVC IN MOD ##### category app-startup sbAlbumArtService service,@songbirdnest.com/Songbird/album-art-service;1
  category app-startup sbDistHelperEnvWriter @songbirdnest.com/tools/disthelper/update/env;1
 # category profile-after-change sbMediaItemControllerCleanup service,@songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1
 # category profile-after-change sbMediaItemDownloadService service,@songbirdnest.com/Songbird/MediaItemDownloadService;1
- category app-startup sbStringTransform @songbirdnest.com/Songbird/Intl/StringTransform;1
- category app-startup sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
+# # category app-startup sbStringTransform @songbirdnest.com/Songbird/Intl/StringTransform;1
+# # category app-startup sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
 # ##### REG AS SRVC IN MOD ##### category app-startup sbWindowWatcher service,@songbirdnest.com/Songbird/window-watcher;1
- category app-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+# # category app-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
 # ##### REG AS SRVC IN MOD ##### category app-startup service-device-error-monitor service,@songbirdnest.com/device/error-monitor-service;1
 # ##### REG AS SRVC IN MOD ##### category app-startup service-device-event-monitor service,@songbirdnest.com/device/event-monitor-service;1
 # category profile-after-change smartplaylist-property-registrar service,@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
@@ -429,7 +429,7 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
 # category profile-after-change webservices-lastfm service,@songbirdnest.com/Songbird/webservices/last-fm;1
  category sb-command-line-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
- category xpcom-startup m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
+# Don't register at all? doesn't have observer? category xpcom-startup m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
  category command-line-handler m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
  category display-pane-provider play-queue @songbirdnest.com/Songbird/playqueue/contentInfo;1
  category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
@@ -469,7 +469,7 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
  category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
  category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
 # # category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
-category xpcom-startup SongbirdThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
+# category xpcom-startup SongbirdThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
 # # category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 
