@@ -469,7 +469,6 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
  category external-uricontentlisteners application/vnd.songbird.maybe.media @songbirdnest.com/contentlistener/media;1
  category external-uricontentlisteners application/vnd.songbird.maybe.playlist @songbirdnest.com/contentlistener/media;1
  category external-uricontentlisteners sbMediaContentListener @songbirdnest.com/contentlistener/media;1
-# category final-ui-startup sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1 os=Linux
  category JavaScript-global-property songbird @songbirdnest.com/remoteapi/remoteplayer;1
  category library-importer iTunesLibraryImporter @songbirdnest.com/Songbird/ITunesImporter;1
 # category metadata-lookup sbTestProvider @songbirdnest.com/Songbird/MetadataLookup/testProvider;1
@@ -481,7 +480,9 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
  category playlist-reader pls @songbirdnest.com/Songbird/Playlist/Reader/PLS;1
  category playlist-writer m3u @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
 # category profile-after-change sbLibraryImporterManager @songbirdnest.com/Songbird/LibraryImporterManager;1
-# category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
+
+ category final-ui-startup sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
+ category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
 # category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActions;1
  category quit-application sbServicePaneService @songbirdnest.com/servicepane/service;1
  category quit-application feathers-manager @songbirdnest.com/songbird/feathersmanager;1
