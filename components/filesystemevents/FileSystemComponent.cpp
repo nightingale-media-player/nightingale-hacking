@@ -28,45 +28,40 @@
 #include "sbFileSystemCID.h"
 #include "sbFileSystemNode.h"
 
-#if defined(XP_WIN) 
+
+#if defined(XP_WIN)
 #include "win32/sbWin32FileSystemWatcher.h"
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWin32FileSystemWatcher);
 NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMWATCHER_CID);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode);
-NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMNODE_CID);
-
-static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
-  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbWin32FileSystemWatcherConstructor },
-  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
-  { NULL }
-};
 
 #elif defined(XP_MACOSX)
 #include "macosx/sbMacFileSystemWatcher.h"
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemWatcher);
 NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMWATCHER_CID);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode);
-NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMNODE_CID);
-
-static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
-  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbMacFileSystemWatcherConstructor },
-  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
-  { NULL }
-};
 
 #else
 #include "linux/sbLinuxFileSystemWatcher.h"
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLinuxFileSystemWatcher);
 NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMWATCHER_CID);
+
+#endif
+
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode);
 NS_DEFINE_NAMED_CID(SONGBIRD_FILESYSTEMNODE_CID);
 
 static const mozilla::Module::CIDEntry kFileSystemCIDs[] = {
+#if defined(XP_WIN) 
+  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbWin32FileSystemWatcherConstructor },
+  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
+#elif defined(XP_MACOSX)
+  { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbMacFileSystemWatcherConstructor },
+  { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
+#else
   { &kSONGBIRD_FILESYSTEMWATCHER_CID, false, NULL, sbLinuxFileSystemWatcherConstructor },
   { &kSONGBIRD_FILESYSTEMNODE_CID, false, NULL, sbFileSystemNodeConstructor },
+#endif
   { NULL }
 };
-#endif
 
 static const mozilla::Module::ContractIDEntry kFileSystemContracts[] = {
   { SONGBIRD_FILESYSTEMWATCHER_CONTRACTID, &kSONGBIRD_FILESYSTEMWATCHER_CID },
