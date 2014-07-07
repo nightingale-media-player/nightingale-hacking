@@ -43,8 +43,6 @@ NS_DEFINE_NAMED_CID(SB_HTTP_MEDIA_ITEM_DOWNLOADER_CID);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemDownloadService);
 NS_DEFINE_NAMED_CID(SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID);
 
-// Component registration declarations.
-SB_MEDIA_ITEM_DOWNLOADER_REGISTERSELF(sbHTTPMediaItemDownloader);
 
 static const mozilla::Module::CIDEntry kMediaItemDownloadCIDs[] = {
   { &kSB_HTTP_MEDIA_ITEM_DOWNLOADER_CID, false, NULL, sbHTTPMediaItemDownloaderConstructor },
@@ -59,6 +57,9 @@ static const mozilla::Module::ContractIDEntry kMediaItemDownloadContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kMediaItemDownloadCategories[] = {
+  { "app-startup", SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME, SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID },
+  { "songbird-media-item-downloader", SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME, SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID },
+  { "songbird-media-item-downloader", SB_HTTP_MEDIA_ITEM_DOWNLOADER_CLASSNAME, SB_HTTP_MEDIA_ITEM_DOWNLOADER_CONTRACTID },
   { NULL }
 };
 
