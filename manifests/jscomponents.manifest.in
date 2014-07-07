@@ -25,8 +25,11 @@ component {845c31ee-c30e-4fb6-9667-0b10e58c7069} sbDeviceServicePaneService.js
 component {6e542f90-44a0-11dd-ae16-0800200c9a66} sbDirectoryImportService.js
 component {6aef120f-d7ad-414d-a93d-3ac945e64301} sbDisplayPanes.js
 component {54b21a93-5b1b-46a2-a60f-5378ccf7f65c} sbDndSourceTracker.js
+
+# JScomp components/devicesobsolete/download #
 component {576b6833-15d8-483a-84d6-2fbd329c82e1} sbDownloadDeviceHelper.js
 component {ee93796b-090e-4703-982a-1d27bea552c3} sbDownloadDeviceServicePaneModule.js
+
 component {10a07ef5-8ab6-4728-9172-4e609f65b4a2} sbDynamicPlaylist.js
 component {eb5c665a-bfe2-49f0-a747-cd3554e55606} sbFaceplateManager.js
 component {99f24350-a67f-11db-befa-0800200c9a66} sbFeathersManager.js
@@ -111,10 +114,8 @@ contract @songbirdnest.com/aboutRedirector {42631c40-1cbe-4f3a-b859-7936e542130f
 contract @songbirdnest.com/AddOnBundleUpdateService;1 {927d9849-8565-4bc4-805a-f3a6ad1b25ec}
 # contract @songbirdnest.com/AmazonMusic;1 {413cc7f0-3a16-4573-8c18-d7a583cf77f1}
 contract @songbirdnest.com/app-startup-service;1 {bf8300d3-95a7-4f52-b8e1-7012d8c639b8}
-contract @songbirdnest.com/autodownloader;1 {a3d7426b-0b22-4f07-b72c-e44bab0759f7}
 contract @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird {128badd1-aa05-4508-87cc-f3cb3e9b5499}
 contract @songbirdnest.com/contentlistener/media;1 {2803c9e8-b0b6-4dfe-8333-53430128f7e7}
-contract @songbirdnest.com/device/cd/mock-cddevice-service;1 {1a0e7b9a-1dd2-11b2-80a3-dbd2c047498a}
 contract @songbirdnest.com/device/error-monitor-service;1 {7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}
 contract @songbirdnest.com/device/event-monitor-service;1 {57b32ce8-a373-4d8d-babb-9d23afeeb409}
 contract @songbirdnest.com/faceplate/manager;1 {eb5c665a-bfe2-49f0-a747-cd3554e55606}
@@ -137,6 +138,7 @@ contract @songbirdnest.com/servicepane/device;1 {845c31ee-c30e-4fb6-9667-0b10e58
 contract @songbirdnest.com/servicepane/library;1 {64ec2154-3733-4862-af3f-9f2335b14821}
 contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
 contract @songbirdnest.com/shutdown-service;1 {594137ed-db4a-4530-8635-2573c018b4fb}
+
 # binary components/albumart # contract @songbirdnest.com/Songbird/album-art-fetcher-set;1 {5da41a79-0ed6-4876-bbd7-348a447c784f}
 # binary components/albumart # contract @songbirdnest.com/Songbird/album-art-service;1 {8df4920b-89ac-49a3-8552-d74d313c62b6}
 # binary components/albumart # contract @songbirdnest.com/Songbird/album-art/file-fetcher;1 {5fdeaf80-1a91-4970-8cba-c016cd6edc82}
@@ -144,46 +146,59 @@ contract @songbirdnest.com/shutdown-service;1 {594137ed-db4a-4530-8635-2573c018b
 # binary components/albumart # contract @songbirdnest.com/Songbird/album-art/scanner;1 {06c6e812-ca0d-4632-8e2d-2b0a8c9b0675}
 contract @songbirdnest.com/Songbird/ApplicationController;1 {8492c5a0-ab8e-11dd-ad8b-0800200c9a66}
 contract @songbirdnest.com/Songbird/Bundle;1 {ff29ec35-1294-42ae-a341-63d0303df969}
-contract @songbirdnest.com/Songbird/CDDeviceController;1 {45684bb8-1dd2-11b2-acb3-95cc54818717}
-contract @songbirdnest.com/Songbird/CDDeviceMarshall;1 {1115bc18-1dd2-11b2-b441-aa8a5f59751d}
 contract @songbirdnest.com/Songbird/CharsetDetector;1 {32f9b560-4830-11df-9879-0800200c9a66}
 # binary components/dbengine # contract @songbirdnest.com/Songbird/DatabaseEngine;1 {67d9edfd-9a76-4d60-9d76-59181801e193}
 # binary components/dbengine # contract @songbirdnest.com/Songbird/DatabaseQuery;1 {377a6592-64bd-4a6b-a941-d488abb5a8aa}
 # binary components/dbengine # contract @songbirdnest.com/Songbird/DatabaseResult;1 {9079e1b1-01e9-4cb8-9f2a-08fdf69597cf}
 contract @songbirdnest.com/Songbird/DataRemote;1 {1cb891b0-e9c5-11dd-ba2f-d1080200c966}
 contract @songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1 {76512c09-7f02-48f5-86c0-c3a8670ead3f}
+
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/DeviceCapabilities;1 {54d42a87-9031-4928-991e-e66f4916a90b}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1 {c20c7dfa-1dd1-11b2-a4a6-b98bb9a0aa47}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/DeviceCapsCompatibility;1 {e8717123-1bb2-4ca5-a442-7e8424fbdb49}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1 {e5060de5-9fa9-4cad-b7db-4c42243d9c6f}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/DeviceProperties;1 {1b7449fe-86d1-4668-85fb-9d75591e48cd}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/DeviceStatus;1 {7b2026c4-9193-4cbd-818a-0d07abaec854}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbaudioformattype;1 {fbfadb32-b95b-49cb-b5f0-08f9a87057e5}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1 {a8e9d2f7-6640-41a1-9bd7-b6cef284b947}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbdevcapvideostream;1 {1eb66418-11bd-493c-9329-290d0e4fb78a}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbformattypeconstraint;1 {5d73ba28-f460-48bd-923b-68d4a88e92da}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbfraction;1 {b8b158a2-1dd1-11b2-9f1d-b95608790ab8}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbimageformattype;1 {496881cb-ed03-435f-9da5-df99636f9ee3}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbimagesize;1 {0f2915d0-0f43-46fd-90bd-842248430b0f}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbplaylistformattype;1 {dc2b0702-b8d7-4ef5-83b6-6485e5efd5f1}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbrange;1 {491604ba-51e1-45e4-9d11-ce1ec63d0eae}
+# binary components/devices/base # contract @songbirdnest.com/Songbird/Device/sbvideoformattype;1 {87cced11-258e-4131-ae51-a52af76daabc}
+
+# binary components/devices/cd/mock/public # contract @songbirdnest.com/device/cd/mock-cddevice-service;1 {1a0e7b9a-1dd2-11b2-80a3-dbd2c047498a}
+# binary components/devices/cd/mock/src # contract @songbirdnest.com/Songbird/MockCDDevice;1 {cf0c112e-a2f9-4ca2-9013-a3de6bcc6b85}
+# binary components/devices/cd/mock/src # contract @songbirdnest.com/Songbird/MockCDTOC;1 {136f8b3a-8747-4a2c-9db8-741a6c798034}
+# binary components/devices/cd/src # contract @songbirdnest.com/Songbird/CDDeviceController;1 {45684bb8-1dd2-11b2-acb3-95cc54818717}
+# binary components/devices/cd/src # contract @songbirdnest.com/Songbird/CDDeviceMarshall;1 {1115bc18-1dd2-11b2-b441-aa8a5f59751d}
+
+# JScomp components/devices/device
 contract @songbirdnest.com/Songbird/Device/Base/Helper;1 {ebe6e08a-0604-44fd-a3d7-2be556b96b24}
-contract @songbirdnest.com/Songbird/Device/DeviceCapabilities;1 {54d42a87-9031-4928-991e-e66f4916a90b}
-contract @songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1 {c20c7dfa-1dd1-11b2-a4a6-b98bb9a0aa47}
-contract @songbirdnest.com/Songbird/Device/DeviceCapsCompatibility;1 {e8717123-1bb2-4ca5-a442-7e8424fbdb49}
-contract @songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1 {e5060de5-9fa9-4cad-b7db-4c42243d9c6f}
-contract @songbirdnest.com/Songbird/Device/DeviceProperties;1 {1b7449fe-86d1-4668-85fb-9d75591e48cd}
-contract @songbirdnest.com/Songbird/Device/DeviceStatus;1 {7b2026c4-9193-4cbd-818a-0d07abaec854}
-contract @songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1 {3f023adc-11ef-4f63-a969-ed554dc9736a}
-contract @songbirdnest.com/Songbird/Device/DeviceTester/Utils;1 {524f2420-f979-44ee-bc77-ba4e11aefc62}
+# binary components/devices/device/mock # contract @songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1 {3f023adc-11ef-4f63-a969-ed554dc9736a}
+# binary components/devices/device/mock # contract @songbirdnest.com/Songbird/Device/DeviceTester/Utils;1 {524f2420-f979-44ee-bc77-ba4e11aefc62}
+# JScomp components/devices/firmware/mock # contract @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1 {5b100d2b-486a-4f3a-9b60-14640bcba68e}
+# JScomp components/devices/firmware/src #
 contract @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1 {2137a87f-2ade-448b-a093-bad4f6649fa3}
-contract @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1 {5b100d2b-486a-4f3a-9b60-14640bcba68e}
-contract @songbirdnest.com/Songbird/Device/Firmware/Support;1 {c71e74a4-ff35-4f98-bd9c-29d1c45d524e}
-contract @songbirdnest.com/Songbird/Device/Firmware/Update;1 {c5dc91bb-1b27-431e-8f93-0112022a9548}
-contract @songbirdnest.com/Songbird/Device/Firmware/Updater;1 {9a84d24f-b02b-42bc-a2cb-b4792023aa70}
-contract @songbirdnest.com/Songbird/Device/sbaudioformattype;1 {fbfadb32-b95b-49cb-b5f0-08f9a87057e5}
-contract @songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1 {a8e9d2f7-6640-41a1-9bd7-b6cef284b947}
-contract @songbirdnest.com/Songbird/Device/sbdevcapvideostream;1 {1eb66418-11bd-493c-9329-290d0e4fb78a}
-contract @songbirdnest.com/Songbird/Device/sbformattypeconstraint;1 {5d73ba28-f460-48bd-923b-68d4a88e92da}
-contract @songbirdnest.com/Songbird/Device/sbfraction;1 {b8b158a2-1dd1-11b2-9f1d-b95608790ab8}
-contract @songbirdnest.com/Songbird/Device/sbimageformattype;1 {496881cb-ed03-435f-9da5-df99636f9ee3}
-contract @songbirdnest.com/Songbird/Device/sbimagesize;1 {0f2915d0-0f43-46fd-90bd-842248430b0f}
-contract @songbirdnest.com/Songbird/Device/sbplaylistformattype;1 {dc2b0702-b8d7-4ef5-83b6-6485e5efd5f1}
-contract @songbirdnest.com/Songbird/Device/sbrange;1 {491604ba-51e1-45e4-9d11-ce1ec63d0eae}
-contract @songbirdnest.com/Songbird/Device/sbvideoformattype;1 {87cced11-258e-4131-ae51-a52af76daabc}
-contract @songbirdnest.com/Songbird/DeviceManager;1 {d0b017c4-f388-4e78-abf3-5f48ca616a94}
-contract @songbirdnest.com/Songbird/DeviceManager;2 {f1b2417e-2515-481d-b03a-da3d5b7f62fa}
-contract @songbirdnest.com/Songbird/DirectoryEnumerator;1 {7065ab15-8b5f-4e02-965e-cf499bd9ca3a}
+# binary components/devices/firmware/src # contract @songbirdnest.com/Songbird/Device/Firmware/Support;1 {c71e74a4-ff35-4f98-bd9c-29d1c45d524e}
+# binary components/devices/firmware/src # contract @songbirdnest.com/Songbird/Device/Firmware/Update;1 {c5dc91bb-1b27-431e-8f93-0112022a9548}
+# binary components/devices/firmware/src # contract @songbirdnest.com/Songbird/Device/Firmware/Updater;1 {9a84d24f-b02b-42bc-a2cb-b4792023aa70}
+# binary components/devices/manager # contract @songbirdnest.com/Songbird/DeviceManager;2 {f1b2417e-2515-481d-b03a-da3d5b7f62fa}
+
+# binary components/devicesobsolete/base # contract @songbirdnest.com/Songbird/Device/DeviceBase;1 {937d0ae7-9ba1-475d-82fd-609ff5f78508}
+# binary components/devicesobsolete/download # contract @songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1 {961da3f4-5ef1-4ad0-818d-622c7bd17447}
+# JScomp components/devicesobsolete/download #
+contract @songbirdnest.com/autodownloader;1 {a3d7426b-0b22-4f07-b72c-e44bab0759f7}
+contract @songbirdnest.com/Songbird/DownloadDeviceHelper;1 {576b6833-15d8-483a-84d6-2fbd329c82e1}
+contract @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 {ee93796b-090e-4703-982a-1d27bea552c3}
+# binary components/devicesobsolete/manager # contract @songbirdnest.com/Songbird/DeviceManager;1 {d0b017c4-f388-4e78-abf3-5f48ca616a94}
+
 contract @songbirdnest.com/Songbird/DirectoryImportService;1 {6e542f90-44a0-11dd-ae16-0800200c9a66}
 contract @songbirdnest.com/Songbird/DisplayPane/Manager;1 {6aef120f-d7ad-414d-a93d-3ac945e64301}
 contract @songbirdnest.com/Songbird/DndSourceTracker;1 {54b21a93-5b1b-46a2-a60f-5378ccf7f65c}
-contract @songbirdnest.com/Songbird/DownloadDeviceHelper;1 {576b6833-15d8-483a-84d6-2fbd329c82e1}
-contract @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 {ee93796b-090e-4703-982a-1d27bea552c3}
 contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0800200c9a66}
 contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
 contract @songbirdnest.com/Songbird/FileScan;1 {411dd545-ead0-41c4-8ba1-697dbe5c67ea}
@@ -317,11 +332,8 @@ contract @songbirdnest.com/Songbird/MediacoreErrorHandler;1 {8bb6de60-a11b-11de-
 contract @songbirdnest.com/Songbird/MediaItemDownloadService;1 {35443420-1dd2-11b2-8d65-fef3918182cf}
 contract @songbirdnest.com/Songbird/MediaPageManager;1 {e63463d0-357c-4035-af33-db670ee1b7f2}
 contract @songbirdnest.com/Songbird/Metrics;1 {1066527d-b135-4e0c-9ea4-f6109ae97d02}
-contract @songbirdnest.com/Songbird/MockCDDevice;1 {cf0c112e-a2f9-4ca2-9013-a3de6bcc6b85}
-contract @songbirdnest.com/Songbird/MockCDTOC;1 {136f8b3a-8747-4a2c-9db8-741a6c798034}
 contract @songbirdnest.com/Songbird/MoveRenameHelper;1 {02ba1ba0-fee5-11dd-87af-0800200c9a66}
 contract @songbirdnest.com/Songbird/NetworkProxyImport;1 {caece57b-6634-491e-a858-9c99ab873dc4}
-contract @songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1 {961da3f4-5ef1-4ad0-818d-622c7bd17447}
 contract @songbirdnest.com/Songbird/ParserErrorHandler;1 {213a0ebb-12b3-492f-bc4c-f472f8f24d2c}
 contract @songbirdnest.com/Songbird/Playlist/Reader/ASX;1 {e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}
 contract @songbirdnest.com/Songbird/Playlist/Reader/Feed;1 {fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}
@@ -417,16 +429,11 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # ##### REG AS SRVC IN MOD ##### category app-startup service-device-event-monitor service,@songbirdnest.com/device/event-monitor-service;1
 # category profile-after-change smartplaylist-property-registrar service,@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
 # category profile-after-change smartplaylists-updater service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1
-# # category app-startup SongbirdAutoDownloaderService service,@songbirdnest.com/autodownloader;1
-# # category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate service,@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
-# # category app-startup SongbirdDeviceFirmwareUpdater service,@songbirdnest.com/Songbird/Device/Firmware/Updater;1
-# # category app-startup SongbirdDeviceManager2Service service,@songbirdnest.com/Songbird/DeviceManager;2
 # # DEL ? # category profile-after-change SongbirdGlobalHotkeyService service,@songbirdnest.com/Songbird/HotkeyService;1
 # ##### REG AS SRVC IN MOD ##### category app-startup sbLibraryDiffingService service,@songbirdnest.com/Songbird/Library/DiffingService;1
 # category profile-after-change sbLibraryImporterManagerService service,@songbirdnest.com/Songbird/LibraryImporterManager;1
 # ##### REG AS SRVC IN MOD ##### category profile-after-change sbLibraryManager service,@songbirdnest.com/Songbird/library/Manager;1
 # category profile-after-change SongbirdMediaListViewMap service,@songbirdnest.com/Songbird/library/MediaListViewMap;1
-# # category app-startup SongbirdObsoleteDeviceManagerService service,@songbirdnest.com/Songbird/DeviceManager;1
  category app-startup ParserErrorHandler service,@songbirdnest.com/Songbird/ParserErrorHandler;1
 # ## Causes a hang right now ## category app-startup SbPlaybackHistoryService service,@songbirdnest.com/Songbird/PlaybackHistoryService;1
  category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
@@ -489,7 +496,11 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
 category service-pane 0library @songbirdnest.com/servicepane/library;1
 # JScomp components/devices/cd/src #
 category service-pane cdrip-device @songbirdnest.com/servicepane/cdDevice;1
+# JScomp components/devices/device/src #
+category profile-after-change service-device-error-monitor @songbirdnest.com/device/error-monitor-service;1
+category profile-after-change service-device-event-monitor @songbirdnest.com/device/event-monitor-service;1
 # JScomp components/devicesobsolete/download #
+category app-startup SongbirdAutoDownloaderService @songbirdnest.com/autodownloader;1
 category service-pane device @songbirdnest.com/servicepane/device;1
 category service-pane folders @rsjtdrjgfuzkfg.com/servicepane/folders;1
 category service-pane z-download-device-service-pane-module @songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1 
@@ -501,13 +512,19 @@ category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servi
 
  category songbird-library-manager-before-shutdown LibraryServicePaneService @songbirdnest.com/servicepane/library;1
 # category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
- category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
- category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
 # # category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 
 # binary components/albumart # category songbird-album-art-fetcher sbFileAlbumArtFetcher @songbirdnest.com/Songbird/album-art/file-fetcher;1
 # binary components/albumart # category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
+
+# binary components/devices/cd/src # category songbird-device-controller @songbirdnest.com/Songbird/CDDeviceController;1 @songbirdnest.com/Songbird/CDDeviceController;1
+# binary components/devices/cd/src # category songbird-device-marshall SongbirdCDDeviceMarshall @songbirdnest.com/Songbird/CDDeviceMarshall;1
+# binary components/devices/device/src # category app-startup SongbirdDeviceManager2Service @songbirdnest.com/Songbird/DeviceManager;2
+# binary components/devices/firmware/mock # category songbird-device-firmware-handler SongbirdDeviceFirmwareTester-MockDeviceFirmwareHandler @songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1
+# binary components/devices/firmware/src # category app-startup SongbirdDeviceFirmwareAutoCheckForUpdate @songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1
+# binary components/devices/firmware/src # category app-startup SongbirdDeviceFirmwareUpdater @songbirdnest.com/Songbird/Device/Firmware/Updater;1
+# binary components/devicesobsolete/manager # category app-startup SongbirdObsoleteDeviceManagerService @songbirdnest.com/Songbird/DeviceManager;1
 
 # binary components/mediacore/gstreamer/src # category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
 # binary components/mediacore/manager # category profile-after-change SongbirdMediacoreManager @songbirdnest.com/Songbird/Mediacore/Manager;1
