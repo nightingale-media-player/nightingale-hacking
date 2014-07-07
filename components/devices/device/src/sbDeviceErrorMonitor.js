@@ -65,7 +65,7 @@ var deviceErrorMonitorConfig = {
     {
       category: 'profile-after-change',
       entry: 'service-device-error-monitor',
-      value: 'service,@songbirdnest.com/device/error-monitor-service;1',
+      value: '@songbirdnest.com/device/error-monitor-service;1',
       service: true
     }
   ],

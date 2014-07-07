@@ -55,7 +55,7 @@ var deviceEventMonitorConfig = {
     {
       category: 'profile-after-change',
       entry: 'service-device-event-monitor',
-      value: 'service,@songbirdnest.com/device/event-monitor-service;1',
+      value: '@songbirdnest.com/device/event-monitor-service;1',
       service: true
     }
   ]
