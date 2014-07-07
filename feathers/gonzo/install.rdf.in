@@ -25,10 +25,12 @@
          See http://developer.songbirdnest.com/feathers/ -->
     <songbird:skin>
       <Description>
-        <songbird:name/>
+        <songbird:name>Gonzo</songbird:name>
         <songbird:internalName>gonzo</songbird:internalName>
         <songbird:compatibleLayout>
           <Description>
+            <songbird:layoutURL>chrome://gonzo/content/xul/mainplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>true</songbird:showChrome>
             <songbird:onTop>false</songbird:onTop>
           </Description>
           <Description>
