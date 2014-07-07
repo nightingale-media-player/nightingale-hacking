@@ -126,10 +126,7 @@ contract @songbirdnest.com/mediacore/sbTestDummyMediacoreManager;1 {00831a9c-1d9
 contract @songbirdnest.com/mediacore/sbTestMediacoreEventCreator;1 {77cf73e7-fc6b-458b-969a-97945f4160b7}
 contract @songbirdnest.com/mediacore/sbTestMediacoreStressThreads;1 {a2c2010f-d87d-440d-bf2e-74542b9bebea}
 contract @songbirdnest.com/mock-firmware-url-handler;1 {c0a0ebce-1dd1-11b2-afed-a5eeb1302690}
-contract @songbirdnest.com/moz/clipboard/helper;1 {6063116b-2b98-44d5-8f6e-0a7043f01fc3}
 contract @songbirdnest.com/moz/sburlformatter;1 {4dc7da1b-89d1-48b5-8582-64c98bfb3410}
-contract @songbirdnest.com/moz/xpcom/sbpropertybag;1 {135c8890-d9da-4a1c-b345-3bb2fee8fab5}
-contract @songbirdnest.com/moz/xpcom/threadsafe-array;1 {14fa3c6c-868d-445d-a3b5-d18b77bf8b36}
 contract @songbirdnest.com/remoteapi/remoteapiservice;1 {8e380cb6-cfbc-4d80-9e4c-e035253243c9}
 contract @songbirdnest.com/remoteapi/remoteplayer-factory;1 {df5f2b39-66b1-44ff-bb03-6bb7636d593b}
 contract @songbirdnest.com/remoteapi/remoteplayer;1 {645e064c-e547-444c-bb41-8f2e5b12700b}
@@ -191,13 +188,11 @@ contract @songbirdnest.com/songbird/feathersmanager;1 {99f24350-a67f-11db-befa-0
 contract @songbirdnest.com/Songbird/FileDownloader;1 {f93a67e4-d97d-4607-971e-00ae2bf8ef8f}
 contract @songbirdnest.com/Songbird/FileScan;1 {411dd545-ead0-41c4-8ba1-697dbe5c67ea}
 contract @songbirdnest.com/Songbird/FileScanQuery;1 {7bb22470-e03d-4220-ac93-ac70700af6ab}
-contract @songbirdnest.com/Songbird/FileUtils;1 {88d4bc8a-1dd2-11b2-a227-d746b1d00458}
 contract @songbirdnest.com/Songbird/HotkeyActions;1 {0bb80965-77c8-4212-866c-f22677f75a2c}
 contract @songbirdnest.com/Songbird/HotkeyConfiguration;1 {5c6b204c-1dd2-11b2-8005-83725e03a0d0}
 contract @songbirdnest.com/Songbird/HotkeyService;1 {8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}
 contract @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1 {9a364e08-1dd1-11b2-91da-c8a2df3c5785}
 contract @songbirdnest.com/Songbird/IdentityService;1 {94717ce5-adb7-4661-8044-530c4b4330ce}
-contract @songbirdnest.com/Songbird/ImageParser;1 {39dd2e7c-1dd2-11b2-b8c2-b50253bd2e17}
 contract @songbirdnest.com/Songbird/Intl/StringTransform;1 {0a8d2a48-2947-4ee4-bf36-32e7777358db}
 contract @songbirdnest.com/Songbird/ITunesImporter;1 {56202248-e7ab-4e45-bff3-f296844688c4}
 contract @songbirdnest.com/Songbird/JobProgressService;1 {afef6b00-90d5-11dd-ad8b-0800200c9a66}
@@ -205,6 +200,7 @@ contract @songbirdnest.com/Songbird/Library/Constraint;1 {318e7d66-59c4-43d5-8cf
 contract @songbirdnest.com/Songbird/Library/ConstraintBuilder;1 {68046bc7-ad03-40a0-b1d8-b007613778ba}
 contract @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1 {10a07ef5-8ab6-4728-9172-4e609f65b4a2}
 contract @songbirdnest.com/Songbird/Library/EnumeratorWrapper;1 {ae7b146d-9edc-47e0-9bc7-29f3bee4d00a}
+
 # binary components/library/localdatabase # contract @songbirdnest.com/Songbird/Library/DiffingService;1 {a3786151-dba2-46c5-9e07-5f958c233f1a}
 # binary components/library/localdatabase # contract @songbirdnest.com/Songbird/Library/LocalDatabase/AsyncGUIDArray;1 {590b758a-aa00-41e4-8b41-4ef002a6b31d}
 # binary components/library/localdatabase # contract @songbirdnest.com/Songbird/Library/LocalDatabase/DynamicMediaListFactory;1 {1dcff5da-9a36-46d7-87fd-a6f0d0ec081f}
@@ -214,6 +210,7 @@ contract @songbirdnest.com/Songbird/Library/EnumeratorWrapper;1 {ae7b146d-9edc-4
 # binary components/library/localdatabase # contract @songbirdnest.com/Songbird/Library/LocalDatabase/MediaListViewState;1 {9a1a9305-ca11-4067-aa24-baeb64231dfa}
 # binary components/library/localdatabase # contract @songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1 {6b9b9718-05b4-4ee3-ab09-a9d575f4c2aa}
 # binary components/library/localdatabase # contract @songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1 {89cc7c59-2d70-4d6f-8472-59e15f2a3581}
+
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.6.1to0.7.0 {54a1d507-d085-4bfe-b729-1ffa13291c24}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0RC1to0.7.0 {60e48ff7-13b4-498d-9c2e-a077a34a9ca6}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/0.7.0RC2to0.7.0 {116c3a20-dd68-45e9-81fd-ebeebfd21bf6}
@@ -239,6 +236,7 @@ contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/27to
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/28to29 {4eba22e9-d657-4599-a181-b8340852e7a2}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/utf16toutf8 {e313d2f1-d1be-4683-963f-5f43c5245c6c}
 contract @songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1 {744f6217-4cb9-4929-8d1d-72492c1b8c83}
+
 contract @songbirdnest.com/Songbird/library/Manager;1 {ff27fd1d-183d-4c6d-89e7-1cd489f18bb9}
 contract @songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1 {7f29a8d6-b4cf-4d6e-8f86-3145a3deff88}
 contract @songbirdnest.com/Songbird/Library/MediaItemWatcher;1 {3452f193-9bdc-45d4-a626-d8d7d4605035}
@@ -339,7 +337,6 @@ contract @songbirdnest.com/Songbird/PlaylistWriter/M3U;1 {a11690c2-1dd1-11b2-82b
 contract @songbirdnest.com/Songbird/PlaylistWriterManager;1 {9d66cb86-951e-49f4-bef8-26a578891275}
 contract @songbirdnest.com/Songbird/playqueue/contentInfo;1 {e0d6e860-1dd1-11b2-8663-a4d535a29859}
 contract @songbirdnest.com/Songbird/playqueue/service;1 {e6407d63-33d2-402e-a166-3d6bc785a48e}
-contract @songbirdnest.com/Songbird/Prompter;1 {fa7ec5bd-7cab-4a63-a970-7bc4e83ee891}
 contract @songbirdnest.com/Songbird/Properties/Builder/DownloadButton;1 {186a6af0-ebc3-4147-8cc3-19d92c991efc}
 contract @songbirdnest.com/Songbird/Properties/Builder/Image;1 {90253df9-a6aa-4060-8849-c4369b6d00d5}
 contract @songbirdnest.com/Songbird/Properties/Builder/ImageLabelLink;1 {bec530f1-e514-4291-9b63-732725c7a426}
@@ -362,9 +359,7 @@ contract @songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1 {f07898c0
 contract @songbirdnest.com/Songbird/PublicPlaylistCommands;1 {1126ee77-2d85-4f79-a07a-b014da404e53}
 contract @songbirdnest.com/Songbird/RemoveHelper;1 {b44bf03e-fe28-4ad4-ba7e-6112cdced7a4}
 contract @songbirdnest.com/Songbird/sbiTunesXMLParser;1 {f0ebf580-c5fb-4efc-960a-50bef0bcedcc}
-contract @songbirdnest.com/Songbird/sbstringmap;1 {56a00dd5-cfae-4910-ae12-ef53935dcf3e}
 contract @songbirdnest.com/Songbird/ScreenSaverSuppressor;1 {0e3247f9-a111-4d2a-869a-043966108d98}
-contract @songbirdnest.com/Songbird/ServiceManager;1 {f162173e-1dd1-11b2-ac46-96108118919e}
 contract @songbirdnest.com/Songbird/SmartMediaListsUpdater;1 {35af253e-c7b0-40d6-a1a2-c747de924639}
 contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
 contract @songbirdnest.com/Songbird/songbird-internal-search;1 {13d82f60-a625-11df-981c-0800200c9a66}
@@ -372,13 +367,7 @@ contract @songbirdnest.com/Songbird/SQLBuilder/Delete;1 {908dd5de-d31b-469d-a01a
 contract @songbirdnest.com/Songbird/SQLBuilder/Insert;1 {8d744125-903b-42bc-8b2f-21f6b91c47e9}
 contract @songbirdnest.com/Songbird/SQLBuilder/Select;1 {588687d7-3123-418a-b6ba-cc54b1066c8a}
 contract @songbirdnest.com/Songbird/SQLBuilder/Update;1 {dbaf00cb-bb40-47a1-a7a9-aa88d4506e9e}
-contract @songbirdnest.com/Songbird/stringbundle;1 {04134658-9cf9-4fea-90c0-bc159c016037}
-contract @songbirdnest.com/Songbird/TemporaryFileFactory;1 {33ecad26-1dd2-11b2-b11b-84c215c310a5}
-contract @songbirdnest.com/Songbird/TemporaryFileService;1 {a73256d2-1dd1-11b2-9faa-b9709834174c}
-contract @songbirdnest.com/Songbird/ThreadPoolService;1 {f3980a5a-39da-4e1b-bb63-c3e26e85d3c6}
-contract @songbirdnest.com/Songbird/Variant;1 {b522c2e8-826f-477f-86b7-4a143cd1a188}
 contract @songbirdnest.com/Songbird/webservices/last-fm;1 {6582d596-95dd-4449-be8b-7793a15bdfa2}
-contract @songbirdnest.com/Songbird/window-watcher;1 {4d83ab89-f909-4e71-8d5d-d0884d0cb788}
 contract @songbirdnest.com/Songbird/WindowCloak;1 {d5267aa4-f3ba-4b7b-b136-c1861c410ee5}
 contract @songbirdnest.com/contentsniffer/manager;1 {b4f06ad2-0252-4a2f-9d83-f4f25d0303a3}
 contract @songbirdnest.com/tools/disthelper/update/env;1 {6325fde4-f1ee-47f9-a40e-306b877a2bc2}
@@ -386,6 +375,24 @@ contract @songbirdnest.com/uri-import-service;1 {cc435d34-f76a-458f-b786-faf897c
 contract @songbirdnest.com/watch-folder-service;1 {bc4a17b5-4b9d-4a2c-be93-7699cdd6b583}
 contract @songbirdnest.com/watch-folder;1 {11ef8123-666b-4acc-ab17-587a5c44c5b9}
 contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2-8059-c4e994415c12} os=WINNT
+
+# binary components/moz/clipboard # contract @songbirdnest.com/moz/clipboard/helper;1 {6063116b-2b98-44d5-8f6e-0a7043f01fc3}
+# binary components/moz/fileutils # contract @songbirdnest.com/Songbird/DirectoryEnumerator;1 {7065ab15-8b5f-4e02-965e-cf499bd9ca3a}
+# binary components/moz/fileutils # contract @songbirdnest.com/Songbird/FileUtils;1 {88d4bc8a-1dd2-11b2-a227-d746b1d00458}
+# binary components/moz/image # contract @songbirdnest.com/Songbird/ImageParser;1 {39dd2e7c-1dd2-11b2-b8c2-b50253bd2e17}
+# binary components/moz/prompter # contract @songbirdnest.com/Songbird/Prompter;1 {fa7ec5bd-7cab-4a63-a970-7bc4e83ee891}
+# binary components/moz/strings/components # contract @songbirdnest.com/Songbird/sbstringmap;1 {56a00dd5-cfae-4910-ae12-ef53935dcf3e}
+# binary components/moz/strings/components # contract @songbirdnest.com/Songbird/stringbundle;1 {04134658-9cf9-4fea-90c0-bc159c016037}
+# binary components/moz/temporaryfileservice # contract @songbirdnest.com/Songbird/TemporaryFileFactory;1 {33ecad26-1dd2-11b2-b11b-84c215c310a5}
+# binary components/moz/temporaryfileservice # contract @songbirdnest.com/Songbird/TemporaryFileService;1 {a73256d2-1dd1-11b2-9faa-b9709834174c}
+# binary components/moz/threadpoolservice # contract @songbirdnest.com/Songbird/ThreadPoolService;1 {f3980a5a-39da-4e1b-bb63-c3e26e85d3c6}
+# binary components/moz/variant # contract @songbirdnest.com/Songbird/Variant;1 {b522c2e8-826f-477f-86b7-4a143cd1a188}
+# binary components/moz/windowwatcher # contract @songbirdnest.com/Songbird/window-watcher;1 {4d83ab89-f909-4e71-8d5d-d0884d0cb788}
+# binary components/moz/xpcom # contract @songbirdnest.com/moz/xpcom/sbpropertybag;1 {135c8890-d9da-4a1c-b345-3bb2fee8fab5}
+# binary components/moz/xpcom # contract @songbirdnest.com/moz/xpcom/threadsafe-array;1 {14fa3c6c-868d-445d-a3b5-d18b77bf8b36}
+# binary components/moz/xpcom # contract @songbirdnest.com/Songbird/ServiceManager;1 {f162173e-1dd1-11b2-ac46-96108118919e}
+
+
 
 ##############
 # CATEGORIES #
@@ -425,14 +432,39 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
  category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
 # category profile-after-change sbPublicPlaylistCommands service,@songbirdnest.com/Songbird/PublicPlaylistCommands;1
 # category profile-after-change sbScreenSaverSuppressor service,@songbirdnest.com/Songbird/ScreenSaverSuppressor;1
-# ##### REG AS SRVC IN MOD ##### category app-startup sbShutdownService service,@songbirdnest.com/shutdown-service;1
+category app-startup sbShutdownService @songbirdnest.com/shutdown-service;1
 # category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
 # category profile-after-change webservices-lastfm service,@songbirdnest.com/Songbird/webservices/last-fm;1
  category sb-command-line-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
 # Don't register at all? doesn't have observer? category xpcom-startup m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
  category command-line-handler m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
  category display-pane-provider play-queue @songbirdnest.com/Songbird/playqueue/contentInfo;1
- category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
+
+# category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
+# um, it has like 50 entries?
+category extension-update-params LOCALE @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params VENDOR @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params NAME @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PRODUCT @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params ID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params APPBUILDID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params BUILD_ID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params BUILD_TARGET @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PLATFORMVERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PLATFORM_VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PLATFORMBUILDID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params APP @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params OS @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params XPCOMABI @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params DISTRIBUTION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params DISTRIBUTION_VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params CHANNEL @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params OS_VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params CUSTOM1 @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
+
+
  category external-uricontentlisteners application/vnd.songbird.maybe.media @songbirdnest.com/contentlistener/media;1
  category external-uricontentlisteners application/vnd.songbird.maybe.playlist @songbirdnest.com/contentlistener/media;1
  category external-uricontentlisteners sbMediaContentListener @songbirdnest.com/contentlistener/media;1
@@ -467,8 +499,6 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # category songbird-media-item-downloader sbHTTPMediaItemDownloader @songbirdnest.com/Songbird/HTTPMediaItemDownloader;1
  category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
  category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1
-# # category xpcom-startup SongbirdThreadPoolService service,@songbirdnest.com/Songbird/ThreadPoolService;1
-# category xpcom-startup SongbirdThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
 # # category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 
@@ -478,6 +508,9 @@ category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbir
 # binary components/mediacore/gstreamer/src # category songbird-mediacore-factory SongbirdGstreamerMediacoreFactory @songbirdnest.com/Songbird/Mediacore/GStreamerMediacoreFactory;1
 # binary components/mediacore/manager # category profile-after-change SongbirdMediacoreManager @songbirdnest.com/Songbird/Mediacore/Manager;1
 
-# binary components/mediaexport/src # category profile-after-change SongbirdMediaExportAgentService service,@songbirdnest.com/media-export-service;1
+# binary components/mediaexport/src # category profile-after-change SongbirdMediaExportAgentService @songbirdnest.com/media-export-service;1
 
-# binary components/moz/windowwatcher # category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
+# binary components/moz/strings/components # category profile-after-change sbStringBundleService @songbirdnest.com/Songbird/stringbundle;1
+# binary components/moz/temporaryfileservice # category app-startup sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
+# binary components/moz/threadpoolservice # category xpcom-startup SongbirdThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
+# binary components/moz/windowwatcher # category app-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
