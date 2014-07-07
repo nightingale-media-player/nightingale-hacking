@@ -1,7 +1,7 @@
 #ifdef DEBUG
 
 # Linux #
-# binary-component sbAlbumArt_d.so os=Linux
+binary-component sbAlbumArt_d.so os=Linux
 binary-component sbBrowserAPI_d.so os=Linux
 binary-component sbCDDevice_d.so os=Linux
 binary-component sbClipboardHelper_d.so os=Linux

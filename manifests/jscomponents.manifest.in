@@ -515,6 +515,9 @@ category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servi
 # # category app-startup sbWindowsAutoPlayService service,@songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 
+
+
+# binary components/albumart # category app-startup sbAlbumArtService @songbirdnest.com/Songbird/album-art-service;1
 # binary components/albumart # category songbird-album-art-fetcher sbFileAlbumArtFetcher @songbirdnest.com/Songbird/album-art/file-fetcher;1
 # binary components/albumart # category songbird-album-art-fetcher sbMetadataAlbumArtFetcher @songbirdnest.com/Songbird/album-art/metadata-fetcher;1
 
