@@ -363,10 +363,6 @@ contract @songbirdnest.com/Songbird/ScreenSaverSuppressor;1 {0e3247f9-a111-4d2a-
 contract @songbirdnest.com/Songbird/SmartMediaListsUpdater;1 {35af253e-c7b0-40d6-a1a2-c747de924639}
 contract @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1 {4b6a6c23-e247-419e-b629-3c2ef5f5876d}
 contract @songbirdnest.com/Songbird/songbird-internal-search;1 {13d82f60-a625-11df-981c-0800200c9a66}
-contract @songbirdnest.com/Songbird/SQLBuilder/Delete;1 {908dd5de-d31b-469d-a01a-bfba69e775af}
-contract @songbirdnest.com/Songbird/SQLBuilder/Insert;1 {8d744125-903b-42bc-8b2f-21f6b91c47e9}
-contract @songbirdnest.com/Songbird/SQLBuilder/Select;1 {588687d7-3123-418a-b6ba-cc54b1066c8a}
-contract @songbirdnest.com/Songbird/SQLBuilder/Update;1 {dbaf00cb-bb40-47a1-a7a9-aa88d4506e9e}
 contract @songbirdnest.com/Songbird/webservices/last-fm;1 {6582d596-95dd-4449-be8b-7793a15bdfa2}
 contract @songbirdnest.com/Songbird/WindowCloak;1 {d5267aa4-f3ba-4b7b-b136-c1861c410ee5}
 contract @songbirdnest.com/contentsniffer/manager;1 {b4f06ad2-0252-4a2f-9d83-f4f25d0303a3}
@@ -392,6 +388,10 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # binary components/moz/xpcom # contract @songbirdnest.com/moz/xpcom/threadsafe-array;1 {14fa3c6c-868d-445d-a3b5-d18b77bf8b36}
 # binary components/moz/xpcom # contract @songbirdnest.com/Songbird/ServiceManager;1 {f162173e-1dd1-11b2-ac46-96108118919e}
 
+# binary components/sqlbuilder # contract @songbirdnest.com/Songbird/SQLBuilder/Delete;1 {908dd5de-d31b-469d-a01a-bfba69e775af}
+# binary components/sqlbuilder # contract @songbirdnest.com/Songbird/SQLBuilder/Insert;1 {8d744125-903b-42bc-8b2f-21f6b91c47e9}
+# binary components/sqlbuilder # contract @songbirdnest.com/Songbird/SQLBuilder/Select;1 {588687d7-3123-418a-b6ba-cc54b1066c8a}
+# binary components/sqlbuilder # contract @songbirdnest.com/Songbird/SQLBuilder/Update;1 {dbaf00cb-bb40-47a1-a7a9-aa88d4506e9e}
 
 
 ##############
