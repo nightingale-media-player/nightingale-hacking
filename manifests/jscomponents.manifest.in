@@ -470,9 +470,9 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
  category external-uricontentlisteners application/vnd.songbird.maybe.playlist @songbirdnest.com/contentlistener/media;1
  category external-uricontentlisteners sbMediaContentListener @songbirdnest.com/contentlistener/media;1
  category JavaScript-global-property songbird @songbirdnest.com/remoteapi/remoteplayer;1
- category library-importer iTunesLibraryImporter @songbirdnest.com/Songbird/ITunesImporter;1
 # category metadata-lookup sbTestProvider @songbirdnest.com/Songbird/MetadataLookup/testProvider;1
 # category net-content-sniffers SongbirdMediaSniffer @songbirdnest.com/contentsniffer/manager;1
+# category library-importer iTunesLibraryImporter @songbirdnest.com/Songbird/ITunesImporter;1
  category playlist-reader asx @songbirdnest.com/Songbird/Playlist/Reader/ASX;1
  category playlist-reader feed @songbirdnest.com/Songbird/Playlist/Reader/Feed;1
  category playlist-reader html @songbirdnest.com/Songbird/Playlist/Reader/HTML;1
