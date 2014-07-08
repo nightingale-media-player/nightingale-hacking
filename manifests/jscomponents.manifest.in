@@ -412,10 +412,17 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 
 # Registering for app-startup is pretty problematic
 
- category profile-after-change AddonBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
- category profile-after-change DynamicPlaylistService @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
- category app-startup faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
- category app-startup feathers-manager @songbirdnest.com/songbird/feathersmanager;1
+category command-line-handler m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
+category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
+category app-startup AddonBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
+category app-startup sbShutdownService @songbirdnest.com/shutdown-service;1
+
+category profile-after-change feathers-manager @songbirdnest.com/songbird/feathersmanager;1
+category profile-after-change faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
+
+category profile-after-change ParserErrorHandler @songbirdnest.com/Songbird/ParserErrorHandler;1
+
+category profile-after-change DynamicPlaylistService @songbirdnest.com/Songbird/Library/DynamicPlaylistService;1
 
 # # category app-startup sbStringTransform @songbirdnest.com/Songbird/Intl/StringTransform;1
 # ### doesn't implement nsiobserver ### category profile-after-change smartplaylist-property-registrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
@@ -423,21 +430,16 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
 # # DEL ? # category profile-after-change SongbirdGlobalHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
 
 # category profile-after-change sbLibraryImporterManagerService @songbirdnest.com/Songbird/LibraryImporterManager;1
- category app-startup ParserErrorHandler @songbirdnest.com/Songbird/ParserErrorHandler;1
 # ## Causes a hang right now ## category app-startup SbPlaybackHistoryService @songbirdnest.com/Songbird/PlaybackHistoryService;1
  category profile-after-change sbPlayQueueService @songbirdnest.com/Songbird/playqueue/service;1
 # GOOD? # category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
 # category profile-after-change sbScreenSaverSuppressor @songbirdnest.com/Songbird/ScreenSaverSuppressor;1
 
-
-category app-startup sbAppStartupService @songbirdnest.com/app-startup-service;1
-category app-startup sbShutdownService @songbirdnest.com/shutdown-service;1
 category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1 os=WINNT
 
 # category profile-after-change sbWatchFolderService @songbirdnest.com/watch-folder-service;1
 # category profile-after-change webservices-lastfm @songbirdnest.com/Songbird/webservices/last-fm;1
 # Don't register at all? doesn't have observer? category xpcom-startup m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
- category command-line-handler m-songbird-clh @songbirdnest.com/commandlinehandler/general-startup;1?type=songbird
  category display-pane-provider play-queue @songbirdnest.com/Songbird/playqueue/contentInfo;1
 
 # category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
@@ -484,7 +486,7 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
  category quit-application sbHotkeyService @songbirdnest.com/Songbird/HotkeyService;1
 # category quit-application sbHotkeyActions @songbirdnest.com/Songbird/HotkeyActions;1
  category quit-application sbServicePaneService @songbirdnest.com/servicepane/service;1
- category quit-application feathers-manager @songbirdnest.com/songbird/feathersmanager;1
+ # category quit-application feathers-manager @songbirdnest.com/songbird/feathersmanager;1
 
 category service-pane 0library @songbirdnest.com/servicepane/library;1
 # JScomp components/devices/cd/src #
