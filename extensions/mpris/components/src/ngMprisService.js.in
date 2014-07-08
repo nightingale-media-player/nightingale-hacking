@@ -175,6 +175,7 @@ ngMprisService.prototype.initDBus = function() {
 	    var list = mediacore.sequencer.view.mediaList;
 
         var args = {};
+        var inv = [];
 	    switch (event.type) {
           case Ci.sbIMediacoreEvent.BEFORE_VIEW_CHANGE:
             mediacore.sequencer.view.mediaList.removeListener(mediaListListener);
@@ -206,16 +207,26 @@ ngMprisService.prototype.initDBus = function() {
             if(videoWindow!= null)
                 videoWindow.QueryInterface(Ci.sbIMediacoreVideoWindow).videoWindow.QueryInterface(Ci.nsIDOMXULElement).addEventListener("fullscreen", _ngMprisCheckFullscreen, false);
             break;
-          case Ci.sbIMediacoreEvent.SEQUENCE_CHANGE:
           case Ci.sbIMediacoreEvent.SEQUENCE_END:
             args.CanGoNext = false;
+          case Ci.sbIMediacoreEvent.SEQUENCE_CHANGE:
             dbus.prepareSignal("/org/mpris/MediaPlayer2",
                                "org.mpris.MediaPlayer2.TrackList",
                                "TrackListReplaced");
             plugin.setDBusArg(plugin._TrackList.Tracks);
             plugin.setDBusArg(plugin._Player.Metadata["mpris:trackid"]);
             dbus.sendSignal();
-            if(event.type == Ci.sbIMediacoreEvent.SEQUENCE_CHANGE) break;
+            inv.push("Tracks");
+            if(event.type == Ci.sbIMediacoreEvent.SEQUENCE_CHANGE) {
+                dbus.prepareSignal("/org/mpris/MediaPlayer2",
+                               "org.freedesktop.DBus.Properties",
+                               "PropertiesChanged");
+                dbus.setStringArg("org.mpris.MediaPlayer2.Player");
+                plugin.setDBusArg(args);
+                plugin.setDBusArg(inv);
+    	        dbus.sendSignal();
+                break;
+            }
           case Ci.sbIMediacoreEvent.STREAM_START:
 	      case Ci.sbIMediacoreEvent.STREAM_PAUSE:
 	      case Ci.sbIMediacoreEvent.STREAM_STOP:
@@ -229,8 +240,7 @@ ngMprisService.prototype.initDBus = function() {
                                "PropertiesChanged");
             dbus.setStringArg("org.mpris.MediaPlayer2.Player");
             plugin.setDBusArg(args);
-            dbus.openArray();
-            dbus.closeArray();
+            plugin.setDBusArg(inv);
 	        dbus.sendSignal();
 
             // MPRIS 1
@@ -643,41 +653,36 @@ ngMprisService.prototype.handleMethod = function(inter, path, member) {
         }
         break;
       case "org.mpris.MediaPlayer2.TrackList":
-        switch(member) {
-            case "GetTracksMetadata":
-                var tracks = this._dbus.getArrayArg().QueryInterface(Ci.nsIArray).enumerate(),
-                    list = ComponentContainer.mediacore.sequencer.view.mediaList,
-                    ret = [];
-                while(tracks.hasMoreItems()) {
-                    ret.push(getMetadata(list.getItemByGuid(getOItem(tracks.getNext()))));
-                }
-                this.setDBusArg(ret);
-                break;
-            case "AddTrack":
-                break;
-            case "RemoveTrack":
-                var seq = ComponentContainer.mediacore.sequencer,
-                    list = seq.view.mediaList,
-                    trackGUID = getOItem(this._dbus.getStringArg());
-                if(trackGUID == seq.currentItem.getProperty(SBProperties.GUID)) {
-                    seq.next();
-                }
-                list.remove(list.getItemByGuid(track));
-                break;
-            case "GoTo":
-                var seq = ComponentContainer.mediacore.sequencer,
-                    mediaItem = seq.view.mediaList.getItemByGuid(getOItem(this._dbus.getStringArg()));
-                    viewIndex = seq.view.getIndexForItem(mediaItem),
-                    currentSeq = seq.currentSequence.enumerate(),
-                    item;
-                    while(currentSeq.hasMoreItems()) {
-                        item = currentSeq.getNext().QueryInterface(Ci.nsISupportsPRUint32);
-                        if(item.data == viewIndex) {
-                            seq.sequencePosition = seq.currentSequence.indexOf(0, item);
-                            break;
-                        }
+        if(path == "/org/mpris/MediaPlayer2") {
+            switch(member) {
+                case "GetTracksMetadata":
+                    var tracks = this._dbus.getArrayArg().QueryInterface(Ci.nsIArray).enumerate(),
+                        list = ComponentContainer.mediacore.sequencer.view.mediaList,
+                        ret = [];
+                    while(tracks.hasMoreItems()) {
+                        ret.push(getMetadata(list.getItemByGuid(getOItem(tracks.getNext()))));
                     }
-                break;
+                    this.setDBusArg(ret);
+                    break;
+                case "AddTrack":
+                    break;
+                case "RemoveTrack":
+                    break;
+                case "GoTo":
+                    var seq = ComponentContainer.mediacore.sequencer,
+                        mediaItem = seq.view.mediaList.getItemByGuid(getOItem(this._dbus.getStringArg()));
+                        viewIndex = seq.view.getIndexForItem(mediaItem),
+                        currentSeq = seq.currentSequence.enumerate(),
+                        item;
+                        while(currentSeq.hasMoreItems()) {
+                            item = currentSeq.getNext().QueryInterface(Ci.nsISupportsPRUint32);
+                            if(item.data == viewIndex) {
+                                seq.sequencePosition = seq.currentSequence.indexOf(0, item);
+                                break;
+                            }
+                        }
+                    break;
+            }
         }
         break;
       case "org.freedesktop.DBus.Properties":
@@ -1451,7 +1456,7 @@ function TrackList() {
 
 TrackList.prototype = {
     get CanEditTracks() {
-        return !!ComponentContainer.mediacore.sequencer.view;
+        return false;
     },
     get Tracks() {
         if(ComponentContainer.mediacore.sequencer.view) {
