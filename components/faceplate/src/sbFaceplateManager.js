@@ -412,9 +412,8 @@ FaceplateManager.prototype = {
   classID: Components.ID("{eb5c665a-bfe2-49f0-a747-cd3554e55606}"),
   contractID: "@songbirdnest.com/faceplate/manager;1",
   _xpcom_categories: [{
-    category: 'app-startup',
+    category: 'profile-after-change',
     entry: 'faceplate-pane-manager',
-    value: '@songbirdnest.com/faceplate/manager;1',
     service: true
   }]
 }; // FaceplateManager.prototype

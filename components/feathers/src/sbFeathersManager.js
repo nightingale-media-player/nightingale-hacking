@@ -484,9 +484,8 @@ FeathersManager.prototype = {
   contractID:        CONTRACTID,
   _xpcom_categories:
   [{
-    category: "app-startup",
+    category: "profile-after-change",
     entry: "feathers-manager",
-    value: CONTRACTID,
     service: true
   }],
   constructor: FeathersManager,
