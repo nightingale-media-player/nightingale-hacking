@@ -96,8 +96,6 @@ function ParserErrorHandler() {
                         .getService(Components.interfaces.nsIObserverService);
     
     if (gOS.addObserver) {
-      // We should wait until the profile has been loaded to start
-      gOS.addObserver(this, "profile-after-change", false);
       // We need to unhook things on shutdown
       gOS.addObserver(this, "xpcom-shutdown", false);
     }
@@ -112,7 +110,7 @@ ParserErrorHandler.prototype = {
   classID: SONGBIRD_PARSERERRORHANDLER_CID,
   contractID: SONGBIRD_PARSERERRORHANDLER_CONTRACTID,
   _xpcom_categories: [{
-    category: "app-startup",
+    category: "profile-after-change",
     service: true
   }],
 
@@ -164,57 +162,3 @@ ParserErrorHandler.prototype = {
  */
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([ParserErrorHandler]);
-
-// var gModule = {
-//   registerSelf: function(componentManager, fileSpec, location, type) {
-//     componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-//     for (var key in this._objects) {
-//       var obj = this._objects[key];
-//       componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-//                                                fileSpec, location, type);
-//     }
-//     var categoryManager = Components.classes["@mozilla.org/categorymanager;1"]
-//                                     .getService(Components.interfaces.nsICategoryManager);
-//     categoryManager.addCategoryEntry("app-startup", this._objects.parsererrorhandler.className,
-//                                     "service," + this._objects.parsererrorhandler.contractID, 
-//                                     true, true, null);
-//   },
-
-//   getClassObject: function(componentManager, cid, iid) {
-//     if (!iid.equals(Components.interfaces.nsIFactory))
-//       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-//     for (var key in this._objects) {
-//       if (cid.equals(this._objects[key].CID))
-//         return this._objects[key].factory;
-//     }
-    
-//     throw Components.results.NS_ERROR_NO_INTERFACE;
-//   },
-
-//   _makeFactory: #1= function(ctor) {
-//     function ci(outer, iid) {
-//       if (outer != null)
-//         throw Components.results.NS_ERROR_NO_AGGREGATION;
-//       return (new ctor()).QueryInterface(iid);
-//     } 
-//     return { createInstance: ci };
-//   },
-  
-//   _objects: {
-//     // The ParserError Component
-//     parsererrorhandler:     { CID        : SONGBIRD_PARSERERRORHANDLER_CID,
-//                               contractID : SONGBIRD_PARSERERRORHANDLER_CONTRACTID,
-//                               className  : SONGBIRD_PARSERERRORHANDLER_CLASSNAME,
-//                               factory    : #1#(ParserErrorHandler)
-//                             },
-//   },
-
-//   canUnload: function(componentManager) { 
-//     return true; 
-//   }
-// }; // gModule
-
-// function NSGetModule(comMgr, fileSpec) {
-//   return gModule;
-// } // NSGetModule
