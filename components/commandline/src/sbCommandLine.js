@@ -117,18 +117,11 @@ sbCommandLineHandler.prototype = {
   classID: SONGBIRD_CLH_CID,
   contractID: SONGBIRD_CLH_CONTRACTID,
 
-  _xpcom_categories: [
-    {
-      category: "xpcom-startup",
-      entry: SONGBIRD_CLH_CATEGORY,
-      value: SONGBIRD_CLH_CONTRACTID
-    },
-    {
+  _xpcom_categories: [{
       category: "command-line-handler",
       entry: SONGBIRD_CLH_CATEGORY,
       value: SONGBIRD_CLH_CONTRACTID
-    }
-  ],
+  }],
 
   // there are specific formatting guidelines for help test, see nsICommandLineHandler
   helpInfo : "  -test [tests]        Run tests on the components listed in the\n" +
@@ -419,65 +412,5 @@ sbCommandLineHandler.prototype = {
     Ci.nsISupports
   ])
 }; // sbCommandLineHandler
-
-/**
- * /brief The module for getting the commandline handler
- */
-const sbCommandLineHandlerModule = {
-  registerSelf : function (compMgr, fileSpec, location, type) {
-    compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation(SONGBIRD_CLH_CID,
-                                    SONGBIRD_CLH_CLASSNAME,
-                                    SONGBIRD_CLH_CONTRACTID,
-                                    fileSpec,
-                                    location,
-                                    type);
-
-    var catMan = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
-    catMan.addCategoryEntry("command-line-handler",
-                            SONGBIRD_CLH_CATEGORY,
-                            SONGBIRD_CLH_CONTRACTID,
-                            true,
-                            true);
-  },
-
-  getClassObject : function (compMgr, cid, iid) {
-    if (!cid.equals(SONGBIRD_CLH_CID))
-      throw Cr.NS_ERROR_NO_INTERFACE;
-
-    if (!iid.equals(Ci.nsIFactory))
-      throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
-    return this.mFactory;
-  },
-
-  mFactory : {
-    createInstance : function (outer, iid) {
-      if (outer != null)
-        throw Cr.NS_ERROR_NO_AGGREGATION;
-      return (new sbCommandLineHandler()).QueryInterface(iid);
-    }
-  },
-
-  unregisterSelf : function (compMgr, location, type) {
-    compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.unregisterFactoryLocation(SONGBIRD_CLH_CID, location);
-
-    var catMan = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
-    catMan.deleteCategoryEntry("command-line-handler", SONGBIRD_CLH_CATEGORY);
-  },
-
-  canUnload : function (compMgr) {
-    return true;
-  },
-
-  QueryInterface : function (iid) {
-    if ( !iid.equals(Ci.nsIModule) ||
-         !iid.equals(Ci.nsISupports) )
-      throw Cr.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
-
-}; // sbCommandLineHandlerModule
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbCommandLineHandler]);
