@@ -434,7 +434,8 @@ ngMprisService.prototype.getInterfaceSpec = function(path) {
         <arg type=\"i\" /> \
     </signal> \
 </interface></node>",
-    mpris2root = "<node name=\"/org/mpris/MediaPlayer2\">	\
+    mpris2begin = "<node name=\"";
+    mpris2root ="\">	\
     <interface name=\"org.mpris.MediaPlayer2\">	\
         <method name=\"Raise\">	\
 			<annotation name=\"org.freedesktop.DBus.Method.NoReply\" value=\"true\"/>		\
@@ -539,16 +540,22 @@ ngMprisService.prototype.getInterfaceSpec = function(path) {
         <property name=\"Tracks\" type=\"ao\" access=\"read\" />	\
         <property name=\"CanEditTracks\" type=\"b\" access=\"read\" />	\
     </interface>	\
-    <node name=\"nightingale\" /> \
+    <node name=\"nightingale\"> \
+        <node name=\"Player\" /> \
+        <node name=\"TrackList\" /> \
+    </node> \
 </node>",
     head = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
 ";
     switch(path) {
         case "/":
+            return head + mpris2begin + path + "\">" + mpris2begin + "org/mpris/MediaPlayer2\" /></node>";
         case "/org":
+            return head + mpris2begin + path + "\">" + mpris2begin + "mpris/MediaPlayer2\" /></node>";
         case "/org/mpris/":
+            return head + mpris2begin + path + "\">" + mpris2begin + "MediaPlayer2\" /></node>";
         case "/org/mpris/MediaPlayer2":
-            return head + mpris2root;
+            return head + mpris2begin + path  + mpris2root;
         case "/org/mpris/MediaPlayer2/nightingale":
             return head + mpris1root;
         case "/org/mpris/MediaPlayer2/nightingale/Player":
