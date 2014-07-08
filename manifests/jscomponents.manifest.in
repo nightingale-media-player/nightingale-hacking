@@ -417,7 +417,6 @@ contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2
  category app-startup faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
  category app-startup feathers-manager @songbirdnest.com/songbird/feathersmanager;1
 
- category app-startup sbDistHelperEnvWriter @songbirdnest.com/tools/disthelper/update/env;1
 # # category app-startup sbStringTransform @songbirdnest.com/Songbird/Intl/StringTransform;1
 # ### doesn't implement nsiobserver ### category profile-after-change smartplaylist-property-registrar @songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1
  category profile-after-change smartplaylists-updater @songbirdnest.com/Songbird/SmartMediaListsUpdater;1
@@ -537,3 +536,5 @@ category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servi
 # binary components/moz/temporaryfileservice # category app-startup sbTemporaryFileService @songbirdnest.com/Songbird/TemporaryFileService;1
 # binary components/moz/threadpoolservice # category xpcom-startup SongbirdThreadPoolService @songbirdnest.com/Songbird/ThreadPoolService;1
 # binary components/moz/windowwatcher # category app-startup sbWindowWatcher @songbirdnest.com/Songbird/window-watcher;1
+
+# binary components/update # category app-startup sbDistHelperEnvWriter @songbirdnest.com/tools/disthelper/update/env;1

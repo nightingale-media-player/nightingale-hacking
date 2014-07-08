@@ -55,7 +55,7 @@
 #endif
 
 /* Misc preprocessor macros */
-#define NS_APPSTARTUP_CATEGORY "app-startup"
+#define NS_PROF_AFTR_CNG "profile-after-change"
 #define XRE_UPDATE_ROOT_DIR  "UpdRootD"
 #define TOPIC_UPDATE_STATUS "update-service-pre-update-status"
 
@@ -88,53 +88,6 @@ sbDistHelperEnvWriter::sbDistHelperEnvWriter()
 
 sbDistHelperEnvWriter::~sbDistHelperEnvWriter()
 {
-}
-
-/* static */ NS_METHOD
-sbDistHelperEnvWriter::RegisterSelf(nsIComponentManager*         aCompMgr,
-                                    nsIFile*                     aPath,
-                                    const char*                  aLoaderStr,
-                                    const char*                  aType,
-                                    const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  char* previousEntry;
-  rv = categoryManager->AddCategoryEntry(NS_APPSTARTUP_CATEGORY,
-                                         "sbDistHelperEnvWriter",
-                                         SB_DISTHELPER_ENV_WRITER_CONTRACTID,
-                                         PR_TRUE, PR_TRUE, &previousEntry);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (previousEntry) {
-    NS_Free(previousEntry);
-  }
-
-  return NS_OK;
-}
-
-/* static */ NS_METHOD
-sbDistHelperEnvWriter::UnregisterSelf(nsIComponentManager *aCompMgr,
-                                      nsIFile *aPath,
-                                      const char *aLoaderStr,
-                                      const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the app-startup category.
-  rv = categoryManager->DeleteCategoryEntry(NS_APPSTARTUP_CATEGORY,
-                                            "sbDistHelperEnvWriter",
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
 }
 
 nsresult
@@ -211,7 +164,7 @@ sbDistHelperEnvWriter::Observe(nsISupports *aSubject,
   nsresult rv;
   TRACE(("%s: %s", __FUNCTION__, aTopic));
 
-  if (!strcmp(aTopic, NS_APPSTARTUP_CATEGORY)) {
+  if (!strcmp(aTopic, NS_PROF_AFTR_CNG)) {
     nsCOMPtr<nsIObserverService> obsSvc =
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);

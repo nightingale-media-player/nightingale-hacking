@@ -23,7 +23,6 @@
  *=END SONGBIRD GPL
  */
 
-#include <nsIComponentManager.h>
 #include <nsIObserver.h>
 
 struct nsModuleComponentInfo;
@@ -35,17 +34,6 @@ public:
   NS_DECL_NSIOBSERVER
 
   sbDistHelperEnvWriter();
-  
-  static NS_METHOD RegisterSelf(nsIComponentManager*         aCompMgr,
-                                nsIFile*                     aPath,
-                                const char*                  aLoaderStr,
-                                const char*                  aType,
-                                const nsModuleComponentInfo* aInfo);
-
-  static NS_METHOD UnregisterSelf(nsIComponentManager *aCompMgr,
-                                  nsIFile *aPath,
-                                  const char *aLoaderStr,
-                                  const nsModuleComponentInfo *aInfo);
 
 protected:
   /**
@@ -68,3 +56,6 @@ protected:
 
 #define SB_DISTHELPER_ENV_WRITER_CONTRACTID           \
   "@songbirdnest.com/tools/disthelper/update/env;1"
+
+#define SB_DISTHELPER_ENV_WRITER_CLASSNAME            \
+  "sbDistHelperEnvWriter"

@@ -39,6 +39,7 @@ static const mozilla::Module::ContractIDEntry kSongbirdUpdateContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kSongbirdUpdateCategories[] = {
+  { "profile-after-change", SB_DISTHELPER_ENV_WRITER_CLASSNAME, SB_DISTHELPER_ENV_WRITER_CONTRACTID },
   { NULL }
 };
 
