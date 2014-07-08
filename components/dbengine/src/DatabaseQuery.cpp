@@ -62,7 +62,7 @@
 
 #ifdef PR_LOGGING
 static PRLogModuleInfo* sDatabaseQueryLog = nsnull;
-#define LOG(args)   PR_LOG(sDatabaseQueryLog, PR_LOG_ALWAYS, args)
+#define LOG(args)   PR_LOG(sDatabaseQueryLog, PR_LOG_DEBUG, args)
 #else
 #define LOG(args)   /* nothing */
 #endif
