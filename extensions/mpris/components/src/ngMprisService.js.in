@@ -348,6 +348,8 @@ ngMprisService.prototype.getInterfaceSpec = function(path) {
 	<method name=\"MprisVersion\">		\
 	  <arg type=\"(qq)\" direction=\"out\"/>	\
 	</method>  \
+    <node name=\"Player\" /> \
+    <node name=\"TrackList\" /> \
 </interface></node>",
         mpris1player = "<node name=\"/org/mpris/MediaPlayer2/nightingale/Player\">	\
 <interface name=\"org.freedesktop.MediaPlayer\">		\
@@ -537,6 +539,7 @@ ngMprisService.prototype.getInterfaceSpec = function(path) {
         <property name=\"Tracks\" type=\"ao\" access=\"read\" />	\
         <property name=\"CanEditTracks\" type=\"b\" access=\"read\" />	\
     </interface>	\
+    <node name=\"nightingale\" /> \
 </node>",
     head = "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">	\
 ";
@@ -545,9 +548,9 @@ ngMprisService.prototype.getInterfaceSpec = function(path) {
         case "/org":
         case "/org/mpris/":
         case "/org/mpris/MediaPlayer2":
-            return head + mpris2root + mpris1root + mpris1player + mpris1tracklist;
+            return head + mpris2root;
         case "/org/mpris/MediaPlayer2/nightingale":
-            return head + mpris1root + mpris1player + mpris1tracklist;
+            return head + mpris1root;
         case "/org/mpris/MediaPlayer2/nightingale/Player":
             return head + mpris1player;
         case "/org/mpris/MediaPlayer2/nightingale/TrackList":
