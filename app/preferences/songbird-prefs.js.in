@@ -298,7 +298,8 @@ pref("songbird.mediacore.resumePlaybackPosition", true);
 pref("songbird.metadata.enableWriting", true);
 pref("songbird.metadata.promptOnWrite", false);
 pref("songbird.metadata.ratings.enableWriting", false);
-pref("songbird.trackeditor.enableAdvancedTab", false);
+pref("songbird.trackeditor.videoAdvancedTags", "[]");
+pref("songbird.trackeditor.audioAdvancedTags", "[]");
 
 //
 // Sanitize prefs
