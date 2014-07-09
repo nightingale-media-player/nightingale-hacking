@@ -34,7 +34,7 @@ DISTDIRNAME = dist
 OBJDIR_DEPTH = ..
 
 CWD := $(shell pwd)
-ifeq "$(CWD)" "/"
+ifeq ("$(CWD)", "/")
   CWD := /.
 endif
 
@@ -113,7 +113,7 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
 #
 # Prepare tests command
 #
-ifeq (,$(filter --enable-tests, $(CONFIGURE_ARGS)))
+ifeq (, $(filter --enable-tests, $(CONFIGURE_ARGS)))
     TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
 else
     TEST_COMMAND = $(DISTDIR)/nightingale -test
@@ -140,27 +140,19 @@ dvidir ?= $(docdir)
 pdfdir ?= $(docdir)
 psdir ?= $(docdir)
 infodir ?= $(datarootdir)/info
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = ${INSTALL} -m 644
+rellibdir = $(shell echo $(libdir) | sed 's@$(exec_prefix)@@;' - )
+INSTALL_PROGRAM = $(INSTALL) -m 755
+INSTALL_DATA = $(INSTALL) -m 644
+ICONS_DESTDIR = $(datarootdir)/icons/hicolor
 ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
 ifneq (Windows_NT,$(OS))
-    ifeq (Darwin,$(UNAME_S))
+    ifeq (Darwin, $(UNAME_S))
         INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
     endif
     ifeq (Linux, $(UNAME_S))
         INSTALL_CMD = $(MAKE) install-linux
-
-        UNINSTALL_CMD = $(RM) -r $(DESTDIR)$(libdir)/nightingale &&\
-                        $(RM) $(DESTDIR)$(bindir)/nightingale &&\
-                        $(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
-        ifndef DESTDIR
-            POST_INSTALL_CMD = $(foreach SIZE,$(ICON_SIZES),xdg-icon-resource install --novendor --size $(SIZE) $(TOPSRCDIR)/app/branding/nightingale-$(SIZE).png nightingale ;) \
-                               xdg-desktop-menu install --novendor $(TOPSRCDIR)/installer/common/nightingale.desktop
-
-            POST_UNINSTALL_CMD = $(foreach SIZE,$(ICON_SIZES),xdg-icon-resource uninstall --size $(SIZE) nightingale ;) \
-                                 xdg-desktop-menu uninstall $(TOPSRCDIR)/installer/common/nightingale.desktop
-        endif
+        UNINSTALL_CMD = $(MAKE) uninstall-linux
     endif
 else
     INSTALL_CMD = @echo Please use the installer located in compiled/dist.
@@ -226,11 +218,31 @@ uninstall:
 installdirs:
 	$(MKDIR) $(DESTDIR)$(bindir)
 	$(MKDIR) $(DESTDIR)$(libdir)/nightingale
+	$(MKDIR) $(DESTDIR)$(docdir)
+	$(MKDIR) $(DESTDIR)$(man1dir)
+	$(MKDIR) $(DESTDIR)$(datarootdir)/applications
+	$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ;)
 
 install-linux:
 	$(MAKE) installdirs
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
-	$(LN) -fs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
-	-$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+	$(LN) -fs ..$(rellibdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	# $(LN) -frs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(INSTALL_DATA) $(CURDIR)/README.md $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+	$(INSTALL_DATA) $(CURDIR)/installer/common/nightingale.desktop $(DESTDIR)$(datarootdir)/applications
+	$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale.svg $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale-$(SIZE).png \
+		$(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux
+uninstall-linux:
+	$(RM) -r $(DESTDIR)$(libdir)/nightingale
+	$(RM) $(DESTDIR)$(bindir)/nightingale
+	$(RM) -r $(DESTDIR)$(docdir)
+	$(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
+	$(RM) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps/nightingale.svg
+	$(RM) $(DESTDIR)$(datarootdir)/applications/nightingale.desktop
+	$(foreach SIZE,$(ICON_SIZES),$(RM) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux
