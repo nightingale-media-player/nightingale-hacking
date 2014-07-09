@@ -506,9 +506,9 @@ pref("songbird.mediaimport.warn_filtered_exts", true);
 //
 pref("songbird.firmware.update.defaultInterval", 604800); // every 7 days
 
-///
-/// Disable Feedback survey
-///
+//
+// Disable Feedback survey
+//
 pref("feedback.disabled", true);
 
 //
