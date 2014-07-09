@@ -43,6 +43,7 @@ if (typeof(Cr) == 'undefined')
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 const CLASS_ID = Components.ID("{03638fa0-5327-11de-8a39-0800200c9a66}");
 const CLASS_NAME = "ngMprisService";
@@ -150,7 +151,7 @@ ngMprisService.prototype.initDBus = function() {
         onAfterItemRemoved: null,
         onItemUpdated: function(aList, aItem) {
             var viewIndex = mediacore.sequencer.view.getIndexForItem(aItem),
-                isInSequence = mediacore.sequencer.currentSequence.indexOf(0, viewIndex) >= 0;
+                isInSequence = ArrayConverter.JSArray(mediacore.sequencer.currentSequence).indexOf(0, viewIndex) >= 0;
 
             if(isInSequence) {
                 dbus.prepareSignal("/org/mpris/MediaPlayer2",
@@ -559,11 +560,11 @@ ngMprisService.prototype.getInterfaceSpec = function(path) {
 ";
     switch(path) {
         case "/":
-            return head + mpris2begin + path + "\">" + mpris2begin + "org/mpris/MediaPlayer2\" /></node>";
+            return head + mpris2begin + path + "\"><node name=\"org/mpris/MediaPlayer2\" /></node>";
         case "/org":
-            return head + mpris2begin + path + "\">" + mpris2begin + "mpris/MediaPlayer2\" /></node>";
+            return head + mpris2begin + path + "\"><node name=\"mpris/MediaPlayer2\" /></node>";
         case "/org/mpris/":
-            return head + mpris2begin + path + "\">" + mpris2begin + "MediaPlayer2\" /></node>";
+            return head + mpris2begin + path + "\"><node name=\"MediaPlayer2\" /></node>";
         case "/org/mpris/MediaPlayer2":
             return head + mpris2begin + path  + mpris2root;
         case "/org/mpris/MediaPlayer2/nightingale":

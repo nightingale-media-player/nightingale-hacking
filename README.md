@@ -1,3 +1,5 @@
+Nightingale Media Player
+=====================
 Nightingale is a community based fork of the Songbird Media player
 distributed under the GNU GPL and portions (XULRunner and Mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
@@ -11,10 +13,10 @@ This git tree is the Songbird trunk, rebranded for Nightingale. It's a
 reflection of what our Xul 6+ releases will be like.
 
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=230233)](https://www.bountysource.com/trackers/230233-nightingale-media-player-nightingale-hacking?utm_source=230233&utm_medium=shield&utm_campaign=TRACKER_BADGE)
+[![Travis CI](https://travis-ci.org/nightingale-media-player/nightingale-hacking)](https://api.travis-ci.org/nightingale-media-player/nightingale-hacking.svg)
 
 Notes
 =====
-
   * To build, you need to have all of the gstreamer0.10 packages for your 
 distro, svn, wget, and git (if pulling the tree down) installed, 
 as well as the usual dependencies for building software upon your 
@@ -46,7 +48,6 @@ More information can be gleaned from the Nightingale wiki:
 
 Configure Options
 =================
-
 `ac_add_options (option here)`
 
  option                                  | description 
@@ -68,7 +69,6 @@ Configure Options
 
 Notes for Configurable Options
 ==============================
-
 libnotify support
 -----------------
 dependencies:
@@ -121,10 +121,9 @@ Contributors
 
 REMINDER!!!!
 ============
-
 This is an open source software and everyone who works on it is a
 volunteer! Don't be a troll towards the people giving you free
-software and hard work!
+software and hard work! Look at the [license](LICENSE) for detailed information.
 ```
 
 ░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
