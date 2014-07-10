@@ -56,7 +56,7 @@ sbLocalDatabaseMigrate070to08pre1.prototype = {
 
   classDescription: 'Songbird Migration Handler for 0.7.0 to 0.8.0 pre with no content hash',
   classID: Components.ID("{b080f650-7ef2-11dd-ad8b-a0800200c9a6}"),
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.7.0 to 0.8.0 pre1",
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.7.0to0.8.0pre1",
   
   _databaseLocation: null,
   _databaseGUID: null,
