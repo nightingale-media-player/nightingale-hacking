@@ -49,7 +49,10 @@ static const mozilla::Module::ContractIDEntry kDeviceMarshallContracts[] = {
   { NULL }
 };
 
+// SB_DEVICE_MARSHALL_CATEGORY = "songbird-device-marshall"
 static const mozilla::Module::CategoryEntry kDeviceMarshallCategories[] = {
+  { SB_DEVICE_MARSHALL_CATEGORY, SB_CDDEVICE_MARSHALL_CLASSNAME, SB_CDDEVICE_MARSHALL_CONTRACTID },
+  { SB_DEVICE_MARSHALL_CATEGORY, SB_CDDEVICE_CONTROLLER_CLASSNAME, SB_CDDEVICE_CONTROLLER_CONTRACTID },
   { NULL }
 };
 
