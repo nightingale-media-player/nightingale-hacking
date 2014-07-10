@@ -42,7 +42,6 @@ static const mozilla::Module::ContractIDEntry kDataRemoteWrapperContracts[] = {
 };
 
 static const mozilla::Module::CategoryEntry kDataRemoteWrapperCategories[] = {
-  // { "profile-after-change", SB_DATAREMOTEWRAPPER_CLASSNAME, SB_DATAREMOTEWRAPPER_CONTRACTID },
   { NULL }
 };
 

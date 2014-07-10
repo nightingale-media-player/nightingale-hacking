@@ -2747,12 +2747,3 @@ function LOG(str) {
 };
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([PublicPlaylistCommands]);
-//  function(aCompMgr, aFileSpec, aLocation) {
-//    XPCOMUtils.categoryManager.addCategoryEntry(
-//      "app-startup",
-//      PublicPlaylistCommands.prototype.classDescription,
-//      "service," + PublicPlaylistCommands.prototype.contractID,
-//      true,
-//      true);
-//  });
-//}

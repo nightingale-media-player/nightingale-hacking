@@ -94,10 +94,11 @@ SmartPlaylistPropertyRegistrar.prototype = {
   classID         : Components.ID("{4b6a6c23-e247-419e-b629-3c2ef5f5876d}"),
   contractID      : "@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1",
  
- _xpcom_categories: [{
+  _xpcom_categories: [{
     category: "app-startup",
+    entry: "smartplaylist-property-registrar",
     service: true
- }],
+  }],
 
   /**
    * Returns an enumerator to all properties for a particular smart

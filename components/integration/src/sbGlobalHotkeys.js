@@ -539,7 +539,7 @@ sbHotkeyService.prototype =
   ],
   QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports,
                                          Ci.sbIHotkeyService])
-};
+}; // sbHotkeyService
 
 
 function sbDefaultGlobalHotkeyActions() {
@@ -715,7 +715,7 @@ sbDefaultGlobalHotkeyActions.prototype =
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIHotkeyActionBundle,
                                          Ci.nsISupportsWeakReference,
                                          Ci.nsISupports])
-};
+}; // sbDefaultGlobalHotkeyActions
 
 
 function sbHotkeyConfiguration() {
@@ -733,18 +733,11 @@ sbHotkeyConfiguration.prototype =
   contractID: SB_HOTKEY_CONFIGURATION_CONTRACTID,
   QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports,
                                          Ci.sbIHotkeyConfiguration])
-};
+}; // sbHotkeyConfiguration
 
 
 //------------------------------------------------------------------------------
 // XPCOM Registration
-
-// function NSGetModule(compMgr, fileSpec)
-// {
-//   return XPCOMUtils.generateModule([sbHotkeyService,
-//                                     sbDefaultGlobalHotkeyActions,
-//                                     sbHotkeyConfiguration]);
-// }
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyService]);
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyConfiguration]);
