@@ -184,16 +184,7 @@ sbMediaItemDownloadService::Observe(nsISupports*     aSubject,
   nsresult rv;
 
   // Dispatch processing of event.
-  if (!strcmp(aTopic, "app-startup")) {
-    nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
-            "@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = obsSvc->AddObserver(this,
-                             "profile-after-change",
-                             PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(aTopic, "profile-after-change")) {
+  if (!strcmp(aTopic, "profile-after-change")) {
     // Initialize the component.
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);

@@ -1773,7 +1773,7 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  if (!strcmp(aTopic, APPSTARTUP_CATEGORY)) {
+  if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
     // listen for profile startup and profile shutdown messages
     nsCOMPtr<nsIObserverService> obsSvc =
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
@@ -1783,17 +1783,11 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
       do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->AddObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-
-  }
-  else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
 
     // Called after the profile has been loaded, so prefs and such are available
     rv = Init();
