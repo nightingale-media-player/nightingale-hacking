@@ -56,10 +56,10 @@ static const mozilla::Module::ContractIDEntry kMediaItemDownloadContracts[] = {
   { NULL }
 };
 
+// SB_MEDIA_ITEM_DOWNLOADER_CATEGORY = "songbird-media-item-downloader"
 static const mozilla::Module::CategoryEntry kMediaItemDownloadCategories[] = {
-  { "app-startup", SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME, SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID },
-  { "songbird-media-item-downloader", SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME, SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID },
-  { "songbird-media-item-downloader", SB_HTTP_MEDIA_ITEM_DOWNLOADER_CLASSNAME, SB_HTTP_MEDIA_ITEM_DOWNLOADER_CONTRACTID },
+  { "profile-after-change", SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME, SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID },
+  { SB_MEDIA_ITEM_DOWNLOADER_CATEGORY, SB_HTTP_MEDIA_ITEM_DOWNLOADER_CLASSNAME, SB_HTTP_MEDIA_ITEM_DOWNLOADER_CONTRACTID },
   { NULL }
 };
 
