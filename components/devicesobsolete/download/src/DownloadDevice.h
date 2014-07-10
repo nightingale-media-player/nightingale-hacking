@@ -85,7 +85,7 @@
 #include <nsIStringBundle.h>
 #include <nsIThreadPool.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 
 /* Songbird imports. */
 #include <sbDownloadButtonPropertyInfo.h>
@@ -186,7 +186,7 @@ class sbDownloadDevice : public nsIObserver,
     nsString                    mQueuedStr;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
-    mozilla::Monitor            mpDeviceMonitor;
+    mozilla::ReentrantMonitor   mpDeviceMonitor;
     nsString                    mDeviceIdentifier;
 
     nsCOMPtr<nsIThreadPool>     mFileMoveThreadPool;

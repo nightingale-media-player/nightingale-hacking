@@ -49,7 +49,7 @@
 /* Mozilla imports. */
 #include <nsArrayUtils.h>
 #include <mozilla/Mutex.h>
-#include <mozilla/Monitor.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
 #include <nsIDOMWindow.h>
@@ -514,7 +514,7 @@ NS_IMPL_ISUPPORTS4(sbDownloadDevice,
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpDeviceMonitor("mpDeviceMonitor")
+    mpDeviceMonitor("sbDownloadDevice::mpDeviceMonitor")
 {
 }
 
@@ -765,7 +765,7 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
 {
   {
     /* Lock the download device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* Dispose of any outstanding download sessions. */
     if (mpDownloadSession)
@@ -850,7 +850,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
     PRUint32                    *aState)
 {
     /* Lock the device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* Return results. */
     return (sbDeviceBase::GetDeviceState(mDeviceIdentifier, aState));
@@ -1001,7 +1001,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
     NS_ENSURE_ARG_POINTER(aItemCount);
 
     /* Lock the device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* Remove the items. */
     result = aMediaItems->GetLength(&arrayLength);
@@ -1080,7 +1080,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteAllItems(
     NS_ENSURE_ARG_POINTER(aItemCount);
 
     /* Lock the device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* Remove all the items in the queue. */
     while (GetNextTransferItem(getter_AddRefs(pMediaItem)))
@@ -1159,7 +1159,7 @@ NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
     NS_ENSURE_ARG_POINTER(aNumItems);
 
     /* Lock the device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* If there's a download session, suspend it. */
     if (mpDownloadSession)
@@ -1199,7 +1199,7 @@ NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
     NS_ENSURE_ARG_POINTER(aNumItems);
 
     /* Lock the device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* If there's a download session, resume it. */
     if (mpDownloadSession)
@@ -1826,7 +1826,7 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
     nsresult                    rv;
 
     /* Lock the download device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* Handle case where download media list has already been initialized. */
     if (mpDownloadMediaList)
@@ -2062,7 +2062,7 @@ nsresult sbDownloadDevice::EnqueueItem(
 
     /* Add item to the transfer queue. */
     {
-        mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
         rv = AddItemToTransferQueue(mDeviceIdentifier, apMediaItem);
         NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -2085,7 +2085,7 @@ nsresult sbDownloadDevice::RunTransferQueue()
     nsresult                    result = NS_OK;
 
     /* Lock the device. */
-    mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+    mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
     /* Initiate transfers until queue is busy or empty. */
     while (   !mpDownloadSession
@@ -2199,7 +2199,7 @@ nsresult sbDownloadDevice::ResumeTransfers()
         if (property.value->GetMode() !=
             sbDownloadButtonPropertyValue::eComplete) {
 
-            mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+            mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
             itemResult = AddItemToTransferQueue(mDeviceIdentifier, pMediaItem);
             if (NS_SUCCEEDED(itemResult))
                 queuedCount++;
@@ -2328,7 +2328,7 @@ void sbDownloadDevice::SessionCompleted(
     /* Complete session. */
     {
         /* Lock the device. */
-        mozilla::MonitorAutoLock mon(mpDeviceMonitor);
+        mozilla::ReentrantMonitorAutoEnter mon(mpDeviceMonitor);
 
         /* Deliver transfer completion callbacks. */
         DoTransferCompleteCallback(apDownloadSession->mpMediaItem, aStatus);
