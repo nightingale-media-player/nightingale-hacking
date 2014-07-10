@@ -532,7 +532,7 @@ sbHotkeyService.prototype =
   contractID: SB_HOTKEY_SERVICE_CONTRACTID,
   _xpcom_categories: [
     {
-      category: "final-ui-startup",
+      category: "profile-after-change",
       entry:    SB_HOTKEY_SERVICE_DESC,
       service:  true
     }

@@ -30,7 +30,8 @@ const Cr = Components.results;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_HOTKEYACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyActions;1";
-const SONGBIRD_HOTKEYACTIONS_CLASSNAME = "Songbird Hotkey Actions Service Interface";
+const SONGBIRD_HOTKEYACTIONS_DESC = "Songbird Hotkey Actions Service Interface";
+const SONGBIRD_HOTKEYACTIONS_CLASSNAME = "sbHotkeyActionsServiceInterface";
 const SONGBIRD_HOTKEYACTIONS_CID = Components.ID("{0bb80965-77c8-4212-866c-f22677f75a2c}");
 
 function HotkeyActions() {
@@ -82,8 +83,9 @@ HotkeyActions.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIHotkeyActions,
                                          Ci.nsIObserver,
                                          Ci.nsISupportsWeakReference]),
-  
-  classDescription: SONGBIRD_HOTKEYACTIONS_CLASSNAME,
+
+  className: SONGBIRD_HOTKEYACTIONS_CLASSNAME,
+  classDescription: SONGBIRD_HOTKEYACTIONS_DESC,
   classID: SONGBIRD_HOTKEYACTIONS_CID,
   contractID: SONGBIRD_HOTKEYACTIONS_CONTRACTID
 }; // HotkeyActions.prototype

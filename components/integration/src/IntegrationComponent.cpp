@@ -106,88 +106,67 @@ NS_DEFINE_NAMED_CID(SB_WINDOWMOVE_SERVICE_CID);
 #endif
 
 
-#ifdef XP_WIN
   static const mozilla::Module::CIDEntry kIntegrationCIDs[] = {
     { &kSONGBIRD_WINDOWCLOAK_CID, false, NULL, sbWindowCloakConstructor },
     { &kSONGBIRD_NATIVEWINDOWMANAGER_CID, false, NULL, sbNativeWindowManagerConstructor },
+    { &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID, true, NULL, sbScreenSaverSuppressorConstructor },
+#ifdef XP_WIN
     { &kSONGBIRD_KNOWN_FOLDER_MANAGER_CID, false, NULL, sbKnownFolderManagerConstructor },
-    { &kSONGBIRD_WINDOW_CHROME_SERVICE_CID, false, NULL, sbWindowChromeServiceConstructor },
+    { &kSONGBIRD_WINDOW_CHROME_SERVICE_CID, true, NULL, sbWindowChromeServiceConstructor },
     { &kSONGBIRD_WINDOWMINMAX_CID, false, NULL, CWindowMinMaxConstructor },
     { &kSONGBIRD_WINDOWRESIZEHOOK_CID, false, NULL, CWindowResizeHookConstructor },
     { &kSONGBIRD_WINDOWREGION_CID, false, NULL, CWindowRegionConstructor },
     { &kSONGBIRD_GLOBALHOTKEYS_CID, false, NULL, CGlobalHotkeysConstructor },
-    { &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID, false, NULL, sbScreenSaverSuppressorConstructor },
     { &kSB_WINDOWMOVE_SERVICE_CID, false, NULL, sbWindowMoveServiceConstructor },
+#endif
+#ifdef XP_MACOSX
+    { &kSONGBIRD_MACAPPDELEGATEMANAGER_CID, false, NULL, sbMacAppDelegateManagerConstructor },
+    { &kSB_MAC_WINDOW_TITLEBAR_SERVICE_CID, false, NULL, sbMacWindowTitlebarServiceConstructor },
+    { &kSB_WINDOWMOVE_SERVICE_CID, false, NULL, sbMacWindowMoveServiceConstructor },
+#endif
+#ifdef MOZ_WIDGET_GTK2
+    { &kSB_WINDOWMOVE_SERVICE_CID, false, NULL, sbGtkWindowMoveServiceConstructor },
+#endif
     { NULL }
   };
 
   static const mozilla::Module::ContractIDEntry kIntegrationContracts[] = {
     { SONGBIRD_WINDOWCLOAK_CONTRACTID, &kSONGBIRD_WINDOWCLOAK_CID },
     { SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID, &kSONGBIRD_NATIVEWINDOWMANAGER_CID },
+    { SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID, &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID },
+    { SB_WINDOWMOVE_SERVICE_CONTRACTID, &kSB_WINDOWMOVE_SERVICE_CID },
+#ifdef XP_WIN
     { SONGBIRD_KNOWN_FOLDER_MANAGER_CONTRACTID, &kSONGBIRD_KNOWN_FOLDER_MANAGER_CID },
     { SONGBIRD_WINDOW_CHROME_SERVICE_CONTRACTID, &kSONGBIRD_WINDOW_CHROME_SERVICE_CID },
     { SONGBIRD_WINDOWMINMAX_CONTRACTID, &kSONGBIRD_WINDOWMINMAX_CID },
     { SONGBIRD_WINDOWRESIZEHOOK_CONTRACTID, &kSONGBIRD_WINDOWRESIZEHOOK_CID },
     { SONGBIRD_WINDOWREGION_CONTRACTID, &kSONGBIRD_WINDOWREGION_CID },
     { SONGBIRD_GLOBALHOTKEYS_CONTRACTID, &kSONGBIRD_GLOBALHOTKEYS_CID },
-    { SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID, &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID },
-    { SB_WINDOWMOVE_SERVICE_CONTRACTID, &kSB_WINDOWMOVE_SERVICE_CID },
-    { NULL }
-  };
-
-  static const mozilla::Module::CategoryEntry kIntegrationCategories[] = {
-    { "app-startup", SB_WINDOWMOVE_SERVICE_CLASSNAME, "service," SB_WINDOWMOVE_SERVICE_CONTRACTID },
-    { "app-startup", SONGBIRD_WINDOW_CHROME_SERVICE_CLASSNAME, "service," SONGBIRD_WINDOW_CHROME_SERVICE_CONTRACTID },
-    { NULL }
-  };
 #endif
 #ifdef XP_MACOSX
-  static const mozilla::Module::CIDEntry kIntegrationCIDs[] = {
-    { &kSONGBIRD_WINDOWCLOAK_CID, false, NULL, sbWindowCloakConstructor },
-    { &kSONGBIRD_NATIVEWINDOWMANAGER_CID, false, NULL, sbNativeWindowManagerConstructor },
-    { &kSONGBIRD_MACAPPDELEGATEMANAGER_CID, false, NULL, sbMacAppDelegateManagerConstructor },
-    { &kSB_MAC_WINDOW_TITLEBAR_SERVICE_CID, false, NULL, sbMacWindowTitlebarServiceConstructor },
-    { &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID, false, NULL, sbScreenSaverSuppressorConstructor },
-    { &kSB_WINDOWMOVE_SERVICE_CID, false, NULL, sbMacWindowMoveServiceConstructor },
-    { NULL }
-  };
-  static const mozilla::Module::ContractIDEntry kIntegrationContracts[] = {
-    { SONGBIRD_WINDOWCLOAK_CONTRACTID, &kSONGBIRD_WINDOWCLOAK_CID },
-    { SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID, &kSONGBIRD_NATIVEWINDOWMANAGER_CID },
     { SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID, &kSONGBIRD_MACAPPDELEGATEMANAGER_CID },
     { SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID, &kSB_MAC_WINDOW_TITLEBAR_SERVICE_CID },
-    { SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID, &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID },
-    { SB_WINDOWMOVE_SERVICE_CONTRACTID, &kSB_WINDOWMOVE_SERVICE_CID },
-    { NULL }
-  };
-
-  static const mozilla::Module::CategoryEntry kIntegrationCategories[] = {
-    { "final-ui-startup", SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME, "service," SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID },
-    { "app-startup", SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME, "service," SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID },
-    { NULL }
-  };
 #endif
 #ifdef MOZ_WIDGET_GTK2
-  static const mozilla::Module::CIDEntry kIntegrationCIDs[] = {
-    { &kSONGBIRD_WINDOWCLOAK_CID, false, NULL, sbWindowCloakConstructor },
-    { &kSONGBIRD_NATIVEWINDOWMANAGER_CID, false, NULL, sbNativeWindowManagerConstructor },
-    { &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID, true, NULL, sbScreenSaverSuppressorConstructor },
-    { &kSB_WINDOWMOVE_SERVICE_CID, false, NULL, sbGtkWindowMoveServiceConstructor },
-    { NULL }
-  };
-
-  static const mozilla::Module::ContractIDEntry kIntegrationContracts[] = {
-    { SONGBIRD_WINDOWCLOAK_CONTRACTID, &kSONGBIRD_WINDOWCLOAK_CID },
-    { SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID, &kSONGBIRD_NATIVEWINDOWMANAGER_CID },
-    { SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID, &kSB_BASE_SCREEN_SAVER_SUPPRESSOR_CID },
-    { SB_WINDOWMOVE_SERVICE_CONTRACTID, &kSB_WINDOWMOVE_SERVICE_CID },
+    // Nothing
+#endif
     { NULL }
   };
 
   static const mozilla::Module::CategoryEntry kIntegrationCategories[] = {
+    { "app-startup", SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME, SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID },
+#ifdef XP_WIN
+    // Nothing
+#endif
+#ifdef XP_MACOSX
+    { "profile-after-change", SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME, SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID },
+    { "profile-after-change", SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME, SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID },
+#endif
+#ifdef MOZ_WIDGET_GTK2
+    // Nothing
+#endif
     { NULL }
   };
-#endif
 
 static const mozilla::Module kIntegrationModule = {
   mozilla::Module::kVersion,
