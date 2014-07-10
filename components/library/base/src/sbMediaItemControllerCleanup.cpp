@@ -63,6 +63,8 @@
  *   NSPR_LOG_MODULES=sbMediaItemControllerCleanup:5
  */
 
+#define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
+
 // The property name on the library we use to store the last seen set of
 // track types
 #define K_LAST_SEEN_TYPES_PROPERTY \
@@ -183,7 +185,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
       mListener->Stop();
     }
   }
-  else if (!strcmp(aTopic, APPSTARTUP_TOPIC)) {
+  else if (!strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID)) {
     nsCOMPtr<nsIObserverService> obs =
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -748,36 +750,6 @@ sbMediaItemControllerCleanup::ProcessLibraries()
   
   return NS_OK;
 }
-
-// XXX XUL 9
-
-///// static
-/* static */
-// NS_METHOD
-// sbMediaItemControllerCleanup::RegisterSelf(nsIComponentManager* aCompMgr,
-//                                            nsIFile* aPath,
-//                                            const char* aLoaderStr,
-//                                            const char* aType,
-//                                            const nsModuleComponentInfo *aInfo)
-// {
-//   SB_PRLOG_SETUP(sbMediaItemControllerCleanup);
-//   TRACE_FUNCTION("");
-
-//   nsresult rv = NS_ERROR_UNEXPECTED;
-//   nsCOMPtr<nsICategoryManager> categoryManager =
-//     do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-//   NS_ENSURE_SUCCESS(rv, rv);
-
-//   rv = categoryManager->AddCategoryEntry(APPSTARTUP_TOPIC,
-//                                          SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CLASSNAME,
-//                                          "service,"
-//                                          SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CONTRACTID,
-//                                          PR_TRUE, PR_TRUE, nsnull);
-//   NS_ENSURE_SUCCESS(rv, rv);
-
-//   return NS_OK;
-// }
-
 
 ///// sbIMediaListEnumerationListener helper class impl
 
