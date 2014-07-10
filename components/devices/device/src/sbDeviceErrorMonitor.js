@@ -77,8 +77,6 @@ function deviceErrorMonitor () {
   var obsSvc = Cc['@mozilla.org/observer-service;1']
                  .getService(Ci.nsIObserverService);
 
-  // We want to wait until profile-after-change to initialize
-  obsSvc.addObserver(this, 'profile-after-change', false);
   obsSvc.addObserver(this, 'quit-application', false);
 }
 

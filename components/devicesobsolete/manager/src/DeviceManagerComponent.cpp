@@ -40,7 +40,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceManagerObsolete, Initialize);
 NS_DEFINE_NAMED_CID(SONGBIRD_OBSOLETE_DEVICEMANAGER_CID);
 
 static const mozilla::Module::CIDEntry kDeviceManagerObsoleteCIDs[] = {
-  { &kSONGBIRD_OBSOLETE_DEVICEMANAGER_CID, false, NULL, sbDeviceManagerObsoleteConstructor },
+  { &kSONGBIRD_OBSOLETE_DEVICEMANAGER_CID, true, NULL, sbDeviceManagerObsoleteConstructor },
   { NULL }
 };
 

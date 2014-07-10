@@ -108,7 +108,7 @@ sbAutoDownloader.prototype.classID =
 sbAutoDownloader.prototype.contractID = '@songbirdnest.com/autodownloader;1';
 sbAutoDownloader.prototype._xpcom_categories = 
 [{
-  category: "app-startup",
+  category: "profile-after-change",
   service: true
 }];
 

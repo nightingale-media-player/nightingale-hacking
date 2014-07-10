@@ -126,7 +126,7 @@ sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID =
     '@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1';
 sbDeviceFirmwareAutoCheckForUpdate.prototype._xpcom_categories = 
 [{
-  category: "app-startup",
+  category: "profile-after-change",
   service: true
 }];
 
