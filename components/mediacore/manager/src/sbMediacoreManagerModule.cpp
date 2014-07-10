@@ -45,7 +45,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediacoreTypeSniffer, Init);
 NS_DEFINE_NAMED_CID(SB_MEDIACORETYPESNIFFER_CID);
 
 static const mozilla::Module::CIDEntry kSongbirdMediacoreManagerCIDs[] = {
-  { &kSB_MEDIACOREMANAGER_CID, false, NULL, sbMediacoreManagerConstructor },
+  { &kSB_MEDIACOREMANAGER_CID, true, NULL, sbMediacoreManagerConstructor },
   { &kSB_MEDIACORETYPESNIFFER_CID, false, NULL, sbMediacoreTypeSnifferConstructor },
   { NULL }
 };
