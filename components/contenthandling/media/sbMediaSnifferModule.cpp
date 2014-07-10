@@ -39,7 +39,9 @@ static const mozilla::Module::ContractIDEntry kMediaSnifferContracts[] = {
   { NULL }
 };
 
+// NS_CONTENT_SNIFFER_CATEGORY = "net-content-sniffer"
 static const mozilla::Module::CategoryEntry kMediaSnifferCategories[] = {
+  { "net-content-sniffer", SONGBIRD_MEDIASNIFFER_CLASSNAME, SONGBIRD_MEDIASNIFFER_CONTRACTID },
   { NULL }
 };
 
