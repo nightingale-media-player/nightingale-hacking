@@ -10,3 +10,6 @@ category service-pane sbLibraryServicePaneService @songbirdnest.com/servicepane/
 component {eb5c665a-bfe2-49f1-a747-cd3554e55606} sbServicePaneService.js
 contract @songbirdnest.com/servicepane/service;1 {eb5c665a-bfe2-49f1-a747-cd3554e55606}
 category service-pane sbServicePaneService @songbirdnest.com/servicepane/service;1
+category quit-application ServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-added ServicePaneService @songbirdnest.com/servicepane/service;1
+category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servicepane/service;1

@@ -1,0 +1,4 @@
+## components/moz/system/windows ##
+component {3124ec90-1dd2-11b2-8059-c4e994415c12} sbWindowsAutoPlayService.js
+contract @songbirdnest.com/Songbird/WindowsAutoPlayService;1 {3124ec90-1dd2-11b2-8059-c4e994415c12}
+category profile-after-change sbWindowsAutoPlayService @songbirdnest.com/Songbird/WindowsAutoPlayService;1

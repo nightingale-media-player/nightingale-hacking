@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/moz-system-windows.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbWindowsAutoPlayService.js \
+                      $(CURDIR)/moz-system-windows.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

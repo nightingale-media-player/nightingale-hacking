@@ -1,6 +1,6 @@
 ## components/protocol ##
-component {B6C04B7A-C640-4314-8093-C52370D05ECF} sbAboutCredits.js
-contract @mozilla.org/network/protocol/about;1?what=credits {B6C04B7A-C640-4314-8093-C52370D05ECF}
+component {b6c04b7a-c640-4314-8093-c52370d05ecf} sbAboutCredits.js
+contract @mozilla.org/network/protocol/about;1?what=credits {b6c04b7a-c640-4314-8093-c52370d05ecf}
 
 component {416a028e-1dd2-11b2-a247-cc08533670be} sbAboutDRM.js
 contract @mozilla.org/network/protocol/about;1?what=drm {416a028e-1dd2-11b2-a247-cc08533670be}

@@ -1,4 +1,25 @@
 ## components/moz/urlformatter ##
 component {4dc7da1b-89d1-48b5-8582-64c98bfb3410} sbURLFormatter.js
 contract @songbirdnest.com/moz/sburlformatter;1 {4dc7da1b-89d1-48b5-8582-64c98bfb3410}
-category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
+# category extension-update-params sbURLFormatter @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params LOCALE @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params VENDOR @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params NAME @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PRODUCT @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params ID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params APPBUILDID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params BUILD_ID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params BUILD_TARGET @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PLATFORMVERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PLATFORM_VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params PLATFORMBUILDID @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params APP @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params OS @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params XPCOMABI @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params DISTRIBUTION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params DISTRIBUTION_VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params CHANNEL @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params OS_VERSION @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params CUSTOM1 @songbirdnest.com/moz/sburlformatter;1
+category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
