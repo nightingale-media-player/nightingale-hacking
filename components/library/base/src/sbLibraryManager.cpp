@@ -122,10 +122,6 @@ sbLibraryManager::Init()
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID,
-                                    PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = observerService->AddObserver(this, NS_PROFILE_TEARDOWN_OBSERVER_ID,
                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -942,10 +938,7 @@ sbLibraryManager::Observe(nsISupports* aSubject,
   nsCOMPtr<nsIObserverService> observerService = 
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
 
-  if (strcmp(aTopic, APPSTARTUP_TOPIC) == 0) {
-    return NS_OK;
-  }
-  else if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+  if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
     // Remove ourselves from the observer service.
     if (NS_SUCCEEDED(rv)) {
       observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
