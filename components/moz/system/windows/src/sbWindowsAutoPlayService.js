@@ -91,7 +91,6 @@ sbWindowsAutoPlayServiceCfg._xpcom_categories = [
   {
     category: "profile-after-change",
     entry:    sbWindowsAutoPlayServiceCfg.className,
-    value:    sbWindowsAutoPlayServiceCfg.contractID,
     service: true
   }
 ];

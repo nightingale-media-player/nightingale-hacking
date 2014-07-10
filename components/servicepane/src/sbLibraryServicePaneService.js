@@ -121,7 +121,6 @@ sbLibraryServicePane.prototype.contractID =
 sbLibraryServicePane.prototype._xpcom_categories = [{
   category: 'service-pane',
   entry: '0library', // we want this to load first
-  value: CONTRACTID,
   service: true
 }];
 //////////////////////////

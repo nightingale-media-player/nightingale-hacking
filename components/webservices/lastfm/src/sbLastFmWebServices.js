@@ -142,7 +142,6 @@ sbLastFmWebServices.prototype = {
   [{
     category: "profile-after-change",
     entry: "webservices-lastfm",
-    value: CONTRACTID,
     service: true
   }],
 
