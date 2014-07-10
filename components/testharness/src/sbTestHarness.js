@@ -37,7 +37,8 @@ const Cr = Components.results;
 
 // testharness constants
 const SONGBIRD_TESTHARNESS_CONTRACTID = "@songbirdnest.com/Songbird/TestHarness;1";
-const SONGBIRD_TESTHARNESS_CLASSNAME = "Songbird Unit Test Test-Harness";
+const SONGBIRD_TESTHARNESS_CLASSDESC = "Songbird Unit Test Test-Harness";
+const SONGBIRD_TESTHARNESS_CLASSNAME = "sbUnitTest-TestHarness";
 const SONGBIRD_TESTHARNESS_CID = Components.ID("{fd541a71-0e71-48aa-9dd1-971df86d1e01}");
 const SONGBIRD_TESTHARNESS_IID = Ci.sbITestHarness;
 
@@ -436,57 +437,13 @@ sbTestHarness.prototype = {
         !iid.equals(Ci.nsISupports))
       throw Cr.NS_ERROR_NO_INTERFACE;
     return this;
-  }
+  },
+
+  classID: SONGBIRD_TESTHARNESS_CID,
+  classDescription: SONGBIRD_TESTHARNESS_CLASSDESC,
+  className: SONGBIRD_TESTHARNESS_CLASSNAME,
+  contractID: SONGBIRD_TESTHARNESS_CONTRACTID
 }; // sbTestHarness
 
-/**
- * ----------------------------------------------------------------------------
- * Registration for XPCOM
- * ----------------------------------------------------------------------------
- */
-const sbTestHarnessModule = {
-  registerSelf: function(compMgr, fileSpec, location, type) {
-    compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation( SONGBIRD_TESTHARNESS_CID,
-                                     SONGBIRD_TESTHARNESS_CLASSNAME,
-                                     SONGBIRD_TESTHARNESS_CONTRACTID,
-                                     fileSpec,
-                                     location,
-                                     type );
-  },
 
-  getClassObject: function(compMgr, cid, iid) {
-    if (!cid.equals(SONGBIRD_TESTHARNESS_CID))
-      throw Cr.NS_ERROR_NO_INTERFACE;
-
-    if (!iid.equals(Ci.nsIFactory))
-      throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
-    return this.mFactory;
-  },
-
-  mFactory: {
-    createInstance : function (outer, iid) {
-      if (outer != null)
-        throw Cr.NS_ERROR_NO_AGGREGATION;
-      return (new sbTestHarness()).QueryInterface(iid);
-    }
-  },
-
-  canUnload: function(compMgr) {
-    return true;
-  },
-
-  QueryInterface : function (iid) {
-    if ( !iid.equals(Ci.nsIModule) &&
-         !iid.equals(Ci.nsISupports) )
-      throw Cr.NS_ERROR_NO_INTERFACE;
-
-    return this;
-  }
-
-}; // sbTestHarnessModule
-
-function NSGetModule(compMgr, fileSpec) {
-  return sbTestHarnessModule;
-} // NSGetModule
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbTestHarnessModule]);
