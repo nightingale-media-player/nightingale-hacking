@@ -1,4 +1,8 @@
 ## components/displaypanes ##
 component {6aef120f-d7ad-414d-a93d-3ac945e64301} sbDisplayPanes.js
 contract @songbirdnest.com/Songbird/DisplayPane/Manager;1 {6aef120f-d7ad-414d-a93d-3ac945e64301}
-category display-pane-provider sbDisplayPanes @songbirdnest.com/Songbird/DisplayPane/Manager;1
+# not needed? category display-pane-provider sbDisplayPanes @songbirdnest.com/Songbird/DisplayPane/Manager;1
+
+component {34b1c7d0-1dd2-11b2-9e33-9086cae69f99} sbTestDisplayPaneProvider.js
+contract @songbirdnest.com/Songbird/DisplayPane/test-provider;1 {34b1c7d0-1dd2-11b2-9e33-9086cae69f99}
+category display-pane-provider test-provider @songbirdnest.com/Songbird/DisplayPane/test-provider;1

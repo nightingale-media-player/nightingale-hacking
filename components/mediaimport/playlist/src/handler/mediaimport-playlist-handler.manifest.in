@@ -1,0 +1,22 @@
+## components/mediaimport/playlist/src/handler ##
+
+
+component {e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c} sbPlaylistHandlerModule.js
+contract @songbirdnest.com/Songbird/Playlist/Reader/ASX;1 {e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}
+category playlist-reader asx @songbirdnest.com/Songbird/Playlist/Reader/ASX;1
+
+component {fc67054f-3a60-4d8e-a2ec-fc1c8feac14c} sbPlaylistHandlerModule.js
+contract @songbirdnest.com/Songbird/Playlist/Reader/Feed;1 {fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}
+category playlist-reader feed @songbirdnest.com/Songbird/Playlist/Reader/Feed;1
+
+component {75c8f646-e75a-4743-89cd-412fa083ce07} sbPlaylistHandlerModule.js
+contract @songbirdnest.com/Songbird/Playlist/Reader/HTML;1 {75c8f646-e75a-4743-89cd-412fa083ce07}
+category playlist-reader html @songbirdnest.com/Songbird/Playlist/Reader/HTML;1
+
+component {ba32eac9-6732-4d5d-be50-156f52b5368b} sbPlaylistHandlerModule.js
+contract @songbirdnest.com/Songbird/Playlist/Reader/M3U;1 {ba32eac9-6732-4d5d-be50-156f52b5368b}
+category playlist-reader m3u @songbirdnest.com/Songbird/Playlist/Reader/M3U;1
+
+component {a6937260-0d7f-4721-8f31-4b8455cf72c9} sbPlaylistHandlerModule.js
+contract @songbirdnest.com/Songbird/Playlist/Reader/PLS;1 {a6937260-0d7f-4721-8f31-4b8455cf72c9}
+category playlist-reader pls @songbirdnest.com/Songbird/Playlist/Reader/PLS;1

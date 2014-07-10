@@ -1,0 +1,4 @@
+## components/faceplate ##
+component {eb5c665a-bfe2-49f0-a747-cd3554e55606} sbFaceplateManager.js
+contract @songbirdnest.com/faceplate/manager;1 {eb5c665a-bfe2-49f0-a747-cd3554e55606}
+category profile-after-change faceplate-pane-manager @songbirdnest.com/faceplate/manager;1
