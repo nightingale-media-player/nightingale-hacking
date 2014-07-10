@@ -29,6 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/migrationhandlers.manifest.in \
+                        $(NULL)
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
                       $(srcdir)/sbMigrate070RC1to070.js \
                       $(srcdir)/sbMigrate070RC2to070.js \
@@ -53,6 +56,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
                       $(srcdir)/sbMigrate18to19pre0.index.js \
                       $(srcdir)/sbMigrate18to19pre0.indexSort.js \
                       $(srcdir)/sbMigrate19to110pre0.addMetadataHashIdentity.js \
+                      $(CURDIR)/migrationhandlers.manifest \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -29,7 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbDndSourceTracker.js
+SONGBIRD_PP_RESOURCES = $(srcdir)/draganddrop.manifest.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbDndSourceTracker.js \
+                      $(CURDIR)/draganddrop.manifest \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-
