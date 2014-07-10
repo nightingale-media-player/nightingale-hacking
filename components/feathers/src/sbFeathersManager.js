@@ -1431,9 +1431,6 @@ FeathersManager_switchFeathers_callback.prototype = {
 }; // FeathersManager_switchFeathers_callback.prototype
 
 
-
-
-
 /**
  * ----------------------------------------------------------------------------
  * Registration for XPCOM

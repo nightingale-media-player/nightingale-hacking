@@ -272,23 +272,5 @@ sbMediaContentListener.prototype = {
 /**
  * XPCOM component registration.
  */
-// function postRegister(aCompMgr, aFileSpec, aLocation) {
-//   XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
-//                                               TYPE_MAYBE_MEDIA, CONTRACTID,
-//                                               true, true);
-//   XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
-//                                               TYPE_MAYBE_PLAYLIST, CONTRACTID,
-//                                               true, true);
-// }
-
-// function preUnregister(aCompMgr, aFileSpec, aLocation) {
-//   XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
-//                                                  TYPE_MAYBE_MEDIA, true);
-//   XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
-//                                                  TYPE_MAYBE_PLAYLIST, true);
-// }
-
-// var NSGetModule = XPCOMUtils.generateNSGetModule([sbMediaContentListener],
-//                                                  postRegister, preUnregister);
 
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbMediaContentListener]);
