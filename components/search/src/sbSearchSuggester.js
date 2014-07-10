@@ -443,93 +443,12 @@ SearchSuggester.prototype = {
         !iid.equals(Ci.nsISupports))
       throw Cr.NS_ERROR_NO_INTERFACE;
     return this;
-  }
+  },
+
+  classID: SEARCH_SUGGEST_CLASSID,
+  contractID: SEARCH_SUGGEST_CONTRACTID,
+  className: SEARCH_SUGGEST_CLASSNAME
 };
 
 
-
-var gModule = {
-  /**
-   * Registers all the components supplied by this module. Part of nsIModule
-   * implementation.
-   * @param componentManager  the XPCOM component manager
-   * @param location          the location of the module on disk
-   * @param loaderString      opaque loader specific string
-   * @param type              loader type being used to load this module
-   */
-  registerSelf: function(componentManager, location, loaderString, type) {
-    if (this._firstTime) {
-      this._firstTime = false;
-      throw Cr.NS_ERROR_FACTORY_REGISTER_AGAIN;
-    }
-    componentManager =
-      componentManager.QueryInterface(Ci.nsIComponentRegistrar);
-
-    for (var key in this.objects) {
-      var obj = this.objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-                                               location, loaderString, type);
-    }
-  },
-
-  /**
-   * Retrieves a Factory for the given ClassID. Part of nsIModule
-   * implementation.
-   * @param componentManager  the XPCOM component manager
-   * @param cid               the ClassID of the object for which a factory
-   *                          has been requested
-   * @param iid               the IID of the interface requested
-   */
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Ci.nsIFactory))
-      throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
-    for (var key in this.objects) {
-      if (cid.equals(this.objects[key].CID))
-        return this.objects[key].factory;
-    }
-
-    throw Cr.NS_ERROR_NO_INTERFACE;
-  },
-
-  /**
-   * Create a Factory object that can construct an instance of an object.
-   * @param constructor   the constructor used to create the object
-   * @private
-   */
-  _makeFactory: function(constructor) {
-    function createInstance(outer, iid) {
-      if (outer != null)
-        throw Cr.NS_ERROR_NO_AGGREGATION;
-      return (new constructor()).QueryInterface(iid);
-    }
-    return { createInstance: createInstance };
-  },
-
-  /**
-   * Determines whether or not this module can be unloaded.
-   * @return returning true indicates that this module can be unloaded.
-   */
-  canUnload: function(componentManager) {
-    return true;
-  }
-};
-
-/**
- * Entry point for registering the components supplied by this JavaScript
- * module.
- * @param componentManager  the XPCOM component manager
- * @param location          the location of this module on disk
- */
-function NSGetModule(componentManager, location) {
-  // Metadata about the objects this module can construct
-  gModule.objects = {
-    search: {
-      CID: SEARCH_SUGGEST_CLASSID,
-      contractID: SEARCH_SUGGEST_CONTRACTID,
-      className: SEARCH_SUGGEST_CLASSNAME,
-      factory: gModule._makeFactory(SearchSuggester)
-    },
-  };
-  return gModule;
-}
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbSearchSuggester]);
