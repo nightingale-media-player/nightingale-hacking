@@ -137,8 +137,11 @@ static const mozilla::Module::ContractIDEntry kAlbumArtContacts[] = {
   { SB_METADATAALBUMARTFETCHER_CONTRACTID, &kSB_METADATAALBUMARTFETCHER_CID },
 };
 
+// SB_ALBUM_ART_FETCHER_CATEGORY = "songbird-album-art-fetcher"
 static const mozilla::Module::CategoryEntry kAlbumArtCategories[] = {
-  { "app-startup", SB_ALBUMARTSERVICE_CLASSNAME, SB_ALBUMARTSERVICE_CONTRACTID },
+  { "profile-after-change", SB_ALBUMARTSERVICE_CLASSNAME, SB_ALBUMARTSERVICE_CONTRACTID },
+  { "songbird-album-art-fetcher", SB_FILEALBUMARTFETCHER_CLASSNAME, SB_FILEALBUMARTFETCHER_CONTRACTID },
+  { "songbird-album-art-fetcher", SB_METADATAALBUMARTFETCHER_CLASSNAME, SB_METADATAALBUMARTFETCHER_CONTRACTID },
   { NULL }
 };
 

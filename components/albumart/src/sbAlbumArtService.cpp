@@ -448,22 +448,16 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   nsresult rv;
 
   // Dispatch processing of event.
-  if (!strcmp(aTopic, "app-startup")) {
+  if (!strcmp(aTopic, "profile-after-change")) {
     // Add observers for other events.
     nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
             "@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add observers.
-    rv = obsSvc->AddObserver(this,
-                             "profile-after-change",
-                             PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = obsSvc->AddObserver(this,
                              SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                              PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(aTopic, "profile-after-change")) {
+
     // Initialize, now that we're able to read our preferences/etc.
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
