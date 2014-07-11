@@ -130,8 +130,6 @@ ParserErrorHandler.prototype = {
   observe: function(subject, topic, data) {
     switch (topic) {
     case "profile-after-change":
-      gOS.removeObserver(this, "profile-after-change");
-      
       // Preferences are initialized, ready to start the service
       this._init();
       break;

@@ -782,7 +782,6 @@ deviceErrorMonitor.prototype = {
         this._shutdown();
       break;
       case 'profile-after-change':
-        obsSvc.removeObserver(this, 'profile-after-change');
         this._init();
       break;
     }

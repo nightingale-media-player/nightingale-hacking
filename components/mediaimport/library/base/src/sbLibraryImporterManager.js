@@ -514,7 +514,6 @@ sbLibraryImporterManager.prototype = {
   _finalize: function sbLibraryImporterManager__finalize() {
     // Remove observers.
     this._observerSvc.removeObserver(this, "songbird-library-manager-before-shutdown");
-    this._observerSvc.removeObserver(this, "profile-after-change");
     this._observerSvc.removeObserver(this, "songbird-library-manager-ready");
 
     // Remove all library importers.

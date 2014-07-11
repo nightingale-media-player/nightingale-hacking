@@ -272,11 +272,6 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
 
   if (strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC) == 0) {
 
-    // Remove ourselves from the observer service.
-    if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
-    }
-
     // Startup
     mViewMap.Init();
 

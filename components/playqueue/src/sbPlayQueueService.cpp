@@ -1410,9 +1410,6 @@ sbPlayQueueService::Observe(nsISupports* aSubject,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!strcmp(SB_LIBRARY_MANAGER_READY_TOPIC, aTopic)) {
-    rv = observerService->RemoveObserver(this, aTopic);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // Get a weak reference to the mediacore manager
     nsCOMPtr<nsISupportsWeakReference> weak =
         do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);

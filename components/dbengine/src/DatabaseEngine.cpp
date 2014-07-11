@@ -1166,13 +1166,6 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   if(!strcmp(aTopic, NS_FINAL_UI_STARTUP_CATEGORY)) {
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService("@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = observerService->RemoveObserver(this, NS_FINAL_UI_STARTUP_CATEGORY);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Remove Observer Failed!");
-
     mozilla::ReentrantMonitorAutoEnter mon(m_pThreadMonitor);
     if(m_PromptForDelete) {
       mozilla::ReentrantMonitorAutoExit mon(m_pThreadMonitor);

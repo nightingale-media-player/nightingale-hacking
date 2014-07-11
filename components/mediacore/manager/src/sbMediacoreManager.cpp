@@ -1831,9 +1831,6 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
       do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->RemoveObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 

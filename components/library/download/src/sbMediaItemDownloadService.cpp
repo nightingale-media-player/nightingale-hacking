@@ -188,16 +188,6 @@ sbMediaItemDownloadService::Observe(nsISupports*     aSubject,
     // Initialize the component.
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Now remove the listener, since it's no longer needed.
-    nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
-            "@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = obsSvc->RemoveObserver(this,
-                                "profile-after-change");
-    NS_ENSURE_SUCCESS(rv, rv);
-
   }
 
   return NS_OK;
