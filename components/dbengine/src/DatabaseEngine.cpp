@@ -1032,9 +1032,6 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   if(NS_SUCCEEDED(rv)) {
     rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
                                       PR_FALSE);
-
-    rv = observerService->AddObserver(this, NS_FINAL_UI_STARTUP_CATEGORY,
-                                      PR_FALSE);
   }
 
   // This shouldn't be an 'else' case because we want to set this flag if
