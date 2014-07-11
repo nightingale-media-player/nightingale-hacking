@@ -36,7 +36,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPlayQueueService, Init);
 NS_DEFINE_NAMED_CID(SB_PLAYQUEUESERVICE_CID);
 
 static const mozilla::Module::CIDEntry kPlayQueueServiceCIDs[] = {
-  { &kSB_PLAYQUEUESERVICE_CID, false, NULL, sbPlayQueueServiceConstructor },
+  { &kSB_PLAYQUEUESERVICE_CID, true, NULL, sbPlayQueueServiceConstructor },
   { NULL }
 };
 
@@ -45,8 +45,10 @@ static const mozilla::Module::ContractIDEntry kPlayQueueServiceContracts[] = {
   { NULL }
 };
 
+// SB_LIBRARY_MANAGER_READY_TOPIC = "songbird-library-manager-ready"
 static const mozilla::Module::CategoryEntry kPlayQueueServiceCategories[] = {
   // { "app-startup", SB_PLAYQUEUESERVICE_CLASSNAME, SB_PLAYQUEUESERVICE_CONTRACTID },
+  { "songbird-library-manager-ready", SB_PLAYQUEUESERVICE_CLASSNAME, SB_PLAYQUEUESERVICE_CONTRACTID },
   { NULL }
 };
 

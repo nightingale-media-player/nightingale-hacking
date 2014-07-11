@@ -240,12 +240,7 @@ sbPlayQueueService::Init()
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add observers for library manager topics
-  rv = observerService->AddObserver(this,
-                                    SB_LIBRARY_MANAGER_READY_TOPIC,
-                                    PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  // Add observers for library manager shutdown
   rv = observerService->AddObserver(this,
                                     SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                     PR_FALSE);
