@@ -555,7 +555,7 @@ category metadata-lookup sbTestProvider @songbirdnest.com/Songbird/MetadataLooku
 # components/mediaexport/playlist/src/handler #
 category playlist-writer m3u @songbirdnest.com/Songbird/PlaylistWriter/M3U;1
 # components/mediaimport/library/base #
-category app-startup sbLibraryImporterManagerService @songbirdnest.com/Songbird/LibraryImporterManager;1
+category profile-after-change sbLibraryImporterManagerService @songbirdnest.com/Songbird/LibraryImporterManager;1
 # components/mediaimport/playlist/src/handler #
 category playlist-reader asx @songbirdnest.com/Songbird/Playlist/Reader/ASX;1
 category playlist-reader feed @songbirdnest.com/Songbird/Playlist/Reader/Feed;1

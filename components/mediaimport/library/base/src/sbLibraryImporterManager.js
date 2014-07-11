@@ -96,7 +96,7 @@ var sbLibraryImporterManagerCfg = {
 
 sbLibraryImporterManagerCfg.categoryList = [
   {
-    category: "app-startup",
+    category: "profile-after-change",
     entry:    sbLibraryImporterManagerCfg.className,
     service: true
   }
@@ -373,10 +373,6 @@ sbLibraryImporterManager.prototype = {
   observe: function sbLibraryImporterManager_observe(aSubject, aTopic, aData) {
     // Dispatch processing of the event.
     switch (aTopic) {
-      case "app-startup" :
-        this._handleAppStartup();
-        break;
-
       case "profile-after-change" :
         this._handleProfileAfterChange();
         break;
@@ -409,16 +405,6 @@ sbLibraryImporterManager.prototype = {
   // Library importer manager event handler services.
   //
   //----------------------------------------------------------------------------
-
-  /**
-   * Handle application startup events.
-   */
-
-  _handleAppStartup: function sbLibraryImporterManager__handleAppStartup() {
-    // Initialize the services.
-    this._initialize();
-  },
-
 
   /**
    * Handle profile after change events.
@@ -475,10 +461,7 @@ sbLibraryImporterManager.prototype = {
       this._observerSvc = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
       this._observerSvc.addObserver(this, "songbird-library-manager-before-shutdown", false);
-      this._observerSvc.addObserver(this, "profile-after-change", false);
-      this._observerSvc.addObserver(this,
-                                    "songbird-library-manager-ready",
-                                    false);
+      this._observerSvc.addObserver(this, "songbird-library-manager-ready", false);
     }
 
     // Wait until preferences are available.
