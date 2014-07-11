@@ -461,17 +461,14 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
                                        const PRUnichar *aData)
 {
   nsresult rv;
-  if (!strcmp(aTopic, APPSTARTUP_CATEGORY)) {
-    // listen for profile startup and profile shutdown messages
+  if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
+    // listen for profile shutdown and library manager messages
     nsCOMPtr<nsIObserverService> obsSvc =
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIObserver> observer =
       do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = obsSvc->AddObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->AddObserver(observer,
@@ -491,7 +488,6 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-  } else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
     // Called after the profile has been loaded, so prefs and such are available
     rv = this->Init();
     NS_ENSURE_SUCCESS(rv, rv);
