@@ -739,6 +739,7 @@ sbHotkeyConfiguration.prototype =
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
-var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyService]);
-var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbHotkeyConfiguration]);
-var NSGetFactory = XPCOMUtils.generateNSGetFactory([sbDefaultGlobalHotkeyActions]);
+var NSGetFactory = 
+    XPCOMUtils.generateNSGetFactory([sbHotkeyService,
+                                     sbHotkeyConfiguration,
+                                     sbDefaultGlobalHotkeyActions]);
