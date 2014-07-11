@@ -26,7 +26,7 @@ interfaces sbFileSystem.xpt
 interfaces sbFileUtils.xpt
 interfaces sbGStreamerMediacore.xpt
 # interfaces sbIMediacoreErrorHandler.xpt
-interfaces sbIURIImportService.xpt os=Linux
+interfaces sbIURIImportService.xpt
 interfaces sbIdentityServiceComponent.xpt
 interfaces sbImageParser.xpt
 interfaces sbIntegration.xpt
