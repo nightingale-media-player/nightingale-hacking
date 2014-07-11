@@ -100,10 +100,6 @@ sbMediaListViewMap::Init()
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC,
-                                    PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
