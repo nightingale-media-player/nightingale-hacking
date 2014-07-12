@@ -28,7 +28,8 @@
 #include <nsIRunnable.h>
 #include "sbIDeviceEventListener.h"
 
-#include <prmon.h>
+#include <a11yGeneric.h>
+#include <mozilla/Monitor.h>
 #include <nsCOMArray.h>
 #include <nsIThread.h>
 
@@ -51,7 +52,9 @@ private:
   void OnEvent();
 
 protected:
-  PRMonitor* mMonitor;
+  mozilla::Monitor mMonitor;
   PRInt32 mCounter;
   nsCOMArray<nsIThread> mThreads;
+
+  NS_DECL_RUNNABLEMETHOD(sbDeviceEventTesterStressThreads, OnEvent);
 };

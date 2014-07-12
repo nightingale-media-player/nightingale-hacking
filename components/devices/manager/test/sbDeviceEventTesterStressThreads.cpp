@@ -27,11 +27,10 @@
 
 #include "sbDeviceEventTesterStressThreads.h"
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/Monitor.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
@@ -45,7 +44,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceEventTesterStressThreads,
                               sbIDeviceEventListener)
 
 sbDeviceEventTesterStressThreads::sbDeviceEventTesterStressThreads()
- : mMonitor(nsnull),
+ : mMonitor(__FILE__),
    mCounter(-999)
 {
   /* member initializers and constructor code */
@@ -59,11 +58,6 @@ sbDeviceEventTesterStressThreads::~sbDeviceEventTesterStressThreads()
 /* void run (); */
 NS_IMETHODIMP sbDeviceEventTesterStressThreads::Run()
 {
-  NS_ENSURE_FALSE(mMonitor, NS_ERROR_ALREADY_INITIALIZED);
-
-  mMonitor = nsAutoMonitor::NewMonitor(__FILE__);
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
   nsresult rv;
 
   nsCOMPtr<sbIDeviceEventTarget> target =
@@ -76,9 +70,8 @@ NS_IMETHODIMP sbDeviceEventTesterStressThreads::Run()
   // spin up a *ton* of threads...
   mCounter = 0;
   for (int i = 0; i < STRESS_TEST_THREAD_COUNT; ++i) {
-    nsAutoMonitor mon(mMonitor);
-    nsCOMPtr<nsIRunnable> event =
-      NS_NEW_RUNNABLE_METHOD(sbDeviceEventTesterStressThreads, this, OnEvent);
+    mozilla::MonitorAutoLock mon(mMonitor);
+    nsCOMPtr<nsIRunnable> event = new nsRunnableMethod_OnEvent(this);
     NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<nsIThread> thread;
@@ -109,7 +102,7 @@ NS_IMETHODIMP sbDeviceEventTesterStressThreads::Run()
 /* void onDeviceEvent (in sbIDeviceEvent aEvent); */
 NS_IMETHODIMP sbDeviceEventTesterStressThreads::OnDeviceEvent(sbIDeviceEvent *aEvent)
 {
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
   --mCounter;
   if (!NS_IsMainThread()) {
     NS_WARNING("Not on main thread!");

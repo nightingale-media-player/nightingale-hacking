@@ -58,7 +58,6 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
-#include <nsIGenericFactory.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>

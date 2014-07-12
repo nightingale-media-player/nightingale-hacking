@@ -38,6 +38,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/manager/public \
                      $(NULL)
 
+ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
+   CPP_EXTRA_FLAGS += -std=gnu++0x
+endif
+
 DYNAMIC_LIB = sbDeviceEventTester
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
