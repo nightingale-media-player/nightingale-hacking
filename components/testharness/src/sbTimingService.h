@@ -31,9 +31,8 @@
 
 #include <nsIFile.h>
 #include <nsIObserver.h>
-#include <nsIGenericFactory.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
@@ -56,7 +55,7 @@ public:
   nsresult Init(const nsAString &aTimerName);
 
 protected:
-  PRLock * mTimerLock;
+  mozilla::Mutex mTimerLock;
 
   nsString mTimerName;
 
@@ -77,31 +76,25 @@ public:
   sbTimingService();
   ~sbTimingService();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
   NS_METHOD Init();
 
   nsresult FormatResultsToString(nsACString &aOutput);
 
 private:
-  PRLock *          mLoggingLock;
+  mozilla::Mutex    mLoggingLock;
   PRBool            mLoggingEnabled;
   nsCOMPtr<nsIFile> mLogFile;
 
   // Supplementary lock is required to ensure that a timer of the same name
   // as another does not get inserted while the first time is in process of
   // insertion.
-  PRLock *mTimersLock;
+  mozilla::Mutex mTimersLock;
 
   nsInterfaceHashtableMT<nsStringHashKey, sbITimingServiceTimer> mTimers;
   
   // Supplementary lock is required to ensure that the count doesn't change
   // between the time we look it up and the time we insert an entry.
-  PRLock *mResultsLock;
+  mozilla::Mutex mResultsLock;
 
   nsInterfaceHashtableMT<nsUint32HashKey, sbITimingServiceTimer> mResults;
 };

@@ -35,7 +35,7 @@
 #define SB_TIMINGSERVICE_CONTRACTID     \
   "@songbirdnest.com/Songbird/TimingService;1"
 #define SB_TIMINGSERVICE_CLASSNAME      \
-  "Songbird Timing Service"
+  "sbTimingService"
 #define SB_TIMINGSERVICE_CID            \
 { /* 1f81bd64-a25a-4c25-b12e-9993add59177 */  \
   0x1f81bd64,                                 \

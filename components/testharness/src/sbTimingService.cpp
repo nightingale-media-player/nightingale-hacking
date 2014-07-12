@@ -41,6 +41,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCID.h>
 
+#include <mozilla/Mutex.h>
+
 #include <sbStringUtils.h>
 
 #define NS_APPSTARTUP_CATEGORY           "app-startup"
@@ -50,7 +52,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbTimingServiceTimer,
                               sbITimingServiceTimer)
 
 sbTimingServiceTimer::sbTimingServiceTimer() 
-: mTimerLock(nsnull)
+: mTimerLock("sbTimingServiceTimer::mTimerLock")
 , mTimerStartTime(0)
 , mTimerStopTime(0)
 , mTimerTotalTime(0)
@@ -61,19 +63,12 @@ sbTimingServiceTimer::sbTimingServiceTimer()
 sbTimingServiceTimer::~sbTimingServiceTimer()
 {
   MOZ_COUNT_DTOR(sbTimingService);
-
-  if(mTimerLock) {
-    nsAutoLock::DestroyLock(mTimerLock);
-  }
 }
 
 nsresult 
 sbTimingServiceTimer::Init(const nsAString &aTimerName)
 {
-  mTimerLock = nsAutoLock::NewLock("sbTimingServiceTimer::mTimerLock");
-  NS_ENSURE_TRUE(mTimerLock, NS_ERROR_OUT_OF_MEMORY);
-
-  nsAutoLock lock(mTimerLock);
+  mozilla::MutexAutoLock lock(mTimerLock);
   mTimerName = aTimerName;
 
   mTimerStartTime = PR_Now();
@@ -83,7 +78,7 @@ sbTimingServiceTimer::Init(const nsAString &aTimerName)
 
 NS_IMETHODIMP sbTimingServiceTimer::GetName(nsAString & aName)
 {
-  nsAutoLock lock(mTimerLock);
+  mozilla::MutexAutoLock lock(mTimerLock);
   aName = mTimerName;
   
   return NS_OK;
@@ -93,7 +88,7 @@ NS_IMETHODIMP sbTimingServiceTimer::GetStartTime(PRInt64 *aStartTime)
 {
   NS_ENSURE_ARG_POINTER(aStartTime);
 
-  nsAutoLock lock(mTimerLock);
+  mozilla::MutexAutoLock lock(mTimerLock);
   *aStartTime = mTimerStartTime;
 
   return NS_OK;
@@ -103,7 +98,7 @@ NS_IMETHODIMP sbTimingServiceTimer::GetStopTime(PRInt64 *aStopTime)
 {
   NS_ENSURE_ARG_POINTER(aStopTime);
 
-  nsAutoLock lock(mTimerLock);
+  mozilla::MutexAutoLock lock(mTimerLock);
   *aStopTime = mTimerStopTime;
 
   return NS_OK;
@@ -113,7 +108,7 @@ NS_IMETHODIMP sbTimingServiceTimer::GetTotalTime(PRInt64 *aTotalTime)
 {
   NS_ENSURE_ARG_POINTER(aTotalTime);
 
-  nsAutoLock lock(mTimerLock);
+  mozilla::MutexAutoLock lock(mTimerLock);
   *aTotalTime = mTimerTotalTime;
 
   return NS_OK;
@@ -124,10 +119,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbTimingService,
                               sbITimingService)
 
 sbTimingService::sbTimingService()
-: mLoggingLock(nsnull)
+: mLoggingLock("sbTimingService::mLoggingLock")
 , mLoggingEnabled(PR_TRUE)
-, mTimersLock(nsnull)
-, mResultsLock(nsnull)
+, mTimersLock("sbTimingService::mTimersLock")
+, mResultsLock("sbTimingService::mResultsLock")
 {
   MOZ_COUNT_CTOR(sbTimingService);
 }
@@ -136,46 +131,8 @@ sbTimingService::~sbTimingService()
 {
   MOZ_COUNT_DTOR(sbTimingService);
 
-  if(mLoggingLock) {
-    nsAutoLock::DestroyLock(mLoggingLock);
-  }
-  if(mTimersLock) {
-    nsAutoLock::DestroyLock(mTimersLock);
-  }
-  if(mResultsLock) {
-    nsAutoLock::DestroyLock(mResultsLock);
-  }
-
   mTimers.Clear();
   mResults.Clear();
-}
-
-/*static*/ NS_METHOD 
-sbTimingService::RegisterSelf(nsIComponentManager* aCompMgr,
-                              nsIFile* aPath,
-                              const char* aLoaderStr,
-                              const char* aType,
-                              const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->AddCategoryEntry(NS_APPSTARTUP_CATEGORY,
-                                         SB_TIMINGSERVICE_DESCRIPTION,
-                                         "service,"
-                                         SB_TIMINGSERVICE_CONTRACTID,
-                                         PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
 }
 
 static nsresult 
@@ -198,16 +155,8 @@ CheckEnvironmentVariable(nsIFile ** aFile)
 }
 
 NS_METHOD
-sbTimingService::Init() {
-  mLoggingLock = nsAutoLock::NewLock("sbTimingService::mLoggingLock");
-  NS_ENSURE_TRUE(mLoggingLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mTimersLock = nsAutoLock::NewLock("sbTimingService::mTimersLock");
-  NS_ENSURE_TRUE(mTimersLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mResultsLock = nsAutoLock::NewLock("sbTimingService::mResultsLock");
-  NS_ENSURE_TRUE(mResultsLock, NS_ERROR_OUT_OF_MEMORY);
-
+sbTimingService::Init()
+{
   PRBool success = mTimers.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
@@ -215,14 +164,7 @@ sbTimingService::Init() {
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = CheckEnvironmentVariable(getter_AddRefs(mLogFile));
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "CheckEnvironmentVariable failed");  
-
-  nsCOMPtr<nsIObserverService> observerService = 
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = observerService->AddObserver(this, "profile-before-change", PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "CheckEnvironmentVariable failed");
 
   return NS_OK;
 }
@@ -232,7 +174,7 @@ sbTimingService::GetEnabled(PRBool *aEnabled)
 {
   NS_ENSURE_ARG_POINTER(aEnabled);
 
-  nsAutoLock lock(mLoggingLock);
+  mozilla::MutexAutoLock lock(mLoggingLock);
   *aEnabled = mLoggingEnabled;
 
   return NS_OK;
@@ -240,7 +182,7 @@ sbTimingService::GetEnabled(PRBool *aEnabled)
 NS_IMETHODIMP 
 sbTimingService::SetEnabled(PRBool aEnabled)
 {
-  nsAutoLock lock(mLoggingLock);
+  mozilla::MutexAutoLock lock(mLoggingLock);
   mLoggingEnabled = aEnabled;
 
   return NS_OK;
@@ -251,7 +193,7 @@ sbTimingService::GetLogFile(nsIFile * *aLogFile)
 {
   NS_ENSURE_ARG_POINTER(aLogFile);
 
-  nsAutoLock lock(mLoggingLock);
+  mozilla::MutexAutoLock lock(mLoggingLock);
   NS_ADDREF(*aLogFile = mLogFile);
 
   return NS_OK;
@@ -261,7 +203,7 @@ sbTimingService::SetLogFile(nsIFile * aLogFile)
 {
   NS_ENSURE_ARG_POINTER(aLogFile);
 
-  nsAutoLock lock(mLoggingLock);
+  mozilla::MutexAutoLock lock(mLoggingLock);
   mLogFile = aLogFile;
 
   return NS_OK;
@@ -270,14 +212,13 @@ sbTimingService::SetLogFile(nsIFile * aLogFile)
 NS_IMETHODIMP 
 sbTimingService::StartPerfTimer(const nsAString & aTimerName)
 {
-  nsRefPtr<sbTimingServiceTimer> timer;
-  NS_NEWXPCOM(timer, sbTimingServiceTimer);
+  nsRefPtr<sbTimingServiceTimer> timer = new sbTimingServiceTimer();
   NS_ENSURE_TRUE(timer, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = timer->Init(aTimerName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lockTimers(mTimersLock);
+  mozilla::MutexAutoLock lockTimers(mTimersLock);
 
   if(mTimers.Get(aTimerName, nsnull)) {
     return NS_ERROR_ALREADY_INITIALIZED;
@@ -298,7 +239,7 @@ sbTimingService::StopPerfTimer(const nsAString & aTimerName, PRInt64 *_retval)
   nsCOMPtr<sbITimingServiceTimer> timer;
 
   {
-    nsAutoLock lockTimers(mTimersLock);
+    mozilla::MutexAutoLock lockTimers(mTimersLock);
 
     if(!mTimers.Get(aTimerName, getter_AddRefs(timer))) {
       return NS_ERROR_NOT_INITIALIZED;
@@ -315,7 +256,7 @@ sbTimingService::StopPerfTimer(const nsAString & aTimerName, PRInt64 *_retval)
   *_retval = rawTimer->mTimerTotalTime;
 
   {
-    nsAutoLock lockResults(mResultsLock);
+    mozilla::MutexAutoLock lockResults(mResultsLock);
     PRUint32 resultCount = mResults.Count();
     
     PRBool success = mResults.Put(resultCount, timer);
@@ -331,19 +272,10 @@ sbTimingService::Observe(nsISupports* aSubject,
                          const PRUnichar* aData)
 {
   nsresult rv;
-  nsCOMPtr<nsIObserverService> observerService = 
-    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
 
-  nsAutoLock lock(mLoggingLock);
+  mozilla::MutexAutoLock lock(mLoggingLock);
 
   if(strcmp(aTopic, "profile-before-change") == 0) {
-    
-    nsCOMPtr<nsIObserverService> observerService = 
-      do_GetService("@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = observerService->RemoveObserver(this, "profile-before-change");
-    NS_ENSURE_SUCCESS(rv, rv);
 
      if(mLoggingEnabled) {
       // Logging output is enabled; format and output to the console.
@@ -384,7 +316,7 @@ sbTimingService::Observe(nsISupports* aSubject,
 
 nsresult sbTimingService::FormatResultsToString(nsACString &aOutput)
 {
-  nsAutoLock lockResults(mResultsLock);
+  mozilla::MutexAutoLock lockResults(mResultsLock);
   PRUint32 resultCount = mResults.Count();
 
   nsresult rv = NS_ERROR_UNEXPECTED;
