@@ -7,7 +7,7 @@ Build-Depends: autoconf,
  debhelper (>= 9),
  libasound2,
  libdbus-glib-1-dev,
- libgstreamer-plugins-base0.10-dev,
+ libgstreamer-plugins-base1.0-dev,
  libgtk2.0-dev,
  libidl0,
  libsqlite0-dev,
@@ -23,7 +23,7 @@ Homepage: http://www.getnightingale.com
 
 Package: nightingale
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, gstreamer0.10-plugins-good
+Depends: ${shlibs:Depends}, ${misc:Depends}, gstreamer1.0-plugins-good
 Suggests: firefox | iceweasel
 Description: Nightingale is a desktop media player
  a digital jukebox and Web browser mash-up. It supports extensions
