@@ -133,6 +133,7 @@ component {e0d6e860-1dd1-11b2-8663-a4d535a29859} sbPlayQueueContentInfo.js
 component {4b6a6c23-e247-419e-b629-3c2ef5f5876d} sbSmartPlaylistPropertyRegistrar.js
 # components/protocol #
 component {b6c04b7a-c640-4314-8093-c52370d05ecf} sbAboutCredits.js
+component {416a028e-1dd2-11b2-a247-cc08533670be} sbAboutDRM.js
 component {ea82983c-4e22-43e0-8942-ae5f31d3671a} sbAboutGStreamer.js
 component {42631c40-1cbe-4f3a-b859-7936e542130f} sbAboutRedirector.js
 component {2c15f30e-815f-4414-8d18-277d943a2f68} sbSongbirdProtocol.js
