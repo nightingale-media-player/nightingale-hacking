@@ -101,9 +101,9 @@
     </handlers>
   </binding>
 
-    <binding id="tabbrowser-tabs"
-           extends="chrome://global/content/bindings/tabbox.xml#tabs">
-
+  <binding id="tabbrowser-tabs"
+           extends="chrome://songbird/content/bindings/browser/tabbox-draggable.xml#tabs-draggable">
+           <!-- extends="chrome://global/content/bindings/tabbox.xml#tabs" -->
     <content>
       <xul:hbox align="end">
         <xul:image class="tab-drop-indicator" anonid="tab-drop-indicator" collapsed="true"/>
