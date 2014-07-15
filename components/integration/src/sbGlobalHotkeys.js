@@ -236,12 +236,19 @@ sbHotkeyService.prototype =
   // Internal Methods
   ///////////////////////////////////////////////////////////////////
   _init: function() {
+    this._initPlatform();
+
+    // win32 is the only platform with GlobalHotkeys so be more
+    // reasonable with what the reported error is. 
     if(!HotkeyManager) {
-      Cu.reportError("Global Hotkey Manager is not available.");
+      if (this._platform != "Windows_NT") {
+        Cu.reportError("Global Hotkey Manager is not available on this platform.");
+      } else {
+        Cu.reportError("Failed to get Global Hotkey Manager.");
+      }
       return;
     }
 
-    this._initPlatform();
     this._initMetaKeyString();
     this._initHotkeyHandler();
 
