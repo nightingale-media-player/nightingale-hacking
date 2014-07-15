@@ -593,7 +593,7 @@ category extension-update-params CUSTOM2 @songbirdnest.com/moz/sburlformatter;1
 # components/parsererror #
 category profile-after-change ParserErrorHandler @songbirdnest.com/Songbird/ParserErrorHandler;1
 # components/playlistcommands #
-category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
+# category profile-after-change sbPublicPlaylistCommands @songbirdnest.com/Songbird/PublicPlaylistCommands;1
 # components/playqueue #
 category display-pane-provider play-queue @songbirdnest.com/Songbird/playqueue/contentInfo;1
 # components/property #
