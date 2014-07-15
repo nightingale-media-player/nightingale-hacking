@@ -138,12 +138,12 @@ sbLastFmWebServices.prototype = {
   classDescription:  CLASSNAME,
   classID:           CID,
   contractID:        CONTRACTID,
-  _xpcom_categories:
-  [{
-    category: "profile-after-change",
-    entry: "webservices-lastfm",
-    service: true
-  }],
+  // _xpcom_categories:
+  // [{
+  //   category: "profile-after-change",
+  //   entry: "webservices-lastfm",
+  //   service: true
+  // }],
 
   // Error reporting
   log: function sbLastFmWebServices_log(message) {

@@ -608,7 +608,7 @@ category xpcom-category-entry-removed ServicePaneService @songbirdnest.com/servi
 # components/update #
 category app-startup AddonBundleUpdateService @songbirdnest.com/AddOnBundleUpdateService;1
 # components/webservices/lastfm #
-category profile-after-change webservices-lastfm @songbirdnest.com/Songbird/webservices/last-fm;1
+# category profile-after-change webservices-lastfm @songbirdnest.com/Songbird/webservices/last-fm;1
 
 
 
