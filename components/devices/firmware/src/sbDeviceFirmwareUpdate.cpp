@@ -44,7 +44,7 @@ NS_IMPL_CI_INTERFACE_GETTER1(sbDeviceFirmwareUpdate,
 NS_IMPL_THREADSAFE_CI(sbDeviceFirmwareUpdate);
 
 sbDeviceFirmwareUpdate::sbDeviceFirmwareUpdate()
-: mMonitor(nsnull)
+: mMonitor("sbDeviceFirmwareUpdate::mMonitor")
 , mFirmwareReadableVersion(NS_LITERAL_STRING("0"))
 , mFirmwareVersion(0)
 {
