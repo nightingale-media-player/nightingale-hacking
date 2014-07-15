@@ -156,9 +156,16 @@
         ]]>
       </destructor>
 
+<!--       
       <field name="tabbrowser" readonly="true">
         document.getElementById(this.getAttribute("tabbrowser"));
       </field>
+ -->
+      <!-- public property: the tabbrowser this tab strip is attached to -->
+      <property name="tabBrowser" readonly="true"
+                onget="return document.getBindingParent(this)"/>
+      <property name="tabbrowser" readonly="true"
+                onget="return document.getBindingParent(this)"/>
 
       <field name="tabbox" readonly="true">
         this.tabbrowser.mTabBox;
