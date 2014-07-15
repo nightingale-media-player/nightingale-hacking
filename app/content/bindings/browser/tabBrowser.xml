@@ -2620,51 +2620,6 @@
     </implementation>
   </binding>
 
-  <binding id="tabbrowser-arrowscrollbox" extends="chrome://global/content/bindings/scrollbox.xml#arrowscrollbox-clicktoscroll">
-    <implementation>
-      <!-- Override scrollbox.xml method, since our scrollbox's children are
-           inherited from the binding parent -->
-      <method name="_getScrollableElements">
-        <body><![CDATA[
-          return Array.filter(document.getBindingParent(this).childNodes,
-                              this._canScrollToElement, this);
-        ]]></body>
-      </method>
-      <method name="_canScrollToElement">
-        <parameter name="tab"/>
-        <body><![CDATA[
-          return !tab.pinned && !tab.hidden;
-        ]]></body>
-      </method>
-    </implementation>
-
-    <handlers>
-      <handler event="underflow" phase="capturing"><![CDATA[
-        if (event.detail == 0)
-          return; // Ignore vertical events
-
-        var tabs = document.getBindingParent(this);
-        tabs.removeAttribute("overflow");
-
-        if (tabs._lastTabClosedByMouse)
-          tabs._expandSpacerBy(this._scrollButtonDown.clientWidth);
-
-        tabs.tabbrowser._removingTabs.forEach(tabs.tabbrowser.removeTab,
-                                              tabs.tabbrowser);
-
-        tabs._positionPinnedTabs();
-      ]]></handler>
-      <handler event="overflow"><![CDATA[
-        if (event.detail == 0)
-          return; // Ignore vertical events
-
-        var tabs = document.getBindingParent(this);
-        tabs.setAttribute("overflow", "true");
-        tabs._positionPinnedTabs();
-      ]]></handler>
-    </handlers>
-  </binding>
-
   <binding id="tabbrowser-tabs"
            extends="chrome://global/content/bindings/tabbox.xml#tabs">
     <resources>
