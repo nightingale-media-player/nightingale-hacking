@@ -1124,12 +1124,12 @@
               // and restore the original tab when it's done
               if (!gBrowser._springLoadedTab) {
                 gBrowser._springLoadedTab = {
-                  tab: gBrowser.mTabContainer.selectedItem,
+                  tab: gBrowser.tabContainer.selectedItem,
                   interval: setInterval(function() {
                     if (!dragService.getCurrentSession()) {
                       // the drag is over, clear the timer, clear the state
                       // restore the tab
-                      gBrowser.mTabContainer.selectedItem =
+                      gBrowser.tabContainer.selectedItem =
                           gBrowser._springLoadedTab.tab;
                       clearInterval(gBrowser._springLoadedTab.interval);
                       gBrowser._springLoadedTab = null;
@@ -1138,7 +1138,7 @@
                 }
               }
 
-              gBrowser.mTabContainer.selectedItem = tab;
+              gBrowser.tabContainer.selectedItem = tab;
             }, tab._dragTimeout);
           })(this);
         }

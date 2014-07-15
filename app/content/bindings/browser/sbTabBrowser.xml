@@ -322,7 +322,7 @@
       <method name="updateCurrentBrowser">
         <body>
           <![CDATA[
-            var newBrowser = this.getBrowserAtIndex(this.mTabContainer.selectedIndex);
+            var newBrowser = this.getBrowserAtIndex(this.tabContainer.selectedIndex);
             if (this.mCurrentBrowser == newBrowser)
               return;
 
@@ -400,7 +400,7 @@
 
                 // make sure that all status indicators are properly updated
                 if ("onUpdateCurrentBrowser" in p) {
-                  var listener = this.mTabListeners[this.mTabContainer.selectedIndex] || null;
+                  var listener = this.mTabListeners[this.tabContainer.selectedIndex] || null;
                   if (listener && listener.mStateFlags)
                     p.onUpdateCurrentBrowser(listener.mStateFlags, listener.mStatus,
                                              listener.mMessage, listener.mTotalProgress);
@@ -873,7 +873,7 @@
         <parameter name="aView" />
         <body><![CDATA[
           // Search open tabs for an sbIMediaListView that is showing the given view
-          var tabs = this.mTabs;
+          var tabs = this.tabs;
           var tab;
           for (var i = 0; i < tabs.length; i++) {
             tab = tabs[i];
@@ -1257,12 +1257,12 @@
       <method name="getTabForDocument">
         <parameter name="aDocument" />
         <body><![CDATA[
-          var numTabs = this.mTabs.length;
+          var numTabs = this.tabs.length;
           for ( var index = 0; index < numTabs; index++ ) {
-            if ( this.mTabs[index]
+            if ( this.tabs[index]
                      .linkedBrowser
                      .contentDocument == aDocument ) {
-              return this.mTabs[index];
+              return this.tabs[index];
             }
           }
           return null;
@@ -1274,7 +1274,7 @@
         <getter><![CDATA[
           if (!this.hasAttribute("hasmediatab"))
             return null;
-          return this.mTabs[0];
+          return this.tabs[0];
         ]]></getter>
       </property>
       <property name="_lastNonMediaTab">
@@ -1332,7 +1332,7 @@
 
             var tab = document.getAnonymousElementByAttribute(tabBrowser, "linkedpanel", this.parentNode.id);
             if (!tab) {
-              tab = tabBrowser.mTabContainer.getElementsByAttribute("linkedpanel", this.parentNode.id)[0];
+              tab = tabBrowser.tabContainer.getElementsByAttribute("linkedpanel", this.parentNode.id)[0];
             }
             tabBrowser.setTabTitle(tab);
 
@@ -1380,10 +1380,10 @@
               }
               this._strip.style.MozBinding = "";
             }
-            this._strip = this.mTabContainer = val;
+            this._strip = this.tabContainer = val;
             val._tabbrowser = this; // setting the private property!
-            this.mTabs = this.mTabContainer.childNodes;
-            this.mTabBox._tabs = this.mTabContainer;
+            this.tabs = this.tabContainer.childNodes;
+            this.mTabBox._tabs = this.tabContainer;
             this.mTabBox.selectedTab = selectedTab;
           ]]>
         </setter>

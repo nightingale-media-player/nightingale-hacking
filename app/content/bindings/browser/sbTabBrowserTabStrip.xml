@@ -158,7 +158,7 @@
       </property>
       <property name="_firstTab">
         <getter>
-          return this.tabBrowser.mTabs[0];
+          return this.tabBrowser.tabs[0];
         </getter>
       </property>
       <property name="_scrollbox">
