@@ -3,6 +3,8 @@
  *
  * This file is part of the Nightingale Media Player.
  *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://songbirdnest.com
  * Copyright(c) 2013
  * http://getnightingale.com
  *
