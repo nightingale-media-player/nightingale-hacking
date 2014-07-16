@@ -58,6 +58,11 @@ include $(topsrcdir)/build/rules.mk
 # XXX Note that on a windows debug build, ogg.dll is named ogg_d.dll.  This is
 # fixed using a perl script to copy the file and make the change
 export::
+ifeq (1, $(MEDIA_CORE_GST_SYSTEM))
+	$(PERL) -p -e "s/^\@lib\/(libgst(.*?)-1.0.so)/# \@lib\/\1/g" \
+	$(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(GST_LIBS_FILE)
+else # Windows only below, but we still need to get gst_libs.txt into CURDIR
 	$(PERL) -p -e "s/ogg.dll/ogg$(DEBUG:%=_d).dll/g" \
 	$(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(GST_LIBS_FILE)
+endif
 	$(INSTALL_FILE) $(GST_LIBS_FILE) $(SONGBIRD_COMPONENTSDIR)
