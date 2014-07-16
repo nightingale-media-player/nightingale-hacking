@@ -1,0 +1,16 @@
+# a little about jar.mn.in...
+# lines starting with "#" (like this one) are comments
+
+# this says we're creating a new jar file
+apple-remote.jar:
+# map the things under content/ to chrome://xpcom_helloworld/content/
+% content  apple-remote  %content/	contentaccessible=yes
+# map in the locale
+% locale  apple-remote en-US %locale/en-US/
+# map in the skin
+% skin apple-remote classic/1.0 %skin/
+# apply an overlay to all Songbird main windows
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://apple-remote/content/overlay.xul
+# include all the files in this jar
+% overlay chrome://browser/content/preferences/preferences.xul chrome://apple-remote/content/prefsOverlay.xul
+@include_all_to 

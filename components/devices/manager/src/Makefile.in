@@ -36,20 +36,6 @@ DYNAMIC_LIB = sbDeviceManager2
 CPP_SRCS = sbDeviceManagerModule.cpp \
            sbDeviceManager.cpp \
 
-#TODO:XXX should get this from sbDeviceBase.lib
-# included from components/devices/base/src
-CPP_SRCS += sbBaseDeviceEventTarget.cpp \
-            sbDefaultBaseDeviceInfoRegistrar.cpp \
-            sbDeviceCompatibility.cpp \
-            sbDeviceContent.cpp \
-            sbDeviceEvent.cpp \
-            sbDeviceEventBeforeAddedData.cpp \
-            sbDeviceLibrary.cpp \
-            sbDeviceLibraryHelpers.cpp \
-            sbDeviceLibraryMediaSyncSettings.cpp \
-            sbDeviceLibrarySyncSettings.cpp \
-            $(NULL)
-            
 # included from components/moz/xpcom/src
 CPP_SRCS += sbWeakReference.cpp \
             $(NULL)
@@ -87,6 +73,20 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(NULL)
 
 COMPONENTS_OBJDIR = $(SONGBIRD_OBJDIR)/components
+
+# included from components/devices/base/src
+DYNAMIC_LIB_EXTRA_OBJS +=  \
+    $(DEPTH)/components/devices/base/src/sbBaseDeviceEventTarget$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDefaultBaseDeviceInfoRegistrar$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceCompatibility$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceContent$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceEvent$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceEventBeforeAddedData$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibrary$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibraryHelpers$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibraryMediaSyncSettings$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibrarySyncSettings$(OBJ_SUFFIX) \
+    $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/devices/device/src/sbDeviceCore \

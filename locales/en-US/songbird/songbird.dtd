@@ -211,25 +211,11 @@
 <!ENTITY equalizer.band7.label    "4K" >
 <!ENTITY equalizer.band8.label    "8K" >
 <!ENTITY equalizer.band9.label    "16K" >
-<!ENTITY equalizer.preset.custom      "Custom" >
-<!ENTITY equalizer.preset.flat        "Flat" >
-<!ENTITY equalizer.preset.rock        "Rock" >
-<!ENTITY equalizer.preset.soft_rock   "Soft Rock" >
-<!ENTITY equalizer.preset.techno      "Techno" >
-<!ENTITY equalizer.preset.ska         "Ska" >
-<!ENTITY equalizer.preset.reggae      "Reggae" >
-<!ENTITY equalizer.preset.live        "Live" >
-<!ENTITY equalizer.preset.club        "Club" >
-<!ENTITY equalizer.preset.party       "Party" >
-<!ENTITY equalizer.preset.classical   "Classical" >
-<!ENTITY equalizer.preset.large_hall  "Large Hall" >
-<!ENTITY equalizer.preset.dance       "Dance" >
-<!ENTITY equalizer.preset.pop         "Pop" >
-<!ENTITY equalizer.preset.soft        "Soft" >
-<!ENTITY equalizer.preset.small_speakers   "Laptop/Headphones" >
-<!ENTITY equalizer.preset.full_bass_treble "Full Bass and Treble" >
-<!ENTITY equalizer.preset.full_treble "Full treble" >
-<!ENTITY equalizer.preset.full_bass   "Full bass" >
+<!ENTITY equalizer.presets.save   "Save" >
+<!ENTITY equalizer.presets.delete "Delete" >
+<!ENTITY equalizer.presets.reset  "Reset" >
+<!ENTITY equalizer.presets.saveerror "No Preset Name Set" >
+<!ENTITY equalizer.presets.saveerror.description "Please enter a name before saving the preset." >
 
 
 <!ENTITY setupprogress.pleasewait "Please wait…" >
@@ -833,6 +819,7 @@
 <!ENTITY videowindow.bringtofront.key "T">
 
 <!-- about:credits entities. -->
+<!ENTITY about.credits.ngale "Developers and contributors of Nightingale:">
 <!ENTITY about.credits.intro "We would like to thank our contributors, whose efforts make Songbird what it is. These people have helped by writing code and documentation, and by testing. They have created and maintained this product, its associated development kits, our build tools and our web sites.  Names are followed by IRC nicks, come by #songbird on irc.mozilla.org and say hello!">
 <!ENTITY about.credits.footer.beforeLink "Of course, none of this would be possible without the hard work and efforts of">
 <!ENTITY about.credits.footer.linkText "the contributors">

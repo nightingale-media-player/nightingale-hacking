@@ -58,9 +58,9 @@
       }
 
       function populateList() {
-        var tracks = ["http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3",
-                      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/mactonite_-_Days_of_April_(Part_1).mp3" ];
+        var tracks = ["http://static.getnightingale.com/unittests/remoteapi/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3",
+                      "http://static.getnightingale.com/unittests/remoteapi/mactonite_-_Days_of_April_(Part_1).mp3" ];
 
         var item = siteLib.createMediaItem(tracks[0]);
         item.setProperty("http://example.com/button1", "Buy Me"); 
@@ -79,7 +79,7 @@
         item = siteLib.createMediaItem(tracks[2]);
         item.setProperty("http://example.com/button1", "Don't Buy Me|1"); 
         item.setProperty("http://example.com/logo1", "1|0|0"); 
-        item.setProperty("http://example.com/downloadButton1", "http://www.songbirdnest.com/files/images/button_opera.png"); 
+        item.setProperty("http://example.com/downloadButton1", "http://www.example.com/files/images/button_opera.png"); 
         item.setProperty("http://example.com/ratings1", "3"); 
         siteList.add(item);
       }

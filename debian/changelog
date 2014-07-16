@@ -1,3 +1,9 @@
+nightingale (1.12.2a-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Martin Giger <zm.redaktion@gmail.com>  Wed, 05 Mar 2014 00:35:27 +0100
+
 nightingale (1.11.0-1) unstable; urgency=low
 
   * New upstream version

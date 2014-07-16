@@ -8,7 +8,7 @@ pref("browser.chromeURL", "chrome://songbird/content/xul/macCmdLineFwd.xul");
 // Prevent xulrunner from launching multiple instances of Songbird.
 pref("toolkit.singletonWindowType", "Songbird:Main");
 
-pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
+pref("general.useragent.extra.nightingale", "Nightingale/@SB_MILESTONE@ (@SB_BUILD_ID@)");
 pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 // Default feather settings:
@@ -260,12 +260,14 @@ pref("songbird.url.addons.displaypanes", "http://addons.getnightingale.com/");
 pref("songbird.url.addons.feathers", "http://addons.getnightingale.com/");
 pref("songbird.url.addons.mediaviews", "http://addons.getnightingale.com/");
 pref("browser.startup.homepage", "http://addons.getnightingale.com/");
+pref("songbird.url.firstrunpage", "http://firstrun.getnightingale.com/?type=install");
+pref("nightingale.update.url", "http://firstrun.getnightingale.com/?type=upgrade");
 pref("songbird.url.bugzilla", "http://github.com/nightingale-media-player/nightingale-hacking/issues/");
 pref("songbird.url.metrics", "");
 pref("songbird.url.support", "http://forum.getnightingale.com/");
 pref("songbird.url.keyboard", "about:keyboard-help");
-pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
-pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
+// pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
+pref("songbird.url.support.corefailure", "http://wiki.getnightingale.com/doku.php?id=developer_center:articles:core_wrapper_failure");
 
 //
 // Media Core prefs
@@ -304,6 +306,7 @@ pref("songbird.trackeditor.enableAdvancedTab", false);
 pref("privacy.sanitize.promptOnSanitize", true);
 pref("privacy.sanitize.sanitizeOnShutdown", false);
 pref("privacy.sanitize.didShutdownSanitize", false);
+pref("privacy.cpd.mediaHistory", false);
 pref("privacy.item.mediaHistory", true);
 pref("privacy.item.history", true);
 pref("privacy.item.formdata", true);
@@ -520,3 +523,6 @@ pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,m
 
 // Optionally blacklist certain files from being imported as audio
 // pref("songbird.mediacore.gstreamer.blacklistAudioExtensions", "");
+
+// By defualt the eq is on the "Flat" preset.
+pref("songbird.eq.currentPreset", "chrome://songbird/locale/songbird.properties");

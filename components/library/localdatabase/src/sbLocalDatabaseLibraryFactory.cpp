@@ -412,11 +412,28 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
   NS_NAMED_LITERAL_STRING(colonNewline, ";\n");
   PRInt32 posStart = 0;
   PRInt32 posEnd = response.Find(colonNewline, posStart);
-  while (posEnd >= 0) {
-    rv = query->AddQuery(Substring(response, posStart, posEnd - posStart));
-    NS_ENSURE_SUCCESS(rv, rv);
-    posStart = posEnd + 2;
-    posEnd = response.Find(colonNewline, posStart);
+
+  /* If the SQL file has CRLF endings, posEnd is -1, and no queries are added
+   * This is more important issue now since we use git, which, by default, 
+   * can convert line endings when checking out a branch on windows
+   */ 
+  if (posEnd < 0) {
+    // Try again, looking for ";\r\n"
+    NS_NAMED_LITERAL_STRING(colonCRNewline, ";\r\n");
+    posEnd = response.Find(colonCRNewline, posStart);
+    while (posEnd >= 0) {
+      rv = query->AddQuery(Substring(response, posStart, posEnd - posStart));
+      NS_ENSURE_SUCCESS(rv, rv);
+      posStart = posEnd + 3;
+      posEnd = response.Find(colonCRNewline, posStart);
+    }
+  } else {
+    while (posEnd >= 0) {
+      rv = query->AddQuery(Substring(response, posStart, posEnd - posStart));
+      NS_ENSURE_SUCCESS(rv, rv);
+      posStart = posEnd + 2;
+      posEnd = response.Find(colonNewline, posStart);
+    }
   }
 
   rv = query->Execute(&dbOk);

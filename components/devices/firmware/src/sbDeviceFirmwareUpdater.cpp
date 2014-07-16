@@ -64,9 +64,10 @@ static PRLogModuleInfo* gDeviceFirmwareUpdater = nsnull;
 #define FIRMWARE_VERSION_PREF   "firmware.cache.version"
 #define FIRMWARE_READABLE_PREF  "firmware.cache.readableVersion"
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceFirmwareUpdater,
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbDeviceFirmwareUpdater,
                               sbIDeviceFirmwareUpdater,
-                              sbIDeviceEventListener)
+                              sbIDeviceEventListener,
+                              nsIObserver)
 
 sbDeviceFirmwareUpdater::sbDeviceFirmwareUpdater()
 : mMonitor(nsnull)

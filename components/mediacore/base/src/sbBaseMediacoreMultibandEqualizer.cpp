@@ -32,14 +32,20 @@
 
 #include <nsIMutableArray.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIPrefBranch.h>
+#include <nsISupportsPrimitives.h>
+#include <nsIPrefLocalizedString.h>
 
-#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsAutoPtr.h>
 
 #include <prlog.h>
 #include <prprf.h>
 
 #include "sbMediacoreEqualizerBand.h"
+#include <sbProxiedComponentManager.h>
+#include <ngIEqualizerPresetProvider.h>
+#include <ngIEqualizerPreset.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -91,6 +97,11 @@ SB_ConvertFloatEqGainToJSStringValue(double aGain, nsCString &aGainStr)
   return;
 }
 
+#define SB_EQ_PRESET_PREF "songbird.eq.currentPreset"
+
+/*static*/ const nsEmbedString
+sbBaseMediacoreMultibandEqualizer::NO_PRESET = NS_LITERAL_STRING("");
+
 /*static*/ const PRUint32
 sbBaseMediacoreMultibandEqualizer::EQUALIZER_BAND_COUNT_DEFAULT = 10;
 
@@ -104,6 +115,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreMultibandEqualizer,
 sbBaseMediacoreMultibandEqualizer::sbBaseMediacoreMultibandEqualizer()
 : mMonitor(nsnull)
 , mEqEnabled(PR_FALSE)
+, mCurrentPresetName(NO_PRESET)
+, mSettingPreset(false)
+, mPrefs(nsnull)
+, mPresets(nsnull)
 {
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - Created", this));
 }
@@ -174,7 +189,26 @@ sbBaseMediacoreMultibandEqualizer::InitBaseMediacoreMultibandEqualizer()
   nsresult rv = OnInitBaseMediacoreMultibandEqualizer();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
+  mPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+  nsCOMPtr<nsIPrefLocalizedString> data;
+  rv = mPrefs->GetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsIPrefLocalizedString), getter_AddRefs(data));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = data->GetData(getter_Copies(mCurrentPresetName));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mPresets = do_ProxiedGetService("@getnightingale.com/equalizer-presets/manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool hasPreset;
+  rv = mPresets->HasPresetNamed(mCurrentPresetName, &hasPreset);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if(!hasPreset) {
+    rv = this->SetCurrentPresetName(NO_PRESET);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return rv;
 }
 
 /*virtual*/ nsresult 
@@ -343,6 +377,11 @@ sbBaseMediacoreMultibandEqualizer::SetBands(nsISimpleEnumerator *aBands)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if(!mSettingPreset) {
+    rv = this->SetCurrentPresetName(NO_PRESET);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -361,6 +400,128 @@ sbBaseMediacoreMultibandEqualizer::GetBandCount(PRUint32 *aBandCount)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+/* attribute AString currentPresetName; */
+NS_IMETHODIMP
+sbBaseMediacoreMultibandEqualizer::GetCurrentPresetName(nsAString& aCurrentPresetName)
+{
+    TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - GetCurrentPresetName", this));
+
+    NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+    nsAutoMonitor mon(mMonitor);
+
+    aCurrentPresetName = mCurrentPresetName;
+    return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseMediacoreMultibandEqualizer::SetCurrentPresetName(const nsAString& aCurrentPresetName)
+{
+    TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - SetCurrentPresetName", this));
+
+    nsresult rv = NS_OK;
+
+    NS_ENSURE_TRUE(mPrefs, NS_ERROR_NOT_INITIALIZED);
+    NS_ENSURE_TRUE(mPresets, NS_ERROR_NOT_INITIALIZED);
+
+    mSettingPreset = true;
+
+    /* Not sure if this is needed and even works (->GetBands instatiates its own mon)
+    NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+    nsAutoMonitor mon(mMonitor);*/
+
+    if(mCurrentPresetName != aCurrentPresetName)
+    {
+        mCurrentPresetName = aCurrentPresetName;
+
+        LOG(("Updating currentPreset pref"));
+        nsCOMPtr<nsIPrefLocalizedString> data (do_CreateInstance("@mozilla.org/pref-localizedstring;1", &rv));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = data->SetDataWithLength(aCurrentPresetName.Length(), aCurrentPresetName.BeginReading());
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mPrefs->SetComplexValue(SB_EQ_PRESET_PREF, NS_GET_IID(nsIPrefLocalizedString), data);
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(aCurrentPresetName != NO_PRESET) {
+        // Apply the preset
+        PRBool presetExists;
+        rv = mPresets->HasPresetNamed(aCurrentPresetName, &presetExists);
+        NS_ENSURE_SUCCESS(rv, rv);
+        LOG(("Preset exists: %i", presetExists));
+
+        if(presetExists)
+        {
+            nsCOMPtr<nsISimpleEnumerator> bands = nsnull;
+            rv = this->GetBands(getter_AddRefs(bands));
+            NS_ENSURE_SUCCESS(rv, rv);
+            NS_ENSURE_TRUE(bands, NS_ERROR_UNEXPECTED);
+
+            nsCOMPtr<ngIEqualizerPreset> preset = nsnull;
+            rv = mPresets->GetPresetByName(aCurrentPresetName, getter_AddRefs(preset));
+            NS_ENSURE_SUCCESS(rv, rv);
+            NS_ENSURE_TRUE(preset, NS_ERROR_UNEXPECTED);
+            nsCOMPtr<nsIArray> valuesArray = nsnull;
+            rv = preset->GetValues(getter_AddRefs(valuesArray));
+            NS_ENSURE_SUCCESS(rv, rv);
+            NS_ENSURE_TRUE(valuesArray, NS_ERROR_UNEXPECTED); 
+            LOG(("Got the two enumerators"));
+            PRBool hasMoreBands = PR_FALSE;
+
+            nsCOMPtr<nsISupports> element = nsnull;
+            nsCOMPtr<nsISupports> value = nsnull;
+
+            while(NS_SUCCEEDED(bands->HasMoreElements(&hasMoreBands)) &&
+                  hasMoreBands &&
+                  NS_SUCCEEDED(bands->GetNext(getter_AddRefs(element)))) {
+                LOG(("Getting the info for a band"));
+                nsCOMPtr<sbIMediacoreEqualizerBand> band(do_QueryInterface(element, &rv));
+                NS_ENSURE_SUCCESS(rv, rv);
+
+                PRUint32 index;
+                rv = band->GetIndex(&index);
+                NS_ENSURE_SUCCESS(rv, rv);
+
+                nsCOMPtr<nsISupportsDouble> gain;
+                rv = valuesArray->QueryElementAt(index, NS_GET_IID(nsISupportsDouble), getter_AddRefs(gain));
+                NS_ENSURE_SUCCESS(rv, rv);
+                LOG(("Extracting the GAIN value"));
+                PRFloat64 gainValue;
+                rv = gain->GetData(&gainValue);
+                NS_ENSURE_SUCCESS(rv, rv);
+                LOG(("Applying the GAIN value"));
+                rv = band->SetGain(gainValue);
+                NS_ENSURE_SUCCESS(rv, rv);
+
+                LOG(("Applying the band"));
+                rv = this->SetBand(band);
+                NS_ENSURE_SUCCESS(rv, rv);
+
+                // This should possibly be done in front-end code for the separation.
+                LOG(("Applying new GAIN value to the band slider"));
+                char* gainString;
+                rv = gain->ToString(&gainString);
+                NS_ENSURE_SUCCESS(rv, rv);
+                nsEmbedCString bandPrefName(NS_LITERAL_CSTRING("songbird.eq.band."));
+                bandPrefName.AppendInt(index);
+                
+                LOG(("Band: %i, Gain: %s", index, gainString));
+                rv = mPrefs->SetCharPref(bandPrefName.get(), gainString);
+                NS_ENSURE_SUCCESS(rv,  rv);
+            }
+        }
+        else {
+            // Preset doesn't exist, set to no preset.
+            return this->SetCurrentPresetName(NO_PRESET);
+        }
+    }
+
+    mSettingPreset = false;
+    
+    return rv;
 }
 
 /* sbIMediacoreEqualizerBand getBand (in unsigned long aBandIndex); */
@@ -412,6 +573,11 @@ sbBaseMediacoreMultibandEqualizer::SetBand(sbIMediacoreEqualizerBand *aBand)
 
   if(mEqEnabled) {
     rv = OnSetBand(aBand);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if(!mSettingPreset) {
+    rv = this->SetCurrentPresetName(NO_PRESET);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

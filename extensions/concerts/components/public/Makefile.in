@@ -41,7 +41,7 @@ include $(DEPTH)/build/autodefs.mk
 IS_EXTENSION = 1
 
 # compile these IDL files
-XPIDL_SRCS = Songkick.idl \
+XPIDL_SRCS = ISongkick.idl \
              $(NULL)
 
 # into this xpt (an xpt is like a compiled IDL read at runtime)

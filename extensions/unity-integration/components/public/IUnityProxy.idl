@@ -9,5 +9,4 @@ interface IUnityProxy : nsISupports
   void SoundMenuSetPlayingState(in PRInt16 playing);
   void HideWindow();
   void ShowWindow();
-  void EnableNotifications (in PRBool needEnable);
 };

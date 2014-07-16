@@ -80,6 +80,13 @@ interface sbIMediacoreMultibandEqualizer : nsISupports
    */
   readonly attribute unsigned long bandCount;
   /**
+   * \brief The name of the current equalizer preset
+   * \note If the current band values were not set through a preset this holds
+   *       an empty string.
+   * \note Changing the name will apply the preset.
+   */
+  attribute AString currentPresetName;
+  /**
    * \brief Get a band.
    */
   sbIMediacoreEqualizerBand getBand(in unsigned long aBandIndex);

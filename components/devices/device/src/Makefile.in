@@ -54,15 +54,15 @@ CPP_SRCS = sbBaseDevice.cpp \
            sbRequestThreadQueue.cpp \
            sbTranscodeProgressListener.cpp \
            $(NULL)
-
-# sources from components/watchfolder/utils
-CPP_SRCS += sbWatchFolderUtils.cpp \
-            $(NULL)
-            
-# sources from components/moz/xpcom/src
+           
+# included from components/moz/xpcom/src
 CPP_SRCS += sbWeakReference.cpp \
             $(NULL)
-           
+            
+# included from components/watchfolder/utils
+CPP_SRCS += sbWatchFolderUtils$(OBJ_SUFFIX) \
+            $(NULL)
+
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/devices/base/public \

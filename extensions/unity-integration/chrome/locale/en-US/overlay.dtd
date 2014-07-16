@@ -1,4 +1,3 @@
 <!ENTITY unity-integration.test "This is test">
 <!ENTITY unity-integration.options.title "Unity Integration options">
 <!ENTITY unity-integration.options.hideOnClose "Hide on close">
-<!ENTITY unity-integration.options.enableNotifications "Enable notifications">

@@ -90,7 +90,9 @@ interface sbIMediacoreSequencer : nsISupports
   readonly attribute sbIMediaItem nextItem;
 
   /**
-   * \brief The current sequence.
+   * \brief The current sequence. It contains the indexes of the songs in the
+   *        current sequence in the view.
+   * \note  The value of viewPosition should be at the index of sequencePosition.
    */
   readonly attribute nsIArray currentSequence;
 

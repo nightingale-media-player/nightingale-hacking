@@ -32,8 +32,10 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = metadatamanager/errorcases
 
 SONGBIRD_TESTS = $(wildcard $(srcdir)/*.mp3) \
+                 $(wildcard $(srcdir)/*.flac) \
+                 $(wildcard $(srcdir)/*.ogg) \
+                 $(wildcard $(srcdir)/*.m4a) \
                  $(NULL)
 
 
 include $(topsrcdir)/build/rules.mk
-

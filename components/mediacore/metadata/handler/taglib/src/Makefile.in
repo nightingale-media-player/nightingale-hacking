@@ -26,7 +26,6 @@ DEPTH = ../../../../../../
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
-ZERO = 0
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -71,40 +70,46 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-   DYNAMIC_LIB_STATIC_IMPORTS += \
+  DYNAMIC_LIB_STATIC_IMPORTS += \
     $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib$(LIB_SUFFIX) \
     $(NULL)
 else 
-   DYNAMIC_LIB_EXTRA_IMPORTS += z
+  DYNAMIC_LIB_EXTRA_IMPORTS += z
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-   # Search in xulrunner directory at runtime for shared libraries.
-   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
+  # Search in xulrunner directory at runtime for shared libraries.
+  ifneq (, $(findstring clang, $(CC)))
+    DYNAMIC_LIB_EXTRA_FLAGS += -R,'$$ORIGIN/../xulrunner'
+  else
+    DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
+  endif
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
-   # Search in xulrunner directory at runtime for shared libraries.
-   DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
+  # Search in xulrunner directory at runtime for shared libraries.
+  DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
 endif
 
-CPP_EXTRA_FLAGS   += $(TAGLIB_CFLAGS) \
-					 -frtti \
-					  $(NULL)
+ifeq (linux, $(SB_PLATFORM))
+  CPP_EXTRA_FLAGS += $(TAGLIB_CFLAGS) \
+                     -frtti \
+                     $(NULL)
+endif
 
 ifeq (system,$(SB_TAGLIB))
-	DYNAMIC_LIB_RAW_IMPORTS += $(TAGLIB_LIBS) \
-						  $(NULL)					  
+  DYNAMIC_LIB_RAW_IMPORTS += $(TAGLIB_LIBS) \
+                             $(NULL)
 else
-	DYNAMIC_LIB_STATIC_IMPORTS += \
-		$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag$(LIB_SUFFIX) \
-		$(NULL)
+  DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag$(LIB_SUFFIX) \
+    $(NULL)
 
-	CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
-						  $(NULL)
-						  
-	CPP_EXTRA_DEFS = -DTAGLIB_STATIC \
-					 $(NULL)
+  CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
+                        $(NULL)
+
+  CPP_EXTRA_DEFS = -DTAGLIB_STATIC \
+                    $(NULL)
 endif
         
 IS_COMPONENT = 1                     

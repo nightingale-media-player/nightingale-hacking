@@ -94,17 +94,18 @@ CPP_INCLUDES = $(DEPTH)/components/devices/cd/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-#XXXeps should get this from sbDeviceBase.lib
-# included from components/devices/base/src
-CPP_SRCS += sbBaseDeviceEventTarget.cpp \
-            sbDeviceCompatibility.cpp \
-            sbDeviceContent.cpp \
-            sbDeviceEvent.cpp \
-            sbDeviceLibrary.cpp \
-            sbDeviceLibraryHelpers.cpp \
-            sbDeviceLibraryMediaSyncSettings.cpp \
-            sbDeviceLibrarySyncSettings.cpp \
-            $(NULL)
+
+# objects from components/devices/base/src
+DYNAMIC_LIB_EXTRA_OBJS +=  \
+    $(DEPTH)/components/devices/base/src/sbBaseDeviceEventTarget$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceCompatibility$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceContent$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceEvent$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibrary$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibraryHelpers$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibraryMediaSyncSettings$(OBJ_SUFFIX) \
+    $(DEPTH)/components/devices/base/src/sbDeviceLibrarySyncSettings$(OBJ_SUFFIX) \
+    $(NULL)
 
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \

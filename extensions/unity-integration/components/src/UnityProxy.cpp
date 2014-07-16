@@ -166,10 +166,3 @@ NS_IMETHODIMP UnityProxy::ShowWindow ()
 
     return NS_OK;
 }
-
-NS_IMETHODIMP UnityProxy::EnableNotifications (PRBool needEnable)
-{
-    enableNotify = !!needEnable;
-
-    return NS_OK;
-}

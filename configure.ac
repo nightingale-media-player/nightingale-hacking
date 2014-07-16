@@ -745,7 +745,7 @@ case "$SB_PLATFORM" in
     _CC_SUPPORTED_MAJOR_VERSION=14
 
     changequote(,)
-    _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+    _MSVC_VER_FILTER='s|.*[^!-~]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
 
     # Determine compiler version
@@ -986,7 +986,16 @@ case "$SB_PLATFORM" in
     # We always want to include "mozilla-config.h"
     GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    # hardcoding to just "clang" is lame. prevents "/usr/bin/clang", etc.
+    if test "$CC" == "clang" ; then
+      GCC_LINKER_FLAGS="-L\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    else
+      GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    fi
+
+    if test "$LD" == "gold" ; then
+      GCC_LINKER_FLAGS="$GCC_LINKER_FLAGS -fuse-ld=gold"
+    fi
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"
@@ -1250,7 +1259,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
                 MEDIA_CORE_QT=1
             ;;
             linux|solaris)
-                MEDIA_CORE_GST=1
+                MEDIA_CORE_GST_SYSTEM=1
             ;;
             *)
                 AC_MSG_ERROR([No platform default media cores found; please manually specify --with-media-core=])
@@ -1366,9 +1375,9 @@ AC_SUBST(NIGHTINGALE_UNITY)
 #  Check for --enable-libnotify
 #
 
-AC_ARG_ENABLE(libnotify-notifs,
+AC_ARG_ENABLE(libnotify,
             [  --enable-libnotify  enable libnotify extension (default=no)])
-if test "$SB_PLATFORM" = "linux" -a "$with_libnotify" = "yes"; then
+if test "$SB_PLATFORM" = "linux" -a "$enable_libnotify" = "yes"; then
   PKG_CHECK_MODULES(LNTFY, libnotify)
   AC_SUBST(LNTFY_CFLAGS)
   AC_SUBST(LNTFY_LIBS)
@@ -1390,6 +1399,23 @@ else
   METRICS_ENABLED=
 fi
 AC_SUBST(METRICS_ENABLED)
+
+#
+# Are we going to use system nspr?
+#
+
+AC_ARG_ENABLE(system-nspr,
+      [  --enable-system-nspr  use system's NSPR (default=no)])
+if test "$enable_system_nspr" = "yes"; then
+  PKG_CHECK_MODULES(NSPR, nspr)
+  AC_SUBST(NSPR_CFLAGS)
+  AC_SUBST(NSPR_LIBS)
+  NG_SYSTEM_NSPR=1
+  AC_DEFINE(NG_SYSTEM_NSPR)
+else
+  NG_SYSTEM_NSPR=
+fi
+AC_SUBST(NG_SYSTEM_NSPR)
 
 #
 # Checks for libraries.

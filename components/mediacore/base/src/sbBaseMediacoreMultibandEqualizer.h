@@ -38,6 +38,10 @@
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
+#include <nsEmbedString.h>
+
+class nsIPrefBranch;
+class ngIEqualizerPresetCollection;
 
 double
 SB_ClampDouble(double aGain, double aMin, double aMax);
@@ -55,6 +59,11 @@ public:
 
   nsresult InitBaseMediacoreMultibandEqualizer();
 
+  /**
+   * \brief Value of currentPResetName if the equalizer is not set by a preset.
+   *        This value is set as empty string ("").
+   */
+  static const nsEmbedString NO_PRESET;
   /**
    * \brief Suggested default band count for the equalizer.
    *        This value is defined as 10.
@@ -92,6 +101,12 @@ protected:
 
   typedef nsInterfaceHashtable<nsUint32HashKey, sbIMediacoreEqualizerBand> eqbands_t;
   eqbands_t mBands;
+
+private:
+  nsEmbedString                          mCurrentPresetName;
+  bool                                   mSettingPreset;
+  nsCOMPtr<nsIPrefBranch>                mPrefs;
+  nsCOMPtr<ngIEqualizerPresetCollection> mPresets;
 };
 
 #endif /* __SB_BASEMEDIACOREMULTIBANDEQUALIZER_H__ */

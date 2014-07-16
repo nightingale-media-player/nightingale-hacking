@@ -27,12 +27,14 @@
 #   just how it's gonna be... This MUST match what's in
 #   configure.ac or bad things will happen!
 #
+SHELL = /bin/sh
+
 OBJDIRNAME  = compiled
 DISTDIRNAME = dist
 OBJDIR_DEPTH = ..
 
 CWD := $(shell pwd)
-ifeq "$(CWD)" "/"
+ifeq ("$(CWD)", "/")
   CWD := /.
 endif
 
@@ -95,6 +97,9 @@ AUTOCONF ?= autoconf
 MKDIR ?= mkdir -p
 PERL ?= perl
 RM ?= rm
+CP ?= cp
+LN ?= ln
+INSTALL ?= install
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -105,12 +110,62 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
+#
+# Prepare tests command
+#
+ifeq (, $(filter --enable-tests, $(CONFIGURE_ARGS)))
+    TEST_COMMAND = $(error Not a Build with enabled Tests. Please set --enable-tests.)
+else
+    TEST_COMMAND = $(DISTDIR)/nightingale -test
+endif
+
+#
+# Prepare install
+# For best practices see: https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html#Makefile-Conventions
+# Should use the install command to install Nightingale, however since it's not recursive that's non-trivial.
+#
+UNAME_S := $(shell uname -s)
+prefix = /usr
+exec_prefix = $(prefix)
+libdir ?= $(exec_prefix)/lib
+bindir ?= $(exec_prefix)/bin
+datarootdir ?= $(prefix)/share
+mandir ?= $(datarootdir)/man
+man1dir ?= $(mandir)/man1
+manext ?= .1
+man1ext ?= $(manext)
+docdir ?= $(datarootdir)/doc/nightingale
+htmldir ?= $(docdir)
+dvidir ?= $(docdir)
+pdfdir ?= $(docdir)
+psdir ?= $(docdir)
+infodir ?= $(datarootdir)/info
+rellibdir = $(shell echo $(libdir) | sed 's@$(exec_prefix)@@;' - )
+INSTALL_PROGRAM = $(INSTALL) -m 755
+INSTALL_DATA = $(INSTALL) -m 644
+ICONS_DESTDIR = $(datarootdir)/icons/hicolor
+ICON_SIZES = 16 24 32 48 64 96 128 256 512
+
+ifneq (Windows_NT,$(OS))
+    ifeq (Darwin, $(UNAME_S))
+        INSTALL_CMD = @echo Please use the .dmg file in compiled/dist.
+    endif
+    ifeq (Linux, $(UNAME_S))
+        INSTALL_CMD = $(MAKE) install-linux
+        UNINSTALL_CMD = $(MAKE) uninstall-linux
+    endif
+else
+    INSTALL_CMD = @echo Please use the installer located in compiled/dist.
+endif
+
+INSTALL_CMD ?= $(error Installing using make is currently not supported on your operating system.)
+UNINSTALL_CMD ?= $(error Uninstalling using make is currently not supported on your operating system.)
 
 all: songbird_output build
 
 run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 	cd $(OBJDIR) && \
-   $(CONFIGURE) $(CONFIGURE_ARGS)
+    $(CONFIGURE) $(CONFIGURE_ARGS)
 
 $(CONFIGURE): $(CONFIGURE_PREREQS)
 	cd $(TOPSRCDIR) && \
@@ -131,7 +186,7 @@ $(OBJDIR) $(DISTDIR):
 makefiles: $(OBJDIR) $(DISTDIR) run_configure
 
 clean:
-	rm -rf $(OBJDIR)
+	$(RM) -rf $(OBJDIR)
 
 clobber:
 	$(RM) $(CLOBBER_TRASH)
@@ -143,4 +198,51 @@ depclobber:
 build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build
+test:
+	$(TEST_COMMAND)
+
+install:
+	$(PRE_INSTALL)
+	$(NORMAL_INSTALL) # Normal commands follow
+	$(INSTALL_CMD)
+	$(POST_INSTALL) # Post-install commands follow
+	$(POST_INSTALL_CMD)
+
+uninstall:
+	$(PRE_UNINSTALL)
+	$(NORMAL_UNINSTALL) # Normal commands follow
+	$(UNINSTALL_CMD)
+	$(POST_UNINSTALL) # Post-uninstallation commands follow
+	$(POST_UNINSTALL_CMD)
+
+installdirs:
+	$(MKDIR) $(DESTDIR)$(bindir)
+	$(MKDIR) $(DESTDIR)$(libdir)/nightingale
+	$(MKDIR) $(DESTDIR)$(docdir)
+	$(MKDIR) $(DESTDIR)$(man1dir)
+	$(MKDIR) $(DESTDIR)$(datarootdir)/applications
+	$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ;)
+
+install-linux:
+	$(MAKE) installdirs
+	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
+	$(LN) -fs ..$(rellibdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	# $(LN) -frs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(INSTALL_DATA) $(CURDIR)/README.md $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
+	$(INSTALL_DATA) $(CURDIR)/installer/common/nightingale.desktop $(DESTDIR)$(datarootdir)/applications
+	$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale.svg $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale-$(SIZE).png \
+		$(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+
+uninstall-linux:
+	$(RM) -r $(DESTDIR)$(libdir)/nightingale
+	$(RM) $(DESTDIR)$(bindir)/nightingale
+	$(RM) -r $(DESTDIR)$(docdir)
+	$(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
+	$(RM) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps/nightingale.svg
+	$(RM) $(DESTDIR)$(datarootdir)/applications/nightingale.desktop
+	$(foreach SIZE,$(ICON_SIZES),$(RM) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux

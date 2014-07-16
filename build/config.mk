@@ -43,7 +43,7 @@ EXIT_ON_ERROR = set -e; # Shell loops continue past errors without this.
 ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
    $(error Please check out or build vendor-binaries - \
 	  $(MOZSDK_SCRIPTS_DIR) \
-      see https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
+      see http://wiki.getnightingale.com/doku.php?id=build#build_it_yourself)
 endif
 
 ifeq (,$(wildcard $(MOZBROWSER_DIR)))

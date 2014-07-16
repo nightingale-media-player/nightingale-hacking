@@ -34,4 +34,10 @@ SUBDIRS = stub \
           encode-profiles \
           $(NULL)
 
+ifeq (1,$(MEDIA_CORE_GST))
+    SUBDIRS += gst-plugins
+else ifeq (1,$(MEDIA_CORE_GST_SYSTEM))
+    SUBDIRS += gst-plugins
+endif
+
 include $(topsrcdir)/build/rules.mk

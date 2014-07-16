@@ -28,6 +28,7 @@
 
 
 static GtkWindow *playerGtkWindow = NULL;
+static gchar *playerIcon = NULL;
 
 
 /* Used to get a handle on the window so notifications don't
@@ -73,8 +74,19 @@ NS_IMETHODIMP lnNotifs::InitNotifs(const char *windowTitle)
 
     if (!notify_init("nightingale"))
         return NS_ERROR_NOT_INITIALIZED;
+    
+    GKeyFile *keyFile = g_key_file_new ();
 
-    notification = notify_notification_new("", "", "");
+    gchar *desktopFilePath = g_build_filename ("/usr/share/applications", "nightingale.desktop", NULL);
+
+    if (g_key_file_load_from_file (keyFile, desktopFilePath, G_KEY_FILE_NONE, NULL))
+    {
+        playerIcon = g_key_file_get_string (keyFile, "Desktop Entry", "Icon", NULL);
+    }
+
+    if(!playerIcon) return NS_ERROR_UNEXPECTED;
+
+    notification = notify_notification_new("", "", playerIcon);
     if (!notification) return NS_ERROR_NOT_INITIALIZED;
 
     return NS_OK;
@@ -99,7 +111,7 @@ NS_IMETHODIMP lnNotifs::TrackChangeNotify(const char *title,
     if (notifsEnabled && !gtk_window_is_active(playerGtkWindow)) {
         gchar *summary = g_strdup_printf("%s", title);
         gchar *body = g_strdup_printf("%s - %s", artist, album);
-        const char *image = (!coverFilePath) ? NULL : coverFilePath;
+        const char *image = (!coverFilePath) ? playerIcon : coverFilePath;
 
         notify_notification_update(notification, summary, body, image);
         notify_notification_show(notification, NULL);

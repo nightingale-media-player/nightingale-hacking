@@ -1,0 +1,159 @@
+# ***** BEGIN LICENSE BLOCK *****
+# Version: MPL 1.1/GPL 2.0/LGPL 2.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# The Original Code is mozilla.org code.
+#
+# The Initial Developer of the Original Code is
+# Mozilla Foundation.
+# Portions created by the Initial Developer are Copyright (C) 2007
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#
+# Alternatively, the contents of this file may be used under the terms of
+# either of the GNU General Public License Version 2 or later (the "GPL"),
+# or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+# in which case the provisions of the GPL or the LGPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of either the GPL or the LGPL, and not to allow others to
+# use your version of this file under the terms of the MPL, indicate your
+# decision by deleting the provisions above and replace them with the notice
+# and other provisions required by the GPL or the LGPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the MPL, the GPL or the LGPL.
+#
+# ***** END LICENSE BLOCK *****
+
+DEPTH		= ../../../..
+topsrcdir	= @top_srcdir@
+srcdir		= @srcdir@
+VPATH		= @srcdir@
+relativesrcdir  = browser/base/content/test
+
+include $(DEPTH)/config/autoconf.mk
+include $(topsrcdir)/config/rules.mk
+
+_TEST_FILES = \
+		test_feed_discovery.html \
+		feed_discovery.html \
+		test_bug395533.html \
+		bug395533-data.txt \
+		test_contextmenu.html \
+		subtst_contextmenu.html \
+		ctxmenu-image.png \
+		video.ogg \
+		test_offlineNotification.html \
+		offlineChild.html \
+		offlineChild.cacheManifest \
+		offlineChild.cacheManifest^headers^ \
+		offlineChild2.html \
+		offlineChild2.cacheManifest \
+		offlineChild2.cacheManifest^headers^ \
+		offlineEvent.html \
+		offlineEvent.cacheManifest \
+		offlineEvent.cacheManifest^headers^ \
+		test_bug364677.html \
+		bug364677-data.xml \
+		bug364677-data.xml^headers^ \
+		test_offline_gzip.html \
+		gZipOfflineChild.html \
+		gZipOfflineChild.html^headers^ \
+		gZipOfflineChild.cacheManifest \
+		gZipOfflineChild.cacheManifest^headers^ \
+		$(NULL)
+
+# The following tests are disabled because they are unreliable:
+#   browser_bug423833.js is bug 428712
+#   browser_sanitize-download-history.js is bug 432425
+#
+# browser_sanitizeDialog_treeView.js is disabled until the tree view is added
+# back to the clear recent history dialog (santize.xul), if it ever is (bug
+# 480169)
+
+_BROWSER_FILES = \
+                 browser_bug321000.js \
+                 browser_sanitize-timespans.js \
+                 browser_bug405137.js \
+                 browser_bug409481.js \
+                 browser_bug413915.js \
+                 browser_bug417483.js \
+                 browser_bug419612.js \
+                 browser_bug420160.js \
+                 browser_bug424101.js \
+                 browser_bug427559.js \
+                 browser_bug432599.js \
+                 browser_bug435035.js \
+                 browser_bug441778.js \
+                 browser_bug455852.js \
+                 browser_bug462673.js \
+                 browser_bug481560.js \
+                 browser_bug484315.js \
+                 browser_bug477014.js \
+                 browser_bug495058.js \
+                 browser_bug517902.js \
+                 browser_bug521216.js \
+                 browser_bug537474.js \
+                 browser_discovery.js \
+                 browser_tabfocus.js \
+                 discovery.html \
+                 moz.png \
+                 test_bug435035.html \
+                 test_bug462673.html \
+                 browser_getshortcutoruri.js \
+                 browser_page_style_menu.js \
+                 page_style_sample.html \
+                 browser_ctrlTab.js \
+                 browser_selectTabAtIndex.js \
+                 browser_gestureSupport.js \
+                 browser_pageInfo.js \
+                 feed_tab.html \
+                 browser_pluginnotification.js \
+                 plugin_unknown.html \
+                 plugin_test.html \
+                 plugin_both.html \
+                 plugin_both2.html \
+                 browser_alltabslistener.js \
+                 alltabslistener.html \
+                 zoom_test.html \
+                 browser_bug416661.js \
+                 browser_bug386835.js \
+                 dummy_page.html \
+                 browser_bug422590.js \
+                 browser_sanitize-sitepermissions.js \
+                 browser_bug356571.js \
+                 browser_sanitize-passwordDisabledHosts.js \
+                 browser_bug479408.js \
+                 browser_bug479408_sample.html \
+                 browser_scope.js \
+                 browser_overflowScroll.js \
+                 browser_sanitizeDialog.js \
+                 browser_tabs_owner.js \
+                 browser_bug491431.js \
+                 browser_bug304198.js \
+                 browser_drag.js \
+                 browser_relatedTabs.js \
+                 browser_contextSearchTabPosition.js \
+                 browser_NetworkPrioritizer.js \
+    $(NULL)
+
+ifeq (,$(filter mac cocoa,$(MOZ_WIDGET_TOOLKIT)))
+_BROWSER_FILES += browser_bug462289.js
+else
+_BROWSER_FILES += browser_customize.js
+endif
+
+libs:: $(_TEST_FILES)
+	$(INSTALL) $(foreach f,$^,"$f") $(DEPTH)/_tests/testing/mochitest/tests/$(relativesrcdir)
+
+libs::	$(_BROWSER_FILES)
+	$(INSTALL) $(foreach f,$^,"$f") $(DEPTH)/_tests/testing/mochitest/browser/$(relativesrcdir)
