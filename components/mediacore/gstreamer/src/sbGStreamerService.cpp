@@ -470,7 +470,7 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
     plugin = (GstPlugin *) (plugins->data);
     plugins = g_list_next (plugins);
 
-    if (g_strcmp0(plugin->desc.name, libvisual) != 0) {
+    if (g_strcmp0(gst_plugin_get_name(plugin), libvisual) != 0) {
 
       nsCString filename;
       if (gst_plugin_get_filename(plugin)) {
@@ -498,7 +498,7 @@ sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
         GstPluginFeature *feature;
         feature = GST_PLUGIN_FEATURE(features->data);
 
-        if (g_strcmp0(feature->plugin_name, libvisual) != 0) {
+        if (g_strcmp0(gst_plugin_feature_get_name(feature), libvisual) != 0) {
           if (GST_IS_ELEMENT_FACTORY(feature)) {
             GstElementFactory *factory;
             factory = GST_ELEMENT_FACTORY(feature);
