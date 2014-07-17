@@ -321,38 +321,21 @@ var TrackEditor = {
     // get the new item's content type
     var itemContentType = this.mediaListView.selection.currentMediaItem.contentType;
 
-    // create default options for the advanced tab
-    var defaultUserPreferenceProperty = ["http://songbirdnest.com/data/1.0#keywords",
-                                         "http://songbirdnest.com/data/1.0#description",
-                                         "http://songbirdnest.com/data/1.0#showName",
-                                         "http://songbirdnest.com/data/1.0#episodeNumber",
-                                         "http://songbirdnest.com/data/1.0#seasonNumber"];
-
     if (itemContentType == "audio"){
       // load the users audio preference
       var userPreferenceProperty = JSON.parse(Application.prefs.getValue(
                                         "songbird.trackeditor.audioAdvancedTags", "")); 
             
-      // if not empty, update the advanced tab with the proper elements
-      if (userPreferenceProperty.length > 0){
-        TrackEditor.updateAdvancedTab(userPreferenceProperty);
-      }
-      else {
-        TrackEditor.updateAdvancedTab(defaultUserPreferenceProperty);  
-      }
+      // update the advanced tab with the proper elements
+      TrackEditor.updateAdvancedTab(userPreferenceProperty);
     }
     else if (itemContentType == "video"){
       // load the users audio preference
       var userPreferenceProperty = JSON.parse(Application.prefs.getValue(
                                         "songbird.trackeditor.videoAdvancedTags", ""));
       
-      // if not empty, update the advanced tab with the proper elements
-      if (userPreferenceProperty.length > 0){
-        TrackEditor.updateAdvancedTab(userPreferenceProperty);
-      }
-      else {
-        TrackEditor.updateAdvancedTab(defaultUserPreferenceProperty);
-      }
+      // update the advanced tab with the proper elements
+      TrackEditor.updateAdvancedTab(userPreferenceProperty);
     }
 
     this.state.setSelection(this.mediaListView.selection);    
