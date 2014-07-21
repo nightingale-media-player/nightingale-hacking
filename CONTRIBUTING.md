@@ -19,16 +19,20 @@ Claim the Issue
 ---------------
 Tell everybody that you're working on an issue with a comment. If there's no
 issue for the bug you want to fix (reporting bugs is contributin too!) or the
-feature you'd like to implement, open an issue for it.
+feature you'd like to implement, open an issue for it. You'll need a GitHub
+account to do this, and that's the onyl account you need to contribute to
+Nightingale.
 
 XULRunner and the other Technologies
 ------------------------------------
 Nightingale is based on a pretty rare combination of toolchains (these days),
 not to mention that some of them are outdated.
 
-Fist off, Nightingale uses a combination of C++ and JS as its main languages.
-If you encounter any language you're not familiar with, or new APIs, it's worth
-checking out http://wiki.getnightingale.com/doku.php?id=coding_tutorials.
+Fist off, Nightingale uses a combination of C++ and JS as its main languages. In
+order to contribute code you'll have to use git. In case you don't know git yet,
+we recommend http://try.github.com. If you encounter any language you're not
+familiar with, or new APIs, it's worth checking out
+http://wiki.getnightingale.com/doku.php?id=coding_tutorials.
 
 We user a GNU make based buildsystem. There is no real documentation on it,
 other than it being similar to Mozilla's old buildsystem. If you don't know make,
@@ -66,10 +70,12 @@ even though we don't insist on following these one to one.
 
 Writing the Code
 ----------------
-To the exciting part: writing code. Finally. But first, if you're working on a
-bug within a component or certain parts of the UI, we ask you to create a unit
-test that reproduces the bug. This allows us to make sure we don't reintroduce a
-bug.
+To the exciting part: writing code. Finally. If you haven't already,
+[fork this repository](https://github.com/nightingale-media-player/nightingale-hacking/fork),
+or update the branch you're wokring on to match ours. Before you change or add
+code, if you're working on a bug within a component or certain parts of the UI
+(mainly bindings), we ask you to create a unit test that reproduces the bug.
+This allows us to make sure we don't reintroduce a bug.
 
 Now it's time to do your changes to our code. You should be well prepared for
 this, so there's nothing more on that.
