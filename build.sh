@@ -72,7 +72,8 @@ case $OSTYPE in
         depdirn="linux-$arch"
         patch=1
         version=1.12
-        depdate=20130316
+        # Nightingale dependency build date, change if the linux deps change.
+        depdate="20130316"
         fname="$depdirn-$version-$depdate-$build-final.tar.lzma"
 
         export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
@@ -105,9 +106,8 @@ case $OSTYPE in
         ;;
     msys*)
         depdirn="windows-i686"
-        # Nightingale version number and dependency version, change if the deps change.
-        version=1.12
-        depversion="20130121"
+        # Nightingale dependency build date, change if the msys deps change.
+        depdate="20130121"
 
         # Ensure line endings, as git might have converted them
         tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
@@ -116,7 +116,7 @@ case $OSTYPE in
 
         cd dependencies
 
-        fname="$depdirn-$version-$depversion-$build.tar.lzma"
+        fname="$depdirn-$version-$depdate-$build.tar.lzma"
 
         if [ ! -f "$fname" ] ; then
             # We want the new deps instead of the old ones...
@@ -135,8 +135,8 @@ case $OSTYPE in
         ;;
     darwin*)
         depdirn="macosx-i686"
-        version=1.12
-        depversion="20140419"
+        # Nightingale dependency build date, change if the darwin deps change.
+        depdate="20140419"
         arch_flags="-m32 -arch i386"
         export CFLAGS="$arch_flags"
         export CXXFLAGS="$arch_flags"
@@ -154,7 +154,7 @@ case $OSTYPE in
         cd dependencies
 
         # NOTE: The version is 1.12.1, hence the ".1" appendage here
-        fname="$depdirn-$version.1-$depversion.tar.bz2"
+        fname="$depdirn-$version.1-$depdate.tar.bz2"
 
         if [ ! -f "$fname" ] ; then
             # We want the new deps instead of the old ones...
