@@ -1,6 +1,6 @@
 Contribute to Nightingale
 =========================
-You've decided you want to help out Nightingale by contributin code? This is
+You've decided you want to help out Nightingale by contributing code? This is
 exactly the document you should be reading right now. Please read it until the
 end before doing anything else. If you're looking to contribute in a different
 manner, have a look at http://wiki.getnightingale.com/doku.php?id=contribute.
@@ -20,7 +20,7 @@ Claim the Issue
 Tell everybody that you're working on an issue with a comment. If there's no
 issue for the bug you want to fix (reporting bugs is contributin too!) or the
 feature you'd like to implement, open an issue for it. You'll need a GitHub
-account to do this, and that's the onyl account you need to contribute to
+account to do this, and that's the only account you need to contribute to
 Nightingale.
 
 XULRunner and the other Technologies
@@ -47,7 +47,7 @@ read up on XPCOM, we recommend [the guide on MDN](https://developer.mozilla.org/
 You might also have to use or understand XUL or XBL, both are explained pretty
 well on MDN.
 
-Nightingale has a complete documentation fo its XPCOM APIs on
+Nightingale has a complete documentation for its XPCOM APIs on
 http://developer.getnightingale.com.
 
 Nightingale further uses TagLib, GStreamer and SQLite.
@@ -72,7 +72,7 @@ Writing the Code
 ----------------
 To the exciting part: writing code. Finally. If you haven't already,
 [fork this repository](https://github.com/nightingale-media-player/nightingale-hacking/fork),
-or update the branch you're wokring on to match ours. Before you change or add
+or update the branch you're working on to match ours. Before you change or add
 code, if you're working on a bug within a component or certain parts of the UI
 (mainly bindings), we ask you to create a unit test that reproduces the bug.
 This allows us to make sure we don't reintroduce a bug.
@@ -85,9 +85,9 @@ tests. Thank you.
 
 Building
 -------
-While writting your patch you'll want to test it too, you'll have to build
+While writing your patch you'll want to test it too, you'll have to build
 Nightingale. Luckily we have pretty detailed [building guides](http://wiki.getnightingale.com/doku.php?id=build)
-for all platforms. They explain all the prequisites and steps needed for
+for all platforms. They explain all the prerequisite and steps needed for
 building.
 
 Submit a Pull Request
