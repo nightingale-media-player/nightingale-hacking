@@ -199,7 +199,6 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     mBackgroundEventTarget = do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    mozilla::MutexAutoLock lock(mMutex);
   }
   else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC)) {
     nsCOMPtr<sbILibraryManager> libManager =
