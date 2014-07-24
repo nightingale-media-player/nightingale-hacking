@@ -293,6 +293,7 @@
 <!ENTITY trackeditor.next.accesskey               "N" >
 <!ENTITY trackeditor.prev.key                     "P" >
 <!ENTITY trackeditor.next.key                     "N" >
+<!ENTITY trackeditor.tab.advanced.title           "Advanced" >
 
 <!-- The following strings are from the old track editor, and can be remove one day -->
 <!ENTITY trackeditor.addtag.title     "Add Tag" >

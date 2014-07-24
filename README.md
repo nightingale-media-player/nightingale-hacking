@@ -89,8 +89,7 @@ dependencies:
 
 Contributions
 =============
-To join in and help, please visit [our forum](http://forum.getnightingale.com/)
-or jump into #nightingale on irc.mozilla.org.
+Everything relevant to you should be explained in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Contributors
 ============

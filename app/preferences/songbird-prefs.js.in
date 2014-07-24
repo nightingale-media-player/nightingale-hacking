@@ -298,7 +298,8 @@ pref("songbird.mediacore.resumePlaybackPosition", true);
 pref("songbird.metadata.enableWriting", true);
 pref("songbird.metadata.promptOnWrite", false);
 pref("songbird.metadata.ratings.enableWriting", false);
-pref("songbird.trackeditor.enableAdvancedTab", false);
+pref("songbird.trackeditor.videoAdvancedTags", '["http://songbirdnest.com/data/1.0#keywords","http://songbirdnest.com/data/1.0#description","http://songbirdnest.com/data/1.0#showName","http://songbirdnest.com/data/1.0#episodeNumber","http://songbirdnest.com/data/1.0#seasonNumber"]');
+pref("songbird.trackeditor.audioAdvancedTags", '["http://songbirdnest.com/data/1.0#keywords","http://songbirdnest.com/data/1.0#description","http://songbirdnest.com/data/1.0#showName","http://songbirdnest.com/data/1.0#episodeNumber","http://songbirdnest.com/data/1.0#seasonNumber"]');
 
 //
 // Sanitize prefs

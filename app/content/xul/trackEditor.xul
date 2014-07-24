@@ -70,6 +70,7 @@
       <tab label="&trackeditor.tab.edit.title;" id="edit"/>
       <!--><tab label="&trackeditor.tab.lyrics.title;" id="lyrics"/>-->
       <!--tab disabled="true" label="Sort Values"/-->
+      <tab label="&trackeditor.tab.advanced.title;" />
     </tabs>
 
     <tabpanels id="trackeditor-tabpanels" flex="1">
@@ -345,6 +346,233 @@
       </vbox
   -->
 
+    <vbox id="advanced-tab">
+      <row>
+        <menubar className="advanced-menubar" flex="1" orient="horizontal" align="right">
+          <menu label="&trackeditor.tab.advanced.title;">
+            <menupopup id="menupopup"> 
+            </menupopup>
+          </menu>
+        </menubar>
+      </row>
+
+      <grid id="advanced-tab-grid" style="overflow:auto" flex="1">
+        
+        <columns>
+          <column class="advanced_left_column"/>
+          <column class="advanced_right_column" flex="2"/>
+        </columns>
+
+        <rows>
+          
+          <row property="http://songbirdnest.com/data/1.0#ordinal" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#ordinal"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#ordinal"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#created" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#created"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#created"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#updated" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#updated"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#updated"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#contentURL" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#contentURL"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#contentURL"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#contentLength" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#contentLength"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#contentLength"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#lastPlayTime" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#playCount" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#playCount"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#playCount"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#lastSkipTime" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#skipCount" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#skipCount"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#skipCount"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#bitRate" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#bitRate"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#bitRate"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#channels" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#channels"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#channels"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#sampleRate" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#sampleRate"/>
+            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#sampleRate"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#trackName" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#trackName"/>
+            <textbox flex="1" property="http://songbirdnest.com/data/1.0#trackName" />
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#albumName" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#albumName"/>
+            <textbox property="http://songbirdnest.com/data/1.0#albumName"
+                     flex="1"
+                     type="autocomplete"
+                     autocompletesearch="library-distinct-properties"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#artistName" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#artistName"/>
+            <textbox property="http://songbirdnest.com/data/1.0#artistName"
+                     flex="1"
+                     type="autocomplete"
+                     autocompletesearch="library-distinct-properties"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#genre" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#genre"/>
+            <textbox id="genredropdown"
+                     property="http://songbirdnest.com/data/1.0#genre"
+                     flex="1"
+                     type="autocomplete"
+                     autocompletesearch="library-distinct-properties"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#year" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#year"/>
+            <textbox property="http://songbirdnest.com/data/1.0#year"
+                     flex="1"
+                     class="long-number-input"
+                     type="autocomplete"
+                     autocompletesearch="library-distinct-properties"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#trackNumber" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#trackNumber"/>
+            <textbox id="infotab_tracknumber_textbox"
+                     flex="1"
+                     class="long-number-input"
+                     property="http://songbirdnest.com/data/1.0#trackNumber"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#albumArtistName" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#albumArtistName"/>
+            <textbox property="http://songbirdnest.com/data/1.0#albumArtistName"
+                       flex="1"
+                       type="autocomplete"
+                       autocompletesearch="library-distinct-properties"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#discNumber" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#discNumber"/>
+            <textbox class="long-number-input"
+                     flex="1"
+                     property="http://songbirdnest.com/data/1.0#discNumber"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#totalDiscs" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#totalDiscs"/>
+            <textbox class="long-number-input"
+                     flex="1"
+                     property="http://songbirdnest.com/data/1.0#totalDiscs"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#composerName" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#composerName"/>
+            <textbox property="http://songbirdnest.com/data/1.0#composerName"
+                       flex="1"
+                       type="autocomplete"
+                       autocompletesearch="library-distinct-properties"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#bpm" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#bpm"/>
+            <textbox property="http://songbirdnest.com/data/1.0#bpm" 
+                     flex="1"
+                     class="long-number-input" />
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#comment" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#comment"/>
+            <textbox id="comment_textbox"
+                         multiline="true"
+                         flex="1"
+                         property="http://songbirdnest.com/data/1.0#comment"/>
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#keywords" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#keywords"/>
+            <textbox flex="1" property="http://songbirdnest.com/data/1.0#keywords" />
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#description" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#description"/>
+            <textbox flex="1" property="http://songbirdnest.com/data/1.0#description" />
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#showName" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#showName"/>
+            <textbox flex="1" property="http://songbirdnest.com/data/1.0#showName" />
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#episodeNumber" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#episodeNumber"/>
+            <textbox flex="1" property="http://songbirdnest.com/data/1.0#episodeNumber" />
+          </row>
+
+          <row property="http://songbirdnest.com/data/1.0#seasonNumber" class="advTabRowElements">
+            <label property-type="label" crop="end"
+                   property="http://songbirdnest.com/data/1.0#seasonNumber"/>
+            <textbox flex="1" property="http://songbirdnest.com/data/1.0#seasonNumber" />
+          </row>
+        </rows>
+      </grid>
+    </vbox>
     </tabpanels>
   </tabbox>
   
@@ -368,7 +596,7 @@
     <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
 #endif
   </hbox>
-
+ 
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/trackEditorState.js" />
   <script type="application/x-javascript"
