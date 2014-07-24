@@ -133,14 +133,13 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
 
   if (!strcmp(aTopic, "idle")) {
     // idle observer: we are now idle
-    mMutex.Lock();
+    mozilla::MutexAutoLock lock(mMutex);
     if (mState == STATE_QUEUED) {
       TRACE("preparing to run: STATE->RUNNING");
       mState = STATE_RUNNING;
       rv = mBackgroundEventTarget->Dispatch(static_cast<nsIRunnable*>(this),
                                             NS_DISPATCH_NORMAL);
       NS_ENSURE_SUCCESS(rv, rv);
-      mMutex.Unlock();
     }
     else if (mState == STATE_STOPPING) {
       // we can un-pause
@@ -149,12 +148,11 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
       }
       TRACE("Resuming: STATE->RUNNING");
       mState = STATE_RUNNING;
-      mMutex.Unlock();
     }
     else {
       // we no longer need to hold on to the lock for anything; let it go now
       // because do_ProxiedGetService may cause a nested event loop
-      mMutex.Unlock();
+      mozilla::MutexAutoUnlock unlock(mMutex);
       TRACE("nothing to do, ignoring idle notification");
       nsCOMPtr<nsIObserverService> obs =
         do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
