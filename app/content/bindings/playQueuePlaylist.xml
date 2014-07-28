@@ -116,8 +116,12 @@
                                                aOrientation);
                 if (row < 0 || row >= this.mediaList.length) {
                   this._playQueueService.queueSomeLast(context.items);
+                  // remove the reordered track from play queue
+                  this.mediaListView.removeSelectedMediaItems();
                 } else {
                   this._playQueueService.queueSomeBefore(row, context.items);
+                  // remove the reordered track from play queue
+                  this.mediaListView.removeSelectedMediaItems();
                 }
                 return;
               }
