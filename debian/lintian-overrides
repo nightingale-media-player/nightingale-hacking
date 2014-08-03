@@ -1,0 +1,4 @@
+# At the moment all files for Nightingale are stored in a single folder.
+# Re-arranging everything would be too much work without really achieving anything.
+nightingale binary: image-file-in-usr-lib
+nightingale binary: jar-not-in-usr-share
