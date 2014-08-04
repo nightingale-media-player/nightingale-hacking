@@ -229,6 +229,7 @@ install-linux:
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
 	$(LN) -fs ..$(rellibdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
 	# $(LN) -frs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(INSTALL_DATA) $(CURDIR)/CONTRIBUTING.md $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(CURDIR)/README.md $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
 	$(INSTALL_DATA) $(CURDIR)/installer/common/nightingale.desktop $(DESTDIR)$(datarootdir)/applications
