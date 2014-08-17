@@ -15,9 +15,6 @@ override_dh_auto_build:
 	# remove extra license file
 	rm -f compiled/dist/xulrunner/LICENSE
 
-	# remove libnspr, as we use the native one
-	rm -f compiled/dist/xulrunner/libnspr4.so
-
 override_dh_auto_test:
 	# This isn't a build with enabled tests.
 	# dh_auto_test would make the build stop with an error warning.

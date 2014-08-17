@@ -183,4 +183,8 @@ make clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make
 
+if [ ! -z "$(grep -e 'system-nspr' nightingale.config)" ] ; then
+    [ ! -f compiled/dist/xulrunner/libnspr4.so ] || rm compiled/dist/xulrunner/libnspr4.so
+fi
+
 echo "Build Succeeded!"
