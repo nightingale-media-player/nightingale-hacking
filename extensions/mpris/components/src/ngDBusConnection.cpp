@@ -665,7 +665,7 @@ NS_IMETHODIMP ngDBusConnection::SetDictSBEntryArg(const char *key, PRBool val)
 NS_IMETHODIMP ngDBusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val)
 {
     NS_ENSURE_ARG_POINTER(key);
-    LOG(("Setting dict SD %s:%s", key, val));
+    LOG(("Setting dict SD %s:%d", key, val));
 
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
@@ -674,8 +674,9 @@ NS_IMETHODIMP ngDBusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
 
+    double data = val;
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_DOUBLE_AS_STRING, &var_obj);
-	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_DOUBLE, &val);
+	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_DOUBLE, &data);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
 
