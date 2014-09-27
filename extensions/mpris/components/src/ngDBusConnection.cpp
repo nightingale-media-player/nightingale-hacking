@@ -793,7 +793,7 @@ NS_IMETHODIMP ngDBusConnection::CloseDictSDEntryArg()
 /* void setBoolArg (in bool val); */
 NS_IMETHODIMP ngDBusConnection::SetBoolArg(PRBool val)
 {
-    LOG(("Setting Bool %s", val));
+    LOG(("Setting Bool %i", val));
     DBusMessageIter* args = outgoing_args.back();
 
     dbus_bool_t data = val;
