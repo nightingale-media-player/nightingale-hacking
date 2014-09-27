@@ -665,7 +665,7 @@ NS_IMETHODIMP ngDBusConnection::SetDictSBEntryArg(const char *key, PRBool val)
 NS_IMETHODIMP ngDBusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val)
 {
     NS_ENSURE_ARG_POINTER(key);
-    LOG(("Setting dict SD %s:%d", key, val));
+    LOG(("Setting dict SD %s:%f", key, val));
 
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
@@ -807,7 +807,7 @@ NS_IMETHODIMP ngDBusConnection::SetBoolArg(PRBool val)
 /* void setDoubleArg (in double val); */
 NS_IMETHODIMP ngDBusConnection::SetDoubleArg(PRFloat64 val)
 {
-    LOG(("Set Double %d", val));
+    LOG(("Set Double %f", val));
     DBusMessageIter* args = outgoing_args.back();
 
     double data = val;
