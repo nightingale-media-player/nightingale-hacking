@@ -529,11 +529,13 @@ NS_IMETHODIMP ngDBusConnection::SetUInt16Arg(PRUint16 val)
 
 /* void setStringArg (in string val); */
 //NS_IMETHODIMP ngDBusConnection::SetStringArg(const nsAString &data)
-NS_IMETHODIMP ngDBusConnection::SetStringArg(const char *data)
+NS_IMETHODIMP ngDBusConnection::SetStringArg(const nsAString& val)
 {
-    NS_ENSURE_ARG_POINTER(data);
-    LOG(("Setting string %s", data));
     DBusMessageIter* args = outgoing_args.back();
+
+    NS_ConvertUTF16toUTF8_external val8(val);
+    const char* data = val8.BeginReading();
+    LOG(("Setting string %s", data));
 
     dbus_message_iter_append_basic(args, DBUS_TYPE_STRING, &data);
 
@@ -550,7 +552,8 @@ NS_IMETHODIMP ngDBusConnection::SetDictSSEntryArg(const char *key, const nsAStri
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
 
-    char* data = ToNewUTF8String(val);
+    NS_ConvertUTF16toUTF8_external val8(val);
+    const char* data = val8.BeginReading();
 
     LOG(("Setting dict SS %s:%s", key, data));
 
@@ -568,14 +571,16 @@ NS_IMETHODIMP ngDBusConnection::SetDictSSEntryArg(const char *key, const nsAStri
 }
 
 /* void setDictSOEntryArg (in string key, in AString val, [optional] in boolean escape); */
-NS_IMETHODIMP ngDBusConnection::SetDictSOEntryArg(const char *key, const char* data)
+NS_IMETHODIMP ngDBusConnection::SetDictSOEntryArg(const char *key, const nsAString& val)
 {
     NS_ENSURE_ARG_POINTER(key);
-    NS_ENSURE_ARG_POINTER(data);
 
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
+
+    NS_ConvertUTF16toUTF8_external val8(val);
+    const char* data = val8.BeginReading();
 
     LOG(("Setting dict SO %s:%s", key, data));
 
@@ -831,9 +836,8 @@ NS_IMETHODIMP ngDBusConnection::SetInt64Arg(PRInt64 val)
 }
 
 /* void setArrayStringArg (in string key, in long val); */
-NS_IMETHODIMP ngDBusConnection::SetArrayStringArg(const char* val)
+NS_IMETHODIMP ngDBusConnection::SetArrayStringArg(const nsAString& val)
 {
-    NS_ENSURE_ARG_POINTER(val);
     return this->SetStringArg(val);
 }
 
