@@ -129,7 +129,7 @@ volunteer! Don't be a troll towards the people giving you free
 software and hard work! Look at the [license](LICENSE) for detailed information.
 ```
 
-░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░░
+░░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
 ░░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄░░░░
 ░░░░█░░░▒▒▒▒▒▒░░░░░░░░▒▒▒░░█░░░
 ░░░█░░░░░░▄██▀▄▄░░░░░▄▄▄░░░░█░░
