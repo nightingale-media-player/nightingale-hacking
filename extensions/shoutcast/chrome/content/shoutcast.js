@@ -3,13 +3,13 @@
  * further information on rules and restrictions governing the use of the
  * SHOUTcast API, the SHOUTcast Directory and other related SHOUTcast
  * services, please visit: http://www.shoutcast.com/TermsOfService
- * 
+ *
  * For the API we use there is a Developer ID needed. You are not allowed
  * to use the key we use here in your own Applications. You can request a
  * key by filling the Partner Request Form at
  * http://www.shoutcast.com/Developer#Shoutcast-apiProgram
  */
- 
+
 // Import URL helper
 Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
 
