@@ -502,17 +502,17 @@ sbBaseMediacoreMultibandEqualizer::SetCurrentPresetName(const nsAString& aCurren
 
                 // This should possibly be done in front-end code for the separation.
                 LOG(("Applying new GAIN value to the band slider"));
-                char* gainString;
+                nsEmbedString gainString;
                 SB_ConvertFloatEqGainToJSStringValue(gainValue, &gainString);
-                nsCOMPtr<nsISupportsString> supportsGainString(do_CreateInstance("@mozilla.org/supports-string;1"));
-                nsEmbedString sgsData(gainString);
-                rv = supportsGainString->SetData(sgsData, 64);
+                nsCOMPtr<nsISupportsString> supportsGainString(do_CreateInstance("@mozilla.org/supports-string;1"), &rv);
+                NS_ENSURE_SUCCESS(rv, rv);
+                rv = supportsGainString->SetData(gainString);
                 NS_ENSURE_SUCCESS(rv, rv);
                 
                 nsEmbedCString bandPrefName(NS_LITERAL_CSTRING("songbird.eq.band."));
                 bandPrefName.AppendInt(index);
                 
-                LOG(("Band: %i, Gain: %s", index, gainString));
+                LOG(("Band: %i, Gain: %s", index, gainString->BeginReading()));
                 rv = mPrefs->SetComplexValue(bandPrefName.get(), NS_GET_IID(nsISupportsString), supportsGainString);
                 NS_ENSURE_SUCCESS(rv,  rv);
             }
