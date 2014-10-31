@@ -504,7 +504,7 @@ sbBaseMediacoreMultibandEqualizer::SetCurrentPresetName(const nsAString& aCurren
                 LOG(("Applying new GAIN value to the band slider"));
                 nsEmbedCString gainString;
                 SB_ConvertFloatEqGainToJSStringValue(gainValue, gainString);
-                nsCOMPtr<nsISupportsString> supportsGainString(do_CreateInstance("@mozilla.org/supports-string;1"), &rv);
+                nsCOMPtr<nsISupportsString> supportsGainString(do_CreateInstance("@mozilla.org/supports-string;1", &rv));
                 NS_ENSURE_SUCCESS(rv, rv);
                 rv = supportsGainString->SetData(NS_ConvertUTF8toUTF16(gainString));
                 NS_ENSURE_SUCCESS(rv, rv);
