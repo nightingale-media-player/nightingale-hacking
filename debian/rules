@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
-CXXFLAGS += $(shell dpkg-buildflags --get CPPFLAGS)
+CXXFLAGS = $(filter-out -g -O2,$(shell dpkg-buildflags --get CXXFLAGS)) \
+	$(CPPFLAGS)
 LDFLAGS  += -Wl,--as-needed
 
 
