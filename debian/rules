@@ -2,7 +2,7 @@
 
 CXXFLAGS = $(filter-out -g -O2,$(shell dpkg-buildflags --get CXXFLAGS)) \
 	$(CPPFLAGS)
-LDFLAGS  += -Wl,--as-needed
+LDFLAGS += -Wl,--as-needed
 
 
 %:
@@ -22,6 +22,10 @@ override_dh_auto_build:
 
 	# remove libnspr, as we use the native one
 	rm -f compiled/dist/xulrunner/libnspr4.so
+
+	# Delete the dictionaries directory. It'll be replaced
+	# with a symbolic link to /usr/share/hunspell
+	rm -rf compiled/dist/xulrunner/dictionaries
 
 override_dh_auto_test:
 	# This isn't a build with enabled tests.
