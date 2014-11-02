@@ -1,3 +1,4 @@
-usr/lib/nightingale/xulrunner/defaults/profile/US/chrome/userContent-example.css usr/lib/nightingale/xulrunner/defaults/profile/chrome/userContent-example.css
-usr/lib/nightingale/xulrunner/defaults/profile/US/chrome/userChrome-example.css  usr/lib/nightingale/xulrunner/defaults/profile/chrome/userChrome-example.css
-usr/lib/nightingale/xulrunner/defaults/profile/US/localstore.rdf                 usr/lib/nightingale/xulrunner/defaults/profile/localstore.rdf
+/usr/lib/nightingale/xulrunner/defaults/profile/US/chrome/userContent-example.css /usr/lib/nightingale/xulrunner/defaults/profile/chrome/userContent-example.css
+/usr/lib/nightingale/xulrunner/defaults/profile/US/chrome/userChrome-example.css  /usr/lib/nightingale/xulrunner/defaults/profile/chrome/userChrome-example.css
+/usr/lib/nightingale/xulrunner/defaults/profile/US/localstore.rdf                 /usr/lib/nightingale/xulrunner/defaults/profile/localstore.rdf
+/usr/share/hunspell      /usr/lib/nightingale/xulrunner/dictionaries
