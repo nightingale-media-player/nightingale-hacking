@@ -35,4 +35,4 @@ SONGBIRD_PP_RESOURCES = $(srcdir)/nightingale.1.in
 include $(topsrcdir)/build/rules.mk
 
 export::
-	gzip -9f $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
+	$(GZIP) -9f $(SONGBIRD_DOCUMENTATIONDIR)/manpage/nightingale.1
