@@ -32,6 +32,8 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ gstreamer0.10-plugins-base
+Recommends:
  gstreamer0.10-plugins-good
 Suggests:
  gstreamer0.10-plugins-bad,
@@ -39,7 +41,7 @@ Suggests:
  gstreamer0.10-ffmpeg,
  gtk2-engines-pixbuf,
  gnome-settings-daemon,
- myspell-en-us | hunspell-dictionary | myspell-dictionary
+ myspell-dictionary | hunspell-dictionary
 Provides: nightingale
 Replaces: nightingale, nightingale-nounity
 Description: Play, manage and organize digital media
