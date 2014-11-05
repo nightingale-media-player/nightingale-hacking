@@ -168,18 +168,15 @@ run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTD
 	cd $(OBJDIR) && \
     $(CONFIGURE) $(CONFIGURE_ARGS)
 
-$(CONFIGURE): $(CONFIGURE_PREREQS)
-	cd $(TOPSRCDIR) && \
-    $(AUTOCONF) && \
-    $(RM) -r $(TOPSRCDIR)/autom4te.cache/ 
-
-songbird_output:
-	@echo $(SONGBIRD_MESSAGE)
+$(CONFIGURE): $(CONFIGURE_PREREQS) run_autoconf
 
 run_autoconf:
 	cd $(TOPSRCDIR) && \
     $(AUTOCONF) && \
-    $(RM) -r $(TOPSRCDIR)/autom4te.cache/ 
+    $(RM) -r $(TOPSRCDIR)/autom4te.cache/
+
+songbird_output:
+	@echo $(SONGBIRD_MESSAGE)
 
 $(OBJDIR) $(DISTDIR):
 	$(MKDIR) $(OBJDIR) $(DISTDIR)
