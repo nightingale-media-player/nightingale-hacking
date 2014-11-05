@@ -1219,8 +1219,11 @@ endif
 libs:: $(if $(JAR_MANIFEST),$(OUR_JAR_MN)) $(CHROME_DEPS)
 ifdef JAR_MANIFEST
 	$(MKDIR_APP) $(OUR_JAR_TARGET_DIR)
-	$(JAR_V)$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
-    $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN)
+	$(silent)$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
+    $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN) $(dev_null)
+ifneq ($(V), 1)
+	@echo "       JAR       "$(shell head -n1 $(OUR_JAR_MN) | tr -d ':');
+endif
 	$(silent)$(RM) -r $(OUR_JAR_TARGET_DIR)/stage
 endif
 

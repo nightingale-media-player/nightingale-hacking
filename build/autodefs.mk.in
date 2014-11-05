@@ -213,50 +213,24 @@ SB_INSTALLER_SUFFIXES = @SB_INSTALLER_SUFFIXES@
 #
 ifneq ($(V), 1)
 AR_V          = @echo "       AR        $@";
-#AWK_V         = @echo "       AWK       $@";
 CC_V          = @echo "       CC        $@";
-#CHMOD_V       = @echo "       CHMOD     $@";
-#CP_V          = @echo "       CP        $@";
-#DIFF_V        = @echo "       DIFF      $@";
 DOXYGEN_V     = @echo "       DOXYGEN   $@";
-#FIND_V        = @echo "       FIND      $@";
-#GREP_V        = @echo "       GREP      $@";
-#GUNZIP_V      = @echo "       GUNZIP    $@";
-#GZIP_V        = @echo "       GZIP      $@";
 LD_V          = @echo "       LD        $@";
 LN_V          = @echo "       LN        $@";
-#MACPKGMAKER_V = @echo "       PKGMKR    $@";
-#MD5SUM_V      = @echo "       MD5       $@";
 MIDL_V        = @echo "       MIDL      $@";
 MKDIR_V       = @echo "       MKDIR     $@";
-#MSMANIFEST_V  = @echo "       MANIFST   $@";
-#MV_V          = @echo "       MV        $@";
-#PERL_V        = @echo "       PERL      $@";
 PYTHON_V      = @echo "       PYTHON    $@";
 RANLIB_V      = @echo "       RANLIB    $@";
-#RC_V          = @echo "       RC        $@";
-#REBASE_V      = @echo "       REBASE    $@";
-RM_V          = @echo "       RM        $@";
-#SED_V         = @echo "       SED       $@";
-SHA1SUM_V     = @echo "       SHA1      $@";
-#SORT_V        = @echo "       SORT      $@";
 STRIP_V       = @echo "       STRIP     $@";
-#SYSINSTALL_V  = @echo "       SYSINST   $@";
 TOUCH_V       = @echo "       TOUCH     $@";
-#UNZIP_V       = @echo "       UNZIP     $@";
-#ZIP_V         = @echo "       ZIP       $@";
 XPIDL_V       = @echo "       XPIDL     $@";
 XPTLINK_V     = @echo "       XPTLINK   $@";
-MAR_V         = @echo "       MAR       $@";
-MBSDIFF_V     = @echo "       MBSDIFF   $@";
 
 silent        = @echo "";
+dev_null      = >/dev/null
 
 CXX_V         = @echo "       CXX       "$$(basename $@);
 INSTALL_V     = @echo "$$(test -z $< && echo '' || echo '       INSTALL   '$$(basename $<))";
-JAR_V         = @echo "       JAR";
-TAR_V         = @echo "       UNCOMPRESS $<";
-
 endif
 
 #
@@ -264,24 +238,24 @@ endif
 #
 
 AR      = $(AR_V)@AR@
-AWK     = $(AWK_V)@AWK@
+AWK     = @AWK@
 CC      = $(CC_V)@CC@
-CHMOD   = $(CHMOD_V)@CHMOD@
-CP      = $(CP_V)@CP@
+CHMOD   = @CHMOD@
+CP      = @CP@
 CXX     = $(CXX_V)@CXX@
-DIFF    = $(DIFF_V)@DIFF@
+DIFF    = @DIFF@
 DOXYGEN = $(DOXYGEN_V)@DOXYGEN@
-FIND    = $(FIND_V)@FIND@
-GREP    = $(GREP_V)@GREP@
-GUNZIP  = $(GUNZIP_V)@GUNZIP@
-GZIP    = $(GZIP_V)@GZIP@
+FIND    = @FIND@
+GREP    = @GREP@
+GUNZIP  = @GUNZIP@
+GZIP    = @GZIP@
 INSTALL = @INSTALL@ -c
 INSTALL_FILE = $(INSTALL_V)$(INSTALL) -m 0644
 INSTALL_PROG = $(INSTALL_V)$(INSTALL) -m 0755
 LD      = $(LD_V)@LD@
 LN      = $(LN_V)@LN@
-MACPKGMAKER  = $(MACPKGMAKER_V)@MACPKGMAKER@
-MD5SUM  = $(MD5SUM_V)@MD5SUM@
+MACPKGMAKER  = @MACPKGMAKER@
+MD5SUM  = @MD5SUM@
 MIDL    = $(MIDL_V)@MIDL@
 MKDIR   = $(MKDIR_V)@MKDIR@ -p
 # Use MKDIR_APP to create a directory that is intended to be shipped; we use
@@ -289,28 +263,28 @@ MKDIR   = $(MKDIR_V)@MKDIR@ -p
 # directory part, not any of the other directories it creates along the way;
 # lame, Lame, LAME; hats off to Mook for suggesting this.
 MKDIR_APP = $(silent)$(INSTALL) -d -m 755
-MSMANIFEST_TOOL = $(MSMANIFEST_V)@MSMANIFEST_TOOL@
-MV      = $(MV_V)@MV@
-PERL    = $(PERL_V)@PERL@
-PYTHON  = $(PYTHON_V)@PYTHON@
+MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
+MV      = @MV@
+PERL    = @PERL@
+PYTHON  = @PYTHON@
 RANLIB  = $(RANLIB_V)@RANLIB@
-RC      = $(RC_V)@RC@
-REBASE  = $(REBASE_V)@REBASE@
+RC      = @RC@
+REBASE  = @REBASE@
 RM      = @RM@ -f
-SED     = $(SED_V)@SED@
-SHA1SUM = $(SHA1SUM_V)@SHA1SUM@
-SORT    = $(SORT_V)@SORT@
+SED     = @SED@
+SHA1SUM = @SHA1SUM@
+SORT    = @SORT@
 STRIP   = $(STRIP_V)@STRIP@
-SYSINSTALL = $(SYSINSTALL_V)echo
-TAR     = $(TAR_V)@TAR@
+SYSINSTALL = echo
+TAR     = @TAR@
 TOUCH   = $(TOUCH_V)@TOUCH@
-UNZIP   = $(UNZIP_V)@UNZIP@
-ZIP     = $(ZIP_V)@ZIP@
+UNZIP   = @UNZIP@
+ZIP     = @ZIP@
 
 XPIDL   = $(XPIDL_V)$(MOZSDK_DIR)/bin/xpidl
 XPTLINK = $(XPTLINK_V)$(MOZSDK_DIR)/bin/xpt_link
-MAR     = $(MAR_V)$(MOZSDK_DIR)/bin/mar
-MBSDIFF = $(MBSDIFF_V)$(MOZSDK_DIR)/bin/mbsdiff
+MAR     = $(MOZSDK_DIR)/bin/mar
+MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 
 #
 # Tool flags
