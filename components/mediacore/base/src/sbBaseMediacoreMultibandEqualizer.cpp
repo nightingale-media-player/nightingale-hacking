@@ -90,7 +90,11 @@ SB_ConvertFloatEqGainToJSStringValue(double aGain, nsCString &aGainStr)
   // parseFloat in JS still understands that this number is a floating point
   // number. The JS Standard dictates that parseFloat _ONLY_ supports '.' as
   // it's decimal point character.
-  gain[1] = '.';
+  // Fix for issue 329: Account for the minus sign
+  if(aGain >= 0)
+    gain[1] = '.';
+  else
+    gain[2] = '.';
 
   aGainStr.Assign(gain);
 
