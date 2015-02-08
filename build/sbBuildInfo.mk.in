@@ -6,7 +6,7 @@
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
 SB_BUILD_ID=20140803000000
-BuildNumber=2456
+BuildNumber=`git describe --long --always --dirty --abbrev=10`
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.13a
 SB_MILESTONE_WINDOWS=1.13.1
