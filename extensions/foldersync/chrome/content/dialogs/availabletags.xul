@@ -93,6 +93,10 @@
           <label style="-moz-user-select:text; cursor: text">%tracknumber%</label>
           <label>&availabletags.tracknumber;</label>
         </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%artistfl%</label>
+          <label>&availabletags.artistfl;</label>
+        </row>
       </rows>
     </grid>
   </box>

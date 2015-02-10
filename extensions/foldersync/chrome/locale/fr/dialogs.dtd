@@ -17,6 +17,7 @@
 <!ENTITY availabletags.disccount "Nombre de disques">
 <!ENTITY availabletags.composer "Nom du compositeur">
 <!ENTITY availabletags.producer "Nom du producteur">
+<!ENTITY availabletags.artistfl "Premiere lettre de l'artiste">
 <!ENTITY saveprofile.title "Enregistrer le profil">
 <!ENTITY saveprofile.new "Enregistrer comme nouveau profil">
 <!ENTITY saveprofile.new.pre "Saisir le nom du profil ici">

@@ -22,6 +22,7 @@
 <!ENTITY availabletags.disccount "CD-Anzahl">
 <!ENTITY availabletags.composer "Name des Komponisten">
 <!ENTITY availabletags.producer "Name des Produzenten">
+<!ENTITY availabletags.artistfl "Artist&apos;s First Letter">
 
 
 <!ENTITY saveprofile.title "Profil speichern">
