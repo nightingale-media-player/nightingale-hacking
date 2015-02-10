@@ -17,6 +17,7 @@
 <!ENTITY availabletags.disccount "CD 数量">
 <!ENTITY availabletags.composer "作曲家姓名">
 <!ENTITY availabletags.producer "演出者姓名">
+<!ENTITY availabletags.artistfl "Artist&apos;s First Letter">
 <!ENTITY saveprofile.title "保存配置">
 <!ENTITY saveprofile.new "保存为新的配置">
 <!ENTITY saveprofile.new.pre "在这输入配置的名称">

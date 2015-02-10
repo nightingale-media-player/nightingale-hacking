@@ -17,6 +17,7 @@
 <!ENTITY availabletags.disccount "Cuenta-CD">
 <!ENTITY availabletags.composer "Nombre del Composer's">
 <!ENTITY availabletags.producer "Nombre del Producer's">
+<!ENTITY availabletags.artistfl "Inicial del Artist's">
 <!ENTITY saveprofile.title "Grabar perfil">
 <!ENTITY saveprofile.new "Grabar un perfil nuevo">
 <!ENTITY saveprofile.new.pre "Ingrese el nombre del perfil aquí">
