@@ -42,7 +42,6 @@
     <em:targetPlatform>Linux</em:targetPlatform>
     <em:description>Notifications through libnotify</em:description>
     <!-- <em:iconURL>chrome://libnotify-notifs/skin/icon.png</em:iconURL> -->
-    <em:optionsURL>chrome://libnotify-notifs/content/options.xul</em:optionsURL>
     <em:creator>johnmurrayvi</em:creator>
 
     <em:targetApplication>

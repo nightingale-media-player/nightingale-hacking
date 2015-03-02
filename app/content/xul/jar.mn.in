@@ -2,6 +2,7 @@ songbird.jar:
 % content  songbird  %content/songbird/
 # preferences overlays
 * content/songbird/xul/preferences/mainOverlay.xul                           (preferences/mainOverlay.xul)
+* content/songbird/xul/preferences/playbackPrefs.xul                         (preferences/playbackPrefs.xul)
 % overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/mainOverlay.xul
 % overlay chrome://browser/content/preferences/tabs.xul                      chrome://songbird/content/xul/preferences/tabsOverlay.xul
 % overlay chrome://browser/content/preferences/permissions.xul               chrome://songbird/content/xul/preferences/permissionsOverlay.xul

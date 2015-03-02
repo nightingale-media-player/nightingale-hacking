@@ -59,13 +59,15 @@ ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
 endif
 
 # libnotify
-ifeq (1,$(NIGHTINGALE_LIBNOTIFY))
-    DEFAULT_EXTENSIONS += libnotify-notifs
+ifdef NIGHTINGALE_LIBNOTIFY
+    DEFAULT_EXTENSIONS += libnotify-notifs \
+                          $(NULL)
 endif
 
 # Unity Integration
 ifeq (1,$(NIGHTINGALE_UNITY))
-    DEFAULT_EXTENSIONS += unity-integration
+    DEFAULT_EXTENSIONS += unity-integration \
+                          $(NULL)
 endif
 
 # MPRIS & GTK Window Hiding
