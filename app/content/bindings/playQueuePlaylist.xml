@@ -108,6 +108,8 @@
             var data = DNDUtils.getTransferDataForFlavour(
                          this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
                          this._dragSession);
+            var ds = this._Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(this._Ci.nsIDragService);
             if (data) {
               var context = dnd.getSourceSupports(data);
               if (context instanceof this._Ci.sbIMediaItemsTransferContext) {
@@ -116,12 +118,12 @@
                                                aOrientation);
                 if (row < 0 || row >= this.mediaList.length) {
                   this._playQueueService.queueSomeLast(context.items);
-                  // remove the reordered track from play queue
-                  this.mediaListView.removeSelectedMediaItems();
+                  if(aSession.dragAction == ds.DRAGDROP_ACTION_MOVE)
+                    this.mediaListView.removeSelectedMediaItems();
                 } else {
                   this._playQueueService.queueSomeBefore(row, context.items);
-                  // remove the reordered track from play queue
-                  this.mediaListView.removeSelectedMediaItems();
+                  if(aSession.dragAction == ds.DRAGDROP_ACTION_MOVE)
+                    this.mediaListView.removeSelectedMediaItems();
                 }
                 return;
               }
