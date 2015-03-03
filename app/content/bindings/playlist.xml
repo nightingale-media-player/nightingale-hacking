@@ -2905,13 +2905,11 @@
           this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
           session);
   if (data) {
-    
-    var ds = this._Cc["@mozilla.org/widget/dragservice;1"]
-                        .getService(this._Ci.nsIDragService);
+
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
     if (context.source == this.mediaListView.mediaList &&
-        ds.DRAGDROP_ACTION_COPY != session.dragAction) {
+        this._Ci.nsIDragService.DRAGDROP_ACTION_COPY != session.dragAction) {
       // This is a drop operation _within_ a playlist (i.e. moving items, not
       // adding them).
       this._moveItemsInList(context.indexedItems, row, orientation);
