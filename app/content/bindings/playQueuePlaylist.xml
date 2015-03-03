@@ -118,12 +118,12 @@
                                                aOrientation);
                 if (row < 0 || row >= this.mediaList.length) {
                   this._playQueueService.queueSomeLast(context.items);
-                  if(aSession.dragAction == ds.DRAGDROP_ACTION_MOVE)
-                    this.mediaListView.removeSelectedMediaItems();
                 } else {
                   this._playQueueService.queueSomeBefore(row, context.items);
-                  if(aSession.dragAction == ds.DRAGDROP_ACTION_MOVE)
-                    this.mediaListView.removeSelectedMediaItems();
+                }
+                if(ds.DRAGDROP_ACTION_MOVE == aSession.dragAction &&
+                   context.source == this.mediaListView.mediaList) {
+                  this.mediaListView.removeSelectedMediaItems();
                 }
                 return;
               }
