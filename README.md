@@ -46,6 +46,10 @@ More information can be gleaned from the Nightingale wiki:
   * [Mac](http://tinyurl.com/ckca4no)
   * [Linux](http://tinyurl.com/d569knt)
 
+Building a Debian Package
+-------------------------
+Even though this source contains a debian/ folder, do not consider it as producing a release quality build. Further it will not work out of the box, see [this section](http://wiki.getnightingale.com/doku.php?id=build:linux#additional_steps_to_build_a_debian_package) of the Linux building article.
+
 Configure Options
 =================
 `ac_add_options (option here)`
@@ -125,7 +129,7 @@ volunteer! Don't be a troll towards the people giving you free
 software and hard work! Look at the [license](LICENSE) for detailed information.
 ```
 
-░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
+░░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
 ░░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄░░░░
 ░░░░█░░░▒▒▒▒▒▒░░░░░░░░▒▒▒░░█░░░
 ░░░█░░░░░░▄██▀▄▄░░░░░▄▄▄░░░░█░░
@@ -139,5 +143,6 @@ software and hard work! Look at the [license](LICENSE) for detailed information.
 ░░░░░▀▄░░░░░▀▀▄▄▄█▄█▄█▄█▄▀░░█░░
 ░░░░░░░▀▄▄░▒▒▒▒░░░░░░░░░░▒░░░█░
 ░░░░░░░░░░▀▀▄▄░▒▒▒▒▒▒▒▒▒▒░░░░█░
-░░░░░░░░░░░░░░▀▄▄▄▄▄░░░░░░░░█░░
+░░░░░░░░░░░░░░▀▄▄▄▄▄▄▄▄▄▄▄▄▄▄▀░
+
 ```

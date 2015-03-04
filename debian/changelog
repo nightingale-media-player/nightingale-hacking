@@ -1,8 +1,21 @@
-nightingale (1.12.2a-1) unstable; urgency=medium
+nightingale (1.13a-1) unstable; urgency=medium
 
-  * New upstream version
+  * User Agent switched to "Nightingale/Version (Build ID)"
+  * Improved libnotify extension
+  * Added MPRIS 1 & 2 support
+  * Added GNOME Media Keys support
+  * Added Linux Desktop Entry Actions
+  * Added SEEKED Mediacore Event
+  * Display EQ Band Values
+  * Fixed Application icon sometimes not visible
+  * Fixed mashTape Flickr tab
+  * Fixed weird file permissions when using Sync
+  * Added Command Line Playback Controls
+  * Added Equalizer Presets
+  * Fixed Clearing Private Data
+  * Migrated SHOUTcast to official API
 
- -- Martin Giger <zm.redaktion@gmail.com>  Wed, 05 Mar 2014 00:35:27 +0100
+ -- Martin Giger <zm.redaktion@gmail.com>  Sun, 03 Aug 2014 15:27:11 +0200
 
 nightingale (1.11.0-1) unstable; urgency=low
 

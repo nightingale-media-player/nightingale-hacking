@@ -119,6 +119,10 @@
                 } else {
                   this._playQueueService.queueSomeBefore(row, context.items);
                 }
+                if(this._Ci.nsIDragService.DRAGDROP_ACTION_MOVE == aSession.dragAction &&
+                   context.source == this.mediaListView.mediaList) {
+                  this.mediaListView.removeSelectedMediaItems();
+                }
                 return;
               }
             }

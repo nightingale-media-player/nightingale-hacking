@@ -148,10 +148,20 @@ const K_PLAYQUEUEDROP_TESTCASES = [
       return sourceData;
     });
     this.asyncOpStarted = false;
+    this.fakeSession = {
+      getData: function (aTransferable, aItemIndex) {
+        return  { data: null };
+      },
+      isDataFlavorSupported: function (aDataFlavor) {
+        return true;
+      },
+      dragAction: 1
+    };
   },
   exec: function (libraryPlaylist, playQueuePlaylist) {
     playQueuePlaylist._dropOnTree(0,
-                      Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER);
+                      Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
+                      this.fakeSession);
     // If we didn't start an async operation, fail the test so we explicitly
     // know that there is a problem instead of just hanging the test.
     assertTrue(this.asyncOpStarted,
@@ -215,10 +225,19 @@ const K_PLAYQUEUEDROP_TESTCASES = [
       return sourceData;
     });
     this.asyncOpStarted = false;
+    this.fakeSession = {
+      getData: function (aTransferable, aItemIndex) {
+        return  { data: handle };
+      },
+      isDataFlavorSupported: function (aDataFlavor) {
+        return true;
+      },
+      dragAction: 1
+    };
   },
   exec: function (libraryPlaylist, playQueuePlaylist) {
     playQueuePlaylist._dropOnTree(2,
-                      Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE);
+                      Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE, this.fakeSession);
     // If we didn't start an async operation, fail the test so we explicitly
     // know that there is a problem instead of just hanging the test.
     assertTrue(this.asyncOpStarted,
@@ -288,7 +307,8 @@ const K_PLAYQUEUEDROP_TESTCASES = [
       },
       isDataFlavorSupported: function (aDataFlavor) {
         return true;
-      }
+      },
+      dragAction: 1
     };
   },
   exec: function (libraryPlaylist, playQueuePlaylist) {
@@ -373,7 +393,8 @@ const K_PLAYQUEUEDROP_TESTCASES = [
       },
       isDataFlavorSupported: function (aDataFlavor) {
         return true;
-      }
+      },
+      dragAction: 1
     };
   },
   exec: function (libraryPlaylist, playQueuePlaylist) {

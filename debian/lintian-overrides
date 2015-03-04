@@ -1,0 +1,8 @@
+# They're private dynamic libraries
+nightingale binary: embedded-library */libnss3.so: nss
+nightingale binary: embedded-library */libsqlite3.so: sqlite
+
+# At the moment all files for Nightingale are stored in a single folder.
+# Re-arranging everything would be too much work without really achieving anything.
+nightingale binary: image-file-in-usr-lib
+nightingale binary: jar-not-in-usr-share

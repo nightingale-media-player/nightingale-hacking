@@ -727,7 +727,7 @@
               this.drawer.getItemElementByAttribute(condition, 
                                                     "id", 
                                                     "unitspopup");
-            unitstxt = 
+            var unitstxt = 
               this.drawer.getItemElementByAttribute(condition, 
                                                     "id", 
                                                     "unitlabel");

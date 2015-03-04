@@ -77,10 +77,10 @@ interface ngIDBusConnection : nsISupports
   void setUInt32Arg(in unsigned long val);
   void setInt32Arg(in long val);
   void setUInt16Arg(in unsigned short val);
-  void setStringArg(in string val);
+  void setStringArg(in AString val);
 //  void setStringArg(in AString val);
   void setDictSSEntryArg(in string key, in AString val);
-  void setDictSOEntryArg(in string key, in string val);
+  void setDictSOEntryArg(in string key, in AString val);
   void setDictSIEntryArg(in string key, in unsigned long val);
   void setDictSI64EntryArg(in string key, in PRInt64 val);
   void setDictSBEntryArg(in string key, in boolean val);
@@ -91,7 +91,7 @@ interface ngIDBusConnection : nsISupports
   void closeDictSDEntryArg();
   void setBoolArg(in boolean val);
   void setDoubleArg(in double val);
-  void setArrayStringArg(in string val);
+  void setArrayStringArg(in AString val);
   void setInt64Arg(in PRInt64 val);
   void setObjectPathArg(in string val);
 

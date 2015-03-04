@@ -1,4 +1,0 @@
-<!ENTITY libnotify-notifs.test "This is test">
-<!ENTITY libnotify-notifs.options.title "Options for Libnotify Notifications">
-<!ENTITY libnotify-notifs.options.hideOnClose "Notification Timeout (in milliseconds)">
-<!ENTITY libnotify-notifs.options.enableNotifications "Enable Notifications">

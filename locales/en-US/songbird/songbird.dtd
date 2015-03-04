@@ -772,6 +772,10 @@
 <!ENTITY playback.prefpane.ratings.label "Ratings Metadata">
 <!ENTITY playback.prefpane.ratings.enablewriting "Store ratings info within each file's file metadata.">
 
+<!ENTITY playback.prefpane.notification.options.title "Options for Libnotify Notifications">
+<!ENTITY playback.prefpane.notification.options.notificationTimeout "Notification Timeout:">
+<!ENTITY playback.prefpane.notification.options.enableNotifications "Enable Notifications">
+
 <!ENTITY fetch_album_art.dialog.title "Get Artwork">
 <!ENTITY fetch_album_art.dialog.message "Not currently implemented. (See Bug 14281)">
 
@@ -842,3 +846,5 @@
 <!ENTITY mediamanagement.removed.dialog.title "Media Management Notice">
 <!ENTITY mediamanagement.removed.dialog.text.line1 "Media Management has been removed from &brandShortName; as of version 1.10." >
 <!ENTITY mediamanagement.removed.dialog.text.line2 "This change is part of an effort to simplify our product and provide an easier-to-use experience." >
+
+

@@ -529,11 +529,13 @@ NS_IMETHODIMP ngDBusConnection::SetUInt16Arg(PRUint16 val)
 
 /* void setStringArg (in string val); */
 //NS_IMETHODIMP ngDBusConnection::SetStringArg(const nsAString &data)
-NS_IMETHODIMP ngDBusConnection::SetStringArg(const char *data)
+NS_IMETHODIMP ngDBusConnection::SetStringArg(const nsAString& val)
 {
-    NS_ENSURE_ARG_POINTER(data);
-    LOG(("Setting string %s", data));
     DBusMessageIter* args = outgoing_args.back();
+
+    NS_ConvertUTF16toUTF8_external val8(val);
+    const char* data = val8.BeginReading();
+    LOG(("Setting string %s", data));
 
     dbus_message_iter_append_basic(args, DBUS_TYPE_STRING, &data);
 
@@ -550,7 +552,8 @@ NS_IMETHODIMP ngDBusConnection::SetDictSSEntryArg(const char *key, const nsAStri
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
 
-    char* data = ToNewUTF8String(val);
+    NS_ConvertUTF16toUTF8_external val8(val);
+    const char* data = val8.BeginReading();
 
     LOG(("Setting dict SS %s:%s", key, data));
 
@@ -568,14 +571,16 @@ NS_IMETHODIMP ngDBusConnection::SetDictSSEntryArg(const char *key, const nsAStri
 }
 
 /* void setDictSOEntryArg (in string key, in AString val, [optional] in boolean escape); */
-NS_IMETHODIMP ngDBusConnection::SetDictSOEntryArg(const char *key, const char* data)
+NS_IMETHODIMP ngDBusConnection::SetDictSOEntryArg(const char *key, const nsAString& val)
 {
     NS_ENSURE_ARG_POINTER(key);
-    NS_ENSURE_ARG_POINTER(data);
 
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
     DBusMessageIter var_obj;
+
+    NS_ConvertUTF16toUTF8_external val8(val);
+    const char* data = val8.BeginReading();
 
     LOG(("Setting dict SO %s:%s", key, data));
 
@@ -665,7 +670,7 @@ NS_IMETHODIMP ngDBusConnection::SetDictSBEntryArg(const char *key, PRBool val)
 NS_IMETHODIMP ngDBusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val)
 {
     NS_ENSURE_ARG_POINTER(key);
-    LOG(("Setting dict SD %s:%s", key, val));
+    LOG(("Setting dict SD %s:%f", key, val));
 
     DBusMessageIter* array_obj = outgoing_args.back();
     DBusMessageIter entry_obj;
@@ -674,8 +679,9 @@ NS_IMETHODIMP ngDBusConnection::SetDictSDEntryArg(const char *key, PRFloat64 val
     dbus_message_iter_open_container(array_obj, DBUS_TYPE_DICT_ENTRY, NULL, &entry_obj);
       dbus_message_iter_append_basic(&entry_obj, DBUS_TYPE_STRING, &key);
 
+    double data = val;
       dbus_message_iter_open_container(&entry_obj, DBUS_TYPE_VARIANT, DBUS_TYPE_DOUBLE_AS_STRING, &var_obj);
-	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_DOUBLE, &val);
+	dbus_message_iter_append_basic(&var_obj, DBUS_TYPE_DOUBLE, &data);
       dbus_message_iter_close_container(&entry_obj, &var_obj);
     dbus_message_iter_close_container(array_obj, &entry_obj);
 
@@ -792,7 +798,7 @@ NS_IMETHODIMP ngDBusConnection::CloseDictSDEntryArg()
 /* void setBoolArg (in bool val); */
 NS_IMETHODIMP ngDBusConnection::SetBoolArg(PRBool val)
 {
-    LOG(("Setting Bool %s", val));
+    LOG(("Setting Bool %i", val));
     DBusMessageIter* args = outgoing_args.back();
 
     dbus_bool_t data = val;
@@ -806,7 +812,7 @@ NS_IMETHODIMP ngDBusConnection::SetBoolArg(PRBool val)
 /* void setDoubleArg (in double val); */
 NS_IMETHODIMP ngDBusConnection::SetDoubleArg(PRFloat64 val)
 {
-    LOG(("Set Double %d", val));
+    LOG(("Set Double %f", val));
     DBusMessageIter* args = outgoing_args.back();
 
     double data = val;
@@ -830,9 +836,8 @@ NS_IMETHODIMP ngDBusConnection::SetInt64Arg(PRInt64 val)
 }
 
 /* void setArrayStringArg (in string key, in long val); */
-NS_IMETHODIMP ngDBusConnection::SetArrayStringArg(const char* val)
+NS_IMETHODIMP ngDBusConnection::SetArrayStringArg(const nsAString& val)
 {
-    NS_ENSURE_ARG_POINTER(val);
     return this->SetStringArg(val);
 }
 

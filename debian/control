@@ -33,12 +33,14 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  gstreamer1.0-plugins-good
+Recommends:
 Suggests:
  gstreamer1.0-plugins-bad,
  gstreamer1.0-plugins-ugly,
  gstreamer1.0-ffmpeg,
  gtk2-engines-pixbuf,
- gnome-settings-daemon
+ gnome-settings-daemon,
+ myspell-dictionary | hunspell-dictionary
 Provides: nightingale
 Replaces: nightingale, nightingale-nounity
 Description: Play, manage and organize digital media

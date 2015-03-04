@@ -1,5 +1,10 @@
 #!/usr/bin/make -f
 
+CXXFLAGS = $(filter-out -g -O2,$(shell dpkg-buildflags --get CXXFLAGS)) \
+	$(CPPFLAGS)
+LDFLAGS += -Wl,--as-needed
+
+
 %:
 	dh $@ --parallel
 
@@ -18,10 +23,17 @@ override_dh_auto_build:
 	# remove libnspr, as we use the native one
 	rm -f compiled/dist/xulrunner/libnspr4.so
 
+	# Delete the dictionaries directory. It'll be replaced
+	# with a symbolic link to /usr/share/hunspell
+	rm -rf compiled/dist/xulrunner/dictionaries
+
 override_dh_auto_test:
 	# This isn't a build with enabled tests.
 	# dh_auto_test would make the build stop with an error warning.
 	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
+
+override_dh_shlibdeps:
+	dh_shlibdeps -Lnightingale -l/usr/lib/nightingale/xulrunner
 
 override_dh_auto_clean:
 	dh_auto_clean -- clobber

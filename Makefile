@@ -100,6 +100,10 @@ RM ?= rm
 CP ?= cp
 LN ?= ln
 INSTALL ?= install
+INSTALL_PROGRAM ?= $(INSTALL) -m 755
+INSTALL_DATA ?= $(INSTALL) -m 644
+
+ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
 SONGBIRD_MESSAGE = Nightingale Build System
 
@@ -125,8 +129,8 @@ endif
 # Should use the install command to install Nightingale, however since it's not recursive that's non-trivial.
 #
 UNAME_S := $(shell uname -s)
-prefix = /usr
-exec_prefix = $(prefix)
+prefix ?= /usr
+exec_prefix ?= $(prefix)
 libdir ?= $(exec_prefix)/lib
 bindir ?= $(exec_prefix)/bin
 datarootdir ?= $(prefix)/share
@@ -140,11 +144,8 @@ dvidir ?= $(docdir)
 pdfdir ?= $(docdir)
 psdir ?= $(docdir)
 infodir ?= $(datarootdir)/info
+icondir ?= $(datarootdir)/icons/hicolor
 rellibdir = $(shell echo $(libdir) | sed 's@$(exec_prefix)@@;' - )
-INSTALL_PROGRAM = $(INSTALL) -m 755
-INSTALL_DATA = $(INSTALL) -m 644
-ICONS_DESTDIR = $(datarootdir)/icons/hicolor
-ICON_SIZES = 16 24 32 48 64 96 128 256 512
 
 ifneq (Windows_NT,$(OS))
     ifeq (Darwin, $(UNAME_S))
@@ -167,18 +168,15 @@ run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTD
 	cd $(OBJDIR) && \
     $(CONFIGURE) $(CONFIGURE_ARGS)
 
-$(CONFIGURE): $(CONFIGURE_PREREQS)
-	cd $(TOPSRCDIR) && \
-    $(AUTOCONF) && \
-    $(RM) -r $(TOPSRCDIR)/autom4te.cache/ 
-
-songbird_output:
-	@echo $(SONGBIRD_MESSAGE)
+$(CONFIGURE): $(CONFIGURE_PREREQS) run_autoconf
 
 run_autoconf:
 	cd $(TOPSRCDIR) && \
     $(AUTOCONF) && \
-    $(RM) -r $(TOPSRCDIR)/autom4te.cache/ 
+    $(RM) -r $(TOPSRCDIR)/autom4te.cache/
+
+songbird_output:
+	@echo $(SONGBIRD_MESSAGE)
 
 $(OBJDIR) $(DISTDIR):
 	$(MKDIR) $(OBJDIR) $(DISTDIR)
@@ -221,28 +219,29 @@ installdirs:
 	$(MKDIR) $(DESTDIR)$(docdir)
 	$(MKDIR) $(DESTDIR)$(man1dir)
 	$(MKDIR) $(DESTDIR)$(datarootdir)/applications
-	$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
-	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps ;)
+	$(MKDIR) $(DESTDIR)$(icondir)/scalable/apps
+	$(foreach SIZE,$(ICON_SIZES),$(MKDIR) $(DESTDIR)$(icondir)/$(SIZE)x$(SIZE)/apps ;)
 
 install-linux:
 	$(MAKE) installdirs
 	$(CP) -r $(DISTDIR)/* $(DESTDIR)$(libdir)/nightingale
 	$(LN) -fs ..$(rellibdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
 	# $(LN) -frs $(DESTDIR)$(libdir)/nightingale/nightingale $(DESTDIR)$(bindir)/nightingale
+	$(INSTALL_DATA) $(CURDIR)/CONTRIBUTING.md $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(CURDIR)/README.md $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(OBJDIR)/documentation/manpage/nightingale$(man1ext).gz $(DESTDIR)$(man1dir)
 	$(INSTALL_DATA) $(CURDIR)/installer/common/nightingale.desktop $(DESTDIR)$(datarootdir)/applications
-	$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale.svg $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps
+	$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale.svg $(DESTDIR)$(icondir)/scalable/apps
 	$(foreach SIZE,$(ICON_SIZES),$(INSTALL_DATA) $(CURDIR)/app/branding/nightingale-$(SIZE).png \
-		$(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+		$(DESTDIR)$(icondir)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
 
 uninstall-linux:
 	$(RM) -r $(DESTDIR)$(libdir)/nightingale
 	$(RM) $(DESTDIR)$(bindir)/nightingale
 	$(RM) -r $(DESTDIR)$(docdir)
 	$(RM) $(DESTDIR)$(man1dir)/nightingale$(man1ext).gz
-	$(RM) $(DESTDIR)$(ICONS_DESTDIR)/scalable/apps/nightingale.svg
+	$(RM) $(DESTDIR)$(icondir)/scalable/apps/nightingale.svg
 	$(RM) $(DESTDIR)$(datarootdir)/applications/nightingale.desktop
-	$(foreach SIZE,$(ICON_SIZES),$(RM) $(DESTDIR)$(ICONS_DESTDIR)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
+	$(foreach SIZE,$(ICON_SIZES),$(RM) $(DESTDIR)$(icondir)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
 
 .PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux

@@ -29,10 +29,6 @@
 
 #include <sbIHelloWorld.h>
 
-#include <nsStringGlue.h>
-#include <nsCOMPtr.h>
-
-
 class sbHelloWorld : public sbIHelloWorld
 {
 public:
