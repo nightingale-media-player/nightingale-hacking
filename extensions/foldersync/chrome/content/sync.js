@@ -742,9 +742,9 @@ foldersync.sync={
                   break;
                 case "..":
                   if (aFile.parent){
-                    aFile = aFile.parent;
                     plRel = aFile.leafName +
                               crtProfile.playlists.splitChar + plRel;
+                    aFile = aFile.parent;
                   } else {
                     foldersync.central.logEvent("sync-sync",
                                                 "Relative path for " +
