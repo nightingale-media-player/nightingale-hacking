@@ -731,7 +731,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = discSecondarySort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Sorting by disc number will sort by disc no->artist->album->track no->track name
+  // Sorting by disc number will sort by disc no->track no->artist->album->track name
+  rv = discSecondarySort->AppendProperty(
+                           NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                           NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   rv = discSecondarySort->AppendProperty(
                            NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                            NS_LITERAL_STRING("a"));
@@ -739,11 +744,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = discSecondarySort->AppendProperty(
                            NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                           NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = discSecondarySort->AppendProperty(
-                           NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                            NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
