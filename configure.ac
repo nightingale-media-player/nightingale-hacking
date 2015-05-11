@@ -109,6 +109,10 @@ if test "$enable_nightly" == "yes"; then
 fi
 AC_SUBST(SONGBIRD_NIGHTLY)
 
+if test "$SONGBIRD_OFFICIAL$SONGBIRD_NIGHTLY" == 1; then
+  AC_CHECK_PROG(GIT, git, git)
+fi
+
 #
 #  Check for --enable-tests
 #
@@ -1224,7 +1228,7 @@ for option in `echo $SB_TAGLIB | sed 's/,/ /g'`; do
 done
 AC_SUBST(SB_TAGLIB)
 
-#	
+#
 # If we're building with SYSTEM_TAGLIB, find it
 #
 
