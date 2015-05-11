@@ -610,19 +610,19 @@ case "$SB_PLATFORM" in
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
     AC_CHECK_PROG(MIDL, midl, midl)
     if test -z "$MIDL"; then AC_MSG_ERROR(Midl not found); fi
-    AC_CHECK_PROG(REBASE, rebase, rebase)
+    AC_CHECK_PROG(REBASE, rebase, rebase, "EDITBIN /DYNAMICBASE:no /REBASE:")
     if test -z "$REBASE"; then AC_MSG_ERROR(Rebase not found); fi
 
     # Check midl version
     changequote(,)
     _MIDL_VER_FILTER='s|.* \([0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
-    
+
     _MIDL_FULL_VERSION=`"${MIDL}" -v 2>&1 | sed -ne "$_MIDL_VER_FILTER"`
     _MIDL_MAJOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
     _MIDL_MINOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $2 }'`
     _MIDL_REV_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $3 }'`
-    
+
     # Add flags if necessary
     AC_MSG_CHECKING([for midl flags])
     case "$target" in
