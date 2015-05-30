@@ -76,7 +76,7 @@ case $OSTYPE in
         depdate="20130316"
         fname="$depdirn-$version-$depdate-$build-final.tar.lzma"
 
-        export CXXFLAGS="$CXXFLAGS -O2 -fomit-frame-pointer -pipe -fpermissive"
+        export CXXFLAGS="-O2 -fomit-frame-pointer $CXXFLAGS"
 
         echo "linux $arch"
         ( cd dependencies && {
