@@ -989,8 +989,7 @@ case "$SB_PLATFORM" in
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
-      # Use -Os on linux, better than -O2 according to moz perf tests
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -gstabs+ -Os"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -gstabs+"
     fi
 
     # We always want to include "mozilla-config.h"
