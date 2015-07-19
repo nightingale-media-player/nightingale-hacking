@@ -244,4 +244,7 @@ uninstall-linux:
 	$(RM) $(DESTDIR)$(datarootdir)/applications/nightingale.desktop
 	$(foreach SIZE,$(ICON_SIZES),$(RM) $(DESTDIR)$(icondir)/$(SIZE)x$(SIZE)/apps/nightingale.png ;)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux
+run:
+	$(DISTDIR)/nightingale
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux run
