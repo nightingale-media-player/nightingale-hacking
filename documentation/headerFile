@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="http://static.getnightingale.com/css-new/legacy-ie.css">
     <script src="http://static.getnightingale.com/javascript/html5shiv.js"></script>
 <![endif]-->
+
+        <script type="text/javascript" src="http://static.getnightingale.com/javascript/base.js"></script>
+        <!-- l10n -->
+        <script type="text/javascript" src="http://static.getnightingale.com/javascript/l10n.js"></script>
+        <link rel="prefetch" type="application/l10n" href="http://static.getnightingale.com/l10n/locales.ini" >
 $treeview
 $search
 $mathjax
