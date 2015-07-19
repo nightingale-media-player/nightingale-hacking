@@ -446,14 +446,14 @@ pref("songbird.mediacore.gstreamer.disablevideo", false);
 pref("songbird.playlist.doubleclickspeed", 500);
 
 
-// Prefs used to control database memory usage.  
+// Prefs used to control database memory usage.
 //
 // All prefs require a restart to take effect, and pageSize
 // can only be changed before databases have been created.
 //
 // See http://www.sqlite.org/malloc.html for details
-// 
-// Also note that page cache and page size can be specified on a 
+//
+// Also note that page cache and page size can be specified on a
 // per db basis with keys like
 //  songbird.dbengine.main@library.songbirdnest.com.cacheSize
 // This is the database GUID, not the filename (note no .db)
@@ -462,8 +462,8 @@ pref("songbird.dbengine.pageSize", 16384);
 // Number of pages
 pref("songbird.dbengine.cacheSize", 100);
 // Number of pages to pre-allocate (avoids fragmentation)
-//pref("songbird.dbengine.preAllocCacheSize", 500);  
-// Number of scratch slots to use (should be roughly the 
+//pref("songbird.dbengine.preAllocCacheSize", 500);
+// Number of scratch slots to use (should be roughly the
 // number of db query threads)
 //pref("songbird.dbengine.preAllocScratchSize", 5);
 // An upper limit (in bytes) on the amount of memory
@@ -522,3 +522,6 @@ pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,m
 
 // By defualt the eq is on the "Flat" preset.
 pref("songbird.eq.currentPreset", "chrome://songbird/locale/songbird.properties");
+
+pref("songbird.faceplate.showelapsed", "1");
+pref("songbird.faceplate.showremainingtime", "0");
