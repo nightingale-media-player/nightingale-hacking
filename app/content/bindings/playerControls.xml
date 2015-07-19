@@ -1961,7 +1961,7 @@
 
 
 
-  <binding id="timeelapsed-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#x">
+  <binding id="timeelapsed-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
 
   <implementation>
 
