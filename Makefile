@@ -247,4 +247,8 @@ uninstall-linux:
 run:
 	$(DISTDIR)/nightingale
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux run
+documentation:
+	$(MKDIR) $(CURDIR)/documentation/api
+	cd $(CURDIR)/documentation && doxygen $(CURDIR)/documentation/nightingale.doxyfile
+
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build test install uninstall installdirs install-linux uninstall-linux run documentation
