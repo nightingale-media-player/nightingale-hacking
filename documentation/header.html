@@ -6,8 +6,13 @@
 <link type="image/vnd.microsoft.icon" size="32x32" rel="icon" href="$relpath$favicon.ico" >
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
+
+<script type="text/javascript" src="$relpath^jquery.js"></script>
+<script type="text/javascript" src="$relpath^dynsections.js"></script>
+
 <link href="$relpath$tabs.css" rel="stylesheet" type="text/css">
-<link href="$relpath$doxygen.css" rel="stylesheet" type="text/css">
+<link href="$relpath^$stylesheet" rel="stylesheet" type="text/css">
+$extrastylesheet
 
 <link rel="stylesheet" type="text/css" href="http://static.getnightingale.com/css-new/style.css">
 <!--[if lt IE 9]>
@@ -15,10 +20,10 @@
     <script src="http://static.getnightingale.com/javascript/html5shiv.js"></script>
 <![endif]-->
 
-        <script type="text/javascript" src="http://static.getnightingale.com/javascript/base.js"></script>
-        <!-- l10n -->
-        <script type="text/javascript" src="http://static.getnightingale.com/javascript/l10n.js"></script>
-        <link rel="prefetch" type="application/l10n" href="http://static.getnightingale.com/l10n/locales.ini" >
+<script type="text/javascript" src="http://static.getnightingale.com/javascript/base.js"></script>
+<!-- l10n -->
+<script type="text/javascript" src="http://static.getnightingale.com/javascript/l10n.js"></script>
+<link rel="prefetch" type="application/l10n" href="http://static.getnightingale.com/l10n/locales.ini" >
 $treeview
 $search
 $mathjax
