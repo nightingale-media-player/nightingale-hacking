@@ -270,13 +270,13 @@ ifdef TIERS
 # and all sorts of stuff will fail.
 
 default all alldep:: $(SUBMAKEFILES) $(APP_DIST_DIRS)
-	$(EXIT_ON_ERROR) \
+	$(silent)$(EXIT_ON_ERROR) \
 	$(foreach tier,$(TIERS),$(MAKE) tier_$(tier); ) true
 
 else
 default all::
-	   $(MAKE) export
-	   $(MAKE) libs
+	   $(silent)$(MAKE) export
+	   $(silent)$(MAKE) libs
 endif
 
 ALL_TRASH = \
@@ -312,7 +312,7 @@ endif
 
 clean:: $(SUBMAKEFILES)
 ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
-	$(foreach extcfg,$(EXTENSION_CONFIGS), \
+	$(silent)$(foreach extcfg,$(EXTENSION_CONFIGS), \
     $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 clean; ) true
 else
 	-$(RM) -r $(ALL_TRASH)
@@ -323,11 +323,11 @@ distclean:: FORCE
 	$(RM) -r $(SONGBIRD_DISTDIR)
 
 export_tier_%:
-	$(EXIT_ON_ERROR) \
+	$(silent)$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) export; ) true
 
 libs_tier_%:
-	$(EXIT_ON_ERROR) \
+	$(silent)$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
 deps_defines= \
@@ -351,8 +351,8 @@ deps_defines= \
 # it's all of them for all the tier_dirs.
 $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(tier)_dirs),$(addsuffix /Makefile,$(tier_$(tier)_dirs))))
 	@echo "BUILDING $(patsubst tier_%,%,$@) TIER; directories: $($@_dirs)"
-	$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e export_$@
-	$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e libs_$@
+	$(silent)$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e export_$@
+	$(silent)$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e libs_$@
 	
 ##
 ## SUBDIRS handling for libs and export targets
@@ -360,7 +360,7 @@ $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(ti
 
 libs collect_xpts:: $(SUBMAKEFILES) $(OUR_SUBDIRS)
 ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
-	$(foreach extcfg,$(EXTENSION_CONFIGS), \
+	$(silent)$(foreach extcfg,$(EXTENSION_CONFIGS), \
     $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 libs; ) true
 else
 	+$(LOOP_OVER_SUBDIRS)
@@ -368,7 +368,7 @@ endif
 
 export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(OUR_SUBDIRS)
 ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
-	$(foreach extcfg,$(EXTENSION_CONFIGS), \
+	$(silent)$(foreach extcfg,$(EXTENSION_CONFIGS), \
     $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 export; ) true
 else
 	+$(LOOP_OVER_SUBDIRS)
@@ -419,10 +419,10 @@ makefiles: $(SUBMAKEFILES)
 	+$(LOOP_OVER_SUBDIRS)
 
 Makefile: $(srcdir)/Makefile.in
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
+	$(silent)$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
 
 $(SUBMAKEFILES): % : $(srcdir)/%.in
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
+	$(silent)$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
 
 #------------------------------------------------------------------------------
 # Rules for XPIDL compilation
@@ -938,7 +938,7 @@ endif
 
 $(OUR_STATIC_LIB): $(OUR_STATIC_LIB_OBJS)
 ifdef USING_RANLIB
-	$(RM) $@
+	$(silent)$(RM) $@
 endif
 	$(AR) $(OUR_LINKER_FLAGS) $(OUR_LINKER_OUTPUT) $(OUR_STATIC_LIB_OBJS)
 ifdef USING_RANLIB
@@ -1087,13 +1087,19 @@ endif
 
 GENERATED_PP_DEPS = $(addprefix $(OUR_SONGBIRD_PP_DIR)/,$(foreach f,$(SONGBIRD_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
 
+ifneq ($(V), 1)
+preprocessing = echo '       GEN       '$$(basename $$target)
+else
+preprocessing = echo Preprocessing $$item into $$target...
+endif
+
 $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
    ifeq (,$(wildcard $(OUR_SONGBIRD_PP_DIR)))
 	   $(MKDIR_APP) $(OUR_SONGBIRD_PP_DIR)
    endif
 	@$(EXIT_ON_ERROR) for item in $(SONGBIRD_PP_RESOURCES); do \
       target=$(OUR_SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
-      echo Preprocessing $$item into $$target...; \
+      $(preprocessing); \
       $(RM) -f $$target; \
       $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
        $(ACDEFINES) $(RESOURCES_PPFLAGS) \
@@ -1202,8 +1208,8 @@ endif
 # $(OUR_JAR_MN_IN) has changed because defines may change as well.
 $(OUR_JAR_MN): FORCE
 ifneq (,$(OUR_JAR_MN_IN))
-	$(RM) $(OUR_JAR_MN)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
+	$(silent)$(RM) $(OUR_JAR_MN)
+	$(silent)$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
     $(srcdir)/$(OUR_JAR_MN_IN) | \
     $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(OUR_JAR_MN)
 endif
@@ -1213,9 +1219,12 @@ endif
 libs:: $(if $(JAR_MANIFEST),$(OUR_JAR_MN)) $(CHROME_DEPS)
 ifdef JAR_MANIFEST
 	$(MKDIR_APP) $(OUR_JAR_TARGET_DIR)
-	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
-    $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN)
-	$(RM) -r $(OUR_JAR_TARGET_DIR)/stage
+	$(silent)$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
+    $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN) $(dev_null)
+ifneq ($(V), 1)
+	@echo "       JAR       "$(shell head -n1 $(OUR_JAR_MN) | tr -d ':');
+endif
+	$(silent)$(RM) -r $(OUR_JAR_TARGET_DIR)/stage
 endif
 
 #------------------------------------------------------------------------------
@@ -1319,7 +1328,7 @@ ifdef DEBUG
 endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+	$(silent)$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
     $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) \
     -DEXTENSION_ARCH="$(EXTENSION_ARCH)" \
     -DEXTENSION_UUID="$(EXTENSION_UUID)" \
@@ -1328,7 +1337,7 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
     -DEXTENSION_MAX_VER="$(EXTENSION_MAX_VER)" \
     -DEXTENSION_NAME=$(OUR_EXTENSION_NAME) -- \
     $(OUR_INSTALL_RDF_IN) > $(OUR_INSTALL_RDF)
-	$(CHMOD) 0644 $(OUR_INSTALL_RDF)
+	$(silent)$(CHMOD) 0644 $(OUR_INSTALL_RDF)
 
 # Check for an extension license; default file name is "LICENSE" in the root
 # directory of the extension. You can override this by setting EXTENSION_LICENSE
@@ -1355,19 +1364,23 @@ endif # } IS_EXTENSION
 libs:: $(if $(IS_EXTENSION), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef IS_EXTENSION
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
+      ifeq ($(V), 1)
 	   @echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME)
-	   $(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+      else
+	   @echo "       XPI       $(OUR_XPI_NAME)";
+      endif
+	   $(silent)$(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME)
 	   $(INSTALL_FILE) $(OUR_INSTALL_RDF) $(EXTENSION_STAGE_DIR)/install.rdf
       ifneq (,$(EXTENSION_LICENSE))
 	      $(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
       endif
-	   cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).tmp *
+	   $(silent)cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).tmp *
 	   $(MKDIR_APP) $(EXTENSION_DIR)
-	   $(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).tmp $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+	   $(silent)$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).tmp $(EXTENSION_DIR)/$(OUR_XPI_NAME)
       ifeq (1,$(INSTALL_EXTENSION))
 	      $(MKDIR_APP) $(SONGBIRD_EXTENSIONSDIR)
-	      $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
-	      $(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	      $(silent)$(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	      $(silent)$(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
       endif
    endif
 endif

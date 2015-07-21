@@ -186,7 +186,7 @@ protected:
    * return true or false depending on whether the item should
    * be skipped by the sequencer
    */
-  nsresult ValidateMediaItemControllerPlayback(PRBool aFromUserAction, 
+  nsresult ValidateMediaItemControllerPlayback(PRBool aFromUserAction,
                                                PRInt32 aOnHoldStatus,
                                                PRBool *_proceed);
 
@@ -237,8 +237,6 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateVolume;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;
 
-  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateRemainingTime;
-
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataAlbum;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataArtist;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataTitle;
@@ -248,6 +246,7 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataDurationStr;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataPosition;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataPositionStr;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataRemainingStr;
 
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataURL;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataImageURL;

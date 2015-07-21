@@ -698,7 +698,7 @@
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
-        this.remote_repeat_disabled = 
+        this.remote_repeat_disabled =
           SBDataBindElementProperty("playlist.repeat.disabled",
                                     this,
                                     "disabled",
@@ -822,7 +822,7 @@
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
-        this.remote_shuffle_disabled = 
+        this.remote_shuffle_disabled =
           SBDataBindElementProperty("playlist.shuffle.disabled",
                                     this,
                                     "disabled",
@@ -1571,7 +1571,7 @@
               <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
             </xul:menupopup>
         </xul:button>
-        
+
         <xul:button type="sb-clickhold"
                 id="sb-player-stop-button-stop"
                 sbid="stop"
@@ -1797,6 +1797,8 @@
 
         // Create and bind data remote
         this.remote_showRemaining = SB_NewDataRemote( "faceplate.showremainingtime", null );
+
+        this.setRemoteChange();
       ]]>
     </constructor>
     <destructor>
@@ -1817,6 +1819,21 @@
           // If you try to toggle it while it is zero, you lose the state.
           else
             this.remote_showRemaining.boolValue = false;
+
+          this.setRemoteChange();
+        ]]>
+      </body>
+    </method>
+
+    <method name="setRemoteChange">
+      <body>
+        <![CDATA[
+          var observes = document.getAnonymousElementByAttribute(this, "type", "dataremote");
+
+          if(this.remote_showRemaining.boolValue)
+            observes.key = "metadata.remaining.str";
+          else
+            observes.key = "metadata.length.str";
         ]]>
       </body>
     </method>
@@ -1949,10 +1966,45 @@
   <implementation>
 
     <constructor>
-      this.data  = "metadata.position.str";
+      <![CDATA[
+        // Create and bind data remote
+        this.remote_showElapsed = SB_NewDataRemote( "faceplate.showelapsed", null );
+
+        this.setRemoteChange();
+      ]]>
     </constructor>
+    <destructor>
+      <![CDATA[
+        this.remote_showElapsed = null;
+      ]]>
+    </destructor>
+
+    <method name="onElapsedDown">
+      <body>
+        <![CDATA[
+          this.remote_showElapsed.boolValue = !this.remote_showElapsed.boolValue;
+
+          this.setRemoteChange();
+        ]]>
+      </body>
+    </method>
+
+    <method name="setRemoteChange">
+      <body>
+        <![CDATA[
+          if(this.remote_showElapsed.boolValue)
+            this.data = "metadata.position.str";
+          else
+            this.data = "metadata.remaining.str";
+        ]]>
+      </body>
+    </method>
 
    </implementation>
+
+    <handlers>
+      <handler event="mousedown" action="this.onElapsedDown();"/>
+    </handlers>
 
   </binding>
 

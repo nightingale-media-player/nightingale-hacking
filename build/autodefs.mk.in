@@ -210,56 +210,81 @@ SB_INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFO
 SB_INSTALLER_SUFFIXES = @SB_INSTALLER_SUFFIXES@
 
 #
+# Turn verbosity on/off
+#
+ifneq ($(V), 1)
+AR_V          = @echo "       AR        $@";
+CC_V          = @echo "       CC        $@";
+DOXYGEN_V     = @echo "       DOXYGEN   $@";
+LD_V          = @echo "       LD        $@";
+LN_V          = @echo "       LN        $@";
+MIDL_V        = @echo "       MIDL      $@";
+MKDIR_V       = @echo "       MKDIR     $@";
+PYTHON_V      = @echo "       PYTHON    $@";
+RANLIB_V      = @echo "       RANLIB    $@";
+STRIP_V       = @echo "       STRIP     $@";
+TOUCH_V       = @echo "       TOUCH     $@";
+XPIDL_V       = @echo "       XPIDL     $@";
+XPTLINK_V     = @echo "       XPTLINK   $@";
+
+silent        = @echo "";
+dev_null      = >/dev/null
+
+CXX_V         = @echo "       CXX       "$$(basename $@);
+INSTALL_V     = @echo "$$(test -z $< && echo '' || echo '       INSTALL   '$$(basename $<))";
+endif
+
+#
 # Tools
 #
 
-AR = @AR@
-AWK = @AWK@
-CC = @CC@
-CHMOD = @CHMOD@
-CP = @CP@
-CXX = @CXX@
-DIFF = @DIFF@
-DOXYGEN = @DOXYGEN@
-FIND = @FIND@
-GREP = @GREP@
-GUNZIP = @GUNZIP@
-GZIP = @GZIP@
+AR      = $(AR_V)@AR@
+AWK     = @AWK@
+CC      = $(CC_V)@CC@
+CHMOD   = @CHMOD@
+CP      = @CP@
+CXX     = $(CXX_V)@CXX@
+DIFF    = @DIFF@
+DOXYGEN = $(DOXYGEN_V)@DOXYGEN@
+FIND    = @FIND@
+GREP    = @GREP@
+GUNZIP  = @GUNZIP@
+GZIP    = @GZIP@
 INSTALL = @INSTALL@ -c
-INSTALL_FILE = $(INSTALL) -m 0644
-INSTALL_PROG = $(INSTALL) -m 0755
-LD = @LD@
-LN = @LN@
-MACPKGMAKER = @MACPKGMAKER@
-MD5SUM = @MD5SUM@
-MIDL = @MIDL@
-MKDIR = @MKDIR@ -p
+INSTALL_FILE = $(INSTALL_V)$(INSTALL) -m 0644
+INSTALL_PROG = $(INSTALL_V)$(INSTALL) -m 0755
+LD      = $(LD_V)@LD@
+LN      = $(LN_V)@LN@
+MACPKGMAKER  = @MACPKGMAKER@
+MD5SUM  = @MD5SUM@
+MIDL    = $(MIDL_V)@MIDL@
+MKDIR   = $(MKDIR_V)@MKDIR@ -p
 # Use MKDIR_APP to create a directory that is intended to be shipped; we use
 # intstall -d here because mkdir -p -m N only applies the -m to the _last_
 # directory part, not any of the other directories it creates along the way;
 # lame, Lame, LAME; hats off to Mook for suggesting this.
-MKDIR_APP = $(INSTALL) -d -m 755
+MKDIR_APP = $(silent)$(INSTALL) -d -m 755
 MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
-MV = @MV@
-PERL = @PERL@
-PYTHON = @PYTHON@
-RANLIB = @RANLIB@
-RC = @RC@
-REBASE = @REBASE@
-RM = @RM@ -f
-SED = @SED@
+MV      = @MV@
+PERL    = @PERL@
+PYTHON  = @PYTHON@
+RANLIB  = $(RANLIB_V)@RANLIB@
+RC      = @RC@
+REBASE  = @REBASE@
+RM      = @RM@ -f
+SED     = @SED@
 SHA1SUM = @SHA1SUM@
-SORT = @SORT@
-STRIP = @STRIP@
+SORT    = @SORT@
+STRIP   = $(STRIP_V)@STRIP@
 SYSINSTALL = echo
-TAR = @TAR@
-TOUCH = @TOUCH@
-UNZIP = @UNZIP@
-ZIP = @ZIP@
+TAR     = @TAR@
+TOUCH   = $(TOUCH_V)@TOUCH@
+UNZIP   = @UNZIP@
+ZIP     = @ZIP@
 
-XPIDL = $(MOZSDK_DIR)/bin/xpidl
-XPTLINK = $(MOZSDK_DIR)/bin/xpt_link
-MAR = $(MOZSDK_DIR)/bin/mar
+XPIDL   = $(XPIDL_V)$(MOZSDK_DIR)/bin/xpidl
+XPTLINK = $(XPTLINK_V)$(MOZSDK_DIR)/bin/xpt_link
+MAR     = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 
 #

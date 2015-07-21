@@ -17,4 +17,4 @@ notifications:
     on_success: change
     on_failure: change
   irc: "irc.mozilla.org#nightingale"
-  
+
