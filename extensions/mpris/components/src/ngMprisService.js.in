@@ -1403,7 +1403,7 @@ Root.prototype = {
     },
     get SupportedMimeTypes() {
         if(mimeList.length == 0) {
-            var ext, mime
+            var ext, mime,
                 typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"].createInstance(Ci.sbIMediacoreTypeSniffer),
                 mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService); //@mozilla.org/uriloader/external-helper-app-service;1
 
