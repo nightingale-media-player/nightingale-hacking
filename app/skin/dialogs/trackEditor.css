@@ -25,16 +25,16 @@
  */
 
 
-/** 
+/**
 *******************************************************************************
 
 TRACK EDITOR DIALOG
 
-Additional styles imported directly by the track editor dialog. 
+Additional styles imported directly by the track editor dialog.
 See app/content/xul/trackEditor.xul
 
 *******************************************************************************
-*/ 
+*/
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
@@ -158,7 +158,7 @@ textbox.short-number-input {
 
 
 #prev_button:not([disabled="true"])+#next_button:not([disabled="true"]),
-#prev_button:not([disabled="true"])+#next_button[disabled="true"] {  
+#prev_button:not([disabled="true"])+#next_button[disabled="true"] {
   border-left:none !important;
 }
 
@@ -236,7 +236,7 @@ textbox.short-number-input {
   padding:1px;
 }
 .art[edited="true"] {
-  
+
 }
 .art:focus {
   /*padding:0px;*/
@@ -261,6 +261,11 @@ image.art+button > .button-box > .button-text {
   height: 88px;
 }
 
+/* Info tab styles */
+
+#summary-tab label[property-type='label'] {
+  font-weight: bold;
+}
 
 /**
 

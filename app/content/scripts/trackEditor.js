@@ -42,11 +42,11 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 /******************************************************************************
  *
- * \class TrackEditor 
+ * \class TrackEditor
  * \brief Base controller for track editor windows, including trackEditor.xul.
  *
- * Responsible for setting up default UI elements and maintaining the 
- * state object 
+ * Responsible for setting up default UI elements and maintaining the
+ * state object
  *
  *****************************************************************************/
 var TrackEditor = {
@@ -56,37 +56,37 @@ var TrackEditor = {
 
   // TrackEditorState object
   state: null,
-  
+
   // Hash of ID to widget objects
   _elements: {},
-    
+
   // TODO consolidate?
   _browser: null,
   mediaListView: null,
-  
+
   /**
    * Called when the dialog loads
    */
   onLoadTrackEditor: function TrackEditor_onLoadTrackEditor() {
-    
+
     // Get the main window.
     var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                           .getService(Ci.nsIWindowMediator);
 
-    var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
+    var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");
     this._browser = songbirdWindow.gBrowser;
-    
-    this.state = new TrackEditorState();  
-    
+
+    this.state = new TrackEditorState();
+
     // Prepare the UI
     this._setUpDefaultWidgets();
-    
+
     // note that this code USED to watch tabContent and selection and library
     // changes, but we've implemented track editor as a modal dialog, so there's
     // no need for any of that now. still, the names are there, so it can be
     // brought back if the desire arises
     this.onTabContentChange();
-    
+
     var initialTab = window.arguments[0];
     if (initialTab) {
       var tabBox = document.getElementById("trackeditor-tabbox");
@@ -98,22 +98,22 @@ var TrackEditor = {
       }
     }
   },
-  
+
   /**
    * Find and configure known DOM elements
    */
   _setUpDefaultWidgets: function TrackEditor__setUpDefaultWidgets() {
 
-    // load the tabBox and individuals tabs     
+    // load the tabBox and individuals tabs
     var tabBox = document.getElementById("trackeditor-tabbox");
-    var tabs = tabBox.tabs;   
-     
+    var tabs = tabBox.tabs;
+
     // Add an additional layer of control to all elements with a property
     // attribute.  This will cause the elements to be updated when the
     // selection model changes, and vice versa.
-    
+
     this._elements["anonymous"] = []; // Keep elements without ids in a list
-    
+
     // Potentially anonymous elements that need wrapping
     var elements = document.getElementsByAttribute("property", "*");
     for each (var element in elements) {
@@ -123,8 +123,14 @@ var TrackEditor = {
       {
         var property = element.getAttribute("property");
         var propertyInfo = this._propertyManager.getPropertyInfo(property);
-        
-        if (element.getAttribute("property-type") != "label" &&
+
+        if(property == "fileType") {
+          if(!element.hasAttribute("property-type")) {
+            wrappedElement = new TrackEditorFileTypeLabel(element);
+          } else {
+            element.value = SBString("property.content_mime_type");
+          }
+        } else if (element.getAttribute("property-type") != "label" &&
             propertyInfo.type == "uri") {
           wrappedElement = new TrackEditorURILabel(element);
         }
@@ -143,8 +149,12 @@ var TrackEditor = {
       } else if (element.localName == "svg") {
         // Setup a TrackEditorArtwork wrappedElement
         wrappedElement = new TrackEditorArtwork(element);
+      } else if (element.tagName == "image") {
+        wrappedElement = new TrackEditorImage(element);
+      } else if(element.tagName == "description") {
+        wrappedElement = new TrackEditorDescription(element);
       }
-      
+
       if (wrappedElement) {
         if (element.id) {
           this._elements[element.id] = wrappedElement;
@@ -157,10 +167,10 @@ var TrackEditor = {
     // load the advanced tab
     // get ngales property manager
     var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                       .getService(Ci.sbIPropertyManager);                   
+                       .getService(Ci.sbIPropertyManager);
     // get all row elements from the advanced tab
     var advancedRowItemsToLoad = document.getElementsByAttribute("class", "advTabRowElements");
-    
+
     // get the menupopup element from the advanced tab
     var advancedMenupopup = document.getElementById("menupopup");
 
@@ -193,11 +203,11 @@ var TrackEditor = {
       var element = document.getElementById(elementName);
       if (element) {
         this._elements[elementName] = element;
-      } 
+      }
     }
 
     this._elements["notification_box"].hidden = true;
-    
+
     var trackeditorTabs = document.getElementById("trackeditor-tabs");
     var tabCount = 0;
     for (var tab = trackeditorTabs.firstChild; tab; tab = tab.nextSibling) {
@@ -212,21 +222,21 @@ var TrackEditor = {
     // Monitor all changes in order to update the dialog controls
     this.state.addPropertyListener("all", this);
   },
-  
+
   /**
    * Show/hide warning messages as needed in the header of the dialog
    */
   updateNotificationBox: function TrackEditor__updateNotificationBox() {
-    
+
     var itemCount = this.state.selectedItems.length;
     var writableCount = this.state.writableItemCount;
-    
+
     var message;
     var notificationClass = "dialog-notification notification-warning";
 
     if (itemCount > 1) {
       if (writableCount == itemCount) {
-        message = SBFormattedString("trackeditor.notification.editingmultiple", [itemCount]);                
+        message = SBFormattedString("trackeditor.notification.editingmultiple", [itemCount]);
         notificationClass = "dialog-notification notification-info";
       } else if (writableCount >= 1) {
         message = SBFormattedString("trackeditor.notification.somereadonly",
@@ -237,7 +247,7 @@ var TrackEditor = {
     } else if (writableCount == 0) {
       message = SBString("trackeditor.notification.singlereadonly");
     }
-      
+
     if (message) {
       this._elements["notification_box"].className = notificationClass;
       this._elements["notification_text"].textContent = message;
@@ -246,27 +256,27 @@ var TrackEditor = {
       this._elements["notification_box"].hidden = true;
     }
   },
-  
+
   /**
    * Update the dialog controls based on the current state
    */
   updateControls: function TrackEditor__updateControls() {
-   
-   // If the user has entered invalid data, disable all 
+
+   // If the user has entered invalid data, disable all
    // UI that would cause an apply()
    var hasErrors = this.state.isKnownInvalid();
-   
+
    this._elements["ok_button"].disabled = hasErrors;
-   
+
    // Disable next/prev at top/bottom of list, and when
    // editing multiple items
    var idx = this.mediaListView.selection.currentIndex;
    var atStart = (idx == 0)
    var atEnd   = (idx == this.mediaListView.length - 1);
    var hasMultiple = this.mediaListView.selection.count > 1;
-   this._elements["prev_button"].setAttribute("disabled", 
+   this._elements["prev_button"].setAttribute("disabled",
       (atStart || hasErrors || hasMultiple ? "true" : "false"));
-   this._elements["next_button"].setAttribute("disabled", 
+   this._elements["next_button"].setAttribute("disabled",
       (atEnd  || hasErrors || hasMultiple ? "true" : "false"));
   },
 
@@ -279,12 +289,12 @@ var TrackEditor = {
     //if(this.mediaListView) {
       //this.mediaListView.mediaList.removeListener(this);
     //}
-    
+
     this.mediaListView = this._browser.currentMediaListView;
-    
-    //this.mediaListView.mediaList.addListener(this); 
+
+    //this.mediaListView.mediaList.addListener(this);
     //we're assuming a modal dialog for now, so don't reflect changes.
-    
+
     this.onSelectionChanged();
   },
 
@@ -297,14 +307,14 @@ var TrackEditor = {
     // so that multiple-selection values are correctly updated
     // this might actually be a punch in the face because there are a
     // a bunch of user-uneditable properties that change when playback starts
-    // hmm    
+    // hmm
     for (var i = 0; i < aOldPropertiesArray.length; i++) {
       // this is weak
       var property = aOldPropertiesArray.getPropertyAt(i);
       var propInfo = this._propertyManager.getPropertyInfo(property.id);
-      
-      //dump("Property change logged for "+aMediaItem.getProperty(SBProperties.trackName)+ ":\n" 
-      //     + property.value + "\n" + aMediaItem.getProperty(property.id) 
+
+      //dump("Property change logged for "+aMediaItem.getProperty(SBProperties.trackName)+ ":\n"
+      //     + property.value + "\n" + aMediaItem.getProperty(property.id)
       //     + "\neditable: " + propInfo.userEditable);
       if (property.value != aMediaItem.getProperty(property.id) && propInfo.userEditable) {
         this.onSelectionChanged();
@@ -312,20 +322,20 @@ var TrackEditor = {
       }
     }
   },*/
-  
+
   /**
    * Called when the media item selection in the main player window changes
    */
   onSelectionChanged: function TrackEditor_onSelectionChanged() {
-    
+
     // get the new item's content type
     var itemContentType = this.mediaListView.selection.currentMediaItem.contentType;
 
     if (itemContentType == "audio"){
       // load the users audio preference
       var userPreferenceProperty = JSON.parse(Application.prefs.getValue(
-                                        "songbird.trackeditor.audioAdvancedTags", "")); 
-            
+                                        "songbird.trackeditor.audioAdvancedTags", ""));
+
       // update the advanced tab with the proper elements
       TrackEditor.updateAdvancedTab(userPreferenceProperty);
     }
@@ -333,19 +343,19 @@ var TrackEditor = {
       // load the users audio preference
       var userPreferenceProperty = JSON.parse(Application.prefs.getValue(
                                         "songbird.trackeditor.videoAdvancedTags", ""));
-      
+
       // update the advanced tab with the proper elements
       TrackEditor.updateAdvancedTab(userPreferenceProperty);
     }
 
-    this.state.setSelection(this.mediaListView.selection);    
-    
+    this.state.setSelection(this.mediaListView.selection);
+
     // Disable summary page if multiple items are selected.
     // TODO summary page is commented out.
     /*
     var tabBox = document.getElementById("trackeditor-tabbox");
     var tabs = tabBox.tabs;
-    
+
     if (this.state.selectedItems.length > 1) {
       // warning: assumes summary page is at tabs[0]
       if (tabBox.selectedIndex == 0) {
@@ -354,17 +364,17 @@ var TrackEditor = {
       tabs.getItemAtIndex(0).setAttribute("disabled", "true");
     }
     */
-    
+
     this.updateNotificationBox();
     this.updateControls();
- 
+
     // Hacky special case to hide the title when editing multiple items.
     // We assume you don't want to set multiple titles at once.
     var hidden = this.state.selectedItems.length > 1;
     this._elements["infotab_trackname_textbox"].hidden = hidden;
     this._elements["infotab_trackname_label"].hidden = hidden;
   },
-  
+
   /**
    * Called any time a property value is modified by the UI
    */
@@ -373,7 +383,7 @@ var TrackEditor = {
     // TODO: this may hurt performance, since it is executed on every keystroke!
     this.updateControls();
   },
-  
+
   /**
    * Called when the media item selection in the main player window changes
    * TODO not being run at the moment?
@@ -385,7 +395,7 @@ var TrackEditor = {
 
     //this.mediaListView.mediaList.removeListener(this);
     //we're assuming a modal dialog for now, so don't reflect changes.
-    
+
     this.mediaListView = null;
   },
 
@@ -401,7 +411,7 @@ var TrackEditor = {
     var idx = this.mediaListView.selection.currentIndex;
 
     if (idx == null || idx == undefined) { return; }
-    
+
     idx = idx+1;
     if (idx >= this.mediaListView.length) {
       //idx = 0; // wrap around
@@ -421,11 +431,11 @@ var TrackEditor = {
     if (!this.apply()) {
       return;
     }
-    
+
     var idx = this.mediaListView.selection.currentIndex;
 
     if (idx == null || idx == undefined) { return; }
-    
+
     idx = idx-1;
     if (idx < 0) {
       //idx = this.mediaListView.length - 1; // wrap around
@@ -436,9 +446,9 @@ var TrackEditor = {
     // called explicitly since we aren't watching
     this.onSelectionChanged();
   },
-  
+
   /**
-   * Purge any edits made by the user. 
+   * Purge any edits made by the user.
    * TODO Currently unused.
    */
   reset: function() {
@@ -459,29 +469,29 @@ var TrackEditor = {
   /**
    * Write property changes back to the selected media items
    * and if possible to the on disk files.
-   */  
+   */
   apply: function() {
-    
+
     if (this.state.isKnownInvalid()) {
       Components.utils.reportError("TrackEditor: attempt to call apply() with known invalid state");
       return false;
     }
-    
+
     var properties = this.state.getEnabledProperties();
     var items = this.state.selectedItems;
     if (items.length == 0 || properties.length == 0) {
       return true;
     }
-    
+
     var enableRatingWrite = Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false);
-    
+
     // Properties we want to write
     var writeProperties = [];
-    
+
     // Apply each modified property back onto the selected items,
     // keeping track of which items have been modified
     var needsWriting = new Array(items.length);
-    
+
     var batchSetter = {
       runBatched: function(aUserData) {
         for each (property in properties) {
@@ -510,9 +520,9 @@ var TrackEditor = {
               }
 
               item.setProperty(property, value);
-              
+
               // Flag the item as needing a metadata-write job.
-              // Do not start a write-job if all that has changed is the 
+              // Do not start a write-job if all that has changed is the
               // rating, and rating-write isn't enabled.
               if (property != SBProperties.rating || enableRatingWrite) {
                 needsWriting[i] = true;
@@ -524,7 +534,7 @@ var TrackEditor = {
     };
 
     this.mediaListView.mediaList.runInBatchMode(batchSetter, null);
-    
+
     /* TODO: finish or nix this
     // isPartOfCompilation gets special treatment because
     // this is our only user-exposed boolean property right now
@@ -538,7 +548,7 @@ var TrackEditor = {
         var sIMI = this.mediaListView.selection.selectedIndexedMediaItems;
         var j = 0;
         while (sIMI.hasMoreElements()) {
-          j++;          
+          j++;
           var mI = sIMI.getNext()
             .QueryInterface(Ci.sbIIndexedMediaItem)
             .mediaItem;
@@ -550,8 +560,8 @@ var TrackEditor = {
         }
     }
     */
-    
-    // Add all items that need writing into an array 
+
+    // Add all items that need writing into an array
     var mediaItemArray = [];
     for (var i = 0; i < items.length; i++) {
       if (needsWriting[i] && LibraryUtils.canEditMetadata(items[i])) {
@@ -564,18 +574,18 @@ var TrackEditor = {
                                     window,
                                     this.mediaListView.mediaList);
     }
-    
+
     return true;
   },
 
   /**
    * onpopupclose function handles the event when the user closes the advanced
-   * tab's menupopup.  It collects all the menuitems in the menupopup that are 
+   * tab's menupopup.  It collects all the menuitems in the menupopup that are
    * checked and show/hides the row elements in the advanced tab that have the
-   * same property attribute.  It also saves the users selection of checked 
-   * items for later use inside the checkedPropertyStrings, which is written to 
+   * same property attribute.  It also saves the users selection of checked
+   * items for later use inside the checkedPropertyStrings, which is written to
    * the users respective preference.
-   */  
+   */
   onpopupclose: function() {
     // get all menuitems from the advanced tab
     var advancedMenuItems = document.getElementsByAttribute("class", "advTabMenuItems");
@@ -592,12 +602,12 @@ var TrackEditor = {
 
     // get current items content type
     var itemContentType = this._browser.currentMediaListView.selection.currentMediaItem.contentType;
-    
+
     // write the list of property strings to the users preferences
     if (itemContentType == "audio"){
-      Application.prefs.setValue("songbird.trackeditor.audioAdvancedTags", 
+      Application.prefs.setValue("songbird.trackeditor.audioAdvancedTags",
                                   JSON.stringify(checkedPropertyStrings));
-    } 
+    }
     else if (itemContentType == "video"){
       Application.prefs.setValue("songbird.trackeditor.videoAdvancedTags",
                                   JSON.stringify(checkedPropertyStrings));
@@ -616,10 +626,10 @@ var TrackEditor = {
     var advancedMenuItems = document.getElementsByAttribute("class", "advTabMenuItems");
     // get all row elements from the advanced tab
     var rowElementsAdvancedTab = document.getElementsByAttribute("class", "advTabRowElements");
-    
+
     /**
-     * Go through all of the advanced tab's row elements. If its property attribute is found within 
-     * anArrayOfPropertyStrings,  we show the row element on screen by removing the hidden attribute 
+     * Go through all of the advanced tab's row elements. If its property attribute is found within
+     * anArrayOfPropertyStrings,  we show the row element on screen by removing the hidden attribute
      * and we hide the row element by setting the attribute to true.
      */
 
@@ -634,8 +644,8 @@ var TrackEditor = {
     }
 
     /**
-     * Go through all of the advanced tab's menuitems elements. If its property attribute is found within 
-     * anArrayOfPropertyStrings,  we "check" the menuitem by setting its "checked" attribute to true and   
+     * Go through all of the advanced tab's menuitems elements. If its property attribute is found within
+     * anArrayOfPropertyStrings,  we "check" the menuitem by setting its "checked" attribute to true and
      * remove the attribute to "un-check" the menuitem.
      */
 
