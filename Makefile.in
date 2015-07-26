@@ -116,10 +116,10 @@ ifdef MAKE_INSTALLER
    ifneq (windows,$(SB_PLATFORM))
 	   @echo "Stripping package directory..."
       ifeq (macosx,$(SB_PLATFORM))
-	      $(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.dylib" \
+	      $(silent)$(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.dylib" \
           -exec $(STRIP) $(STRIP_FLAGS) {} \; 
       endif
-	   $(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.so" \
+	   $(silent)$(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.so" \
        -exec $(STRIP) $(STRIP_FLAGS) {} \; 
    endif
 endif
@@ -134,8 +134,8 @@ ifdef SB_ENABLE_BREAKPAD
     $(MAKE_SYM_STORE_PATH) > \
     $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID)/$(SB_APPNAME)-$(SB_MILESTONE)-$(SB_PLATFORM)-$(SB_ARCH)-$(SB_BUILD_ID)-symbols.txt
 	@echo Setting symbol store package permissions...
-	$(FIND) $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) -type d -exec $(CHMOD) 0755 {} \; 
-	$(FIND) $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) -type f -exec $(CHMOD) 0644 {} \; 
+	$(silent)$(FIND) $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) -type d -exec $(CHMOD) 0755 {} \; 
+	$(silent)$(FIND) $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) -type f -exec $(CHMOD) 0644 {} \; 
 	@echo Packing up symbols...
 	cd $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) && \
     $(ZIP) -r9D $(BREAKPAD_SYMBOL_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) .
@@ -185,6 +185,6 @@ test_distdir_manifest:
 
 distdir_manifest:
 	@echo Making distdir manifest in $(topsrcdir)/update...
-	cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
+	$(silent)cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
 
 .PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols test_distdir_manifest distdir_manifest
