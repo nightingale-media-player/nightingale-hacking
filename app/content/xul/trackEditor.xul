@@ -62,11 +62,10 @@
   <hbox id="notification_box" align="center" pack="center" class="dialog-notification">
     <description id="notification_text" class="dialog-notification-text" />
   </hbox>
-  
-  
+
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
-    <tabs id="trackeditor-tabs" hidden="true">
-      <!--><tab label="&trackeditor.tab.summary.title;" id="summary"/>-->
+    <tabs id="trackeditor-tabs">
+      <tab label="&trackeditor.tab.summary.title;" id="summary"/>
       <tab label="&trackeditor.tab.edit.title;" id="edit"/>
       <!--><tab label="&trackeditor.tab.lyrics.title;" id="lyrics"/>-->
       <!--tab disabled="true" label="Sort Values"/-->
@@ -74,13 +73,9 @@
     </tabs>
 
     <tabpanels id="trackeditor-tabpanels" flex="1">
-      
-      <!--
-      <vbox flex="1" id="summary-tab">
-        Summary page.  Needs styling and layout.
-            When implementing this MAKE SURE THAT LABELS CROP! I MEAN IT! 
-      
-        <hbox flex="1">
+
+      <vbox id="summary-tab">
+        <hbox>
 
           <div id="album-art" height="128" width="128">
             <image
@@ -97,106 +92,137 @@
             <label id="albumName" property="http://songbirdnest.com/data/1.0#albumName" crop="end"/>
           </vbox>
         </hbox>
-        
-        <hbox id="main-block">
-             
-          <vbox id="left-column">
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#playCount"/>
-              <label property="http://songbirdnest.com/data/1.0#playCount" crop="end" />
-            </hbox>
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
-              <label property="http://songbirdnest.com/data/1.0#lastPlayTime" crop="end" />
-            </hbox>
 
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#skipCount"/>
-              <label property="http://songbirdnest.com/data/1.0#skipCount" crop="end" />
-            </hbox>
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
-              <label property="http://songbirdnest.com/data/1.0#lastSkipTime" crop="end" />
-            </hbox>
-            
+        <grid id="main-block">
+          <columns>
+            <column class="summary_left_column" flex="1" />
+            <column class="summary_right_column" flex="1" />
+          </columns>
+          <rows>
+              <row>
+                <hbox flex="1">
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#playCount"/>
+                  <label property="http://songbirdnest.com/data/1.0#playCount" crop="end" flex="1" />
+                </hbox>
+                <hbox flex="1">
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#bitRate"/>
+                  <label property="http://songbirdnest.com/data/1.0#bitRate" crop="end" />
+                  <label property-type="unit"
+                         property="http://songbirdnest.com/data/1.0#bitRate" />
+                </hbox>
+              </row>
+              <row>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+                  <label property="http://songbirdnest.com/data/1.0#lastPlayTime" crop="end" flex="1" />
+                </hbox>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#sampleRate"/>
+                  <label property="http://songbirdnest.com/data/1.0#sampleRate" crop="end" />
+                  <label property-type="unit"
+                         property="http://songbirdnest.com/data/1.0#sampleRate" />
+                </hbox>
+              </row>
+              <row>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#skipCount"/>
+                  <label property="http://songbirdnest.com/data/1.0#skipCount" crop="end" flex="1" />
+                </hbox>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#contentLength"/>
+                  <label property="http://songbirdnest.com/data/1.0#contentLength" crop="end" />
+                  <label property-type="unit"
+                         property="http://songbirdnest.com/data/1.0#contentLength" />
+                </hbox>
+              </row>
+              <row>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+                  <label property="http://songbirdnest.com/data/1.0#lastSkipTime" crop="end" flex="1" />
+                </hbox>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#recordLabelName"/>
+                  <label property="http://songbirdnest.com/data/1.0#recordLabelName" crop="end" flex="1" />
+                </hbox>
+              </row>
+              <row>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#updated"/>
+                  <label property="http://songbirdnest.com/data/1.0#updated" crop="end" flex="1" />
+                </hbox>
+                <hbox>
 
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#contentLength"/>
-              <label property="http://songbirdnest.com/data/1.0#contentLength" crop="end" />
-            </hbox>
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#bitRate"/>
-              <label property="http://songbirdnest.com/data/1.0#bitRate" crop="end" />
-              <label>kbps</label>
-            </hbox>
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#sampleRate"/>
-              <label property="http://songbirdnest.com/data/1.0#sampleRate" crop="end" />
-              <label>kHz</label> 
-            </hbox>
-            
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#originPage"/>
+                  <label property="http://songbirdnest.com/data/1.0#originPage" crop="end" flex="1" />
+                </hbox>
+              </row>
+              <row>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#created"/>
+                  <label property="http://songbirdnest.com/data/1.0#created" crop="end" flex="1" />
+                </hbox>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#softwareVendor"/>
+                  <label property="http://songbirdnest.com/data/1.0#softwareVendor" crop="end" flex="1" />
+                </hbox>
+              </row>
+              <row>
+                <!-- This is confusingly called content_mime_type in the DB,
+                     which it isn't. It's the media type, so the first part of
+                     the MIME type. -->
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#contentType"/>
+                  <label property="http://songbirdnest.com/data/1.0#contentType" crop="end" flex="1" />
+                </hbox>
 
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#recordLabelName"/>
-              <label property="http://songbirdnest.com/data/1.0#recordLabelName" crop="end" />
-            </hbox>
-          </vbox>
-          
-          <vbox id="right-column">
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#updated"/>
-              <label property="http://songbirdnest.com/data/1.0#updated" crop="end" />
-            </hbox>
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#created"/>
-              <label property="http://songbirdnest.com/data/1.0#created" crop="end" />
-            </hbox>
-            <hbox>
+                <hbox>
+                  <label property-type="label"
+                         property="http://songbirdnest.com/data/1.0#channels"/>
+                  <label property="http://songbirdnest.com/data/1.0#channels" crop="end" flex="1" />
+                </hbox>
+              </row>
+              <row>
+                <!-- Special track file type label thing. This is derived from
+                     the contentURL property with nsIMIMEService. -->
+                <hbox>
+                  <label property="fileType" property-type="label"/>
+                  <label property="fileType" crop="end" flex="1"/>
+                </hbox>
+              </row>
+          </rows>
+        </grid>
 
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#originPage"/>
-              <label property="http://songbirdnest.com/data/1.0#originPage" crop="end" />
-            </hbox>
-            
-
-            
-            <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#softwareVendor"/>
-              <label property="http://songbirdnest.com/data/1.0#softwareVendor" crop="end" />
-            </hbox>
-            
-          </vbox>
-        </hbox>
-        
         <hbox>
-              <label property-type="label"
-                     property="http://songbirdnest.com/data/1.0#contentURL"/>
-              <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center" flex="1" />
+          <label property-type="label"
+                 property="http://songbirdnest.com/data/1.0#contentURL"/>
+          <description property="http://songbirdnest.com/data/1.0#contentURL" flex="1" />
         </hbox>
       </vbox>
-  -->
+
       <grid id="info-tab">
-        
+
         <columns>
           <column class="info_left_column" flex="1"/>
           <column class="info_right_column"/>
         </columns>
-        
+
         <rows>
           <!-- the first row spans the whole grid -->
           <label id="infotab_trackname_label"
-                 property-type="label" 
+                 property-type="label"
 				 property="http://songbirdnest.com/data/1.0#trackName"/>
           <!-- need a box wrapping element around the textbox, otherwise it
                flexes vertically, stretching it weirdly -->
@@ -209,7 +235,7 @@
 
           <row>
             <label property-type="label" property="http://songbirdnest.com/data/1.0#artistName"/>
-            <label property-type="label" 
+            <label property-type="label"
                    property="http://songbirdnest.com/data/1.0#year"/>
           </row>
           <row>
@@ -225,7 +251,7 @@
           </row>
 
           <row>
-            <label property-type="label" 
+            <label property-type="label"
                    property="http://songbirdnest.com/data/1.0#albumName"/>
             <label property-type="label" property="http://songbirdnest.com/data/1.0#trackNumber"/>
           </row>
@@ -235,15 +261,15 @@
                      flex="1"
                      autocompletesearch="library-distinct-properties"/>
             <hbox>
-              <textbox id="infotab_tracknumber_textbox" 
+              <textbox id="infotab_tracknumber_textbox"
                        class="long-number-input"
                        property="http://songbirdnest.com/data/1.0#trackNumber"/>
               <vbox pack="center">
-                <label class="separator-label" value="/" /> 
+                <label class="separator-label" value="/" />
               </vbox>
               <textbox class="long-number-input"
                        property="http://songbirdnest.com/data/1.0#totalTracks"/>
-            </hbox> 
+            </hbox>
           </row>
 
           <row>
@@ -277,8 +303,8 @@
                      type="autocomplete"
                      flex="1"
                      autocompletesearch="library-distinct-properties"/>
-            <textbox property="http://songbirdnest.com/data/1.0#bpm" 
-                     flex="1" 
+            <textbox property="http://songbirdnest.com/data/1.0#bpm"
+                     flex="1"
                      class="long-number-input" />
           </row>
 
@@ -320,7 +346,7 @@
           </row>
 
         </rows>
-      
+
         <!-- deferred from 0.6 until we have an actual use for this column -->
         <!--label property-type="label" property="http://songbirdnest.com/data/1.0#grouping"/>
           <textbox property="http://songbirdnest.com/data/1.0#grouping" />
@@ -338,7 +364,7 @@
         <textbox flex="1"
                  id="lyrics-editor"
                  multiline="true"
-                 property="http://songbirdnest.com/data/1.0#lyrics"/> 
+                 property="http://songbirdnest.com/data/1.0#lyrics"/>
         <button label="Fetch"/>
       </vbox>
       <vbox id="sort-value">
@@ -350,93 +376,20 @@
       <row>
         <menubar className="advanced-menubar" flex="1" orient="horizontal" align="right">
           <menu label="&trackeditor.tab.advanced.title;">
-            <menupopup id="menupopup"> 
+            <menupopup id="menupopup">
             </menupopup>
           </menu>
         </menubar>
       </row>
 
       <grid id="advanced-tab-grid" style="overflow:auto" flex="1">
-        
+
         <columns>
           <column class="advanced_left_column"/>
           <column class="advanced_right_column" flex="2"/>
         </columns>
 
         <rows>
-          
-          <row property="http://songbirdnest.com/data/1.0#ordinal" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#ordinal"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#ordinal"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#created" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#created"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#created"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#updated" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#updated"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#updated"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#contentURL" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#contentURL"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#contentURL"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#contentLength" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#contentLength"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#contentLength"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#lastPlayTime" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#playCount" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#playCount"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#playCount"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#lastSkipTime" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#skipCount" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#skipCount"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#skipCount"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#bitRate" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#bitRate"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#bitRate"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#channels" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#channels"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#channels"/>
-          </row>
-
-          <row property="http://songbirdnest.com/data/1.0#sampleRate" class="advTabRowElements">
-            <label property-type="label" crop="end"
-                   property="http://songbirdnest.com/data/1.0#sampleRate"/>
-            <textbox readonly="true" flex="1" property="http://songbirdnest.com/data/1.0#sampleRate"/>
-          </row>
-
           <row property="http://songbirdnest.com/data/1.0#trackName" class="advTabRowElements">
             <label property-type="label" crop="end"
                    property="http://songbirdnest.com/data/1.0#trackName"/>
@@ -527,7 +480,7 @@
           <row property="http://songbirdnest.com/data/1.0#bpm" class="advTabRowElements">
             <label property-type="label" crop="end"
                    property="http://songbirdnest.com/data/1.0#bpm"/>
-            <textbox property="http://songbirdnest.com/data/1.0#bpm" 
+            <textbox property="http://songbirdnest.com/data/1.0#bpm"
                      flex="1"
                      class="long-number-input" />
           </row>
@@ -575,7 +528,7 @@
     </vbox>
     </tabpanels>
   </tabbox>
-  
+
   <hbox class="dialog-button-box" align="center">
     <button id="prev_button" flex="0"
             label="&trackeditor.prev.button.label;"
@@ -596,7 +549,7 @@
     <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
 #endif
   </hbox>
- 
+
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/trackEditorState.js" />
   <script type="application/x-javascript"
@@ -605,19 +558,19 @@
           src="chrome://songbird/content/scripts/trackEditorWidgetAlbumArtwork.js" />
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/trackEditor.js" />
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/windowUtils.js" />
   <script src="chrome://global/content/nsDragAndDrop.js"/>
-  
+
   <keyset id="trackEditorKeys">
     <key id="trackeditor-prev-key" key="&trackeditor.prev.key;"
          modifiers="accel" command="trackeditor-prev-cmd"/>
     <key id="trackeditor-next-key" key="&trackeditor.next.key;"
          modifiers="accel" command="trackeditor-next-cmd"/>
   </keyset>
-  
+
   <commandset id="trackEditorCommands">
     <command id="trackeditor-prev-cmd" oncommand="TrackEditor.prev();"/>
     <command id="trackeditor-next-cmd" oncommand="TrackEditor.next();"/>
