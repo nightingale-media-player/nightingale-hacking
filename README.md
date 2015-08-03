@@ -38,7 +38,7 @@ Even though this source contains a debian/ folder, do not consider it as produci
 
 Configure Options
 =================
-`ac_add_options (option here)`
+`ac_add_options (option here)` (one per line) in a `nightingale.config` file in the top source directory.
 
  option                                  | description 
 -----------------------------------------|-------------
