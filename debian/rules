@@ -40,3 +40,4 @@ override_dh_auto_clean:
 
 override_dh_clean:
 	dh_clean nightingale.config config.log
+
