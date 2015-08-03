@@ -22,7 +22,7 @@ Build-Depends:
  unzip,
  wget,
  zip
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Homepage: http://www.getnightingale.com
 Vcs-Browser: https://github.com/nightingale-media-player/nightingale-hacking
 Vcs-Git: https://github.com/nightingale-media-player/nightingale-hacking.git
