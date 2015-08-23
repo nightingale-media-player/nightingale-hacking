@@ -102,8 +102,8 @@ var Logins = {
   loginManager: Cc["@mozilla.org/login-manager;1"]
       .getService(Ci.nsILoginManager),
 
-  LOGIN_HOSTNAME: 'https://www.last.fm',
-  LOGIN_FORMURL: 'https://www.last.fm',
+  LOGIN_HOSTNAME: 'https://secure.last.fm',
+  LOGIN_FORMURL: 'https://secure.last.fm',
   LOGIN_FIELD_USERNAME: 'username',
   LOGIN_FIELD_PASSWORD: 'password',
 
@@ -1380,7 +1380,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
           }
 
           // We're listening for the LastFM "Permissions Granted" page. It will
-          // have pathname "/api/grantaccess" on the last.fm domain or a
+          // have pathname "/api/auth" on the last.fm domain or a
           // localized version such as lastfm.fr
           var loc = e.target.location;
           if (!/last\.?fm/.test(loc.host)) {
@@ -1393,8 +1393,13 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
             return;
           }
 
-          if (loc.pathname.search(/grantaccess/i) == -1) {
-            // Ignore LastFM pages that aren't the "Permissions Granted" page.
+          if (loc.pathname.search(/api\/auth/i) == -1) {
+            // Ignore LastFM pages that aren't the auth page.
+            return;
+          }
+          else if(self.login_phase == AUTH_PHASE_TOKEN_REQUEST) {
+            // first the user has to give use access to the last.fm API
+            self.login_phase = AUTH_PHASE_APP_APPROVE;
             return;
           }
 
