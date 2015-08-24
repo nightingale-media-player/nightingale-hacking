@@ -4,7 +4,7 @@ compiler: gcc
 env:
   matrix:
     - DEBUG=false
-    - DEBUG=true NSPR_LOG_MODULES=sbMetadataHandlerTaglib:5
+    - DEBUG=true NSPR_LOG_MODULES=sbSeekableChannel,sbMetadataHandlerTaglib:5
 before_install:
  - export DISPLAY=:99.0
  - sh -e /etc/init.d/xvfb start
