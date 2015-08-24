@@ -91,6 +91,7 @@ case $OSTYPE in
                 fi
                 echo "Need to extract $fname"
                 tar --checkpoint=.100 -xf "$fname"
+                echo "\n"
             fi
         } ; )
 
