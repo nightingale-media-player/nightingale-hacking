@@ -2,7 +2,7 @@ sudo: false
 language: cpp
 compiler: gcc
 env:
-  matric:
+  matrix:
     - DEBUG=false
     - DEBUG=true
 before_install:
