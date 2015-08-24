@@ -21,3 +21,47 @@ file_filter = locales/<lang>/songbird/preferences.dtd
 source_file = locales/en-US/songbird/preferences.dtd
 source_lang = en-US
 
+[LastFM.overlaydtd]
+file_filter = extensions/lastfm/chrome/locale/<lang>/overlay.dtd
+source_file = extensions/lastfm/chrome/locale/en-US/overlay.dtd
+source_lang = en-US
+
+[LastFM.overlayproperties]
+file_filter = extensions/lastfm/chrome/locale/<lang>/overlay.properties
+source_file = extensions/lastfm/chrome/locale/en-US/overlay.properties
+source_lang = en-US
+
+[mashTape.overlaydtd]
+file_filter = extensions/mashTape/chrome/locale/<lang>/overlay.dtd
+source_file = extensions/mashTape/chrome/locale/en-US/overlay.dtd
+source_lang = en-US
+
+[mashTape.optionsdtd]
+file_filter = extensions/mashTape/chrome/locale/<lang>/options.dtd
+source_file = extensions/mashTape/chrome/locale/en-US/options.dtd
+source_lang = en-US
+
+[mashTape.mashtapeproperties]
+file_filter = extensions/mashTape/chrome/locale/<lang>/mashtape.properties
+source_file = extensions/mashTape/chrome/locale/en-US/mashtape.properties
+source_lang = en-US
+
+[SHOUTcast.overlaydtd]
+file_filter = extensions/shoutcast/chrome/locale/<lang>/overlay.dtd
+source_file = extensions/shoutcast/chrome/locale/en-US/overlay.dtd
+source_lang = en-US
+
+[SHOUTcast.optionsdtd]
+file_filter = extensions/shoutcast/chrome/locale/<lang>/options.dtd
+source_file = extensions/shoutcast/chrome/locale/en-US/options.dtd
+source_lang = en-US
+
+[SHOUTcast.genresproperties]
+file_filter = extensions/shoutcast/chrome/locale/<lang>/genres.properties
+source_file = extensions/shoutcast/chrome/locale/en-US/genres.properties
+source_lang = en-US
+
+[SHOUTcast.overlayproperties]
+file_filter = extensions/shoutcast/chrome/locale/<lang>/overlay.properties
+source_file = extensions/shoutcast/chrome/locale/en-US/overlay.properties
+source_lang = en-US
