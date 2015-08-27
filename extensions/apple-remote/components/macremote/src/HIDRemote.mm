@@ -277,7 +277,7 @@ static HIDRemote *sHIDRemote = nil;
 		{
 			if ([deviceSupportLevel intValue] > (int)supportLevel)
 			{
-				supportLevel = [deviceSupportLevel intValue];
+				supportLevel = ( HIDRemoteAluminumRemoteSupportLevel )[deviceSupportLevel intValue];
 			}
 		}
 	}
@@ -993,17 +993,17 @@ static HIDRemote *sHIDRemote = nil;
 			{
 				case kHIDUsage_Csmr_MenuPick:
 					// Aluminum Remote: Center
-					buttonCode = (kHIDRemoteButtonCodeCenter|kHIDRemoteButtonCodeAluminumMask);
+					buttonCode = ( HIDRemoteButtonCode )(kHIDRemoteButtonCodeCenter|kHIDRemoteButtonCodeAluminumMask);
 				break;
 				
 				case kHIDUsage_Csmr_ModeStep:
 					// Aluminium Remote: Center Hold
-					buttonCode = (kHIDRemoteButtonCodeCenterHold|kHIDRemoteButtonCodeAluminumMask);
+					buttonCode = ( HIDRemoteButtonCode )(kHIDRemoteButtonCodeCenterHold|kHIDRemoteButtonCodeAluminumMask);
 				break;
 
 				case kHIDUsage_Csmr_PlayOrPause:
 					// Aluminum Remote: Play/Pause
-					buttonCode = (kHIDRemoteButtonCodePlay|kHIDRemoteButtonCodeAluminumMask);
+					buttonCode = ( HIDRemoteButtonCode )(kHIDRemoteButtonCodePlay|kHIDRemoteButtonCodeAluminumMask);
 				break;
 			
 				case kHIDUsage_Csmr_Rewind:
@@ -1119,7 +1119,7 @@ static HIDRemote *sHIDRemote = nil;
 		// .. use it to get the HID interface ..
 		hResult = (*cfPluginInterface)->QueryInterface(	cfPluginInterface, 
 								CFUUIDGetUUIDBytes(kIOHIDDeviceInterfaceID122),
-								(LPVOID)&hidDeviceInterface);
+								(void **)&hidDeviceInterface);
 									
 		if ((hResult!=S_OK) || (hidDeviceInterface==NULL))
 		{
@@ -1220,7 +1220,7 @@ static HIDRemote *sHIDRemote = nil;
 				NSNumber		*usage, *usagePage, *cookie;
 				HIDRemoteButtonCode	buttonCode = kHIDRemoteButtonCodeNone;
 				
-				hidDict = CFArrayGetValueAtIndex(hidElements, i);
+				hidDict = ( CFDictionaryRef )CFArrayGetValueAtIndex(hidElements, i);
 				
 				usage	  = (NSNumber *) CFDictionaryGetValue(hidDict, CFSTR(kIOHIDElementUsageKey));
 				usagePage = (NSNumber *) CFDictionaryGetValue(hidDict, CFSTR(kIOHIDElementUsagePageKey));
@@ -1357,7 +1357,7 @@ static HIDRemote *sHIDRemote = nil;
 		{
 			CFStringRef product, manufacturer, transport;
 		
-			if ((product = IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
+			if ((product = (CFStringRef)IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
 									(CFStringRef) @"Product",
 									kCFAllocatorDefault,
 									0)) != NULL)
@@ -1370,7 +1370,7 @@ static HIDRemote *sHIDRemote = nil;
 				CFRelease(product);
 			}
 
-			if ((manufacturer = IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
+			if ((manufacturer = (CFStringRef)IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
 										(CFStringRef) @"Manufacturer",
 										kCFAllocatorDefault,
 										0)) != NULL)
@@ -1383,7 +1383,7 @@ static HIDRemote *sHIDRemote = nil;
 				CFRelease(manufacturer);
 			}
 
-			if ((transport = IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
+			if ((transport = (CFStringRef)IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
 										(CFStringRef) @"Transport",
 										kCFAllocatorDefault,
 										0)) != NULL)
@@ -1405,7 +1405,7 @@ static HIDRemote *sHIDRemote = nil;
 			if ((_mode == kHIDRemoteModeExclusive) || (_mode == kHIDRemoteModeExclusiveAuto))
 			{
 				// Determine if this driver offers on-demand support for the Aluminum Remote (only relevant under OS versions < 10.6.2)
-				if ((aluSupport = IORegistryEntryCreateCFProperty((io_registry_entry_t)service,
+				if ((aluSupport = (CFNumberRef)IORegistryEntryCreateCFProperty((io_registry_entry_t)service,
 										  (CFStringRef) @"AluminumRemoteSupportLevelOnDemand",
 										  kCFAllocatorDefault,
 										  0)) != nil)
@@ -1432,7 +1432,7 @@ static HIDRemote *sHIDRemote = nil;
 			
 			if (supportLevel == kHIDRemoteAluminumRemoteSupportLevelNone)
 			{
-				if ((aluSupport = IORegistryEntryCreateCFProperty((io_registry_entry_t)service,
+				if ((aluSupport = (CFNumberRef)IORegistryEntryCreateCFProperty((io_registry_entry_t)service,
 										  (CFStringRef) @"AluminumRemoteSupportLevel",
 										  kCFAllocatorDefault,
 										  0)) != nil)
@@ -1448,7 +1448,7 @@ static HIDRemote *sHIDRemote = nil;
 				{
 					CFStringRef ioKitClassName;
 				
-					if ((ioKitClassName = IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
+					if ((ioKitClassName = (CFStringRef)IORegistryEntryCreateCFProperty(	(io_registry_entry_t)service,
 												CFSTR(kIOClassKey),
 												kCFAllocatorDefault,
 												0)) != nil)
@@ -1693,7 +1693,7 @@ static HIDRemote *sHIDRemote = nil;
 			[shTimer invalidate];
 			[hidAttribsDict removeObjectForKey:kHIDRemoteSimulateHoldEventsTimer];
 
-			[self _sendButtonCode:(((HIDRemoteButtonCode)[shButtonCode unsignedIntValue])|kHIDRemoteButtonCodeHoldMask) isPressed:YES hidAttribsDict:hidAttribsDict];
+			[self _sendButtonCode:(HIDRemoteButtonCode) (((HIDRemoteButtonCode)[shButtonCode unsignedIntValue])|(HIDRemoteButtonCode) kHIDRemoteButtonCodeHoldMask) isPressed:YES hidAttribsDict:hidAttribsDict];
 		}
 	}
 }
@@ -1747,7 +1747,7 @@ static HIDRemote *sHIDRemote = nil;
 					{
 						if (shButtonCode!=nil)
 						{
-							[self _sendButtonCode:(((HIDRemoteButtonCode)[shButtonCode unsignedIntValue])|kHIDRemoteButtonCodeHoldMask) isPressed:NO hidAttribsDict:hidAttribsDict];
+							[self _sendButtonCode:(HIDRemoteButtonCode) (((HIDRemoteButtonCode)[shButtonCode unsignedIntValue])|(HIDRemoteButtonCode) kHIDRemoteButtonCodeHoldMask) isPressed:NO hidAttribsDict:hidAttribsDict];
 						}
 					}
 				}
@@ -1807,7 +1807,7 @@ static HIDRemote *sHIDRemote = nil;
 			buttonCode = kHIDRemoteButtonCodePlayHold;
 		}
 	
-		[((NSObject <HIDRemoteDelegate> *)[self delegate]) hidRemote:self eventWithButton:(buttonCode & (~kHIDRemoteButtonCodeAluminumMask)) isPressed:isPressed fromHardwareWithAttributes:hidAttribsDict];
+		[((NSObject <HIDRemoteDelegate> *)[self delegate]) hidRemote:self eventWithButton:(HIDRemoteButtonCode) (((HIDRemoteButtonCode)buttonCode) & ((HIDRemoteButtonCode)(~kHIDRemoteButtonCodeAluminumMask))) isPressed:isPressed fromHardwareWithAttributes:hidAttribsDict];
 	}
 }
 
@@ -1819,7 +1819,7 @@ static HIDRemote *sHIDRemote = nil;
 	{
 		IOHIDQueueInterface **queueInterface  = NULL;
 		
-		queueInterface  = [[hidAttribsDict objectForKey:kHIDRemoteHIDQueueInterface] pointerValue];
+		queueInterface  = (IOHIDQueueInterface **)[[hidAttribsDict objectForKey:kHIDRemoteHIDQueueInterface] pointerValue];
 		
 		if (interface == queueInterface)
 		{
@@ -1831,7 +1831,7 @@ static HIDRemote *sHIDRemote = nil;
 
 			if ((lastButtonPressedNumber = [hidAttribsDict objectForKey:kHIDRemoteLastButtonPressed]) != nil)
 			{
-				lastButtonPressed = [lastButtonPressedNumber unsignedIntValue];
+				lastButtonPressed = (HIDRemoteButtonCode)[lastButtonPressedNumber unsignedIntValue];
 			}
 
 			while (result == kIOReturnSuccess)
@@ -1857,7 +1857,7 @@ static HIDRemote *sHIDRemote = nil;
 					
 					if (buttonCodeNumber!=nil)
 					{
-						HIDRemoteButtonCode buttonCode = [buttonCodeNumber unsignedIntValue];
+						HIDRemoteButtonCode buttonCode = (HIDRemoteButtonCode)[buttonCodeNumber unsignedIntValue];
 					
 						if (hidEvent.value == 0)
 						{
