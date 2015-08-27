@@ -48,14 +48,14 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIAPPLEREMOTESERVICE
   
-  NS_IMETHOD OnPlayButtonPressed();
-  NS_IMETHOD OnMenuButtonPressed();
-  NS_IMETHOD OnVolumeUpPressed();
-  NS_IMETHOD OnVolumeDownPressed();
-  NS_IMETHOD OnNextTrackPressed();
-  NS_IMETHOD OnNextTrackReleased();
-  NS_IMETHOD OnPrevTrackPressed();
-  NS_IMETHOD OnPrevTrackReleased();
+  NS_IMETHOD OnPlayButton();
+  NS_IMETHOD OnMenuButton();
+  NS_IMETHOD OnVolumeUp();
+  NS_IMETHOD OnVolumeDown();
+  NS_IMETHOD OnNextTrack();
+  NS_IMETHOD OnNextTrackHold();
+  NS_IMETHOD OnPrevTrack();
+  NS_IMETHOD OnPrevTrackHold();
 
 protected:
   NS_IMETHOD GetPlaybackControl(sbIMediacorePlaybackControl **aPlaybackControl);
