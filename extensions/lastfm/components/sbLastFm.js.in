@@ -284,10 +284,11 @@ function Listeners() {
 // an object that represents a played track for sending to Last.fm
 function PlayedTrack(mediaItem, timestamp, source) {
   // copy properties out of the media item
-  this.artist = mediaItem.getProperty(SBProperties.artistName);
+  // Default to the MusicBrainz unknown artist name
+  this.artist = mediaItem.getProperty(SBProperties.artistName) || "[unknown]";
   this.track = mediaItem.getProperty(SBProperties.trackName);
   this.duration = Math.round(parseInt(
-      mediaItem.getProperty(SBProperties.duration))/1000000);
+      mediaItem.getProperty(SBProperties.duration), 10)/1000000);
 
   // only set optional properties if they are set
   var tempVal;
@@ -759,7 +760,7 @@ function sbLastFm_submit(submissions, successCallback) {
     params = submissions[0];
   }
   else {
-    // Recursively scrobble the track if we have more tracks than the API
+    // Recursively scrobble the tracks if we have more tracks than the API
     // accepts at once.
     if(submissions.length > 50) {
       var count = 0;
@@ -771,14 +772,7 @@ function sbLastFm_submit(submissions, successCallback) {
       this.submit(submissions.slice(50), callback);
       submissions = submissions.slice(0, 50);
     }
-
-    var submission;
-    for (var i=0; i < submissions.length; ++i) {
-      submission = submissions[i];
-      for(var p in submission) {
-        params[p+"["+i+"]"] = submission[p];
-      }
-    }
+    params = submissions;
   }
 
   this.apiCall("track.scrobble", params, function response(success) {
@@ -1426,10 +1420,9 @@ function sbLastFm_scrobble(aEntries) {
       // don't scrobble non-audio tracks or tracks w/ missing metadata
       // scrobbled anyway so we don't try again in the future
       if (entry_list[i].item.getProperty(SBProperties.contentType) != "audio"
-          || entry_list[i].item.getProperty(SBProperties.artistName) == null
           || entry_list[i].item.getProperty(SBProperties.trackName) == null
           || parseInt(entry_list[i].item.getProperty(SBProperties.duration), 10)
-             / 1000000 > 30)
+             / 1000000 < 30)
       {
         continue;
       }
@@ -1454,6 +1447,7 @@ function sbLastFm_scrobble(aEntries) {
                           Math.round(entry_list[i].timestamp/1000000),
                           source));
     }
+
     // submit to the last.fm audioscrobbler api
     var self = this;
     this.submit(scrobble_list,
@@ -1709,9 +1703,18 @@ function sbLastFm_onTrackChange(aItem) {
   // NOTE: This depends on the current assumption that onTrackChange will
   // be run before onEntriesAdded. Otherwise love/ban won't work.
 
-  if (aItem.getProperty(SBProperties.artistName) == null ||
-      aItem.getProperty(SBProperties.trackName) == null)
+  if (aItem.getProperty(SBProperties.trackName) == null)
   {
+    return;
+  }
+
+  // send now playing info if appropriate
+  if (this.shouldScrobble && this.loggedIn &&
+      aItem.getProperty(SBProperties.excludeFromHistory) != '1') {
+    this.nowPlaying(new PlayedTrack(aItem));
+  }
+
+  if(aItem.getProperty(SBProperties.artistName) == null) {
     return;
   }
 
@@ -1721,12 +1724,6 @@ function sbLastFm_onTrackChange(aItem) {
   var artistName = aItem.getProperty(SBProperties.artistName).toLowerCase();
   if (this.lovedTracks && this.lovedTracks[trackName + "@@" + artistName]) {
     this.loveBan(aItem, true);
-  }
-
-  // send now playing info if appropriate
-  if (this.shouldScrobble && this.loggedIn &&
-      aItem.getProperty(SBProperties.excludeFromHistory) != '1') {
-    this.nowPlaying(new PlayedTrack(aItem));
   }
 
   this.userTags = new Object();
