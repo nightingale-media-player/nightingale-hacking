@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+
+# -*- Mode: Java; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+# ***** BEGIN LICENSE BLOCK *****
+# Version: MPL 1.1/GPL 2.0/LGPL 2.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# The Original Code is the Firefox Preferences System.
+#
+# The Initial Developer of the Original Code is
+# Ben Goodger.
+# Portions created by the Initial Developer are Copyright (C) 2005
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#   Ben Goodger <ben@mozilla.org>
+#
+# Alternatively, the contents of this file may be used under the terms of
+# either the GNU General Public License Version 2 or later (the "GPL"), or
+# the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+# in which case the provisions of the GPL or the LGPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of either the GPL or the LGPL, and not to allow others to
+# use your version of this file under the terms of the MPL, indicate your
+# decision by deleting the provisions above and replace them with the notice
+# and other provisions required by the GPL or the LGPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the MPL, the GPL or the LGPL.
+#
+# ***** END LICENSE BLOCK *****
+
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css" type="text/css"?> 
+
+<!DOCTYPE dialog [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % sanitizeDTD SYSTEM "chrome://browser/locale/sanitize.dtd">
+  %brandDTD;
+  %sanitizeDTD;
+]>
+
+<prefwindow id="SanitizeDialog" type="child"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            dlgbuttons="accept,cancel,help"
+            ondialoghelp="openPrefsHelp()"
+            style="width: &dialog.width;;"
+            title="&sanitizePrefs2.title;">
+
+  <script type="application/javascript" src="chrome://browser/content/utilityOverlay.js"/>
+
+  <prefpane id="SanitizeDialogPane"
+            helpTopic="prefs-clear-private-data">
+
+    <preferences>
+      <preference id="privacy.clearOnShutdown.history"               name="privacy.clearOnShutdown.history"               type="bool"/>
+      <preference id="privacy.clearOnShutdown.formdata"              name="privacy.clearOnShutdown.formdata"              type="bool"/>
+      <preference id="privacy.clearOnShutdown.passwords"             name="privacy.clearOnShutdown.passwords"             type="bool"/>
+      <preference id="privacy.clearOnShutdown.downloads"             name="privacy.clearOnShutdown.downloads"             type="bool"/>
+      <preference id="privacy.clearOnShutdown.cookies"               name="privacy.clearOnShutdown.cookies"               type="bool"/>
+      <preference id="privacy.clearOnShutdown.cache"                 name="privacy.clearOnShutdown.cache"                 type="bool"/>
+      <preference id="privacy.clearOnShutdown.offlineApps"           name="privacy.clearOnShutdown.offlineApps"           type="bool"/>
+      <preference id="privacy.clearOnShutdown.sessions"              name="privacy.clearOnShutdown.sessions"              type="bool"/>
+      <preference id="privacy.clearOnShutdown.siteSettings"          name="privacy.clearOnShutdown.siteSettings"          type="bool"/>
+    </preferences>
+
+    <description>&clearDataSettings2.label;</description>
+
+    <groupbox orient="horizontal">
+      <caption label="&historySection.label;"/>
+      <grid flex="1">
+        <columns>
+          <column style="width: &column.width;"/>
+          <column flex="1"/>
+        </columns>
+        <rows>
+          <row>
+            <checkbox label="&itemBrowsingHistory.label;"
+                      accesskey="&itemBrowsingHistory.accesskey;"
+                      preference="privacy.clearOnShutdown.history"/>
+            <checkbox label="&itemCookies.label;"
+                      accesskey="&itemCookies.accesskey;"
+                      preference="privacy.clearOnShutdown.cookies"/>
+          </row>
+          <row>
+            <checkbox label="&itemDownloadHistory.label;"
+                      accesskey="&itemDownloadHistory.accesskey;"
+                      preference="privacy.clearOnShutdown.downloads"/>
+            <checkbox label="&itemActiveLogins.label;"
+                      accesskey="&itemActiveLogins.accesskey;"
+                      preference="privacy.clearOnShutdown.sessions"/>
+          </row>
+          <row>
+            <checkbox label="&itemFormSearchHistory.label;"
+                      accesskey="&itemFormSearchHistory.accesskey;"
+                      preference="privacy.clearOnShutdown.formdata"/>
+            <checkbox label="&itemCache.label;"
+                      accesskey="&itemCache.accesskey;"
+                      preference="privacy.clearOnShutdown.cache"/>
+          </row>
+        </rows>
+      </grid>
+    </groupbox>
+    <groupbox orient="horizontal">
+      <caption label="&dataSection.label;"/>
+      <grid flex="1">
+        <columns>
+          <column style="width: &column.width;"/>
+          <column flex="1"/>
+        </columns>
+        <rows>
+          <row>
+            <checkbox label="&itemPasswords.label;"
+                      accesskey="&itemPasswords.accesskey;"
+                      preference="privacy.clearOnShutdown.passwords"/>
+            <checkbox label="&itemOfflineApps.label;"
+                      accesskey="&itemOfflineApps.accesskey;"
+                      preference="privacy.clearOnShutdown.offlineApps"/>
+          </row>
+          <row>
+            <checkbox label="&itemSitePreferences.label;"
+                      accesskey="&itemSitePreferences.accesskey;"
+                      preference="privacy.clearOnShutdown.siteSettings"/>
+          </row>
+        </rows>
+      </grid>
+    </groupbox>
+  </prefpane>
+</prefwindow>

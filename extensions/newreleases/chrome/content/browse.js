@@ -33,9 +33,11 @@ if (typeof(gBrowser) == "undefined")
 			.getService(Ci.nsIWindowMediator)
 			.getMostRecentWindow("Songbird:Main").window.gBrowser;
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
     		.createInstance(Ci.sbIMetrics);
+#endif
 
 function flushDisplay() {
 	if (typeof(Components) == "undefined")
@@ -138,7 +140,9 @@ NewReleaseAlbum.init = function() {
 	this.showExtendedInfo = Application.prefs
 			.getValue("extensions.newreleases.showExtendedInfo", false);
 
+#ifdef METRICS_ENABLED
 	gMetrics.metricsInc("newReleases", "servicepane.clicked", "");
+#endif
 	// Register our UI display callback with the newReleases object
 	if (!this.nrSvc.hasDisplayCallback()) {
 		var displayCB = new this.displayCallback(this);
@@ -344,8 +348,10 @@ NewReleaseAlbum.openProviderPage = function() {
  ***************************************************************************/
 NewReleaseAlbum.playArtist = function(e) {
 	var artistName = this.getAttribute("artistName");
-	
+
+#ifdef METRICS_ENABLED
 	gMetrics.metricsInc("newReleases", "browse.view.artist.playartist", "");
+#endif
 	var list = songbirdMainWindow.NewReleases.releasePlaylist;
 	var view = list.createView();
 	var cfs = view.cascadeFilterSet;
@@ -646,7 +652,9 @@ NewReleaseAlbum.browseByDates = function() {
 	var todayDate = today.getDate();
 	var todayYear = today.getFullYear();
 
+#ifdef METRICS_ENABLED
 	gMetrics.metricsInc("newReleases", "browse.view.date", "");
+#endif
 	while (releases.hasMoreElements()) {
 		if (this.abortDrawing)
 			return;
@@ -752,7 +760,9 @@ NewReleaseAlbum.browseByArtists = function() {
 	var todayDate = today.getDate();
 	var todayYear = today.getFullYear();
 
+#ifdef METRICS_ENABLED
 	gMetrics.metricsInc("newReleases", "browse.view.artist", "");
+#endif
 	while (releases.hasMoreElements()) {
 		if (this.abortDrawing)
 			return;
@@ -1057,8 +1067,10 @@ NewReleaseAlbum.createRowDateView = function(release) {
  * do metrics reporting, in addition to just opening the link
  ***************************************************************************/
 NewReleaseAlbum.openAndReport = function(e) {
+#ifdef METRICS_ENABLED
 	var metric = this.getAttribute("metric-key");
 	gMetrics.metricsInc("newReleases", "browse.link." + metric, "");
+#endif
 	gBrowser.loadOneTab(this.href);
 	e.preventDefault();
 	return false;
@@ -1196,10 +1208,12 @@ NewReleaseAlbum.changeFilter = function(updateCheckbox) {
 	this.filterLibraryArtists = !this.filterLibraryArtists;
 	Application.prefs.setValue("extensions.newreleases.filterLibraryArtists",
 			this.filterLibraryArtists);
+#ifdef METRICS_ENABLED
 	if (this.filterLibraryArtists)
 		gMetrics.metricsInc("newReleases", "filter.library", "");
 	else
 		gMetrics.metricsInc("newReleases", "filter.all", "");
+#endif
 
 	/* checks the filter checkbox (for the path taken when there are no
 	   results in the user's country and they click the button to see

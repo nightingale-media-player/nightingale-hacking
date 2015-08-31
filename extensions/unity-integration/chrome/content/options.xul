@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://mlyrics/skin/options.css" type="text/css"?>
+
+<!DOCTYPE page [
+	<!ENTITY % sbDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+	%sbDTD;
+	<!ENTITY % unity-integration-DTD SYSTEM "chrome://unity-integration/locale/overlay.dtd">
+	%unity-integration-DTD;
+]>
+
+<prefwindow id="unity-integration-prefs" 
+			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+			title="&unity-integration.options.title;">
+
+	<prefpane label="&unity-integration.options.title;">
+		<preferences>
+			<preference id="pref_hideOnClose" name="extensions.unity-integration.hideOnClose" type="bool" />
+		</preferences>
+
+		<groupbox>
+			<caption label="General"/>
+
+			<checkbox preference="pref_hideOnClose" label="&unity-integration.options.hideOnClose;" />
+		</groupbox>
+	</prefpane>
+
+</prefwindow>

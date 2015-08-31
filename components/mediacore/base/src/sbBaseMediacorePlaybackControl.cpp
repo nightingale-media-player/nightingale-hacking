@@ -163,6 +163,9 @@ sbBaseMediacorePlaybackControl::Seek(PRUint64 aPosition, PRUint32 aFlags)
   nsresult rv = OnSeek(aPosition, aFlags);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::SEEKED);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoMonitor mon(mMonitor);
   mPosition = aPosition;
 
@@ -436,6 +439,14 @@ sbBaseMediacorePlaybackControl::DispatchPlaybackControlEvent(PRUint32 aType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   switch (aType) {
+    case sbIMediacoreEvent::SEEKED:
+      PRUint64 number;
+      rv = GetPosition(&number);
+      if (NS_SUCCEEDED(rv)) {
+        rv = bag->SetPropertyAsUint64(NS_LITERAL_STRING("position"), number);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      break;
     case sbIMediacoreEvent::STREAM_BEFORE_PAUSE:
     case sbIMediacoreEvent::STREAM_BEFORE_STOP:
     {

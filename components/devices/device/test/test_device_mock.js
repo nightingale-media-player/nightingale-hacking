@@ -90,24 +90,24 @@ function runTest () {
   // or has failed or is completed. It is at the failed or completed state that
   // the handler terminates the unit test.
   device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
-  var handler = function handler(event) { 
+  var handler = function handler(event) {
     if (event.type == Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED) {
     
       // Check the current test status and end it if the test is done
       switch (testStatus) {
         case TEST_COMPLETED:
           device.removeEventListener(handler);
-          doTimeout(500, function() {
+          //doTimeout(500, function() {
             testFinished();
-            return;
-          });
+          //  return;
+          //});
           return;
         case TEST_FAILED:
           device.removeEventListener(handler);
-          doTimeout(500, function() {
+          //doTimeout(500, function() {
             fail(testFailMessage);
-            return;
-          });
+          //  return;
+          //});
           return;
         case TEST_RUNNING:
           // Continue and perform remaining tests
@@ -360,6 +360,7 @@ function test_set_and_verify(device, audio, video, image)
   assertEqual(syncSettings.getMediaSettings(
                                   Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE).mgmtType,
               image);
+  log("Checked Sync settings back");
 }
 
 function test_sync_settings(device) {
@@ -367,12 +368,12 @@ function test_sync_settings(device) {
   let syncSettings = device.defaultLibrary.syncSettings;
 
   log("Changing management type to all");
-  
   test_set_and_verify(device,
                       Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL,
                       Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL,
                       Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL);
 
+  log("Changign management type to none");
   test_set_and_verify(device,
                       Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,
                       Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,

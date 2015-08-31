@@ -153,12 +153,13 @@ firstRunImportMediaSvc.prototype = {
         metricsImportType = "none";
         break;
     }
-    
+
+#ifdef METRICS_ENABLED
     var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Ci.sbIMetrics);
     metrics.metricsInc("firstrun", "mediaimport", metricsImportType);
+#endif
   },
-
 
   //----------------------------------------------------------------------------
   //

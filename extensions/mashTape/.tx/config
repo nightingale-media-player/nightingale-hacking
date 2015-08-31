@@ -1,0 +1,18 @@
+[main]
+host = http://beta.babelzilla.org
+
+[mashTape.mashtapeproperties]
+file_filter = chrome/locale/<lang>/mashtape.properties
+source_file = chrome/locale/en-US/mashtape.properties
+source_lang = en-US
+
+[mashTape.overlaydtd]
+file_filter = chrome/locale/<lang>/overlay.dtd
+source_file = chrome/locale/en-US/overlay.dtd
+source_lang = en-US
+
+[mashTape.optionsdtd]
+file_filter = chrome/locale/<lang>/options.dtd
+source_file = chrome/locale/en-US/options.dtd
+source_lang = en-US
+

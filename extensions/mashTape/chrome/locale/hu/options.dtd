@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Lejátszás közben fedezze fel a dalhoz kapcsolódó Flickr fotókat, YouTube videokat, Last.fm gyűjteményeket, Goggle News cikkeket és még sok mást">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Általános">
+<!ENTITY mtprefs.info "Információ">
+<!ENTITY mtprefs.review "Értékelések">
+<!ENTITY mtprefs.rss "Hírek">
+<!ENTITY mtprefs.photo "Képek">
+<!ENTITY mtprefs.flash "Filmek">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Alapértelmezett lap">
+<!ENTITY mtprefs.defaulttab.help "A mashTape indulásokor:">
+<!ENTITY mtprefs.show.info "Információ megjelenítése">
+<!ENTITY mtprefs.show.review "Értékelések megjelenítése">
+<!ENTITY mtprefs.show.rss "Hírek megjelenítése">
+<!ENTITY mtprefs.show.photo "Képek megjelenítése">
+<!ENTITY mtprefs.show.flash "Filmek megjelenítése">
+<!ENTITY mtprefs.autohide "Automatikus elrejtés">
+<!ENTITY mtprefs.autohide.help "A mashTape panel automatikusan lecsukódik a Songbird böngészőjre váltáskor.">
+<!ENTITY mtprefs.services "Szolgáltatások">
+<!ENTITY mtprefs.getmore "További szolgáltatások a mashTape-hez">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Információ lap beállítása">
+<!ENTITY mtprefs.tab.review "Értékelések lap beállítása">
+<!ENTITY mtprefs.tab.rss "Hírek lap beállítása">
+<!ENTITY mtprefs.tab.photo "Képek lap beállítása">
+<!ENTITY mtprefs.tab.flash "Filmek lap beállítása">
+<!ENTITY mtprefs.tab.help "íésp megjelenítése a mashTape panelen.">
+<!ENTITY mtprefs.single "Ez a panel egyszerre csak egy szolgáltatás tartalmát képes megjelenítwni. Válasszon ki egy szolgáltatást az alábbi listából.">
+<!ENTITY mtprefs.multiple "Ez a panel egyszerre több szolgáltatás tartalmát is képes megjeleníteni. Válassza ki a kívánt szolgáltatás(oka)taz alábbi listából.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Helyi adatok">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Amennyiben az elérhető, automatikusan megjeleníti a helyi előadók információt.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Kép görgetési sebessége">
+<!ENTITY mtprefs.tab.photo.faster "Gyorsabb">
+<!ENTITY mtprefs.tab.photo.slower "Lasabb">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Keresés kulcsszóra">
+<!ENTITY mtprefs.tab.photo.keywords "További keresendő kulcsszavak:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Ttovábbi kulcsszavak adhatók meg, amelyek alapján a képkereső találtaokat ad vissza. A kulcsszavakat szóközzel elválasztva kell beírni, pl.: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Filmek automatikus lejátszása">
+<!ENTITY mtprefs.tab.video.autoplay.help "Engedélyezve ezt a beállítást, a kötegelt videókat támogató szolgáltatók videói automatikusan elindulnak egymás után. Ez hasznos lehet például akkor, ha a Zene Videókat az MTV-ről automatikusan egymás után akarod lejátszani. A kötegelt videókat nem támogató szolgáltatók esetében ez a beállítás nem fog muködni.">

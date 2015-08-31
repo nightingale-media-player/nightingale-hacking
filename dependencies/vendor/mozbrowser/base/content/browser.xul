@@ -1,0 +1,635 @@
+#filter substitution
+<?xml version="1.0"?>
+# -*- Mode: HTML -*-
+#
+# ***** BEGIN LICENSE BLOCK *****
+# Version: MPL 1.1/GPL 2.0/LGPL 2.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# The Original Code is Mozilla Communicator client code, released
+# March 31, 1998.
+#
+# The Initial Developer of the Original Code is
+# Netscape Communications Corporation.
+# Portions created by the Initial Developer are Copyright (C) 1998-2000
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#   Blake Ross <blake@cs.stanford.edu>
+#   David Hyatt <hyatt@mozilla.org>
+#   Joe Hewitt <hewitt@netscape.com>
+#   Pierre Chanial <chanial@noos.fr>
+#   Dean Tessman <dean_tessman@hotmail.com>
+#   Johnathan Nightingale <johnath@mozilla.com>
+#   Dão Gottwald <dao@mozilla.com>
+#   Ehsan Akhgari <ehsan.akhgari@gmail.com>
+#   Robert Strong <robert.bugzilla@gmail.com>
+#
+# Alternatively, the contents of this file may be used under the terms of
+# either the GNU General Public License Version 2 or later (the "GPL"), or
+# the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+# in which case the provisions of the GPL or the LGPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of either the GPL or the LGPL, and not to allow others to
+# use your version of this file under the terms of the MPL, indicate your
+# decision by deleting the provisions above and replace them with the notice
+# and other provisions required by the GPL or the LGPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the MPL, the GPL or the LGPL.
+#
+# ***** END LICENSE BLOCK *****
+
+<?xml-stylesheet href="chrome://browser/content/browser.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/content/places/places.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
+
+<?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
+<?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
+<?xul-overlay href="chrome://browser/content/places/placesOverlay.xul"?>
+
+# All DTD information is stored in a separate file so that it can be shared by
+# hiddenWindow.xul.
+#include browser-doctype.inc
+
+<window id="main-window"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="BrowserStartup()" onunload="BrowserShutdown()" onclose="return WindowIsClosing();"
+        title="&mainWindow.title;@PRE_RELEASE_SUFFIX@"
+        title_normal="&mainWindow.title;@PRE_RELEASE_SUFFIX@"
+#ifdef XP_MACOSX
+        title_privatebrowsing="&mainWindow.title;@PRE_RELEASE_SUFFIX@&mainWindow.titlemodifiermenuseparator;&mainWindow.titlePrivateBrowsingSuffix;"
+        titledefault="&mainWindow.title;@PRE_RELEASE_SUFFIX@"
+        titlemodifier=""
+        titlemodifier_normal=""
+        titlemodifier_privatebrowsing="&mainWindow.titlePrivateBrowsingSuffix;"
+#else
+        title_privatebrowsing="&mainWindow.titlemodifier;@PRE_RELEASE_SUFFIX@ &mainWindow.titlePrivateBrowsingSuffix;"
+        titlemodifier="&mainWindow.titlemodifier;@PRE_RELEASE_SUFFIX@"
+        titlemodifier_normal="&mainWindow.titlemodifier;@PRE_RELEASE_SUFFIX@"
+        titlemodifier_privatebrowsing="&mainWindow.titlemodifier;@PRE_RELEASE_SUFFIX@ &mainWindow.titlePrivateBrowsingSuffix;"
+#endif
+        titlemenuseparator="&mainWindow.titlemodifiermenuseparator;"
+        lightweightthemes="true"
+        lightweightthemesfooter="browser-bottombox"
+        windowtype="navigator:browser"
+        screenX="4" screenY="4"
+        browsingmode="normal"
+        toggletoolbar="true"
+        persist="screenX screenY width height sizemode"> 
+
+# All JS files which are not content (only) dependent that browser.xul
+# wishes to include *must* go into the global-scripts.inc file
+# so that they can be shared by macBrowserOverlay.xul.
+#include global-scripts.inc
+<script type="application/x-javascript" src="chrome://browser/content/nsContextMenu.js"/>
+
+#ifdef MOZ_SAFE_BROWSING
+<script type="application/x-javascript" src="chrome://browser/content/safebrowsing/sb-loader.js"/>
+#endif
+<script type="application/x-javascript" src="chrome://global/content/contentAreaUtils.js"/>
+
+<script type="application/javascript" src="chrome://browser/content/places/editBookmarkOverlay.js"/>
+
+# All sets except for popupsets (commands, keys, stringbundles and broadcasters) *must* go into the 
+# browser-sets.inc file for sharing with hiddenWindow.xul.
+#include browser-sets.inc
+
+  <popupset id="mainPopupSet">
+    <menupopup id="backForwardMenu"
+               onpopupshowing="return FillHistoryMenu(event.target);"
+               oncommand="gotoHistoryIndex(event);"
+               onclick="checkForMiddleClick(this, event);"/>
+    <tooltip id="aHTMLTooltip" onpopupshowing="return FillInHTMLTooltip(document.tooltipNode);"/>
+
+    <!-- for search and content formfill/pw manager -->
+    <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true" hidden="true"/>
+
+    <!-- for url bar autocomplete -->
+    <panel type="autocomplete-richlistbox" id="PopupAutoCompleteRichResult" noautofocus="true" hidden="true"/>
+
+    <panel id="editBookmarkPanel"
+           orient="vertical"
+           ignorekeys="true"
+           hidden="true"
+           onpopupshown="StarUI.panelShown(event);"
+           aria-labelledby="editBookmarkPanelTitle">
+      <row id="editBookmarkPanelHeader" align="center" hidden="true">
+        <vbox align="center">
+          <image id="editBookmarkPanelStarIcon"/>
+        </vbox>
+        <vbox>
+          <label id="editBookmarkPanelTitle"/>
+          <description id="editBookmarkPanelDescription"/>
+          <hbox>
+            <button id="editBookmarkPanelUndoRemoveButton"
+                    class="editBookmarkPanelHeaderButton"
+                    hidden="true"
+                    oncommand="StarUI.undoRemoveBookmarkCommand();"
+                    label="&editBookmark.undo.label;"
+                    accesskey="&editBookmark.undo.accessKey;"/>
+            <button id="editBookmarkPanelRemoveButton"
+                    class="editBookmarkPanelHeaderButton"
+                    oncommand="StarUI.removeBookmarkButtonCommand();"
+                    accesskey="&editBookmark.removeBookmark.accessKey;"/>
+            <button id="editBookmarkPanelEditButton"
+                    class="editBookmarkPanelHeaderButton"
+                    oncommand="StarUI.editButtonCommand();"
+                    label="&editBookmark.edit.label;"
+                    accesskey="&editBookmark.edit.accessKey;"/>
+          </hbox>
+        </vbox>
+      </row>
+      <vbox id="editBookmarkPanelContent" flex="1" hidden="true"/>
+      <hbox id="editBookmarkPanelBottomButtons" pack="end">
+#ifndef XP_UNIX
+        <button id="editBookmarkPanelDoneButton"
+                class="editBookmarkPanelBottomButton"
+                label="&editBookmark.done.label;"
+                default="true"
+                oncommand="StarUI.panel.hidePopup();"/>
+        <button id="editBookmarkPanelDeleteButton"
+                class="editBookmarkPanelBottomButton"
+                label="&editBookmark.cancel.label;"
+                oncommand="StarUI.cancelButtonOnCommand();"/>
+#else
+        <button id="editBookmarkPanelDeleteButton"
+                class="editBookmarkPanelBottomButton"
+                label="&editBookmark.cancel.label;"
+                oncommand="StarUI.cancelButtonOnCommand();"/>
+        <button id="editBookmarkPanelDoneButton"
+                class="editBookmarkPanelBottomButton"
+                label="&editBookmark.done.label;"
+                default="true"
+                oncommand="StarUI.panel.hidePopup();"/>
+#endif
+      </hbox>
+    </panel>
+
+    <popup id="toolbar-context-menu"
+           onpopupshowing="onViewToolbarsPopupShowing(event);">
+      <menuseparator/>
+      <menuitem command="cmd_CustomizeToolbars"
+                label="&viewCustomizeToolbar.label;"
+                accesskey="&viewCustomizeToolbar.accesskey;"/>
+    </popup>
+
+    <popup id="blockedPopupOptions" 
+           onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
+      <menuitem observes="blockedPopupAllowSite"/>
+      <menuitem observes="blockedPopupEditSettings"/>
+      <menuitem observes="blockedPopupDontShowMessage"/>
+      <menuseparator observes="blockedPopupsSeparator"/>
+    </popup>
+
+    <menupopup id="autohide-context"
+           onpopupshowing="FullScreen.getAutohide(this.firstChild);">
+      <menuitem type="checkbox" label="&fullScreenAutohide.label;"
+                accesskey="&fullScreenAutohide.accesskey;"
+                oncommand="FullScreen.setAutohide();"/>
+      <menuseparator/>
+      <menuitem label="&fullScreenExit.label;"
+                accesskey="&fullScreenExit.accesskey;"
+                oncommand="BrowserFullScreen();"/>
+    </menupopup>
+
+    <popup id="contentAreaContextMenu"
+           onpopupshowing="if (event.target != this) return true; updateEditUIVisibility(); gContextMenu = new nsContextMenu(this, window.getBrowser()); return gContextMenu.shouldDisplay;"
+           onpopuphiding="if (event.target == this) { gContextMenu = null; updateEditUIVisibility(); }">
+#include browser-context.inc
+    </popup>
+
+    <popup id="placesContext"/>
+
+    <!-- Popup for site identity information -->
+    <panel id="identity-popup" position="after_start" hidden="true" noautofocus="true"
+           onpopupshown="document.getElementById('identity-popup-more-info-button').focus();"
+           level="top">
+      <hbox id="identity-popup-container" align="top">
+        <image id="identity-popup-icon"/>
+        <vbox id="identity-popup-content-box">
+          <label id="identity-popup-connectedToLabel"
+                 class="identity-popup-label"
+                 value="&identity.connectedTo;"/>
+          <label id="identity-popup-connectedToLabel2"
+                 class="identity-popup-label"
+                 value="&identity.unverifiedsite2;"/>
+          <description id="identity-popup-content-host"
+                       class="identity-popup-description"/>
+          <label id="identity-popup-runByLabel"
+                 class="identity-popup-label"
+                 value="&identity.runBy;"/>
+          <description id="identity-popup-content-owner"
+                       class="identity-popup-description"/>
+          <description id="identity-popup-content-supplemental"
+                       class="identity-popup-description"/>
+          <description id="identity-popup-content-verifier"
+                       class="identity-popup-description"/>
+          <hbox id="identity-popup-encryption" flex="1">
+            <vbox>
+              <image id="identity-popup-encryption-icon"/>
+            </vbox>
+            <description id="identity-popup-encryption-label" flex="1"
+                         class="identity-popup-description"/>
+          </hbox>
+          <!-- Footer button to open security page info -->
+          <hbox pack="end">
+            <button id="identity-popup-more-info-button"
+                    label="&identity.moreInfoLinkText;"
+                    onblur="gIdentityHandler.hideIdentityPopup();"
+                    oncommand="gIdentityHandler.handleMoreInfoClick(event);"/>
+          </hbox>
+        </vbox>
+      </hbox>
+    </panel>
+
+    <tooltip id="urlTooltip">
+      <label crop="center" flex="1" class="tooltip-label"/>
+    </tooltip>
+
+    <panel id="ctrlTab-panel" class="KUI-panel" hidden="true" norestorefocus="true" level="top">
+      <hbox>
+        <button class="ctrlTab-preview" flex="1"/>
+        <button class="ctrlTab-preview" flex="1"/>
+        <button class="ctrlTab-preview" flex="1"/>
+        <button class="ctrlTab-preview" flex="1"/>
+        <button class="ctrlTab-preview" flex="1"/>
+        <button class="ctrlTab-preview" flex="1"/>
+      </hbox>
+      <hbox pack="center">
+        <button id="ctrlTab-showAll" class="ctrlTab-preview" noicon="true"/>
+      </hbox>
+    </panel>
+
+    <panel id="allTabs-panel" hidden="true" norestorefocus="true" ignorekeys="true"
+# XXX: KUI style disabled, because the transparent background slows down
+#      interacting with the panel, esp. the search field.
+#           class="KUI-panel"
+           onmouseover="allTabs._updateTabCloseButton(event);">
+      <hbox id="allTabs-meta" align="center">
+        <spacer flex="1"/>
+        <textbox id="allTabs-filter"
+                 tooltiptext="&allTabs.filter.emptyText;"
+                 type="search"
+                 oncommand="allTabs.filter();"/>
+        <spacer flex="1"/>
+        <toolbarbutton class="KUI-panel-closebutton"
+                       oncommand="allTabs.close()"
+                       tooltiptext="&closeCmd.label;"/>
+      </hbox>
+      <stack id="allTabs-stack">
+        <box id="allTabs-container"/>
+        <toolbarbutton id="allTabs-tab-close-button"
+                       class="tab-close-button"
+                       oncommand="allTabs.closeTab(event);"
+                       tooltiptext="&closeCmd.label;"
+                       style="visibility:hidden"/>
+      </stack>
+    </panel>
+  </popupset>
+
+  <!-- Bookmarks and history tooltip -->
+  <tooltip id="bhTooltip"/>
+
+  <toolbox id="navigator-toolbox" class="toolbox-top" mode="icons"
+#ifdef WINCE
+           defaulticonsize="small" iconsize="small"
+#endif
+           defaultmode="icons">
+    <!-- Menu -->
+    <toolbar type="menubar" id="toolbar-menubar" class="chromeclass-menubar" customizable="true"
+             defaultset="menubar-items"
+             mode="icons" iconsize="small" defaulticonsize="small"
+#ifdef XP_WIN
+             toolbarname="&menubarCmd.label;"
+             accesskey="&menubarCmd.accesskey;"
+#endif
+             context="toolbar-context-menu">
+      <toolbaritem id="menubar-items" align="center">
+# The entire main menubar is placed into browser-menubar.inc, so that it can be shared by 
+# hiddenWindow.xul.
+#include browser-menubar.inc
+      </toolbaritem>
+    </toolbar>
+
+    <toolbarpalette id="BrowserToolbarPalette">
+
+      <toolbaritem id="unified-back-forward-button" class="chromeclass-toolbar-additional"
+                   context="backForwardMenu">
+        <toolbarbutton id="back-button" class="toolbarbutton-1"
+                       label="&backCmd.label;"
+                       command="Browser:BackOrBackDuplicate"
+                       onclick="checkForMiddleClick(this, event);"
+                       tooltiptext="&backButton.tooltip;"/>
+        <toolbarbutton id="forward-button" class="toolbarbutton-1"
+                       label="&forwardCmd.label;"
+                       command="Browser:ForwardOrForwardDuplicate"
+                       onclick="checkForMiddleClick(this, event);"
+                       tooltiptext="&forwardButton.tooltip;"/>
+        <toolbarbutton id="back-forward-dropmarker" type="menu"
+                       disabled="true" tooltiptext="&backForwardMenu.tooltip;"
+                       onbroadcast="if (this.disabled) this.disabled =
+                                      document.getElementById('Browser:Back').hasAttribute('disabled') &amp;&amp;
+                                      document.getElementById('Browser:Forward').hasAttribute('disabled');">
+          <!-- bug 415444: event.stopPropagation is here for the cloned version of
+               this menupopup -->
+          <menupopup context=""
+                     position="after_start"
+                     onpopupshowing="return FillHistoryMenu(event.target);"
+                     oncommand="gotoHistoryIndex(event); event.stopPropagation();"
+                     onclick="checkForMiddleClick(this, event);"/>
+          <observes element="Browser:Back" attribute="disabled"/>
+          <observes element="Browser:Forward" attribute="disabled"/>
+        </toolbarbutton>
+      </toolbaritem>
+
+      <toolbarbutton id="reload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&reloadCmd.label;"
+                     command="Browser:ReloadOrDuplicate"
+                     onclick="checkForMiddleClick(this, event);"
+                     tooltiptext="&reloadButton.tooltip;"/>
+
+      <toolbarbutton id="stop-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&stopCmd.label;"
+                     command="Browser:Stop"
+                     tooltiptext="&stopButton.tooltip;"/>
+
+      <toolbarbutton id="home-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     persist="class"
+                     label="&homeButton.label;"
+                     ondragover="homeButtonObserver.onDragOver(event)"
+                     ondragenter="homeButtonObserver.onDragOver(event)"
+                     ondrop="homeButtonObserver.onDrop(event)"
+                     ondragleave="homeButtonObserver.onDragLeave(event)"
+                     onclick="BrowserGoHome(event);"/>
+
+      <toolbaritem id="urlbar-container" align="center" flex="400" persist="width"
+                   title="&locationItem.title;" class="chromeclass-location">
+        <textbox id="urlbar" flex="1"
+                 bookmarkhistoryemptytext="&urlbar.bookmarkhistory.emptyText;"
+                 bookmarkemptytext="&urlbar.bookmark.emptyText;"
+                 historyemptytext="&urlbar.history.emptyText;"
+                 noneemptytext="&urlbar.none.emptyText;"
+                 type="autocomplete"
+                 autocompletesearch="history"
+                 autocompletepopup="PopupAutoCompleteRichResult"
+                 completeselectedindex="true"
+                 tabscrolling="true"
+                 showcommentcolumn="true"
+                 showimagecolumn="true"
+                 enablehistory="true"
+                 maxrows="6"
+                 newlines="stripsurroundingwhitespace"
+                 oninput="gBrowser.userTypedValue = this.value;"
+                 ontextentered="this.handleCommand(param);"
+                 ontextreverted="return this.handleRevert();"
+                 pageproxystate="invalid"
+                 onsearchbegin="LocationBarHelpers._searchBegin();"
+                 onsearchcomplete="LocationBarHelpers._searchComplete();"
+                 onfocus="document.getElementById('identity-box').style.MozUserFocus= 'normal'"
+                 onblur="setTimeout(function() document.getElementById('identity-box').style.MozUserFocus = '', 0);">
+          <!-- Use onclick instead of normal popup= syntax since the popup
+               code fires onmousedown, and hence eats our favicon drag events.
+               We only add the identity-box button to the tab order when the location bar
+               has focus, otherwise pressing F6 focuses it instead of the location bar -->
+          <box id="identity-box" role="button"
+               onclick="gIdentityHandler.handleIdentityButtonEvent(event);"
+               onkeypress="gIdentityHandler.handleIdentityButtonEvent(event);">
+            <hbox id="identity-box-inner" align="center">
+              <stack id="page-proxy-stack"
+                     onclick="PageProxyClickHandler(event);">
+                <image id="urlbar-throbber" busy="false"/>
+                <image id="page-proxy-favicon" validate="never"
+                       pageproxystate="invalid"
+                       ondragstart="proxyIconDNDObserver.onDragStart(event);"
+                       onerror="this.removeAttribute('src');"/>
+              </stack>
+              <label id="identity-icon-label" crop="center" flex="1"/>
+            </hbox>
+          </box>
+          <hbox id="urlbar-icons">
+            <button type="menu"
+                    style="-moz-user-focus: none"
+                    class="plain urlbar-icon"
+                    id="feed-button"
+                    collapsed="true"
+                    tooltiptext="&feedButton.tooltip;"
+                    onclick="return FeedHandler.onFeedButtonClick(event);">
+              <menupopup position="after_end"
+                         id="feed-menu"
+                         onpopupshowing="return FeedHandler.buildFeedList(this);"
+                         oncommand="return FeedHandler.subscribeToFeed(null, event);"
+                         onclick="checkForMiddleClick(this, event);"/>
+            </button>
+            <image id="star-button"
+                   class="urlbar-icon"
+                   onclick="PlacesStarButton.onClick(event);"/>
+            <image id="go-button"
+                   class="urlbar-icon"
+                   tooltiptext="&goEndCap.tooltip;"
+                   onclick="gURLBar.handleCommand(event);"/>
+          </hbox>
+        </textbox>
+      </toolbaritem>
+
+      <toolbaritem id="search-container" title="&searchItem.title;"
+                   align="center" class="chromeclass-toolbar-additional"
+                   flex="100" persist="width">
+        <searchbar id="searchbar" flex="1"/>
+      </toolbaritem>
+
+      <toolbarbutton id="print-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&printButton.label;" command="cmd_print"
+                     tooltiptext="&printButton.tooltip;"/>
+
+      <toolbaritem id="navigator-throbber" title="&throbberItem.title;" align="center" pack="center"
+                   mousethrough="always">
+        <image/>
+      </toolbaritem>
+
+      <toolbaritem flex="1" id="personal-bookmarks" title="&bookmarksItem.title;">
+         <hbox id="bookmarksBarContent" flex="1"
+               type="places"
+               place="place:folder=TOOLBAR"
+               context="placesContext"
+               onclick="BookmarksEventHandler.onClick(event);"
+               oncommand="BookmarksEventHandler.onCommand(event);"
+               onpopupshowing="BookmarksEventHandler.onPopupShowing(event);"
+               tooltip="bhTooltip" popupsinherittooltip="true"/>
+      </toolbaritem>
+
+        <toolbarbutton id="downloads-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       observes="Tools:Downloads"
+                       ondrop="DownloadsButtonDNDObserver.onDrop(event)"
+                       ondragover="DownloadsButtonDNDObserver.onDragOver(event)"
+                       ondragenter="DownloadsButtonDNDObserver.onDragOver(event)"
+                       ondragleave="DownloadsButtonDNDObserver.onDragLeave(event)"
+                       label="&downloads.label;"
+                       tooltiptext="&downloads.tooltip;"/>
+
+        <toolbarbutton id="history-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       observes="viewHistorySidebar" label="&historyButton.label;"
+                       tooltiptext="&historyButton.tooltip;"/>
+
+        <toolbarbutton id="bookmarks-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       observes="viewBookmarksSidebar"
+                       tooltiptext="&bookmarksButton.tooltip;"
+                       ondrop="bookmarksButtonObserver.onDrop(event)"
+                       ondragover="bookmarksButtonObserver.onDragOver(event)"
+                       ondragenter="bookmarksButtonObserver.onDragOver(event)"
+                       ondragleave="bookmarksButtonObserver.onDragLeave(event)"/>
+
+        <toolbarbutton id="new-tab-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&tabCmd.label;"
+                       command="cmd_newNavigatorTab"
+                       tooltiptext="&newTabButton.tooltip;"
+                       ondrop="newTabButtonObserver.onDrop(event)"
+                       ondragover="newTabButtonObserver.onDragOver(event)"
+                       ondragenter="newTabButtonObserver.onDragOver(event)"
+                       ondragleave="newTabButtonObserver.onDragLeave(event)"/>
+
+        <toolbarbutton id="new-window-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&newNavigatorCmd.label;"
+                       command="key_newNavigator"
+                       tooltiptext="&newWindowButton.tooltip;"
+                       ondrop="newWindowButtonObserver.onDrop(event)"
+                       ondragover="newWindowButtonObserver.onDragOver(event)"
+                       ondragenter="newWindowButtonObserver.onDragOver(event)"
+                       ondragleave="newWindowButtonObserver.onDragLeave(event)"/>
+
+        <toolbarbutton id="cut-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&cutCmd.label;"
+                       command="cmd_cut"
+                       tooltiptext="&cutButton.tooltip;"/>
+
+        <toolbarbutton id="copy-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&copyCmd.label;"
+                       command="cmd_copy"
+                       tooltiptext="&copyButton.tooltip;"/>
+
+        <toolbarbutton id="paste-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&pasteCmd.label;"
+                       command="cmd_paste"
+                       tooltiptext="&pasteButton.tooltip;"/>
+        <toolbarbutton id="fullscreen-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       observes="View:FullScreen"
+                       type="checkbox"
+                       label="&fullScreenCmd.label;"
+                       tooltiptext="&fullScreenButton.tooltip;"/>
+    </toolbarpalette>
+
+    <toolbar id="nav-bar" class="toolbar-primary chromeclass-toolbar"
+             toolbarname="&navbarCmd.label;" accesskey="&navbarCmd.accesskey;"
+             fullscreentoolbar="true" mode="icons"
+#ifdef WINCE
+             iconsize="small" defaulticonsize="small"
+#else
+             iconsize="large"
+#endif
+             customizable="true"
+#ifdef WINCE
+             defaultset="unified-back-forward-button,reload-button,stop-button,home-button,urlbar-container,search-container,navigator-throbber,fullscreenflex,window-controls"
+#else
+             defaultset="unified-back-forward-button,reload-button,stop-button,home-button,urlbar-container,search-container,fullscreenflex,window-controls"
+#endif
+             context="toolbar-context-menu">
+      <hbox id="fullscreenflex" flex="1" hidden="true" fullscreencontrol="true"/>
+      <hbox id="window-controls" hidden="true" fullscreencontrol="true">
+        <toolbarbutton id="minimize-button" class="toolbarbutton-1"
+                       tooltiptext="&fullScreenMinimize.tooltip;"
+                       oncommand="window.minimize();"/>
+
+        <toolbarbutton id="restore-button" class="toolbarbutton-1"
+                       tooltiptext="&fullScreenRestore.tooltip;"
+                       oncommand="BrowserFullScreen();"/>
+
+        <toolbarbutton id="close-button" class="toolbarbutton-1"
+                       tooltiptext="&fullScreenClose.tooltip;"
+                       oncommand="BrowserTryToCloseWindow();"/>
+      </hbox>
+    </toolbar>
+
+    <toolbarset id="customToolbars" context="toolbar-context-menu"/>
+
+    <toolbar id="PersonalToolbar"
+             mode="icons" iconsize="small" defaulticonsize="small"
+             class="chromeclass-directories"
+             context="toolbar-context-menu"
+             defaultset="personal-bookmarks"
+             toolbarname="&personalbarCmd.label;" accesskey="&personalbarCmd.accesskey;"
+#ifdef WINCE
+             collapsed="true"
+#endif
+             customizable="true"/>
+  </toolbox>
+
+  <hbox flex="1" id="browser">
+    <vbox id="sidebar-box" hidden="true" class="chromeclass-extrachrome">
+      <sidebarheader id="sidebar-header" align="center">
+        <label id="sidebar-title" persist="value" flex="1" crop="end" control="sidebar"/>
+        <image id="sidebar-throbber"/>
+        <toolbarbutton class="tabs-closebutton" tooltiptext="&sidebarCloseButton.tooltip;" oncommand="toggleSidebar();"/>
+      </sidebarheader>
+      <browser id="sidebar" flex="1" autoscroll="false" disablehistory="true"
+                style="min-width: 14em; width: 18em; max-width: 36em;"/>
+    </vbox>
+
+    <splitter id="sidebar-splitter" class="chromeclass-extrachrome" hidden="true"/>
+    <vbox id="appcontent" flex="1">
+      <tabbrowser id="content" disablehistory="true"
+                  flex="1" contenttooltip="aHTMLTooltip"
+                  contentcontextmenu="contentAreaContextMenu"
+                  onnewtab="BrowserOpenTab();"
+                  autocompletepopup="PopupAutoComplete"
+                  ondrop="contentAreaDNDObserver.onDrop(event)"
+                  onclick="return contentAreaClick(event, false);"/>
+    </vbox>
+  </hbox>
+  <panel id="customizeToolbarSheetPopup" noautohide="true">
+    <iframe id="customizeToolbarSheetIFrame"
+            style="&dialog.style;"
+            hidden="true"/>
+  </panel>
+
+  <vbox id="browser-bottombox">
+    <findbar browserid="content" id="FindToolbar"/>
+  
+    <statusbar class="chromeclass-status" id="status-bar"
+#ifdef WINCE
+               hidden="true"
+#endif
+               ondrop="contentAreaDNDObserver.onDrop(event)">
+      <statusbarpanel id="statusbar-display" label="" flex="1"/>
+      <statusbarpanel class="statusbarpanel-progress" collapsed="true" id="statusbar-progresspanel">
+        <progressmeter class="progressmeter-statusbar" id="statusbar-icon" mode="normal" value="0"/>
+      </statusbarpanel>
+      <statusbarpanel id="download-monitor" class="statusbarpanel-iconic-text"
+                      tooltiptext="&downloadMonitor2.tooltip;" hidden="true"
+                      command="Tools:Downloads"/>
+      <statusbarpanel id="security-button" class="statusbarpanel-iconic"
+                      hidden="true"
+                      onclick="if (event.button == 0 &amp;&amp; event.detail == 1) displaySecurityInfo();"/>
+      <statusbarpanel id="page-report-button" type="menu"
+                      class="statusbarpanel-menu-iconic"
+                      hidden="true"
+                      tooltiptext="&pageReportIcon.tooltip;">
+        <menupopup onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
+          <menuitem observes="blockedPopupAllowSite"/>
+          <menuitem observes="blockedPopupEditSettings"/>
+          <menuitem observes="blockedPopupDontShowMessage"/>
+          <menuseparator observes="blockedPopupsSeparator"/>
+        </menupopup>
+      </statusbarpanel>
+    </statusbar>
+  </vbox>
+</window>

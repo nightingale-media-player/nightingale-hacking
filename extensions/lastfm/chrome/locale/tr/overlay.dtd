@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Last.fm'e giriş yap...">
+<!ENTITY lastfm.menu.logout "Last.fm'den çık">
+<!ENTITY lastfm.menu.enable "Şarkı listesi göndermeyi etkinleştir">
+<!ENTITY lastfm.login.caption.label "Giriş">
+<!ENTITY lastfm.username.label "Kullanıcı ismi:">
+<!ENTITY lastfm.password.label "Parola:">
+<!ENTITY lastfm.auto.login.label "Başlangıçta otomatik giriş yap">
+<!ENTITY lastfm.login.button "Giriş">
+<!ENTITY lastfm.newaccount.caption "Yeni hesap oluştur">
+<!ENTITY lastfm.signup.label "Yeni bir hesap için kaydol">
+<!ENTITY lastfm.signup.button.label "Yeni bir hesap oluştur">
+<!ENTITY lastfm.loggingin.label "Oturum açılıyor...">
+<!ENTITY lastfm.cancel.button "İptal">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Dinlediğim parçaların listesini gönder">
+<!ENTITY lastfm.profile.logout "Çıkış">
+<!ENTITY lastfm.radio "Last.fm radyosu">
+<!ENTITY lastfm.radio.login.help "Last.fm radyosunu dinlemek için Last.fm'e giriş yapmış olmanız ve Last.fm abonesi olmanız lazımdır.  Eğer henüz bir Last.fm hesabınız yoksa yeni bir hesap oluşturabilirsiniz.">
+<!ENTITY lastfm.radio.start "Nereden başlayacağınıza karar veremediniz mi?  Arama yapmayı deneyin ya da başkalarının ne dinlediğine bakın.">
+<!ENTITY lastfm.radio.start.top.artists "Last.fm'de öne çıkan sanatçılar">
+<!ENTITY lastfm.radio.start.top.tags "Last.fm'de öne çıkan etiketler">
+<!ENTITY lastfm.radio.register "Hesap oluştur">
+<!ENTITY lastfm.radio.subscriber.button "Abone ol">
+<!ENTITY lastfm.radio.subscriber.help "Last.fm radyosunu dinlemek için abone olmanız gerekmektedir.">
+<!ENTITY lastfm.radio.search "Ara">
+<!ENTITY lastfm.radio.library "Kütüphane">
+<!ENTITY lastfm.radio.loved "Beğenilen parçalar">
+<!ENTITY lastfm.radio.neighbourhood "Civar">
+<!ENTITY lastfm.radio.recommended "Öneriler">
+<!ENTITY lastfm.radio.user_stations "Kullanıcı istasyonları">
+<!ENTITY lastfm.radio.recent_stations "Yakın geçmişteki istasyonlar">
+<!ENTITY lastfm.radio.from.lastfm "Last.fm'den">
+<!ENTITY lastfm.radio.recommended_artists "Önerilen sanatçılar">
+<!ENTITY lastfm.radio.top_artists "Sizin öne çıkan sanatçılarınız">
+<!ENTITY lastfm.radio.top_tags "Sizin öne çıkan etiketleriniz">
+<!ENTITY lastfm.radio.friends "Arkadaşlarınız">
+<!ENTITY lastfm.radio.neighbours "Komşular">
+<!ENTITY lastfm.radio.from.songbird "Songbird'den">
+<!ENTITY lastfm.radio.most_played_artists "En sık dinlediğiniz sanatçılar">
+<!ENTITY lastfm.radio.highest_rated_artists "En iyi not verdiğiniz sanatçılar">
+<!ENTITY lastfm.radio.popular_genres "Sizin popüler tarzlarınız">
+<!ENTITY lastfm.radio.play "Çal">
+<!ENTITY lastfm.tags.enter_new "Yeni etiket gir (virgüllerle ayrılmış)">
+<!ENTITY lastfm.tags.add_fail "Etiket eklenmesi başarısız oldu!">
+<!ENTITY lastfm.tags.user "Sizin etiketleriniz">
+<!ENTITY lastfm.tags.global "Last.fm genel etiketleri:">

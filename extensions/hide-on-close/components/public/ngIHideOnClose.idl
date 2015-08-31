@@ -1,0 +1,10 @@
+#include "nsISupports.idl"
+#include "nsIObserverService.idl"
+
+[scriptable, uuid(ab61d3be-cfba-11e3-91bb-5404a6486fb4)]
+interface ngIHideOnClose : nsISupports
+{
+  void InitializeFor(in string desktopFileName, in string windowTitle);
+  void HideWindow();
+  void ShowWindow();
+};

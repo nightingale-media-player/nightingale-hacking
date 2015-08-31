@@ -415,25 +415,6 @@ sbMediacoreSequencer::BindDataRemotes()
   rv = mDataRemoteFaceplateURL->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Faceplate show remaining time
-  mDataRemoteFaceplateRemainingTime =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDataRemoteFaceplateRemainingTime->Init(
-    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_FACEPLATE_SHOWREMAINING),
-    nullString);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString showRemainingTime;
-  rv = mDataRemoteFaceplateRemainingTime->GetStringValue(showRemainingTime);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if(showRemainingTime.IsEmpty()) {
-    rv = mDataRemoteFaceplateRemainingTime->SetBoolValue(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   // Faceplate Volume
   mDataRemoteFaceplateVolume =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
@@ -561,6 +542,20 @@ sbMediacoreSequencer::BindDataRemotes()
 
   rv =
     mDataRemoteMetadataPositionStr->SetStringValue(NS_LITERAL_STRING("0:00"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Metadata Remaining Str
+  mDataRemoteMetadataRemainingStr =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataRemainingStr->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_METADATA_REMAINING_STR),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv =
+    mDataRemoteMetadataRemainingStr->SetStringValue(NS_LITERAL_STRING("0:00"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata URL
@@ -762,6 +757,11 @@ sbMediacoreSequencer::UnbindDataRemotes()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if(mDataRemoteMetadataRemainingStr) {
+    rv = mDataRemoteMetadataRemainingStr->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if (mDataRemoteMetadataURL) {
     rv = mDataRemoteMetadataURL->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -806,11 +806,6 @@ sbMediacoreSequencer::UnbindDataRemotes()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (mDataRemoteFaceplateRemainingTime) {
-    rv = mDataRemoteFaceplateRemainingTime->Unbind();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   return NS_OK;
 }
 
@@ -846,8 +841,10 @@ sbMediacoreSequencer::UpdatePositionDataRemotes(PRUint64 aPosition)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsString str;
-  nsresult rv = EmitMillisecondsToTimeString(aPosition, str);
+  NS_ENSURE_TRUE(mPlaybackControl, NS_OK);
+
+  nsString positionStr;
+  nsresult rv = EmitMillisecondsToTimeString(aPosition, positionStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
@@ -855,7 +852,23 @@ sbMediacoreSequencer::UpdatePositionDataRemotes(PRUint64 aPosition)
   rv = mDataRemoteMetadataPosition->SetIntValue(aPosition);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDataRemoteMetadataPositionStr->SetStringValue(str);
+  rv = mDataRemoteMetadataPositionStr->SetStringValue(positionStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 duration;
+  rv = mPlaybackControl->GetDuration(&duration);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString remainingStr;
+  PRInt64 remaining = 0;
+
+  if(duration > aPosition)
+    remaining = duration - aPosition;
+
+  rv = EmitMillisecondsToTimeString(remaining, remainingStr, true);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataRemainingStr->SetStringValue(remainingStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -874,24 +887,8 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
   nsresult rv = mDataRemoteMetadataDuration->SetIntValue(duration);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // show remaining time only affects the text based data remote!
-  PRBool showRemainingTime = PR_FALSE;
-  rv = mDataRemoteFaceplateRemainingTime->GetBoolValue(&showRemainingTime);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if(showRemainingTime) {
-    PRUint64 position = 0;
-
-    rv = mPlaybackControl->GetPosition(&position);
-    if(NS_FAILED(rv)) {
-      position = 0;
-    }
-
-    duration = duration > position ? duration - position : 0;
-  }
-
   nsString str;
-  rv = EmitMillisecondsToTimeString(duration, str, showRemainingTime);
+  rv = EmitMillisecondsToTimeString(duration, str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);

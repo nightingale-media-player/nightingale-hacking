@@ -318,6 +318,13 @@ menulist {
   min-width: 60px;
 }
 
+/* Fix dropmarker and input field overlapping
+   Not sure this is the best way to fix it. but the only one that worked for me.
+ */
+menulist[editable="true"] .menulist-dropmarker {
+  margin-left: 8px;
+}
+
 button:focus,
 toolbarbutton:focus,
 checkbox:focus > .checkbox-check,

@@ -42,7 +42,6 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(DEPTH)/components/moz/prompter/public \
-                     $(DEPTH)/components/metrics/public \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/intl/src \
                      $(topsrcdir)/components/moz/strings/src \
@@ -60,6 +59,11 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(MOZSDK_IDL_DIR) \
                      $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
                      $(NULL)
+
+ifdef METRICS_ENABLED
+CPP_EXTRA_INCLUDES += $(DEPTH)/components/metrics/public \
+                      $(NULL)
+endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
@@ -82,7 +86,11 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
-   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver
+   ifneq (, $(findstring clang, $(CC)))
+      DYNAMIC_LIB_EXTRA_FLAGS += -version-script,$(srcdir)/hide-sqlite.ver
+   else
+      DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver
+   endif
    DYNAMIC_LIB_RAW_IMPORTS += $(PTHREAD_LIBS) \
                               $(GLIB_LIBS) \
                               $(NULL)

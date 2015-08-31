@@ -1,0 +1,34 @@
+#filter substitution
+amazonmusic.jar:
+% content amazonmusic  %content/
+% locale  amazonmusic  ar     %locale/ar/
+% locale  amazonmusic  cs     %locale/cs/
+% locale  amazonmusic  da     %locale/da/
+% locale  amazonmusic  de     %locale/de/
+% locale  amazonmusic  de-DE  %locale/de-DE/
+% locale  amazonmusic  el     %locale/el/
+% locale  amazonmusic  en-US  %locale/en-US/
+% locale  amazonmusic  es-ES  %locale/es-ES/
+% locale  amazonmusic  fi     %locale/fi/
+% locale  amazonmusic  fr     %locale/fr/
+% locale  amazonmusic  he     %locale/he/
+% locale  amazonmusic  hu     %locale/hu/
+% locale  amazonmusic  it     %locale/it/
+% locale  amazonmusic  ja     %locale/ja/
+% locale  amazonmusic  ko     %locale/ko/
+% locale  amazonmusic  lt-LT  %locale/lt-LT/
+% locale  amazonmusic  nl     %locale/nl/
+% locale  amazonmusic  nn-NO  %locale/nn-NO/
+% locale  amazonmusic  pl     %locale/pl/
+% locale  amazonmusic  pt-BR  %locale/pt-BR/
+% locale  amazonmusic  pt-PT  %locale/pt-PT/
+% locale  amazonmusic  ru     %locale/ru/
+% locale  amazonmusic  sk     %locale/sk/
+% locale  amazonmusic  sr-RS  %locale/sr-RS/
+% locale  amazonmusic  sv-SE  %locale/sv-SE/
+% locale  amazonmusic  th     %locale/th/
+% locale  amazonmusic  tr     %locale/tr/
+% locale  amazonmusic  zh-CN  %locale/zh-CN/
+% locale  amazonmusic  zh-TW  %locale/zh-TW/
+% skin    amazonmusic  classic/1.0 %skin/
+@include_all_to 

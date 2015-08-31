@@ -1,0 +1,63 @@
+This is Unity Integration add-on for Songbird and Nightingale media players
+It provides integration into Ubuntu Unity
+
+Copyright (C) 2012 LookingMan
+You can find me on GitHub (as FreeleX) or on Nightingale forums or on getsatisfaction.com
+
+
+Use instructions:
+-----------------
+You can use whichever version you deside or try UnityIntegration-latest.xpi file (which may be updated frequenly): 
+https://github.com/FreeleX/UnityIntegration/raw/master/UnityIntegration-latest.xpi 
+but if you are NOT able to launch Nightingale\Songbird from Ubuntu Dash
+and if you are using Unity Integration for the FIRST TIME, several actions MUST BE DONE:
+
+1. Download nightingale.desktop, nightingale.xpm or\and songbird.desktop, songbird.xpm files from GitHub:
+https://github.com/FreeleX/UnityIntegration/raw/master/nightingale.xpm
+https://github.com/FreeleX/UnityIntegration/raw/master/nightingale.desktop
+https://github.com/FreeleX/UnityIntegration/raw/master/songbird.xpm
+https://github.com/FreeleX/UnityIntegration/raw/master/songbird.desktop
+2. Edit nightingale.desktop or\and songbird.desktop files with text editor and on lines started with Exec= and TryExec= change paths to point to your Nightingale or\and Songbird executable scripts.
+3. Copy nightingale.desktop or\and songbird.desktop files to /usr/share/applications/ folder.
+4. Copy nightingale.xpm or\and songbird.xpm files to /usr/share/pixmaps/ folder.
+5. If you did right, you will be able to launch Nightingale from Ubuntu Dash (type nighti...).
+
+
+Component build instructions:
+-----------------------------
+There is a component in components directory which is a core and makes it possible to call functions from ubuntu libraries.
+To rebuild it you will need:
+Gecko 1.9.2 SDK - http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/3.6.27/sdk/xulrunner-3.6.27.en-US.linux-i686.sdk.tar.bz2
+libunity development files
+libnotify development files
+Development files for the GTK+ library
+
+1. Unpack Gecko 1.9.2 SDK for example to your home directory
+2. Install libunity development files with: 'sudo apt-get install libunity-dev'
+3. Install libnotify development files with: 'sudo apt-get install libnotify-dev'
+4. Install Development files for the GTK+ library: 'sudo apt-get install libgtk2.0-dev' or\and maybe 'sudo apt-get install libgtk-3-dev'
+5. Edit Makefile in Unity Integration components directory and change on the line:
+GECKO_SDK_PATH = $(HOME)/xulrunner-sdk
+path to point to your gecko sdk directory (no need to change if you just unpacked it to your home directory)
+
+To rebuild component just change directory to the components directory and run make
+
+
+About license:
+--------------
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+Also you can get a copy of GNU Lesser General Public License v3.0 from here 
+http://www.gnu.org/licenses/lgpl-3.0.html

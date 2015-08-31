@@ -1,0 +1,79 @@
+#
+# BEGIN NIGHTINGALE GPL
+# 
+# This file is part of the Nightingale Media Player.
+#
+# Copyright(c) 2014
+# http://getnightingale.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+# 
+# Software distributed under the License is distributed 
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+# express or implied. See the GPL for the specific language 
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this 
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc., 
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# 
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+IS_EXTENSION = 1
+IS_COMPONENT = 1
+DISABLE_DEADLY_WARNINGS = 1
+
+# the name of our component
+DYNAMIC_LIB = sbMacRemoteController
+
+CMM_SRCS = SBAppleRemoteListener.mm         \
+           sbAppleRemoteService.mm          \
+           sbAppleRemoteModule.mm           \
+           $(NULL)
+
+CMM_INCLUDES = $(DEPTH)/extensions/apple-remote/components/macremote/public \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/mediacore/base/public \
+               $(DEPTH)/components/controller/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+
+DYNAMIC_LIB = sbMacRemoteController
+
+#DYNAMIC_LIB_OBJS = $(patsubst %.mm,%$(OBJ_SUFFIX),$(notdir $(CMM_SRCS)))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            xpcom \
+                            xpcomglue_s \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+DYNAMIC_LIB_EXTRA_FLAGS= -framework Foundation \
+                         -framework System \
+                         -framework Carbon \
+                         -framework IOKit \
+                         -framework Cocoa \
+                         $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+
+include $(topsrcdir)/build/rules.mk
+

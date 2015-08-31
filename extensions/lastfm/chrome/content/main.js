@@ -66,9 +66,11 @@ LastFm.onLoad = function() {
   // listen to events from our Last.fm service
   this._service.listeners.add(this);
 
+#ifdef METRICS_ENABLED
   // get metrics service
   this.metrics = Cc['@songbirdnest.com/Songbird/Metrics;1']
     .getService(Ci.sbIMetrics);
+#endif
 
   // get references to our pieces of ui
 
@@ -140,7 +142,9 @@ LastFm.onLoad = function() {
   var self = this;
   // wire up UI events for the menu items
   var onMenuLogin = function(event) {
+#ifdef METRICS_ENABLED
     self.metrics.metricsInc('lastfm', 'menu', 'login');
+#endif
     self.showPanel();
   };
   this._domEventListenerSet.add(this._menuLogin,
@@ -150,7 +154,9 @@ LastFm.onLoad = function() {
                                 false);
 
   var onMenuLogout = function(event) {
+#ifdef METRICS_ENABLED
     self.metrics.metricsInc('lastfm', 'menu', 'logout');
+#endif
     self.showPanel();
   };
   this._domEventListenerSet.add(this._menuLogout,
@@ -174,7 +180,9 @@ LastFm.onLoad = function() {
     // only the left button
     if (event.button != 0) return;
 
+#ifdef METRICS_ENABLED
     self.metrics.metricsInc('lastfm', 'icon', 'click');
+#endif
 
     if (self._service.loggedIn) {
       // if we're logged in, toggle the scrobble state
@@ -192,7 +200,10 @@ LastFm.onLoad = function() {
 
   // and the contextmenu event
   var onStatusIconContextMenu = function(event) {
+#ifdef METRICS_ENABLED
     self.metrics.metricsInc('lastfm', 'icon', 'context');
+#endif
+
     self.showPanel();
   };
   this._domEventListenerSet.add(this._statusIcon,
@@ -315,7 +326,10 @@ LastFm.onLoad = function() {
         this._strings.getString('lastfm.faceplate.love.tooltip'));
 
     var onFaceplateLoveClicked = function(event) {
+#ifdef METRICS_ENABLED
       self.metrics.metricsInc('lastfm', 'faceplate', 'love');
+#endif
+
       if (self._service.loveTrack && self._service.love) {
         /* if we have a loved track, then unlove */
         self._service.loveBan(null, false);
@@ -338,7 +352,10 @@ LastFm.onLoad = function() {
         this._strings.getString('lastfm.faceplate.ban.tooltip'));
 
     var onFaceplateBanClicked = function(event) {
+#ifdef METRICS_ENABLED
       self.metrics.metricsInc('lastfm', 'faceplate', 'ban');
+#endif
+
       if (self._service.loveTrack && !self._service.love) {
         /* if we have a banned track, then unban */
         self._service.loveBan(null, false);
@@ -362,7 +379,10 @@ LastFm.onLoad = function() {
         this._strings.getString('lastfm.faceplate.tag.tooltip'));
 
     var onFaceplateTagClicked = function(event) {
+#ifdef METRICS_ENABLED
       self.metrics.metricsInc('lastfm', 'faceplate', 'tag');
+#endif
+
       self._tagPanel.openPopup(event.target);
       var globalTags = document.getElementById("global-tags");
       var userTags = document.getElementById("user-tags");

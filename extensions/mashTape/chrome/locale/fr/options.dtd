@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Jouer un titre et trouvez des médias qui lui correspondent : photos de Flickr, vidéos de YouTube, biographies de Last.fm, articles de Google News, et bien d'autres choses encore !">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Générales">
+<!ENTITY mtprefs.info "Bio de l'artiste">
+<!ENTITY mtprefs.review "Commentaires">
+<!ENTITY mtprefs.rss "Nouvelles">
+<!ENTITY mtprefs.photo "Photos">
+<!ENTITY mtprefs.flash "Vidéos">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Onglet par défaut">
+<!ENTITY mtprefs.defaulttab.help "Au lancement de mashTape :">
+<!ENTITY mtprefs.show.info "Afficher la bio de l'artiste">
+<!ENTITY mtprefs.show.review "Afficher les commentaires">
+<!ENTITY mtprefs.show.rss "Afficher des nouvelles">
+<!ENTITY mtprefs.show.photo "Afficher des photos">
+<!ENTITY mtprefs.show.flash "Afficher des vidéos">
+<!ENTITY mtprefs.autohide "Masquer automatiquement">
+<!ENTITY mtprefs.autohide.help "Activer le repli automatique du panneau de mashTape quand vous affichez un e page Web.">
+<!ENTITY mtprefs.services "Services">
+<!ENTITY mtprefs.getmore "Obtenir davantage de services de mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Paramètres de l'onglet de la bio de l'artiste">
+<!ENTITY mtprefs.tab.review "Paramètres de l'onglet des commentaires">
+<!ENTITY mtprefs.tab.rss "Paramètres de l'onglet des nouvelles">
+<!ENTITY mtprefs.tab.photo "Paramètres de l'onglet des photos">
+<!ENTITY mtprefs.tab.flash "Paramètres de l'onglet des vidéos">
+<!ENTITY mtprefs.tab.help "Afficher cet onglet dans mashTape">
+<!ENTITY mtprefs.single "Ce panneau assure l'affichage d'un seul service à la fois. Veuillez le sélectionner dans la liste ci-dessous.">
+<!ENTITY mtprefs.multiple "Ce panneau assure l'affichage de multiples services en même temps. Veuillez choisir vos services dans la liste ci-dessous.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Données localisées">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Récupérer automatiquement des informations localisées sur l'artiste si elles sont disponibles.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Vitesse de défilement des photos :">
+<!ENTITY mtprefs.tab.photo.faster "Plus rapide">
+<!ENTITY mtprefs.tab.photo.slower "Plus lente">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Recherche par mots-clés">
+<!ENTITY mtprefs.tab.photo.keywords "Autres mots-clés pour la recherche">
+<!ENTITY mtprefs.tab.photo.keywords.help "Vous pouvez préciser davantage de mots-clés qui seront associés à votre recherche pour le fournisseur de photos. Veuillez séparer les mots-clés par des espaces, par exemple : live concert groupe">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Lire automatiquement les vidéos">
+<!ENTITY mtprefs.tab.video.autoplay.help "Activer cette option provoque la lecture automatique des résultats de tous les fournisseurs de sources vidéos. C'est très utile pour la lecture automatique de toutes les vidéos MTV par exemple. Les fournisseurs de vidéos qui ne sont pas inclus dans l'extension ne fonctionneront pas avec cette option.">

@@ -24,6 +24,8 @@
 //
 */
 
+#include <nsStringGlue.h>
+
 #include "sbHelloWorld.h"
 
 NS_IMPL_ISUPPORTS1(sbHelloWorld, sbIHelloWorld)

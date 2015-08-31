@@ -41,16 +41,6 @@ CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreTypeSniffer.cpp \
            $(NULL)
 
-# From components/mediacore/base/src
-CPP_SRCS += sbMediacoreVotingChain.cpp \
-            sbMediacoreEvent.cpp \
-            sbMediacoreError.cpp \
-            sbBaseMediacoreEventTarget.cpp \
-            sbBaseMediacoreMultibandEqualizer.cpp \
-            sbBaseMediacoreVolumeControl.cpp \
-            sbMediacoreEqualizerBand.cpp \
-            $(NULL)
-            
 # From components/moz/xpcom/src
 CPP_SRCS += sbWeakReference.cpp \
             $(NULL)
@@ -69,6 +59,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/moz/xpcom/src \
                $(DEPTH)/components/moz/windowwatcher/public \
+               $(DEPTH)/components/equalizerpresets/public \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/docshell \
@@ -87,6 +78,18 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 # MSVC has 'deprecated' std::copy, etc. This is remarkably unhelpful, so define
 # this to suppress the warning.
 CPP_EXTRA_FLAGS += "-D_SCL_SECURE_NO_WARNINGS"
+
+# From components/mediacore/base/src
+DYNAMIC_LIB_EXTRA_OBJS += \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreVotingChain$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEvent$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreError$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreEventTarget$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreMultibandEqualizer$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreVolumeControl$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEqualizerBand$(OBJ_SUFFIX) \
+  $(NULL)
+
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)

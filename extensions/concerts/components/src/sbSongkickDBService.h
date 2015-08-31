@@ -25,7 +25,7 @@
 #ifndef sbSongkickDBService_h_
 #define sbSongkickDBService_h_
 
-#include <Songkick.h>
+#include <ISongkick.h>
 
 #include <sbIDatabaseQuery.h>
 

@@ -1,0 +1,5 @@
+hide-on-close.jar:
+% content   hide-on-close %content/
+% locale    hide-on-close en-US %locale/en-US/
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://hide-on-close/content/base.xul
+@include_all_to

@@ -1,0 +1,161 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#filter substitution
+
+// Constants for convience
+if (typeof(Cc) == 'undefined')
+  var Cc = Components.classes;
+if (typeof(Ci) == 'undefined')
+  var Ci = Components.interfaces;
+if (typeof(Cu) == 'undefined')
+  var Cu = Components.utils;
+if (typeof(Cr) == 'undefined')
+  var Cr = Components.results;
+
+// Imports to help with some common tasks
+Cu.import('resource://app/jsmodules/sbProperties.jsm');
+Cu.import('resource://app/jsmodules/sbLibraryUtils.jsm');
+Cu.import('resource://gre/modules/XPCOMUtils.jsm');
+Cu.import('resource://app/jsmodules/StringUtils.jsm');
+
+// FUEL makes us happier...
+var Application = Components.classes["@mozilla.org/fuel/application;1"]
+    .getService(Components.interfaces.fuelIApplication);
+
+// Some prefs to use
+const PREF_CONFIGURED = 'extensions.amazonmusic.configured';
+// What's my GUID
+const EXTENSION_GUID = 'amazonmusic@songbirdnest.com';
+// Node IDs for the service pane
+const NODE_SERVICES = 'SB:Services';
+const NODE_AMAZONMUSIC = 'SB:AmazonMusic';
+// Where's our stringbundle?
+const STRINGBUNDLE = 'chrome://amazonmusic/locale/amazonmusic.properties';
+// Where's that store?
+const AMAZONMUSIC_SONGBIRD_URL = 'http://www.amazon.com/MP3-Music-Download/b/?_encoding=UTF8&node=163856011&tag=songbirdme-20&linkCode=ur2&camp=1789&creative=390957';
+const STORE_ICON = "chrome://amazonmusic/skin/servicepane-icon.png";
+// What's the service pane's namespace
+const SERVICEPANE_NS = 'http://songbirdnest.com/rdf/servicepane#'
+
+function sbAmazonMusic() { }
+sbAmazonMusic.prototype = {
+  // XPCOM stuff
+  className: 'sbAmazonMusic',
+  classDescription: 'Amazon Music Store Integration',
+  classID: Components.ID('{413cc7f0-3a16-4573-8c18-d7a583cf77f1}'),
+  contractID: '@songbirdnest.com/AmazonMusic;1',
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
+
+  // Observer stuff
+  _observerTopics: [
+    'songbird-main-window-presented' // app is done starting up the ui
+  ],
+  _observerService: null,
+
+  // Handy services
+  _servicePaneService: null,
+    
+}
+
+sbAmazonMusic.prototype.initialize = 
+function sbAmazonMusic_initialize() {
+  // Listen to a bunch of observer topics
+  for (var i=0; i<this._observerTopics.length; i++) {
+    this._observerService.addObserver(this, this._observerTopics[i], false);
+  }
+
+  // here's some service we may well use later...
+  this._servicePaneService = Cc['@songbirdnest.com/servicepane/service;1']
+    .getService(Ci.sbIServicePaneService);
+}
+// nsIObserver
+sbAmazonMusic.prototype.observe =
+function sbAmazonMusic_observe(subject, topic, data) {
+  if (topic == 'app-startup') {
+    this._observerService = Cc['@mozilla.org/observer-service;1']
+        .getService(Ci.nsIObserverService);
+    this._observerService.addObserver(this, 'profile-after-change', false);
+  } else if (topic == 'profile-after-change') {
+    this._observerService.removeObserver(this, 'profile-after-change', false);
+    this.initialize();
+  } else if (topic == 'songbird-main-window-presented') {
+    // Run this everytime since it involves servicepane node initialization
+    this.install();
+  }
+}
+
+// install Amazon music store integration
+sbAmazonMusic.prototype.install =
+function sbAmazonMusic_install() {
+  // install ourselves into the service pane
+  try {
+    // find the store node
+    var servicesNode = this._servicePaneService.getNode(NODE_SERVICES);
+    if (!servicesNode) {
+      servicesNode = this._servicePaneService.createNode();
+      servicesNode.id = NODE_SERVICES;
+      servicesNode.className = 'folder services';
+      servicesNode.editable = false;
+      servicesNode.name = SBString("servicesource.services");
+      servicesNode.setAttributeNS(SERVICEPANE_NS, 'Weight', 1);
+      this._servicePaneService.root.appendChild(servicesNode);
+    } else {
+      servicesNode.hidden = false;
+    }
+
+    // create Music Store node
+    var myNode = this._servicePaneService.createNode();
+    myNode.id = NODE_AMAZONMUSIC;
+    myNode.url = AMAZONMUSIC_SONGBIRD_URL;
+    myNode.image = STORE_ICON;
+    myNode.className = 'Amazon Music history';
+    myNode.searchtype = "external";
+    myNode.name = '&servicepane.amazonmusic';
+    myNode.stringbundle = STRINGBUNDLE;
+    myNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
+    servicesNode.appendChild(myNode);
+
+    // Create a event listener to prevent AmazonMusic URL's from being clickable
+    // in the faceplate. See bug 22337.
+    var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Ci.nsIWindowMediator)
+                     .getMostRecentWindow("Songbird:Main").window;
+    sbWindow.addEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
+  } catch (e) {
+    Cu.reportError(e);
+  }
+
+  Application.prefs.setValue(PREF_CONFIGURED, true);
+}
+
+// XPCOM NSGetModule implementation
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([sbAmazonMusic],
+  function(aCompMgr, aFileSpec, aLocation) {
+    XPCOMUtils.categoryManager.addCategoryEntry('app-startup',
+      sbAmazonMusic.prototype.classDescription,
+      sbAmazonMusic.prototype.contractID, true, true);
+  });
+}

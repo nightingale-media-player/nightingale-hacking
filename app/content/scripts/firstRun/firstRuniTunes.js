@@ -190,6 +190,7 @@ firstRuniTunesSvc.prototype = {
                         ("songbird.library_exporter.export_smartplaylists",
                          exportEnabled);
 
+#ifdef METRICS_ENABLED
     // Set the selected media import type for metrics collection.
     var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Ci.sbIMetrics);
@@ -203,6 +204,8 @@ firstRuniTunesSvc.prototype = {
     if (exportEnabled) {
       metrics.metricsInc("firstrun", "mediaexport", "itunes");
     }
+#endif
+
   },
 
 

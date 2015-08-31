@@ -83,6 +83,9 @@ SB_USE_JEMALLOC = @SB_USE_JEMALLOC@
 SB_SQLITE_DEBUG = @SB_SQLITE_DEBUG@
 SB_WITH_MSVC_EXPRESS = @SB_WITH_MSVC_EXPRESS@
 SB_WITH_DEADLY_WARNINGS = @SB_WITH_DEADLY_WARNINGS@
+NIGHTINGALE_UNITY = @NIGHTINGALE_UNITY@
+NIGHTINGALE_LIBNOTIFY = @NIGHTINGALE_LIBNOTIFY@
+METRICS_ENABLED = @METRICS_ENABLED@
 
 SB_ENABLE_LIBRARY_PERF = @SB_ENABLE_LIBRARY_PERF@
 
@@ -206,56 +209,80 @@ SB_INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFO
 SB_INSTALLER_SUFFIXES = @SB_INSTALLER_SUFFIXES@
 
 #
+# Turn verbosity on/off
+#
+ifneq ($(V), 1)
+AR_silent          = @echo "       AR        $@";
+CC_silent          = @echo "       CC        $@";
+DOXYGEN_silent     = @echo "       DOXYGEN   $@";
+LD_silent          = @echo "       LD        $@";
+LN_silent          = @echo "       LN        $@";
+MIDL_silent        = @echo "       MIDL      $@";
+MKDIR_silent       = @echo "       MKDIR     $@";
+PYTHON_silent      = @echo "       PYTHON    $@";
+RANLIB_silent      = @echo "       RANLIB    $@";
+TOUCH_silent       = @echo "       TOUCH     $@";
+XPIDL_silent       = @echo "       XPIDL     $@";
+XPTLINK_silent     = @echo "       XPTLINK   $@";
+
+silent             = @echo "";
+dev_null           = >/dev/null
+
+CXX_silent         = @echo "       CXX       "$$(basename $@);
+INSTALL_silent     = @echo "$$(test -z $< && echo '' || echo '       INSTALL   '$$(basename $<))";
+endif
+
+#
 # Tools
 #
 
-AR = @AR@
-AWK = @AWK@
-CC = @CC@
-CHMOD = @CHMOD@
-CP = @CP@
-CXX = @CXX@
-DIFF = @DIFF@
-DOXYGEN = @DOXYGEN@
-FIND = @FIND@
-GREP = @GREP@
-GUNZIP = @GUNZIP@
-GZIP = @GZIP@
+AR      = $(AR_silent)@AR@
+AWK     = @AWK@
+CC      = $(CC_silent)@CC@
+CHMOD   = @CHMOD@
+CP      = @CP@
+CXX     = $(CXX_silent)@CXX@
+DIFF    = @DIFF@
+DOXYGEN = $(DOXYGEN_silent)@DOXYGEN@
+FIND    = @FIND@
+GREP    = @GREP@
+GUNZIP  = @GUNZIP@
+GZIP    = @GZIP@
 INSTALL = @INSTALL@ -c
-INSTALL_FILE = $(INSTALL) -m 0644
-INSTALL_PROG = $(INSTALL) -m 0755
-LD = @LD@
-LN = @LN@
-MACPKGMAKER = @MACPKGMAKER@
-MD5SUM = @MD5SUM@
-MIDL = @MIDL@
-MKDIR = @MKDIR@ -p
+INSTALL_FILE = $(INSTALL_silent)$(INSTALL) -m 0644
+INSTALL_PROG = $(INSTALL_silent)$(INSTALL) -m 0755
+LD      = $(LD_silent)@LD@
+LN      = $(LN_silent)@LN@
+MACPKGMAKER  = @MACPKGMAKER@
+MD5SUM  = @MD5SUM@
+MIDL    = $(MIDL_silent)@MIDL@
+MKDIR   = $(MKDIR_silent)@MKDIR@ -p
 # Use MKDIR_APP to create a directory that is intended to be shipped; we use
 # intstall -d here because mkdir -p -m N only applies the -m to the _last_
 # directory part, not any of the other directories it creates along the way;
 # lame, Lame, LAME; hats off to Mook for suggesting this.
-MKDIR_APP = $(INSTALL) -d -m 755
+MKDIR_APP = $(silent)$(INSTALL) -d -m 755
 MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
-MV = @MV@
-PERL = @PERL@
-PYTHON = @PYTHON@
-RANLIB = @RANLIB@
-RC = @RC@
-REBASE = @REBASE@
-RM = @RM@ -f
-SED = @SED@
+MV      = @MV@
+PERL    = @PERL@
+PYTHON  = @PYTHON@
+RANLIB  = $(RANLIB_silent)@RANLIB@
+RC      = @RC@
+REBASE  = @REBASE@
+RM      = @RM@ -f
+SED     = @SED@
 SHA1SUM = @SHA1SUM@
-SORT = @SORT@
-STRIP = @STRIP@
+SORT    = @SORT@
+STRIP   = @STRIP@
 SYSINSTALL = echo
-TAR = @TAR@
-TOUCH = @TOUCH@
-UNZIP = @UNZIP@
-ZIP = @ZIP@
+TAR     = @TAR@
+TOUCH   = $(TOUCH_silent)@TOUCH@
+UNZIP   = @UNZIP@
+ZIP     = @ZIP@
 
-XPIDL = $(MOZSDK_DIR)/bin/xpidl
-XPTLINK = $(MOZSDK_DIR)/bin/xpt_link
-MAR = $(MOZSDK_DIR)/bin/mar
+XPIDL   = $(XPIDL_silent)$(MOZSDK_DIR)/bin/xpidl
+XPTLINK = $(XPTLINK_silent)$(MOZSDK_DIR)/bin/xpt_link
+MAR     = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 
 #
@@ -305,11 +332,18 @@ GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
 GLIB_LIBS = @GLIB_LIBS@
+LNTFY_CFLAGS = @LNTFY_CFLAGS@
+LNTFY_LIBS = @LNTFY_LIBS@
+UNITY_CFLAGS = @UNITY_CFLAGS@
+UNITY_LIBS = @UNITY_LIBS@
+
 
 DBUS_CFLAGS = @DBUS_CFLAGS@
 DBUS_LIBS = @DBUS_LIBS@
 HAL_CFLAGS = @HAL_CFLAGS@
 HAL_LIBS = @HAL_LIBS@
+NSPR_CFLAGS = @NSPR_CFLAGS@
+NSPR_LIBS = @NSPR_LIBS@
 
 TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@

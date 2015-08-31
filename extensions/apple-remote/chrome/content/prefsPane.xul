@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE prefwindow SYSTEM "chrome://apple-remote/locale/options.dtd">
+
+<overlay id="radio_preferences_overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefwindow id="BrowserPreferences">
+  <prefpane id="remotePrefPane" label="&apple-remote-prefs-overlay.label;"
+            onpaneload="onPrefPaneLoad()">
+
+    <preferences>
+      <preference id="prefAutoEnable"
+                  type="bool"
+                  name="extensions.apple-remote.autoenable" />
+    </preferences>
+
+    <script type="application/x-javascript" 
+            src="chrome://apple-remote/content/overlay.js"/>
+
+    <vbox class="bottomBox">
+
+      <groupbox id="radioTitleParsingGroup" flex="1">
+        <caption label="&apple-remote-prefs-autoenable-option-caption.label;" />
+        <vbox flex="1">
+          <description label="&apple-remote-prefs-autoenable-option-description.label;" />
+          <hbox align="center">
+            <checkbox id="checkParsingPref"
+                      preference="prefAutoEnable" />
+            <label value="&apple-remote-prefs-autoenable-option-checkbox.label;" />
+          </hbox>
+        </vbox>
+      </groupbox>
+
+    </vbox>
+    
+  </prefpane>
+</prefwindow>
+
+</overlay>

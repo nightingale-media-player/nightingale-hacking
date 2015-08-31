@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Generelt">
+<!ENTITY mtprefs.info "Kunstnerinformation">
+<!ENTITY mtprefs.review "Anmeldelser">
+<!ENTITY mtprefs.rss "Nyheder">
+<!ENTITY mtprefs.photo "Fotos">
+<!ENTITY mtprefs.flash "Videoer">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Standard">
+<!ENTITY mtprefs.defaulttab.help "Når mashTape starter:">
+<!ENTITY mtprefs.show.info "Vis kunstner info">
+<!ENTITY mtprefs.show.review "Vis anmeldelser">
+<!ENTITY mtprefs.show.rss "Vis nyheder">
+<!ENTITY mtprefs.show.photo "Vis fotos">
+<!ENTITY mtprefs.show.flash "Vis videoer">
+<!ENTITY mtprefs.autohide "Auto-skjul">
+<!ENTITY mtprefs.autohide.help "Skjul automatisk mashTape visningspanelet når du skifter til visning af en webside.">
+<!ENTITY mtprefs.services "Services">
+<!ENTITY mtprefs.getmore "Få flere services til mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Kunstnerinfo fanebladsindstillinger">
+<!ENTITY mtprefs.tab.review "Anmendelser-faneblad indstillinger">
+<!ENTITY mtprefs.tab.rss "Nyheder fanebladsindstillinger">
+<!ENTITY mtprefs.tab.photo "Fotos fanebladsindstillinger">
+<!ENTITY mtprefs.tab.flash "Videoer fanebladsindstillinger">
+<!ENTITY mtprefs.tab.help "Vis dette faneblad i mashTape.">
+<!ENTITY mtprefs.single "Dette panel understøtter visning af indhold fra én service ad gangen.">
+<!ENTITY mtprefs.multiple "Dette panel understøtter visning af indhold fra flere services ad gangen. Vælg venligst dine foretrukne services fra nedenstående liste.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Localized Data">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatically retrieve localized artist information if available.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Foto rulle-hastighed:">
+<!ENTITY mtprefs.tab.photo.faster "Hurtigere">
+<!ENTITY mtprefs.tab.photo.slower "Langsommere">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Search Keywords">
+<!ENTITY mtprefs.tab.photo.keywords "Additional search keywords:">
+<!ENTITY mtprefs.tab.photo.keywords.help "You can specify additional keywords to be appended to your photo provider search.  Keywords should be separated by spaces, example: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Auto-afspil videoer">
+<!ENTITY mtprefs.tab.video.autoplay.help "Aktivering af denne indstilling vil gøre at de medfølgende video-leverandør-resultater bliver afspillet en efter en. Dette er f.eks. praktisk til at auto-afspille alle MTV-musikvideoer. Ikke-medfølgende videoleverandører vil ikke virke med denne indstilling.">

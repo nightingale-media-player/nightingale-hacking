@@ -73,7 +73,7 @@ AC_SUBST(SB_CONFIGURATION)
 #
 
 AC_ARG_ENABLE(jars,
-              [  --enable-jars           create jar files (default=yes,debug=no])
+              [  --enable-jars           create jar files (default=yes,debug=no)])
 if test "$enable_jars" == "yes"; then
   FORCE_JARS=1
 fi
@@ -108,6 +108,10 @@ if test "$enable_nightly" == "yes"; then
   SB_ENABLE_TEST_HARNESS=1
 fi
 AC_SUBST(SONGBIRD_NIGHTLY)
+
+if test "$SONGBIRD_OFFICIAL$SONGBIRD_NIGHTLY" == 1; then
+  AC_CHECK_PROG(GIT, git, git)
+fi
 
 #
 #  Check for --enable-tests
@@ -155,7 +159,7 @@ AC_SUBST(SB_USE_JEMALLOC)
 #
 
 AC_ARG_ENABLE(update-channel,
-              [  --enable-update-channel=CHANNEL    which update channel to use ("default")],
+              [  --enable-update-channel=CHANNEL   which update channel to use ("default")],
               SB_UPDATE_CHANNEL=`echo $enableval | tr A-Z a-z`)
 if test -z "$SB_UPDATE_CHANNEL"; then
   SB_UPDATE_CHANNEL=default
@@ -169,7 +173,8 @@ AC_SUBST(SB_UPDATE_CHANNEL)
 SB_WITH_DEADLY_WARNINGS=
 
 AC_ARG_WITH(deadly-warnings,
-            [  --with-deadly-warnings=<debug,release,all,none,force>,conditions under which compiler warnings are considered build failures (default=release)],
+            [  --with-deadly-warnings=LIST  conditions under which compiler warnings are considered
+                          build failures (<debug,release,all,none,force>, default=release)],
             [ SB_WITH_DEADLY_WARNINGS=$withval ],
             [ SB_WITH_DEADLY_WARNINGS=all])
 
@@ -190,7 +195,8 @@ AC_SUBST(SB_WITH_DEADLY_WARNINGS)
 SB_BIRD_EXTENSIONS=default
 
 AC_ARG_WITH(songbird-extensions,
-            [  --with-songbird-extensions=<list of songbird extensions>,list of songbird extensions to build (default=platform dependent)],
+            [  --with-songbird-extensions=LIST  list of songbird extensions to build
+                          (default=platform dependent)],
             [ SB_BIRD_EXTENSIONS=$withval ],
             [ SB_BIRD_EXTENSIONS=default])
 AC_SUBST(SB_BIRD_EXTENSIONS)
@@ -202,7 +208,7 @@ AC_SUBST(SB_BIRD_EXTENSIONS)
 SB_EXTENSIONS=default
 
 AC_ARG_WITH(extensions,
-            [  --with-extensions=<list of extensions>,list of extensions to build (default: xpcom_helloworld)],
+            [  --with-extensions=LIST  list of extensions to build (default: xpcom_helloworld)],
             [ SB_EXTENSIONS=$withval ],
             [ SB_EXTENSIONS=default])
 AC_SUBST(SB_EXTENSIONS)
@@ -231,7 +237,7 @@ AC_SUBST(SB_SQLITE_DEBUG)
 #
 
 AC_ARG_ENABLE(device-drivers,
-              [  --enable-device-drivers  include device drivers (default=yes)])
+              [  --enable-device-drivers include device drivers (default=yes)])
 if test "$enable_device_drivers" == "no"; then
   SB_ENABLE_DEVICE_DRIVERS=0
 else
@@ -270,8 +276,8 @@ case "$target" in
       powerpc* | ppc)
         SB_ARCH="ppc"
       ;;
-      *i*86*)
-        SB_ARCH="$target_cpu"
+      *i*86* | x86_64)
+        SB_ARCH="i686"
       ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
@@ -338,7 +344,8 @@ esac
 # Now process --enable-installer options.
 
 AC_ARG_ENABLE(installer,
-              [  --enable-installer=TYPE create installer (default=no, use "nsis", "dmg", "pkg", "tar". "yes" will build default installer type.)],
+              [  --enable-installer=TYPE create installer (default=no, use "nsis", "dmg", "pkg",
+                          "tar". "yes" will build default installer type.)],
               [enable_installer=`echo $enableval | tr 'A-Z,' 'a-z '`])
 case $enable_installer in
   yes)
@@ -394,7 +401,8 @@ esac
 AC_SUBST(SB_MACOSX_DEV_ROOT_DEFAULT)
 
 AC_ARG_WITH(macosx-developer-tools,
-            [  --with-macosx-developer-tools=<directory>,path to directory containing the Mac OS X developer tools (default=/Developer) ],
+            [  --with-macosx-developer-tools=DIR  path to directory containing the Mac OS X
+                          developer tools (default=/Developer) ],
             [ SB_MACOSX_DEV_ROOT=$withval ],
             [ SB_MACOSX_DEV_ROOT=$SB_MACOSX_DEV_ROOT_DEFAULT])
 AC_SUBST(SB_MACOSX_DEV_ROOT)
@@ -421,7 +429,8 @@ esac
 #
 
 AC_ARG_WITH(macosx-sdk,
-            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=<dev-tools>/SDKs/MacOSX10.5.sdk) ],
+            [  --with-macosx-sdk=DIR   path to directory containing the Mac OS X SDK
+                          (default=<dev-tools>/SDKs/MacOSX10.5.sdk) ],
             [ SB_MACOSX_SDK=$withval ],
             [ SB_MACOSX_SDK=$SB_MACOSX_SDK_DEFAULT])
 
@@ -455,7 +464,8 @@ AC_SUBST(SB_ENABLE_BREAKPAD)
 #
 
 AC_ARG_ENABLE(static,
-              [  --enable-static         experimental single-component static build support (default=no)])
+              [  --enable-static         experimental single-component static build support
+                          (default=no)])
 if test "$enable_static" == "yes"; then
   SB_ENABLE_STATIC=1
 else
@@ -469,7 +479,7 @@ AC_SUBST(SB_ENABLE_STATIC)
 #
 
 AC_ARG_ENABLE(compiler-environment-checks,
-              [  --enable-compiler-environment-checks       check the compiler environment (default=yes)])
+              [  --enable-compiler-environment-checks  check the compiler environment (default=yes)])
 if test "$enable_compiler_environment_checks" == "no"; then
   SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS=
   AC_MSG_WARN([Compiler environment checks disabled.])
@@ -604,19 +614,19 @@ case "$SB_PLATFORM" in
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
     AC_CHECK_PROG(MIDL, midl, midl)
     if test -z "$MIDL"; then AC_MSG_ERROR(Midl not found); fi
-    AC_CHECK_PROG(REBASE, rebase, rebase)
+    AC_CHECK_PROG(REBASE, rebase, rebase, "EDITBIN /DYNAMICBASE:no /REBASE:")
     if test -z "$REBASE"; then AC_MSG_ERROR(Rebase not found); fi
 
     # Check midl version
     changequote(,)
     _MIDL_VER_FILTER='s|.* \([0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
-    
+
     _MIDL_FULL_VERSION=`"${MIDL}" -v 2>&1 | sed -ne "$_MIDL_VER_FILTER"`
     _MIDL_MAJOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
     _MIDL_MINOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $2 }'`
     _MIDL_REV_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $3 }'`
-    
+
     # Add flags if necessary
     AC_MSG_CHECKING([for midl flags])
     case "$target" in
@@ -647,8 +657,8 @@ case "$SB_PLATFORM" in
     _SAVE_LIBS=$LIBS
     LIBS="$LIBS wmvcore.lib"
     AC_MSG_CHECKING([wmvcore.lib])
-    AC_LINK_IFELSE([#include <wmsdk.h>
-                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }],
+    AC_LINK_IFELSE([AC_LANG_SOURCE([#include <wmsdk.h>
+                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }])],
                     AC_MSG_RESULT([yes]),
                     AC_MSG_ERROR([Missing wmvcore.lib; install the Windows SDK]))
     LIBS=$_SAVE_LIBS
@@ -659,7 +669,7 @@ case "$SB_PLATFORM" in
 
     AC_LANG_PUSH([C++])
     AC_ARG_WITH(msvc-express,
-                [  --with-msvc-express       limit to features buildable with MSVC Express],
+                [  --with-msvc-express     limit to features buildable with MSVC Express],
                 [SB_WITH_MSVC_EXPRESS=1
                  AC_MSG_WARN([Limiting functionality to MSVC Express-compatible])],
                 [SB_WITH_MSVC_EXPRESS=
@@ -745,7 +755,7 @@ case "$SB_PLATFORM" in
     _CC_SUPPORTED_MAJOR_VERSION=14
 
     changequote(,)
-    _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+    _MSVC_VER_FILTER='s|.*[^!-~]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
 
     # Determine compiler version
@@ -973,20 +983,28 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
-		
+
     # Breakpad needs stabs debugging data, so always explicitly request it with
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
-      # Use -Os on linux, better than -O2 according to moz perf tests
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -gstabs+ -Os"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -gstabs+"
     fi
 
     # We always want to include "mozilla-config.h"
     GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    # hardcoding to just "clang" is lame. prevents "/usr/bin/clang", etc.
+    if test "$CC" == "clang" ; then
+      GCC_LINKER_FLAGS="-L\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    else
+      GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
+    fi
+
+    if test "$LD" == "gold" ; then
+      GCC_LINKER_FLAGS="$GCC_LINKER_FLAGS -fuse-ld=gold"
+    fi
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"
@@ -1135,7 +1153,7 @@ AC_SUBST(COMPILER_GARBAGE)
 #
 
 AC_ARG_WITH(license-file,
-            [  --with-license-file=PATH, path to the license file to use (default=installer/LICENSE.html],
+            [  --with-license-file=PATH  path to the license file to use (default=installer/LICENSE.html)],
             [ SB_LICENSE_FILE=$withval],
             [ SB_LICENSE_FILE="\$(topsrcdir)/$OBJDIRNAME/installer/LICENSE.html" ])
 AC_SUBST(SB_LICENSE_FILE)
@@ -1145,11 +1163,11 @@ AC_SUBST(SB_LICENSE_FILE)
 #
 
 AC_ARG_WITH(user-eula-file,
-            [  --with-user-eula-file=PATH           the location of the user eula file to use. This file
-                                       is displayed when the application is first launched.
-                                       The user *must* accept this EULA for the application
-                                       to continue. The file *must* reside within the source
-                                       tree. Using / means the root of the source tree.
+            [  --with-user-eula-file=PATH  the location of the user eula file to use. This
+                          file is displayed when the application is first launched.
+                          The user *must* accept this EULA for the application
+                          to continue. The file *must* reside within the source
+                          tree. Using / means the root of the source tree.
                                        ],
             SB_USER_EULA_FILE=$withval)
 if test -z "$SB_USER_EULA_FILE"; then
@@ -1162,7 +1180,7 @@ AC_SUBST(SB_USER_EULA_FILE)
 #
 
 AC_ARG_WITH(dependencies-dir,
-            [  --with-dependencies-dir=DIR          the location of the dependencies directory.],
+            [  --with-dependencies-dir=DIR   the location of the dependencies directory],
             SB_DEPENDENCIES_DIR=$withval)
 if test -z "$SB_DEPENDENCIES_DIR"; then
   DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
@@ -1177,7 +1195,7 @@ AC_SUBST(SB_DEPENDENCIES_DIR)
 
 SB_SYSTEM_TAGLIB=
 AC_ARG_WITH(taglib-source,
-			[  --with-taglib-source=system,packaged,default  Taglib to use],
+			[  --with-taglib-source=TYPE     Taglib to use (default=packaged; use "system", "packaged")],
 			[ SB_TAGLIB=$withval ],
 			[ SB_TAGLIB=default ])
 for option in `echo $SB_TAGLIB | sed 's/,/ /g'`; do
@@ -1209,7 +1227,7 @@ for option in `echo $SB_TAGLIB | sed 's/,/ /g'`; do
 done
 AC_SUBST(SB_TAGLIB)
 
-#	
+#
 # If we're building with SYSTEM_TAGLIB, find it
 #
 
@@ -1229,7 +1247,8 @@ MEDIA_CORE_GST_SYSTEM=
 MEDIA_CORE_QT=
 
 AC_ARG_WITH(media-core,
-            [  --with-media-core=windowsmedia,gstreamer,gstreamer-system,qt,default,none  Media cores to enable],
+            [  --with-media-core=LIST        Media cores to enable (available: "windowsmedia",
+                                "gstreamer", "gstreamer-system", "qt", "default", "none")],
             [ SB_MEDIA_CORES=$withval ],
             [ SB_MEDIA_CORES=default ])
 for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
@@ -1250,7 +1269,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
                 MEDIA_CORE_QT=1
             ;;
             linux|solaris)
-                MEDIA_CORE_GST=1
+                MEDIA_CORE_GST_SYSTEM=1
             ;;
             *)
                 AC_MSG_ERROR([No platform default media cores found; please manually specify --with-media-core=])
@@ -1284,7 +1303,8 @@ FORCE_MEDIA_CORE_WMP=
 FORCE_MEDIA_CORE_QT=
 
 AC_ARG_WITH(force-media-core,
-            [  --with-force-media-core=windowsmedia,gstreamer,qt,default,none  Media cores to force install and enable],
+            [  --with-force-media-core=LIST  Media cores to force install and enable (available:
+                                "windowsmedia", "gstreamer", "qt", "default", "none")],
             [ SB_FORCED_MEDIA_CORES=$withval ],
             [ SB_FORCED_MEDIA_CORES=default ])
 for option in `echo $SB_FORCED_MEDIA_CORES | sed 's/,/ /g'`; do
@@ -1330,7 +1350,7 @@ fi
 SB_SEARCHPLUGINS=
 
 AC_ARG_WITH(searchplugins,
-            [  --with-searchplugins=<list of plugin files>,default   Searchplugins to include (from the locales)],
+            [  --with-searchplugins=LIST     Searchplugins to include (from the locales)],
             [ SB_SEARCHPLUGINS=$withval ],
             [ SB_SEARCHPLUGINS=default ])
 AC_SUBST(SB_SEARCHPLUGINS)
@@ -1344,6 +1364,74 @@ if test "$MEDIA_CORE_GST" = "1" -a "$SB_PLATFORM" = "linux"; then
   )
 fi
 AC_SUBST(HAVE_FLUENDO_MP3)
+
+#
+#  Check for --enable-unity-integration
+#
+
+AC_ARG_ENABLE(unity-integration,
+            [  --enable-unity-integration   integration with unity (default=no)])
+if test "$SB_PLATFORM" = "linux" -a "$enable_unity_integration" = "yes"; then
+  PKG_CHECK_MODULES(LNTFY, libnotify)
+  AC_SUBST(LNTFY_CFLAGS)
+  AC_SUBST(LNTFY_LIBS)
+
+  PKG_CHECK_MODULES(UNITY, unity)
+  AC_SUBST(UNITY_CFLAGS)
+  AC_SUBST(UNITY_LIBS)
+
+  NIGHTINGALE_UNITY=1
+fi
+AC_SUBST(NIGHTINGALE_UNITY)
+
+#
+#  Check for --enable-libnotify
+#
+
+AC_ARG_ENABLE(libnotify,
+            [  --enable-libnotify      enable libnotify extension (default=no)])
+if test "$SB_PLATFORM" = "linux" -a "$enable_libnotify" = "yes"; then
+  PKG_CHECK_MODULES(LNTFY, libnotify)
+  AC_SUBST(LNTFY_CFLAGS)
+  AC_SUBST(LNTFY_LIBS)
+
+  NIGHTINGALE_LIBNOTIFY=1
+  AC_DEFINE(NIGHTINGALE_LIBNOTIFY)
+else
+  NIGHTINGALE_LIBNOTIFY=
+fi
+AC_SUBST(NIGHTINGALE_LIBNOTIFY)
+
+#
+# Check for --enable-metrics
+#
+
+AC_ARG_ENABLE(metrics,
+              [  --enable-metrics        enabling of metrics system (default=no)])
+if test "$enable_metrics" = "yes"; then
+  METRICS_ENABLED=1
+  AC_DEFINE(METRICS_ENABLED)
+else
+  METRICS_ENABLED=
+fi
+AC_SUBST(METRICS_ENABLED)
+
+#
+# Are we going to use system nspr?
+#
+
+AC_ARG_ENABLE(system-nspr,
+      [  --enable-system-nspr    use system's NSPR (default=no)])
+if test "$enable_system_nspr" = "yes"; then
+  PKG_CHECK_MODULES(NSPR, nspr)
+  AC_SUBST(NSPR_CFLAGS)
+  AC_SUBST(NSPR_LIBS)
+  NG_SYSTEM_NSPR=1
+  AC_DEFINE(NG_SYSTEM_NSPR)
+else
+  NG_SYSTEM_NSPR=
+fi
+AC_SUBST(NG_SYSTEM_NSPR)
 
 #
 # Checks for libraries.

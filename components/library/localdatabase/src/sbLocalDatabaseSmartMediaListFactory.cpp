@@ -42,7 +42,9 @@
 #include <sbPropertiesCID.h>
 
 #define SB_SMART_MEDIALIST_FACTORY_TYPE "smart"
+//#ifdef METRICS_ENABLED
 #define SB_SMART_MEDIALIST_METRICS_TYPE "smart"
+//#endif
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseSmartMediaListFactory,
                    sbIMediaListFactory)
@@ -133,7 +135,7 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   rv = newSmartList->Init(aInner);
   NS_ENSURE_SUCCESS(rv, rv);
 
-
+//#ifdef METRICS_ENABLED
   // Get customType so we don't overwrite it.  Grrrr.
   nsAutoString customType;
   rv = newSmartList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType );
@@ -142,6 +144,7 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     rv = newSmartList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
                                    NS_LITERAL_STRING(SB_SMART_MEDIALIST_METRICS_TYPE));
   }
+//#endif
   
   rv = newSmartList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISCONTENTREADONLY),
                                  NS_LITERAL_STRING("1"));

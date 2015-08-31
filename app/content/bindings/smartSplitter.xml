@@ -205,7 +205,8 @@
             var root = "splitter." + id + ".";
 
             var collapsed = (state == "collapsed");
-            
+
+#ifdef METRICS_ENABLED
             var metricsid = this.getAttribute("metricsid");
             var metricscategory = this.getAttribute("metricscategory");
             if (metricsid && metricscategory ) {
@@ -214,6 +215,7 @@
               if (collapsed && !SBDataGetBoolValue(root + "collapsed"))
                 metrics_inc(metricscategory, metricsid, null);
             }
+#endif
 
             this.saveState();
             

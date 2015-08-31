@@ -33,7 +33,7 @@ include $(topsrcdir)/build/rules.mk
 
 # XXX Note that on a windows debug build, ogg.dll is named ogg_d.dll.  This is
 # fixed using a perl script to copy the file and make the change
-export:: 
+export::
 	$(PERL) -p -e "s/ogg.dll/ogg$(DEBUG:%=_d).dll/g" \
-    $(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(GST_LIBS_FILE)
+	$(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(GST_LIBS_FILE)
 	$(INSTALL_FILE) $(GST_LIBS_FILE) $(SONGBIRD_COMPONENTSDIR)

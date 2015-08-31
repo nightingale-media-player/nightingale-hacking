@@ -49,12 +49,14 @@ tier_base_dirs = \
    tools \
    $(NULL)
 
+ifdef METRICS_ENABLED
 tier_componentsbase_dirs = \
    components/moz \
    components/intl \
    components/property \
    components/library \
    components/integration \
+   components/equalizerpresets \
    components/mediacore \
    components/albumart \
    components/dbengine \
@@ -72,6 +74,32 @@ tier_componentsbase_dirs = \
    components/feathers \
    components/playqueue \
    $(NULL)
+else
+tier_componentsbase_dirs = \
+   components/moz \
+   components/intl \
+   components/property \
+   components/library \
+   components/integration \
+   components/equalizerpresets \
+   components/mediacore \
+   components/albumart \
+   components/dbengine \
+   components/sqlbuilder \
+   components/job \
+   components/dataremote \
+   components/mediaimport \
+   components/filesystemevents \
+   components/watchfolder \
+   components/controller \
+   components/devices \
+   components/devicesobsolete \
+   components/mediamanager \
+   components/feathers \
+   components/playqueue \
+   $(NULL)
+endif
+
 
 tier_componentsall_dirs = \
    components/addonmetadata \
@@ -94,6 +122,7 @@ tier_componentsall_dirs = \
    components/mediaexport \
    components/appstartup \
    components/networkproxy \
+   components/internalsearch \
    $(NULL)
 
 tier_appbase_dirs = \
@@ -132,6 +161,10 @@ tier_update_dirs = \
 
 tier_installer_dirs = \
    installer \
+   $(NULL)
+
+tier_documentation_dirs = \
+   documentation \
    $(NULL)
 
 #------------------------------------------------------------------------------

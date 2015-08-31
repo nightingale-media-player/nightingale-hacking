@@ -285,9 +285,11 @@
       <!-- Dispatch a search event -->
       <method name="_sendSearchEvent">
         <body><![CDATA[
+#ifdef METRICS_ENABLED
           try {
             metrics_inc("search.widget", this.currentEngine.name, null);
           } catch(e) { Components.utils.reportError(e); }
+#endif
           var e = document.createEvent("Events");
           e.initEvent("search", false, true);
           this.dispatchEvent(e);

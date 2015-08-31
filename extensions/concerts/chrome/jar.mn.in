@@ -35,4 +35,6 @@ concerts.jar:
 % skin    concerts  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://concerts/content/scripts-overlay.xul
   content/main.js    (@SONGBIRD_PP_RELATIVE_PATH@/main.js)
+* content/browse.js  (content/browse.js)
+* content/options.js (content/options.js)
 @include_all_to

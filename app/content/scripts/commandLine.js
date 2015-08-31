@@ -76,7 +76,7 @@ try
     handleItem: function(aUriSpec, aCount, aTotal) {
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
           aUriSpec.toLowerCase().indexOf("https:") == 0 ||
-          aUriSpec.toLowerCase().indexOf("songbird:") == 0)
+          aUriSpec.toLowerCase().indexOf("ngale:") == 0)
       {
         if (gBrowser._sessionStore && !gBrowser._sessionStore.tabStateRestored) {
           // process this after the session store is complete

@@ -29,7 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbAppStartupService.js \
+SONGBIRD_PP_RESOURCES = $(srcdir)/sbAppStartupService.js.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(CURDIR)/sbAppStartupService.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

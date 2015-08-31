@@ -1,10 +1,43 @@
 #!/usr/bin/make -f
 
-include /usr/share/cdbs/1/rules/debhelper.mk
+CXXFLAGS = $(filter-out -g -O2,$(shell dpkg-buildflags --get CXXFLAGS)) \
+	$(CPPFLAGS)
+LDFLAGS += -Wl,--as-needed
 
-DEB_DH_SHLIBDEPS_ARGS_ALL := -X nightingale
 
-makebuilddir/nightingale::
-	./build.sh
-	cp -r $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
-	cp $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
+%:
+	dh $@ --parallel
+
+# nothing to do, as we do that with make.
+override_dh_auto_configure:
+
+override_dh_auto_build:
+	# echo 'ac_add_options --enable-debug' >> nightingale.config
+	echo 'ac_add_options --enable-libnotify' >> nightingale.config
+	echo 'ac_add_options --enable-system-nspr' >> nightingale.config
+	$(CURDIR)/build.sh
+
+	# remove extra license file
+	rm -f compiled/dist/xulrunner/LICENSE
+
+	# remove libnspr, as we use the native one
+	rm -f compiled/dist/xulrunner/libnspr4.so
+
+	# Delete the dictionaries directory. It'll be replaced
+	# with a symbolic link to /usr/share/hunspell
+	rm -rf compiled/dist/xulrunner/dictionaries
+
+# This isn't a build with enabled tests.
+# dh_auto_test would make the build stop with an error warning.
+# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
+override_dh_auto_test:
+
+override_dh_shlibdeps:
+	dh_shlibdeps -Lnightingale -l/usr/lib/nightingale/xulrunner
+
+override_dh_auto_clean:
+	dh_auto_clean -- clobber
+
+override_dh_clean:
+	dh_clean nightingale.config config.log
+

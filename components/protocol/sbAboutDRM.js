@@ -79,7 +79,7 @@ sbAboutDRM.prototype = {
         username == "78636249353331464e4c6f3539612f7368714f694f673d3d" ||
         Application.prefs.getValue("songbird.buildNumber","42") != "0")
     {
-      url = "http://wikipedia.org/wiki/Digital_rights_management#Controversy";
+      url = "http://en.wikipedia.org/wiki/Digital_rights_management#Opposition_to_DRM";
     } else {
       url = "chrome://songbird/content/html/aboutDRM.xhtml";
     }

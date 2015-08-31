@@ -742,9 +742,9 @@ foldersync.sync={
                   break;
                 case "..":
                   if (aFile.parent){
-                    aFile = aFile.parent;
                     plRel = aFile.leafName +
                               crtProfile.playlists.splitChar + plRel;
+                    aFile = aFile.parent;
                   } else {
                     foldersync.central.logEvent("sync-sync",
                                                 "Relative path for " +
@@ -1048,7 +1048,7 @@ foldersync.sync={
                 try {
                   if (!pFile.exists()){
                     pFile.create(Components.interfaces.nsIFile.
-                                 NORMAL_FILE_TYPE, 0x664);
+                                 NORMAL_FILE_TYPE, 0664);
                   }
                   
                   // Open (and empty) file for writing and init a converter

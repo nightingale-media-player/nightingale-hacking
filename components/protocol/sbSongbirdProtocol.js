@@ -31,19 +31,19 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function sbSongbirdDispatch() {}
 sbSongbirdDispatch.prototype = {
-  classDescription: "Songbird songbird:// protocol command dispatch",
+  classDescription: "Nightingale ngale:// protocol command dispatch",
   classID:          Components.ID("2c15f30e-815f-4414-8d18-277d943a2f68"),
-  contractID:       "@mozilla.org/network/protocol;1?name=songbird",
+  contractID:       "@mozilla.org/network/protocol;1?name=ngale",
  
   newChannel: function(aUri) {
-    if (!(aUri.scheme == "songbird")) {
+    if (!(aUri.scheme == "ngale")) {
       throw Components.Exception("URI " + aUri.spec + " not supported",
                                  Cr.NS_ERROR_UNEXPECTED);
     }
     aUri.QueryInterface(Ci.nsIURL);
 
     // the URI is automatically changed by standard-url to look like this:
-    // songbird://open/?url=http://foo.com
+    // ngale://open/?url=http://foo.com
     // thus "host" will contain the command (if it exists)
     if (aUri.host) {
       switch(aUri.host) {
@@ -71,7 +71,7 @@ sbSongbirdDispatch.prototype = {
             Components.utils.reportError(
                "sbSongbirdProtocol::newChannel: " +
                "failed to make a new channel/url for: " + aUri.query +
-               "\nThe syntax is: songbird:open?url=<encodedURL>");
+               "\nThe syntax is: ngale:open?url=<encodedURL>");
             return new BogusChannel(aUri, "application/dummy-mime-type");
           }
           
@@ -103,7 +103,7 @@ sbSongbirdDispatch.prototype = {
       // Returning a URL from newURI with no host causes XULRunner to crash.
       // mozbug 478478
       Components.utils.reportError("sbSongbirdProtocol::newURI: no command provided.\n"+
-                                   "Syntax is in the form: songbird:<command>?p1=a&p2=b");
+                                   "Syntax is in the form: ngale:<command>?p1=a&p2=b");
 
       // Set up the host so that a valid URI can be returned that indicates that
       // no command was provided.

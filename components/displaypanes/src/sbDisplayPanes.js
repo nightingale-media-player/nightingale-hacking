@@ -25,10 +25,12 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
+const CHROME_PREFIX = "chrome://";
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/RDFHelper.jsm");
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 /**
  * sbIContentPaneInfo
@@ -138,6 +140,18 @@ DisplayPaneMetadataReader.prototype = {
           "Ignoring display pane addon in the install.rdf of extension " +
           addon.Value + " due to these error(s):\n", errorList);
       return;
+    }
+
+    // Resolve any localised display pane contentTitle to their actual strings
+    if (info.contentTitle.substr(0,CHROME_PREFIX.length) == CHROME_PREFIX)
+    {
+      var contentTitle = SBString("displaypanes.contenttitle.unnamed");
+      var split = info.contentTitle.split("#", 2);
+      if (split.length == 2) {
+        var bundle = new SBStringBundle(split[0]);
+        contentTitle = bundle.get(split[1], contentTitle);
+      }
+      info.contentTitle = contentTitle;
     }
     
     // Submit description

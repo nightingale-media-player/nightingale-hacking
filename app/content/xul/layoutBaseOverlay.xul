@@ -620,9 +620,11 @@
   <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/restartBox.js" />
 
+#ifdef METRICS_ENABLED
   <!-- Metrics functions -->
   <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/metrics.js" />
+#endif
 
   <!-- Sanitizer Support (moz) -->
   <script type="application/x-javascript"

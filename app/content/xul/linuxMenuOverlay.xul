@@ -55,6 +55,13 @@
                   oncommand="openPreferences();"/>
       </menupopup>
     </menu>
+    <!-- remove preferences entry in Tools menu, see SB bug #10030 -->
+    <menu id="tools-menu">
+      <menupopup id="menu_ToolsPopup">
+        <menuseparator id="menu_PrefsSeparator" removeelement="true"/>
+        <menuitem id="menu_preferences" removeelement="true"/>
+      </menupopup>
+    </menu>
   </menubar>
 
   <!-- XXXredfive this make ctrl-shift-z work but doens't block ctrl-y -->

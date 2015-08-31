@@ -241,6 +241,7 @@ var watchFolderPrefsPane = {
   
   _updateUIState: function()
   {
+    this._checkManageMedia();
     var checkbox = document.getElementById("watch_folder_enable_checkbox");
     var enabled = checkbox.checked;
     var broadcaster = document.getElementById("watch_folder_disabled_broadcaster");
@@ -252,6 +253,15 @@ var watchFolderPrefsPane = {
     }
 
     this._checkForValidPref();
+  },
+  
+  _checkManageMedia: function()
+  {
+    var manageMediaValue = Application.prefs.getValue("songbird.media_management.library.enabled", false);
+    var watchFolderEnableWarning = document.getElementById("watch_folder_enable_warning");
+    if (!manageMediaValue) {
+      watchFolderEnableWarning.setAttribute("hidden", "true");
+    }
   },
 
   _removeErrorNotifications: function()

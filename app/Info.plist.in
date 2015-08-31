@@ -739,5 +739,7 @@
   <true/>
   <key>CGDisableCoalescedUpdates</key>
   <true/>
+  <key>NSSupportsAutomaticGraphicsSwitching</key>
+  <true/>
 </dict>
 </plist>

@@ -16,7 +16,7 @@
 <!ENTITY custom-genres.help.label "你可以自訂你想在 SHOUTcast 電台目錄中要顯示的曲風，每個曲風要以逗號分隔。">
 <!ENTITY prefs.tosBegin "使用 SHOUTcast 電台目錄需要同意下列服務條款">
 <!ENTITY prefs.tosLinkText "檢視服務條款">
-<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.tosEnd "">
 <!ENTITY prefs.toolbarBegin "安裝">
 <!ENTITY prefs.toolbarLinkText "SHOUTcast 工具列">
 <!ENTITY prefs.toolbarEnd "附加元件可讓您更方便收聽多樣的 SHOUTcast 電台。">

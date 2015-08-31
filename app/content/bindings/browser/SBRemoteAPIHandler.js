@@ -94,8 +94,6 @@ function onRemoteAPI(event) {
                                 true);
 
     aHat.closeEvent = allowEvt;
-
-    // add metrics reporting here
   }
 
   var editOptionsCallback = function(aHat, aButtonInfo) {
@@ -123,9 +121,6 @@ function onRemoteAPI(event) {
       prefWindow.pleaseConfigureWhitelist = 
           [closure.categoryID, closure.siteScope.spec];
     }
-    
-
-    // add metrics reporting here
   }
 
   var buttons = [

@@ -79,6 +79,20 @@
         name="songbird.metadata.ratings.enableWriting"
         type="bool"/>
 
+#ifdef NIGHTINGALE_LIBNOTIFY
+      <preference
+        id="notification_timeout_pref"
+        prefid="notification_timeout_pref" 
+        name="extensions.libnotify-notifs.notificationTimeout" 
+        type="int" />
+
+      <preference
+        id="notification_enable_pref"
+        prefid="notification_enable_pref"
+        name="extensions.libnotify-notifs.enableNotifications"
+        type="bool" />
+#endif
+
     </preferences>
 
     <groupbox>
@@ -144,6 +158,22 @@
                 preference="rating_metadata_writing_pref"
                 label="&playback.prefpane.ratings.enablewriting;"/>
     </groupbox>
+
+#ifdef NIGHTINGALE_LIBNOTIFY
+    <groupbox>
+      <caption label="&playback.prefpane.notification.options.title;"/>
+
+      <hbox>
+        <label value="&playback.prefpane.notification.options.notificationTimeout;" />
+        <textbox preference="notification_timeout_pref" 
+                 min="1" max="30000" />
+        <label value="&playback.prefpane.units.ms;"/>
+      </hbox>
+
+      <checkbox preference="notification_enable_pref" 
+                label="&playback.prefpane.notification.options.enableNotifications;" />
+    </groupbox>
+#endif
 
   </prefpane>
 

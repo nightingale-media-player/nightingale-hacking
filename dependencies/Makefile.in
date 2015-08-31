@@ -527,7 +527,10 @@ SONGBIRD_XR_EXTENSIONS = $(foreach e, \
 
 ## See comment above about, re: the specifics of this export::'s logic.
 export::
-	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
+ifneq ($(V), 1)
+	@echo "       extract xulrunner.tar.bz2";
+endif
+	$(silent)$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
 	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
 ifneq (,$(XULRUNNER_EXTENSION_DIRS))
 	ifneq (1,$(SONGBIRD_OFFICIAL))
@@ -576,3 +579,16 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	 $(SONGBIRD_XR_STUB_DIR)/nightingale.exe, nightingale.res, VersionInfo,1,1033
 endif # }windows
 	$(CHMOD) 0755 $(SONGBIRD_STUB)
+# remove when file permissions are fixed in deps
+ifeq (linux,$(SB_PLATFORM)) #{
+	$(CHMOD) 0644 `find $(SONGBIRD_XULRUNNERDIR) -name "*.*"`
+	$(CHMOD) 0755 $(SONGBIRD_XULRUNNERDIR)/run-mozilla.sh
+endif # }linux
+
+# Move updater icon on linux
+ifeq (linux,$(SB_PLATFORM)) #{
+	$(MKDIR) $(SONGBIRD_DISTDIR)/icons
+	$(MV) -f $(SONGBIRD_XULRUNNERDIR)/icons/updater.png $(SONGBIRD_DISTDIR)/icons/updater.png
+	# remove when file permissions are fixed in deps
+	$(CHMOD) 0644 $(SONGBIRD_DISTDIR)/icons/updater.png
+endif # }linux

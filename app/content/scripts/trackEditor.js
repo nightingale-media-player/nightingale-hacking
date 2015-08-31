@@ -104,31 +104,10 @@ var TrackEditor = {
    */
   _setUpDefaultWidgets: function TrackEditor__setUpDefaultWidgets() {
 
-    // TODO: profiling shows that setting the value of a textbox can
-    // take up to 200ms.  Multiply that by 40 textboxes and performance
-    // can suffer.  Do some more tests and determine the impact of
-    // the advanced tab
-
-    // Set up the advanced tab
-    var enableAdvanced = Application.prefs.getValue(
-                           "songbird.trackeditor.enableAdvancedTab", false);
-    if (enableAdvanced) {
-      // this code assumes that the number of tabs and tabpanels is aligned
-      var tabbox = document.getElementById("trackeditor-tabbox");
-      this._elements["advancedTab"] = new TrackEditorAdvancedTab(tabbox);
-    }
-    else {
-
-      var tabBox = document.getElementById("trackeditor-tabbox");
-      var tabs = tabBox.tabs;
-      /*    
-      // FIXME: hid summary and lyrics tabs halfheartedly
-      //        (you can probably still keyboard shortcut to them)
-      tabs.getItemAtIndex(0).setAttribute("hidden", "true");
-      tabs.getItemAtIndex(2).setAttribute("hidden", "true");
-      tabBox.selectedIndex = 1;*/
-    }
- 
+    // load the tabBox and individuals tabs     
+    var tabBox = document.getElementById("trackeditor-tabbox");
+    var tabs = tabBox.tabs;   
+     
     // Add an additional layer of control to all elements with a property
     // attribute.  This will cause the elements to be updated when the
     // selection model changes, and vice versa.
@@ -174,7 +153,36 @@ var TrackEditor = {
         }
       }
     }
+
+    // load the advanced tab
+    // get ngales property manager
+    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                       .getService(Ci.sbIPropertyManager);                   
+    // get all row elements from the advanced tab
+    var advancedRowItemsToLoad = document.getElementsByAttribute("class", "advTabRowElements");
     
+    // get the menupopup element from the advanced tab
+    var advancedMenupopup = document.getElementById("menupopup");
+
+    // Populate the advanced tab's menupopup
+    for (var i = 0; i < advancedRowItemsToLoad.length; i++){
+      var singleRowItem = advancedRowItemsToLoad[i];
+      var property = singleRowItem.getAttribute("property");
+      var propInfo = propMan.getPropertyInfo(property);
+      // create menuitems
+      var menuitem = document.createElement("menuitem");
+      menuitem.setAttribute("type", "checkbox");
+      menuitem.setAttribute("class", "advTabMenuItems");
+      menuitem.setAttribute("property", property);
+      menuitem.setAttribute("label", propInfo.displayName);
+      // stop the menuitem(s) from triggering the menupopup to close.
+      menuitem.setAttribute("closemenu", "none");
+      advancedMenupopup.appendChild(menuitem);
+    }
+
+    // addEventListener to the menupopup
+    advancedMenupopup.addEventListener("popuphidden", function(){TrackEditor.onpopupclose()}, false);
+
     // Known elements we're going to want to use.
     elements = ["notification_box", "notification_text",
                 "prev_button", "next_button", "infotab_trackname_label",
@@ -310,6 +318,26 @@ var TrackEditor = {
    */
   onSelectionChanged: function TrackEditor_onSelectionChanged() {
     
+    // get the new item's content type
+    var itemContentType = this.mediaListView.selection.currentMediaItem.contentType;
+
+    if (itemContentType == "audio"){
+      // load the users audio preference
+      var userPreferenceProperty = JSON.parse(Application.prefs.getValue(
+                                        "songbird.trackeditor.audioAdvancedTags", "")); 
+            
+      // update the advanced tab with the proper elements
+      TrackEditor.updateAdvancedTab(userPreferenceProperty);
+    }
+    else if (itemContentType == "video"){
+      // load the users audio preference
+      var userPreferenceProperty = JSON.parse(Application.prefs.getValue(
+                                        "songbird.trackeditor.videoAdvancedTags", ""));
+      
+      // update the advanced tab with the proper elements
+      TrackEditor.updateAdvancedTab(userPreferenceProperty);
+    }
+
     this.state.setSelection(this.mediaListView.selection);    
     
     // Disable summary page if multiple items are selected.
@@ -538,97 +566,89 @@ var TrackEditor = {
     }
     
     return true;
-  }
-};
+  },
 
-
-/******************************************************************************
- *
- * \class TrackEditorAdvancedTab 
- * \brief A tab panel that displays all properties in the system
- *
- *****************************************************************************/
-function TrackEditorAdvancedTab(tabBox) {
-  var tabs = tabBox.getElementsByTagName("tabs")[0];
-  var tabPanels = tabBox.getElementsByTagName("tabpanels")[0];
-  var tab = document.createElement("tab");
-  
-  tab.setAttribute("label", SBString("trackeditor.tab.advanced"));
-  tab.setAttribute("id", "advanced");
-  tabs.appendChild(tab);
-  
-  var panel = document.createElement("vbox");
-  panel.style.overflow = "scroll"
-  panel.setAttribute("flex", "1");
-  tabPanels.appendChild(panel);
-  
-  this._populateTab(panel);
-}
-TrackEditorAdvancedTab.prototype = {
-  
   /**
-   * Create grid of labels and text boxes for all known properties
-   */
-  _populateTab: function TrackEditorAdvancedTab__populateTab(advancedTab) {
-    // Create elements for the properties in the Advanced Property Tab
-    var label = document.createElement("label");
-    label.setAttribute("id", "advanced-warning");
-    // TODO remove or localize
-    var labelText = document.createTextNode(
-                      "WARNING: Editing these values could ruin Christmas.");
-    label.appendChild(labelText);
-    
-    var advancedGrid = document.createElement("grid");
-    advancedGrid.id = "advanced-contents";
-    advancedGrid.style.MozBoxFlex = 1;
-    var columns = document.createElement("columns");
-    var column = document.createElement("column");
-    column.setAttribute("id", "advanced-column-key");
-    columns.appendChild(column);
-    column = document.createElement("column");
-    column.setAttribute("id", "advanced-column-value");
-    column.style.MozBoxFlex = "1";
-    columns.appendChild(column);
-    advancedGrid.appendChild(columns);
-    var advancedRows = document.createElement("rows");
-    advancedGrid.appendChild(advancedRows);
-
-    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                   .getService(Ci.sbIPropertyManager);
-
-    var propertiesEnumerator = propMan.propertyIDs;
-    while (propertiesEnumerator.hasMore()) {
-      var property = propertiesEnumerator.getNext();
-      var propInfo = propMan.getPropertyInfo(property);
-      
-      if (propInfo.userViewable) {
-        var container = document.createElement("row");
-        advancedRows.appendChild(container);
-        
-        var label = document.createElement("label");
-        label.setAttribute("class", "advanced-label");
-        label.setAttribute("property", property);
-        label.setAttribute("property-type", "label");
-        container.appendChild(label);
-
-        if (propInfo.userEditable) {
-          var textbox = document.createElement("textbox");
-          textbox.setAttribute("property", property);
-          textbox.setAttribute("flex", "1");
-          container.appendChild(textbox);
-        }
-        else {
-          var label = document.createElement("textbox");
-          label.setAttribute("readonly", true);
-          label.className = "plain";
-          label.setAttribute("property", property);
-          container.appendChild(label);
-        }
+   * onpopupclose function handles the event when the user closes the advanced
+   * tab's menupopup.  It collects all the menuitems in the menupopup that are 
+   * checked and show/hides the row elements in the advanced tab that have the
+   * same property attribute.  It also saves the users selection of checked 
+   * items for later use inside the checkedPropertyStrings, which is written to 
+   * the users respective preference.
+   */  
+  onpopupclose: function() {
+    // get all menuitems from the advanced tab
+    var advancedMenuItems = document.getElementsByAttribute("class", "advTabMenuItems");
+    var checkedPropertyStrings = [];
+    for (var i = 0; i < advancedMenuItems.length; i++){
+      if (advancedMenuItems[i].getAttribute("checked", "true")){
+        var propertyString = advancedMenuItems[i].getAttribute("property");
+        checkedPropertyStrings.push(propertyString);
       }
     }
-    // we add this at the end so that there is just a single reflow
-    advancedTab.appendChild(advancedGrid);
-  }
-}
+
+    // update the advanced tab
+    TrackEditor.updateAdvancedTab(checkedPropertyStrings);
+
+    // get current items content type
+    var itemContentType = this._browser.currentMediaListView.selection.currentMediaItem.contentType;
+    
+    // write the list of property strings to the users preferences
+    if (itemContentType == "audio"){
+      Application.prefs.setValue("songbird.trackeditor.audioAdvancedTags", 
+                                  JSON.stringify(checkedPropertyStrings));
+    } 
+    else if (itemContentType == "video"){
+      Application.prefs.setValue("songbird.trackeditor.videoAdvancedTags",
+                                  JSON.stringify(checkedPropertyStrings));
+    }
+  },
+
+  /**
+   * updateAdvancedTab function show/hides the row elements in the advanced tab
+   * and updates the proper "checked" state of the menuitems that belong to
+   * the advanced tab's menupopup element.
+   * anArrayofPropertyStrings - a list of property strings that correspond to row elements
+   *                            in the advanced tab the user wants to show/hide on screen.
+   */
+  updateAdvancedTab: function(anArrayOfPropertyStrings){
+    // get all menuitems from the advanced tab
+    var advancedMenuItems = document.getElementsByAttribute("class", "advTabMenuItems");
+    // get all row elements from the advanced tab
+    var rowElementsAdvancedTab = document.getElementsByAttribute("class", "advTabRowElements");
+    
+    /**
+     * Go through all of the advanced tab's row elements. If its property attribute is found within 
+     * anArrayOfPropertyStrings,  we show the row element on screen by removing the hidden attribute 
+     * and we hide the row element by setting the attribute to true.
+     */
+
+    for (var i = 0; i < rowElementsAdvancedTab.length; i++){
+      var property = rowElementsAdvancedTab[i].getAttribute("property");
+      var matchStringProperty = anArrayOfPropertyStrings.indexOf(property,0);
+      if(matchStringProperty > -1){
+        rowElementsAdvancedTab[i].removeAttribute("hidden");
+      } else {
+        rowElementsAdvancedTab[i].setAttribute("hidden", true);
+      }
+    }
+
+    /**
+     * Go through all of the advanced tab's menuitems elements. If its property attribute is found within 
+     * anArrayOfPropertyStrings,  we "check" the menuitem by setting its "checked" attribute to true and   
+     * remove the attribute to "un-check" the menuitem.
+     */
+
+    for (var i = 0; i < advancedMenuItems.length; i++){
+      var property = advancedMenuItems[i].getAttribute("property");
+      var matchStringProperty = anArrayOfPropertyStrings.indexOf(property,0);
+      if(matchStringProperty > -1){
+        advancedMenuItems[i].setAttribute("checked", "true");
+      } else {
+        advancedMenuItems[i].removeAttribute("checked");
+      }
+    }
+  },
+};
 
 

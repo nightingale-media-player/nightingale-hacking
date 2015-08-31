@@ -3,9 +3,11 @@ if (typeof Cc == 'undefined')
 if (typeof Ci == 'undefined')
   var Ci = Components.interfaces;
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
         .createInstance(Ci.sbIMetrics);
+#endif
 
 Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
 
@@ -170,13 +172,16 @@ var ConcertOptions = {
       }
     }
 
+#ifdef METRICS_ENABLED
     gMetrics.metricsInc("concerts", "change.location", "");
+#endif
     var box = document.getElementById("library-ontour-box");
     if (box.style.visibility != "hidden") {
       var check = document.getElementById("checkbox-library-integration");
       if (check.checked) {
+#ifdef METRICS_ENABLED
         gMetrics.metricsInc("concerts", "library.ontour.checked", "");
-
+#endif
         // Get the library colspec.  If it's not null, then append
         // the On Tour image property to it
         var parser = new ColumnSpecParser(LibraryUtils.mainLibrary, null, null,

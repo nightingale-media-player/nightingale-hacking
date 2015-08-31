@@ -1,0 +1,100 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale media player.
+#
+# Copyright(c) 2013
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+
+IS_EXTENSION = 1
+
+CPP_SRCS = UnityProxy.cpp \
+           UnityProxyModule.cpp \
+           checkUnity.cpp \
+           $(NULL)
+
+CPP_DEFS = -DXPCOM_GLUE \
+           -DXPCOM_GLUE_USE_NSPR \
+           $(NULL)
+
+# The 64 bit version needs -fPIC, I don't know if it'll harm
+# the 32 bit version though. It wasn't used for the 32 bit 
+# version before, but I don't want to break it.
+
+ifeq (i686,$(SB_ARCH))
+   CPP_EXTRA_FLAGS += -fno-rtti \
+                      -fno-exceptions \
+                      -shared \
+                      $(NULL)
+else
+   CPP_EXTRA_FLAGS += -fno-rtti \
+                      -fno-exceptions \
+                      -shared \
+                      -fPIC \
+                      $(NULL)
+endif
+
+# The main problem with the extension not working previously was 
+# not linking to the 64 bit SDK. This issue is solved pretty easily
+# because MOZSDK_DIR points to the 32 or 64 bit SDK. Also need to 
+# include the public dir where IUnityProxy.h gets generated
+
+CPP_EXTRA_INCLUDES += $(DEPTH)/extensions/unity-integration/components/public \
+                      $(MOZSDK_DIR) \
+                      $(NULL)
+
+CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
+                    $(UNITY_CFLAGS) \
+                    $(NULL)
+
+# Build a component (ie: a dynamically loadable module)
+IS_COMPONENT = 1
+
+# Build the library - UnityProxy.so
+DYNAMIC_LIB = UnityProxy
+
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(MOZSDK_LIB_DIR) \
+                                  $(NULL)
+
+DYNAMIC_LIB_EXTRA_FLAGS += -Wall \
+                           -O2 \
+                           $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                             plds4 \
+                             plc4 \
+                             pthread \
+                             dl \
+                             unity \
+                             $(NULL)
+
+DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
+                           $(LNTFY_LIBS) \
+                           $(NULL)
+
+
+include $(topsrcdir)/build/rules.mk

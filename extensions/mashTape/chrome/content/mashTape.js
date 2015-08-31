@@ -19,9 +19,11 @@ if (typeof(gBrowser) == "undefined")
         .getService(Ci.nsIWindowMediator).getMostRecentWindow('Songbird:Main')
         .window.gBrowser;
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
         .createInstance(Ci.sbIMetrics);
+#endif
 
 if (typeof(SBProperties) == "undefined") {
     Cu.import("resource://app/jsmodules/sbProperties.jsm");
@@ -46,6 +48,7 @@ if (typeof mashTape == "undefined")
 mashTape.firstRun = function() {
   Application.prefs.setValue("extensions.mashTape.firstrun", false);
 
+#ifdef METRICS_ENABLED
   // By default, the info pane is selected, autohide is true, and all
   // individual tabs are enabled
   gMetrics.metricsInc("mashtape", "defaultpane", "info");
@@ -55,6 +58,7 @@ mashTape.firstRun = function() {
   gMetrics.metricsInc("mashtape", "rss", "tab.disabled");
   gMetrics.metricsInc("mashtape", "photo", "tab.disabled");
   gMetrics.metricsInc("mashtape", "flash", "tab.disabled");
+#endif
 }
 
 mashTape.log = function(msg) {
@@ -2162,24 +2166,32 @@ mashTape.prefObserver = {
         }
         if (enabled) {
           tab.style.visibility = "visible";
+#ifdef METRICS_ENABLED
           gMetrics.metricsInc("mashtape", pref[0], "tab.enabled");
+#endif
           mashTape.noDataTab(pref[0]);
         } else {
           tab.style.visibility = "collapse";
+#ifdef METRICS_ENABLED
           gMetrics.metricsInc("mashtape", pref[0], "tab.disabled");
+#endif
           // if we're currently on the tab, then hide it and select some
           // other tab
           mashTape.selectPane();
         }
       } else if (data == "autohide") {
+#ifdef METRICS_ENABLED
         var enabled = subject.getBoolPref(data);
         if (enabled)
           gMetrics.metricsInc("mashtape", "autohide", "enabled");
         else
           gMetrics.metricsInc("mashtape", "autohide", "disabled");
+#endif
       } else if (data == "defaultpane") {
         var which = subject.getCharPref(data);
+#ifdef METRICS_ENABLED
         gMetrics.metricsInc("mashtape", "defaultpane", which);
+#endif
         mashTape.selectPane();
       } else if (data == "photo.speed") {
         mashTape.photoFrame.contentWindow.mashTape_updatePhotoStreamSpeed();

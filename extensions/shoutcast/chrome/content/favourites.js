@@ -3,9 +3,11 @@ if (typeof(Cc) == "undefined")
 if (typeof(Ci) == "undefined")
   var Ci = Components.interfaces;
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
         .createInstance(Ci.sbIMetrics);
+#endif
 
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 
@@ -88,8 +90,10 @@ var FavouriteStreams = {
     var prop = e.getData("property");
     var item = e.getData("item");
     if (prop == SC_bookmark) {
+#ifdef METRICS_ENABLED
       // # of times a station is unfavourited
       gMetrics.metricsInc("shoutcast", "favourites", "removed");
+#endif
 
       var list =
         document.getElementById("playlist").mediaListView.mediaList;
@@ -141,6 +145,7 @@ var FavouriteStreams = {
       }
     }
 
+#ifdef METRICS_ENABLED
     // # of times a station is played
     gMetrics.metricsInc("shoutcast", "station", "total.played");
 
@@ -150,6 +155,7 @@ var FavouriteStreams = {
     // # of times this genre is played
     var genre = item.getProperty(SBProperties.genre);
     gMetrics.metricsInc("shoutcast", "genre", "played." + genre);
+#endif
 
     if (id == -1) {
       plsURL = item.getProperty(SBProperties.contentURL);

@@ -1,30 +1,61 @@
-dependencies/linux-*
+*~
 .DS_Store
-dependencies/vendor
+thumbs.db
+.directory
+
+# VCS
+.bzr
+.svn
+
+# IDE & text editor files
+*.anjuta*
+.cproject
+.project
+.settings
+*.sublime-*
+
+# Dependencies
+# Don't ignore 'official' md5 files
+!dependencies/*1.12*.md5
+# Ignore the other md5 files though
+dependencies/*.md5
 dependencies/*.zip
 dependencies/*.tar.???
 dependencies/*.tar.????
-dependencies/**/*
+dependencies/*-i686*/*
+dependencies/*-i686-msvc?/*
+dependencies/*-i686-msvc??/*
+dependencies/*-x86_64*/*
+# Ignore symlinked dirs
+dependencies/*-i686
+dependencies/*-x86_64
+dependencies/*-i686-msvc?
+dependencies/*-i686-msvc??
+
+# Vendor dependencies
+!dependencies/vendor
+dependencies/vendor-*
+dependencies/vendor.*
+
+# Files generated in tree
+debian/nightingale
+debian/*.debhelper.log
+debian/*.substvars
+debian/files
+documentation/api/*
 tools/win32/reshacker/ResHacker.ini
 tools/win32/reshacker/ResHacker.log
-songbirdconfig.out
-compiled/
-configure
-nightingale.config
-songbird.config
-nightingale.config
-autom4te.cache
-songbird.config
-configure
-compiled
-.songbirdconfig.mk
-.songbirdconfig.out
-.svn
-.nightingaleconfig.mk
-.nightingaleconfig.out
+
+# Built files
+compiled*/*
 compiled-release*
+
+# Auto generated config files
+autom4te.cache
+configure
 config.log
 conftest.o
 confdefs.h
-thumbs.db
-.directory
+*config.out
+*.config*
+.*config.*

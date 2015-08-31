@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Bei Last.fm anmelden...">
+<!ENTITY lastfm.menu.logout "Bei Last.fm abmelden">
+<!ENTITY lastfm.menu.enable "Scrobbeln aktivieren">
+<!ENTITY lastfm.login.caption.label "Einloggen">
+<!ENTITY lastfm.username.label "Benutzername:">
+<!ENTITY lastfm.password.label "Passwort:">
+<!ENTITY lastfm.auto.login.label "Beim Start automatisch anmelden">
+<!ENTITY lastfm.login.button "Anmelden">
+<!ENTITY lastfm.newaccount.caption "Neues Konto erstellen">
+<!ENTITY lastfm.signup.label "Bei Last.fm registrieren">
+<!ENTITY lastfm.signup.button.label "Neues Konto erstellen">
+<!ENTITY lastfm.loggingin.label "Anmelden...">
+<!ENTITY lastfm.cancel.button "Abbrechen">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Meine Lieder scrobbeln">
+<!ENTITY lastfm.profile.logout "Abmelden">
+<!ENTITY lastfm.radio "Last.fm-Radio">
+<!ENTITY lastfm.radio.login.help "Um das Last.fm-Radio zu hören, müssen Sie bei Last.fm angemeldet sein. Wenn Sie noch kein Last.fm-Benutzerkonto haben, können Sie sich anmelden.">
+<!ENTITY lastfm.radio.start "Unsicher, wo Sie anfangen sollen? Probieren Sie die Suche aus oder schauen Sie, was andere hören.">
+<!ENTITY lastfm.radio.start.top.artists "Topkünstler auf Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Toptags auf Last.fm">
+<!ENTITY lastfm.radio.register "Registrieren">
+<!ENTITY lastfm.radio.subscriber.button "Abonnieren">
+<!ENTITY lastfm.radio.subscriber.help "Um das Last.fm-Radio zu hören, müssen Sie es zunächst abonnieren.">
+<!ENTITY lastfm.radio.search "Suchen">
+<!ENTITY lastfm.radio.library "Bibliothek">
+<!ENTITY lastfm.radio.loved "Geliebte Stücke">
+<!ENTITY lastfm.radio.neighbourhood "Nachbarschaft">
+<!ENTITY lastfm.radio.recommended "Empfehlungen">
+<!ENTITY lastfm.radio.user_stations "Meine Sender">
+<!ENTITY lastfm.radio.recent_stations "Letzte Sender">
+<!ENTITY lastfm.radio.from.lastfm "Von Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Empfohlene Künstler">
+<!ENTITY lastfm.radio.top_artists "Ihre Topkünstler">
+<!ENTITY lastfm.radio.top_tags "Ihre Toptags">
+<!ENTITY lastfm.radio.friends "Ihre Freunde">
+<!ENTITY lastfm.radio.neighbours "Nachbarn">
+<!ENTITY lastfm.radio.from.songbird "Von Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Ihre meistgespielten Künstler">
+<!ENTITY lastfm.radio.highest_rated_artists "Ihre höchstbewerteten Künstler">
+<!ENTITY lastfm.radio.popular_genres "Ihre häufigsten Genres">
+<!ENTITY lastfm.radio.play "Spielen">
+<!ENTITY lastfm.tags.enter_new "Neue Tags eingeben (durch Komma getrennt)">
+<!ENTITY lastfm.tags.add_fail "Hinzufügen fehlgeschlagen!">
+<!ENTITY lastfm.tags.user "Ihre Tags:">
+<!ENTITY lastfm.tags.global "Last.fm - Globale Tags:">

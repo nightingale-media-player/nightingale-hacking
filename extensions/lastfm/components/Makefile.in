@@ -1,4 +1,3 @@
-#preedTODO: add copyright
 DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
@@ -8,8 +7,13 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbLastFm.js \
-                      $(srcdir)/sbLastFmProtocol.js \
+
+SONGBIRD_PP_RESOURCES = $(srcdir)/sbLastFm.js.in \
+                        $(srcdir)/sbLastFmProtocol.js.in \
+                        $(NULL)
+
+SONGBIRD_COMPONENTS = $(CURDIR)/sbLastFm.js \
+                      $(CURDIR)/sbLastFmProtocol.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

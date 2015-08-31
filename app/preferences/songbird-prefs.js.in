@@ -8,7 +8,7 @@ pref("browser.chromeURL", "chrome://songbird/content/xul/macCmdLineFwd.xul");
 // Prevent xulrunner from launching multiple instances of Songbird.
 pref("toolkit.singletonWindowType", "Songbird:Main");
 
-pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
+pref("general.useragent.extra.nightingale", "Nightingale/@SB_MILESTONE@ (@SB_BUILD_ID@)");
 pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 // Default feather settings:
@@ -260,12 +260,14 @@ pref("songbird.url.addons.displaypanes", "http://addons.getnightingale.com/");
 pref("songbird.url.addons.feathers", "http://addons.getnightingale.com/");
 pref("songbird.url.addons.mediaviews", "http://addons.getnightingale.com/");
 pref("browser.startup.homepage", "http://addons.getnightingale.com/");
+pref("songbird.url.firstrunpage", "http://firstrun.getnightingale.com/?type=install");
+pref("nightingale.update.url", "http://firstrun.getnightingale.com/?type=upgrade");
 pref("songbird.url.bugzilla", "http://github.com/nightingale-media-player/nightingale-hacking/issues/");
-pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
+pref("songbird.url.metrics", "");
 pref("songbird.url.support", "http://forum.getnightingale.com/");
 pref("songbird.url.keyboard", "about:keyboard-help");
-pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
-pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
+// pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
+pref("songbird.url.support.corefailure", "http://wiki.getnightingale.com/doku.php?id=developer_center:articles:core_wrapper_failure");
 
 //
 // Media Core prefs
@@ -296,7 +298,8 @@ pref("songbird.mediacore.resumePlaybackPosition", true);
 pref("songbird.metadata.enableWriting", true);
 pref("songbird.metadata.promptOnWrite", false);
 pref("songbird.metadata.ratings.enableWriting", false);
-pref("songbird.trackeditor.enableAdvancedTab", false);
+pref("songbird.trackeditor.videoAdvancedTags", '["http://songbirdnest.com/data/1.0#keywords","http://songbirdnest.com/data/1.0#description","http://songbirdnest.com/data/1.0#showName","http://songbirdnest.com/data/1.0#episodeNumber","http://songbirdnest.com/data/1.0#seasonNumber"]');
+pref("songbird.trackeditor.audioAdvancedTags", '["http://songbirdnest.com/data/1.0#keywords","http://songbirdnest.com/data/1.0#description","http://songbirdnest.com/data/1.0#showName","http://songbirdnest.com/data/1.0#episodeNumber","http://songbirdnest.com/data/1.0#seasonNumber"]');
 
 //
 // Sanitize prefs
@@ -304,6 +307,7 @@ pref("songbird.trackeditor.enableAdvancedTab", false);
 pref("privacy.sanitize.promptOnSanitize", true);
 pref("privacy.sanitize.sanitizeOnShutdown", false);
 pref("privacy.sanitize.didShutdownSanitize", false);
+pref("privacy.cpd.mediaHistory", false);
 pref("privacy.item.mediaHistory", true);
 pref("privacy.item.history", true);
 pref("privacy.item.formdata", true);
@@ -442,14 +446,14 @@ pref("songbird.mediacore.gstreamer.disablevideo", false);
 pref("songbird.playlist.doubleclickspeed", 500);
 
 
-// Prefs used to control database memory usage.  
+// Prefs used to control database memory usage.
 //
 // All prefs require a restart to take effect, and pageSize
 // can only be changed before databases have been created.
 //
 // See http://www.sqlite.org/malloc.html for details
-// 
-// Also note that page cache and page size can be specified on a 
+//
+// Also note that page cache and page size can be specified on a
 // per db basis with keys like
 //  songbird.dbengine.main@library.songbirdnest.com.cacheSize
 // This is the database GUID, not the filename (note no .db)
@@ -458,8 +462,8 @@ pref("songbird.dbengine.pageSize", 16384);
 // Number of pages
 pref("songbird.dbengine.cacheSize", 100);
 // Number of pages to pre-allocate (avoids fragmentation)
-//pref("songbird.dbengine.preAllocCacheSize", 500);  
-// Number of scratch slots to use (should be roughly the 
+//pref("songbird.dbengine.preAllocCacheSize", 500);
+// Number of scratch slots to use (should be roughly the
 // number of db query threads)
 //pref("songbird.dbengine.preAllocScratchSize", 5);
 // An upper limit (in bytes) on the amount of memory
@@ -514,4 +518,10 @@ pref("feedback.disabled", true);
 //
 // import all video formats, not just ogv
 //
-pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,mp4,m4v,webm,wmv");
+pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,mp4,m4v,webm,wmv,ogx");
+
+// By defualt the eq is on the "Flat" preset.
+pref("songbird.eq.currentPreset", "chrome://songbird/locale/songbird.properties");
+
+pref("songbird.faceplate.showelapsed", "1");
+pref("songbird.faceplate.showremainingtime", "0");

@@ -52,24 +52,6 @@ CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerTranscodeDeviceConfigurator.cpp \
            $(NULL)
 
-# from /components/mediacore/base/src
-CPP_SRCS += sbBaseMediacore.cpp \
-            sbBaseMediacoreEventTarget.cpp \
-            sbBaseMediacoreFactory.cpp \
-            sbBaseMediacorePlaybackControl.cpp \
-            sbBaseMediacoreVolumeControl.cpp \
-            sbBaseMediacoreMultibandEqualizer.cpp \
-            sbMediacoreCapabilities.cpp \
-            sbMediacoreEvent.cpp \
-            sbMediacoreEqualizerBand.cpp \
-            sbMediacoreError.cpp \
-            sbVideoBox.cpp \
-            $(NULL)
-
-# from /components/mediacore/transcode/src
-CPP_SRCS += sbTranscodingConfigurator.cpp \
-            $(NULL)
-
 ifeq (windows,$(SB_PLATFORM))
    CPP_SRCS += sbGStreamerPlatformWin32.cpp
 endif
@@ -98,6 +80,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/property/src \
                      $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/equalizerpresets/public \
                      $(topsrcdir)/components/moz/errorconsole/src \
                      $(MOZSDK_INCLUDE_DIR)/layout \
                      $(MOZSDK_INCLUDE_DIR)/gfx \
@@ -169,6 +152,23 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/errorconsole/src/sbErrorConsole \
  $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d)$(LIB_SUFFIX) \
  $(NULL)
+
+# from /components/mediacore/base/src
+# from /components/mediacore/transcode/src
+DYNAMIC_LIB_EXTRA_OBJS +=  \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacore$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreEventTarget$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreFactory$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacorePlaybackControl$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreVolumeControl$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbBaseMediacoreMultibandEqualizer$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreCapabilities$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEvent$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreEqualizerBand$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbMediacoreError$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/base/src/sbVideoBox$(OBJ_SUFFIX) \
+  $(DEPTH)/components/mediacore/transcode/src/sbTranscodingConfigurator$(OBJ_SUFFIX) \
+  $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only
 ifdef MEDIA_CORE_GST_SYSTEM

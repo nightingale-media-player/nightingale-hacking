@@ -302,10 +302,12 @@ function doOK()
   if (!args.mediaList) {
     args.mediaList = dps.createList(mainLibrary, uri, interval, localFile);
     args.mediaList.name = getServer(uri);
+#ifdef METRICS_ENABLED
     var metrics =
       Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                 .createInstance(Components.interfaces.sbIMetrics);
     metrics.metricsInc("medialist", "create", "subscription");
+#endif
   }
   else
     dps.updateList(args.mediaList, uri, interval, localFile);

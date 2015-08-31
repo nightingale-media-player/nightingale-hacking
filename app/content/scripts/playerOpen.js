@@ -784,9 +784,11 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
     }
   }
 
+#ifdef METRICS_ENABLED
   var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                   .createInstance(Ci.sbIMetrics);
   metrics.metricsInc("medialist", "create", mediaListType);
+#endif
 
   return mediaList;
 }

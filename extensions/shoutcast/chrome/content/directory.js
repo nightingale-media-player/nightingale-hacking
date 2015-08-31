@@ -21,9 +21,11 @@ if (typeof(ioService) == "undefined")
   var ioService = Cc["@mozilla.org/network/io-service;1"]
       .getService(Ci.nsIIOService);
 
+#ifdef METRICS_ENABLED
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
         .createInstance(Ci.sbIMetrics);
+#endif
 
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 const shoutcastLibraryGuid = "extensions.shoutcast-radio.library.guid";
@@ -68,10 +70,12 @@ var RadioDirectory = {
       // Set the tab title
     document.title = servicePaneStrings.GetStringFromName("radioTabTitle");
 
+#ifdef METRICS_ENABLED
     // the # of times the directory is loaded (corresponds to the # of
     // times the servicepane is clicked, though also works if the user
     // for some reason or another bookmarks it separately)
     gMetrics.metricsInc("shoutcast", "directory", "loaded");
+#endif
 
     var genre;
     this._strings = document.getElementById("shoutcast-radio-strings");
@@ -523,7 +527,9 @@ var RadioDirectory = {
       var uri = ioService.newURI(retVals.url, null, null);
       var item = this.radioLib.createMediaItem(uri, props);
       RadioDirectory.favesList.add(item);
+#ifdef METRICS_ENABLED
       gMetrics.metricsInc("shoutcast", "custom", "added");
+#endif
     }
   }
 }
@@ -590,9 +596,11 @@ function onPlaylistCellClick(e) {
       // the "item" in the favourite list is different from the item
       // in the radiolib
       var faveGuid = item.getProperty(SBProperties.storageGUID);
-      
+
+#ifdef METRICS_ENABLED
       // it's a custom entered favourite list
       gMetrics.metricsInc("shoutcast", "custom", "removed");
+#endif
       RadioDirectory.radioLib.remove(item);
 
       var faveItem = RadioDirectory.favesList.getItemByGuid(faveGuid);
@@ -600,8 +608,10 @@ function onPlaylistCellClick(e) {
       return;
     }
     if (idx != -1) {
+#ifdef METRICS_ENABLED
       // # of times a station is unfavourited
       gMetrics.metricsInc("shoutcast", "favourites", "removed");
+#endif
 
       // Already in the favourites list, so remove it
       RadioDirectory.favouriteIDs.splice(idx, 1);
@@ -617,8 +627,10 @@ function onPlaylistCellClick(e) {
           RadioDirectory.favesList.remove(item);
       }
     } else {
+#ifdef METRICS_ENABLED
       // # of times a station is favourited
       gMetrics.metricsInc("shoutcast", "favourites", "added");
+#endif
 
       // Add to favourites
       var genreLabel =
@@ -670,7 +682,8 @@ function onPlay(e) {
       }
     }
   }
-  
+
+#ifdef METRICS_ENABLED
   // # of times a station is played
   gMetrics.metricsInc("shoutcast", "station", "total.played");
 
@@ -680,6 +693,7 @@ function onPlay(e) {
   // # of times this genre is played
   var genre = item.getProperty(SBProperties.genre);
   gMetrics.metricsInc("shoutcast", "genre", "played." + genre);
+#endif
 
   if (id == -1) {
     plsURL = item.getProperty(SBProperties.contentURL);

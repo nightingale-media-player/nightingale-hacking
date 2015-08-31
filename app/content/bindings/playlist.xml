@@ -2905,11 +2905,13 @@
           this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
           session);
   if (data) {
+
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
-    if (context.source == this.mediaListView.mediaList) {
+    if (context.source == this.mediaListView.mediaList &&
+        this._Ci.nsIDragService.DRAGDROP_ACTION_COPY != session.dragAction) {
       // This is a drop operation _within_ a playlist (i.e. moving items, not
-      // adding them). 
+      // adding them).
       this._moveItemsInList(context.indexedItems, row, orientation);
     }
     else {

@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Geben Sie einen Titel wieder und entdecken Sie zugerhörige Flickr-Fotos, Youtube-Videos, Last.fm-Biografien, Google News-Artikel und vieles mehr!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Allgemein">
+<!ENTITY mtprefs.info "Künstlerinformation">
+<!ENTITY mtprefs.review "Bewertungen">
+<!ENTITY mtprefs.rss "News">
+<!ENTITY mtprefs.photo "Fotos">
+<!ENTITY mtprefs.flash "Videos">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Voreinstellungs-Registerkarte">
+<!ENTITY mtprefs.defaulttab.help "Wenn MashTape startet:">
+<!ENTITY mtprefs.show.info "Künstlerinformation anzeigen">
+<!ENTITY mtprefs.show.review "Bewertungen anzeigen">
+<!ENTITY mtprefs.show.rss "News anzeigen">
+<!ENTITY mtprefs.show.photo "Fotos anzeigen">
+<!ENTITY mtprefs.show.flash "Videos anzeigen">
+<!ENTITY mtprefs.autohide "Automatisch ausblenden">
+<!ENTITY mtprefs.autohide.help "Die DisplayPane von MashTape automatisch ausblenden, wenn eine Website angezeigt wird">
+<!ENTITY mtprefs.services "Dienste">
+<!ENTITY mtprefs.getmore "Mehr Dienste von MashTape erhalten">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Einstellungen für die Künstlerinformations-Registerkarte">
+<!ENTITY mtprefs.tab.review "Einstellungen für die Bewertungen-Registerkarte">
+<!ENTITY mtprefs.tab.rss "Einstellungen für die News-Registerkarte">
+<!ENTITY mtprefs.tab.photo "Einstellungen für die Foto-Registerkarte">
+<!ENTITY mtprefs.tab.flash "Einstellungen für die Video-Registerkarte">
+<!ENTITY mtprefs.tab.help "Diese Registerkarte in MashTape anzeigen.">
+<!ENTITY mtprefs.single "Dieser Ausschnitt zeigt Inhalte eines Dienstes an. Bitte wählen Sie einen untensthehenden Dienst aus.">
+<!ENTITY mtprefs.multiple "Dieser Ausschnitt zeigt Inhlate von mehreren Diensten aus. Bitte wählen Sie sie aus der untenstehenden Liste.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Lokalisierte Daten">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Lokalisierte Künstlerinformationen automatisch herunterladen.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Foto-Scrollgeschwindigkeit">
+<!ENTITY mtprefs.tab.photo.faster "Schneller">
+<!ENTITY mtprefs.tab.photo.slower "Langsamer">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Schlüsselwörter suchen">
+<!ENTITY mtprefs.tab.photo.keywords "Weitere Suchschlüsselwörter">
+<!ENTITY mtprefs.tab.photo.keywords.help "Sie können weitere Suchschlüsselwörter angeben, die bei der Fotosuche berücksichtigt werden. Schlüsselwörter müssen mit einem Leerzeichen getrennt werden. Beispiel: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Videos automatisch abspielen">
+<!ENTITY mtprefs.tab.video.autoplay.help "Wenn Sie diese Option aktivieren, werden gebündelte Video-Resultate eines nach dem anderen abgespielt. Dies kann zum Beispiel für MTV-Musik-Videos nützlich sein. Bei Nicht-gebündelten Videos geht dies nicht.">

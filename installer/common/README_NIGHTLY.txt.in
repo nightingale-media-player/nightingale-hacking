@@ -1,4 +1,3 @@
-
 =================================== WARNING ===================================
                                 HERE BE DRAGONS
 ===============================================================================
@@ -19,6 +18,15 @@ These nightly builds are provided for:
 
 2) Awesome users who want to test our latest stuff to find and fix bugs 
    and who don't mind a little pain.
+
+If you're running an old nightly, you can always grab the latest nightly at:
+
+https://sourceforge.net/projects/ngale/files/trunk-Nightlies/
+
+If you think you've found a bug, please ensure you can reproduce with a recent
+nightly and file your bug at
+
+https://github.com/nightingale-media-player/nightingale-hacking/issues
 
 Thanks for helping us test!
 

@@ -30,7 +30,7 @@ Flickr.prototype = {
 	limit: 100,
 	sort: "&sort=relevance",
 	searchType: "&text=",
-	searchURL: "http://api.flickr.com/services/rest/?" +
+	searchURL: "https://api.flickr.com/services/rest/?" +
 		"method=flickr.photos.search&api_key=461354d3cdcc5425055670cbd3b8e16e" +
 		"&extras=owner_name,date_taken,o_dims,original_format",
 
@@ -60,7 +60,7 @@ Flickr.prototype = {
 			// all photos tagged 'mashtape'
 			//url = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&extras=owner_name,date_taken,o_dims,original_format&user_id=11878025@N03&tags=mashtape";
 			// all photos in the mashTape set
-			url = "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&photoset_id=72157607854460548&extras=owner_name,date_taken,o_dims,original_format";
+			url = "https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&photoset_id=72157607854460548&extras=owner_name,date_taken,o_dims,original_format";
 		}
 
 		mtUtils.log("Flickr", "URL:" + url);
@@ -88,10 +88,10 @@ Flickr.prototype = {
 					var width = entry.@o_width.toString();
 					var height = entry.@o_height.toString();
 
-					var imgUrl = "http://farm" + entry.@farm +
+					var imgUrl = "https://farm" + entry.@farm +
 						".static.flickr.com/" + entry.@server + "/" +
 						entry.@id + "_" + entry.@secret; // + ".jpg";
-					var url = "http://www.flickr.com/photos/" +
+					var url = "https://www.flickr.com/photos/" +
 						entry.@owner + "/" + entry.@id;
 					var timestamp = entry.@datetaken;
 					var year = timestamp.substr(0,4);
@@ -108,7 +108,7 @@ Flickr.prototype = {
 						medium: imgUrl + ".jpg",
 						large: imgUrl + "_b.jpg",
 						owner: entry.@ownername.toString(),
-						ownerUrl: "http://flickr.com/photos/" +
+						ownerUrl: "https://flickr.com/photos/" +
 							escape(entry.@ownername.toString()),
 						time: timestamp,
 						width: width,

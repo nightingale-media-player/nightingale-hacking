@@ -32,18 +32,18 @@ include $(DEPTH)/build/autodefs.mk
 DEFAULT_EXTENSIONS = AlbumArt \
                      concerts \
                      xpcom_helloworld \
-					 foldersync \
-					 foldersync-ng \
-					 playlistfolders \
+                     foldersync \
+                     foldersync-ng \
+                     playlistfolders \
                      $(NULL)
 
 # AlbumArt is not on the list because it's used internally by the bird, so
 # we need to build it regardless of platform
-NOARCH_EXTENSIONS = 7digital \
-                    albumartlastfm \
+NOARCH_EXTENSIONS = albumartlastfm \
                     lastfm \
                     mashTape \
                     shoutcast \
+                    amazonmusic \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
@@ -56,6 +56,30 @@ DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
 # just a build check
 ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    DEFAULT_EXTENSIONS += systray
+endif
+
+# libnotify
+ifdef NIGHTINGALE_LIBNOTIFY
+    DEFAULT_EXTENSIONS += libnotify-notifs \
+                          $(NULL)
+endif
+
+# Unity Integration
+ifeq (1,$(NIGHTINGALE_UNITY))
+    DEFAULT_EXTENSIONS += unity-integration \
+                          $(NULL)
+endif
+
+# MPRIS & GTK Window Hiding
+ifeq (linux,$(SB_PLATFORM))
+    DEFAULT_EXTENSIONS += mpris \
+                          hide-on-close \
+                          $(NULL)
+endif
+
+ifeq (macosx, $(SB_PLATFORM))
+    DEFAULT_EXTENSIONS += apple-mediakeys \
+                          apple-remote
 endif
 
 SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \

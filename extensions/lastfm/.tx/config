@@ -1,0 +1,13 @@
+[main]
+host = http://beta.babelzilla.org
+
+[LastFM.overlaydtd]
+file_filter = chrome/locale/<lang>/overlay.dtd
+source_file = chrome/locale/en-US/overlay.dtd
+source_lang = en-US
+
+[LastFM.overlayproperties]
+file_filter = chrome/locale/<lang>/overlay.properties
+source_file = chrome/locale/en-US/overlay.properties
+source_lang = en-US
+

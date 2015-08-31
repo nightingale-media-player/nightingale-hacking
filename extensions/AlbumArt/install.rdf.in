@@ -43,7 +43,7 @@
     <songbird:displayPane>
         <Description>
             <songbird:contentUrl>chrome://albumart/content/albumArtPane.xul</songbird:contentUrl>
-            <songbird:contentTitle>Artwork</songbird:contentTitle>
+            <songbird:contentTitle>chrome://songbird/locale/songbird.properties#albumart.displaypane.title</songbird:contentTitle>
             <songbird:contentIcon>chrome://albumart/skin/icon-albumart.png</songbird:contentIcon>
             <songbird:defaultWidth>178</songbird:defaultWidth>
             <songbird:defaultHeight>178</songbird:defaultHeight>

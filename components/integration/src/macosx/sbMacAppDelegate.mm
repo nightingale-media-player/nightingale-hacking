@@ -66,6 +66,7 @@
 - (void)onPlayPauseSelected:(id)aSender;
 - (void)onNextSelected:(id)aSender;
 - (void)onPreviousSelected:(id)aSender;
+- (void)onStopSelected:(id)aSender;
 - (void)onMuteSelected:(id)aSender;
 
 @end
@@ -80,6 +81,7 @@
                    menu:(NSMenu *)aParentMenu;
 - (BOOL)_isPlaybackMuted;
 - (BOOL)_isPlaybackPlaying;
+- (BOOL)_isPlaybackStoppable;
 - (NSString *)_stringForLocalizedKey:(const PRUnichar *)aBuffer;
 
 @end
@@ -327,12 +329,18 @@
                  action:@selector(onPreviousSelected:)
                    menu:aMenu];
 
+  // Stop menu item
+  nsString stopLabel(NS_LITERAL_STRING("playback.label.stop"));
+  [self _appendMenuItem:[self _stringForLocalizedKey:stopLabel.get()]
+                 action:@selector(onStopSelected:)
+                   menu:aMenu];
+
   // Mute menu item
   nsString muteLabel(NS_LITERAL_STRING("playback.label.mute"));
   NSMenuItem *muteMenuItem = 
     [[NSMenuItem alloc] initWithTitle:[self _stringForLocalizedKey:muteLabel.get()]
-                               action:@selector(onMuteSelected:)
-                        keyEquivalent:@""];
+                   action:@selector(onMuteSelected:)
+                     keyEquivalent:@""];
 
   int muteState = ([self _isPlaybackMuted] ? NSOnState : NSOffState);
   [muteMenuItem setState:muteState];
@@ -430,6 +438,28 @@
   NS_OBJC_END_TRY_ABORT_BLOCK;
 }
 
+- (void)onStopSelected:(id)aSender
+{
+  NS_OBJC_BEGIN_TRY_ABORT_BLOCK;
+
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+  if (NS_FAILED(rv)) {
+    return;
+  }
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  if (NS_FAILED(rv)) {
+    return;
+  }
+
+  sequencer->Stop(PR_FALSE);
+
+  NS_OBJC_END_TRY_ABORT_BLOCK;
+}
+
 - (void)onMuteSelected:(id)aSender
 {
   NS_OBJC_BEGIN_TRY_ABORT_BLOCK;
@@ -512,6 +542,30 @@
   
   return state == sbIMediacoreStatus::STATUS_PLAYING ||
          state == sbIMediacoreStatus::STATUS_BUFFERING;
+
+  NS_OBJC_END_TRY_ABORT_BLOCK_RETURN(NO);
+}
+
+- (BOOL)_isPlaybackStoppable
+{
+  NS_OBJC_BEGIN_TRY_ABORT_BLOCK_RETURN;
+
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, NO);
+
+  nsCOMPtr<sbIMediacoreStatus> status;
+  rv = manager->GetStatus(getter_AddRefs(status));
+  NS_ENSURE_SUCCESS(rv, NO);
+
+  PRUint32 state;
+  rv = status->GetState(&state);
+  NS_ENSURE_SUCCESS(rv, NO);
+  
+  return state == sbIMediacoreStatus::STATUS_PLAYING ||
+         state == sbIMediacoreStatus::STATUS_BUFFERING ||
+         state == sbIMediacoreStatus::STATUS_PAUSED;
 
   NS_OBJC_END_TRY_ABORT_BLOCK_RETURN(NO);
 }

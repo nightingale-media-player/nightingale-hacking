@@ -1,9 +1,12 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
 <!ENTITY mtprefs.general "General">
 <!ENTITY mtprefs.info "Informacion de Artista">
 <!ENTITY mtprefs.review "Comentarios">
 <!ENTITY mtprefs.rss "Noticias">
 <!ENTITY mtprefs.photo "Fotos">
 <!ENTITY mtprefs.flash "Videos">
+<!-- General preferences -->
 <!ENTITY mtprefs.defaulttab "Pestaña por Defecto">
 <!ENTITY mtprefs.defaulttab.help "Cuando inicie mashTape:">
 <!ENTITY mtprefs.show.info "Mostrar informacion de Artista">
@@ -15,6 +18,7 @@
 <!ENTITY mtprefs.autohide.help "Ocultar Automaticamente la pantalla de mashTape cuando cambie a una pagina web.">
 <!ENTITY mtprefs.services "Servicios">
 <!ENTITY mtprefs.getmore "Obtener mas servivios para mashTape">
+<!-- Common entities for the remaining tabs -->
 <!ENTITY mtprefs.tab.info "Configuracion de la Pestaña de Informacion de Artista">
 <!ENTITY mtprefs.tab.review "Configuracion de la Pestaña de Comentarios">
 <!ENTITY mtprefs.tab.rss "Configuracionde la Pestaña de Noticias">
@@ -23,8 +27,16 @@
 <!ENTITY mtprefs.tab.help "Mostrar esta pestaña en mashTape.">
 <!ENTITY mtprefs.single "Este panel soporta la visualizacion de un servicio a la vez. Por favor, seleccione un servicio de la siguiente lista.">
 <!ENTITY mtprefs.multiple "Este panel soporta la visualizacion de varios servicios a la vez. Por favor, seleccione sus opciones de servicios en la siguiente lista.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Localized Data">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatically retrieve localized artist information if available.">
+<!-- Photo prefs -->
 <!ENTITY mtprefs.tab.photo.speed "Velocidad de movimiento de Fotos">
 <!ENTITY mtprefs.tab.photo.faster "Mas Rapido">
 <!ENTITY mtprefs.tab.photo.slower "Mas Lento">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Search Keywords">
+<!ENTITY mtprefs.tab.photo.keywords "Additional search keywords:">
+<!ENTITY mtprefs.tab.photo.keywords.help "You can specify additional keywords to be appended to your photo provider search.  Keywords should be separated by spaces, example: live concert band">
+<!-- Video prefs -->
 <!ENTITY mtprefs.tab.video.autoplay "Auto reproducir videos">
 <!ENTITY mtprefs.tab.video.autoplay.help "Habilitar esta opcion causara que el proveedor de paquetes de video, auto reproduzca uno despues de otro. Esto es muy usado para auto reproducir todos la musica de MTV, por ejemplo. Esta opcion no funcionara con los proveedores de video que no tienen paquetes.">

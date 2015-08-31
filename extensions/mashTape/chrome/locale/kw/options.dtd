@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Play a track and discover related Flickr photos, YouTube videos, Last.fm biographies, Google News articles, and more!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Ollgemmyn">
+<!ENTITY mtprefs.info "Kedhlow a-dro dhe&apos;n Artydh">
+<!ENTITY mtprefs.review "Daswelyow">
+<!ENTITY mtprefs.rss "Nowodhow">
+<!ENTITY mtprefs.photo "Skeusennow">
+<!ENTITY mtprefs.flash "Gwydheo">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Tab Savonek">
+<!ENTITY mtprefs.defaulttab.help "Pan dhalleth mashTape:">
+<!ENTITY mtprefs.show.info "Diskwedhes Kedhlow Artydh">
+<!ENTITY mtprefs.show.review "Diskwedhes Daswelyow">
+<!ENTITY mtprefs.show.rss "Diskwedhes Nowodhow">
+<!ENTITY mtprefs.show.photo "Diskwedhes Skeusennow">
+<!ENTITY mtprefs.show.flash "Diskwedhes Gwydheos">
+<!ENTITY mtprefs.autohide "Kudha yn Awtomatek">
+<!ENTITY mtprefs.autohide.help "Kudha kwarel mashTape yn awtomatek pan skwychydh dhe weles gwiasva.">
+<!ENTITY mtprefs.services "Servisyow">
+<!ENTITY mtprefs.getmore "Kavos pella gonisow rag mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Settyansow Tab Kedhlow a-dro dhe&apos;n Artydh">
+<!ENTITY mtprefs.tab.review "Settyansow Tab Daswelyow">
+<!ENTITY mtprefs.tab.rss "Settyansow Tab Nowodhow">
+<!ENTITY mtprefs.tab.photo "Settyansow Tab Skeusennow">
+<!ENTITY mtprefs.tab.flash "Settyansow Tab Gwydheo">
+<!ENTITY mtprefs.tab.help "Diskwedhes an tab ma yn mashTape">
+<!ENTITY mtprefs.single "An kwarel ma a yll diskwedhes kedhlow dhyworth unn gonis war unn dro. Mar pleg dewis gonis a&apos;n rol a-woles.">
+<!ENTITY mtprefs.multiple "An kwarel ma a yll diskwedhes kedhlow dhyworth meur a servisyow war unn dro. Mar pleg gwra dha dhewis a wonisow dhyworth an rol a-woles.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Data leelhes">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Kavos kedhlow leelhes a-dro dhe&apos;n artydh yn awtomatek mars yns hedhadow.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Tooth skrolya skeusennow:">
+<!ENTITY mtprefs.tab.photo.faster "Buanna">
+<!ENTITY mtprefs.tab.photo.slower "Uskissa">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Geryow-alhwedh">
+<!ENTITY mtprefs.tab.photo.keywords "Geryow-alhwedh hwilas keworansus:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Ty a yll ri geryow-alhwedh erel dhe vos keworrys dhe&apos;th hwilas provier-skeusennow. Mar pleg gwra ranna an geryow-alhwedh dre spasow, r.e. live concert band.">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Lonchya gwydheos yn awtomatek">
+<!ENTITY mtprefs.tab.video.autoplay.help "Mar kwre&apos;ta galosegi an ethol ma, sywyansow an provier-gwydheo fardeladow a wra seni yn awtomatek an eyl war-lergh y gila. Hemm yw dhe les rag seni pub Gwydheo Ilow MTV, rag ensompel. Proviers-gwydheo na yllons fardella ny gesoberons gans an ethol ma.">

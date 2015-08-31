@@ -35,7 +35,7 @@
 <!ENTITY lastfm.radio.top_tags "Your Top Tags">
 <!ENTITY lastfm.radio.friends "Your Friends">
 <!ENTITY lastfm.radio.neighbours "Neighbors">
-<!ENTITY lastfm.radio.from.songbird "From Songbird">
+<!ENTITY lastfm.radio.from.songbird "From &brandShortName;">
 <!ENTITY lastfm.radio.most_played_artists "Your Most Played Artists">
 <!ENTITY lastfm.radio.highest_rated_artists "Your Highest Rated Artists">
 <!ENTITY lastfm.radio.popular_genres "Your Popular Genres">

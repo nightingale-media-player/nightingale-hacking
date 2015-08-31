@@ -27,7 +27,6 @@
 /**
  * \file sbCommandLine.js
  * \brief Implementation of the interface nsICommandLine
- * \todo Implement the -play functionality
  */
 
 const Cc = Components.classes;
@@ -106,20 +105,35 @@ function sbCommandLineHandler() {
   this.itemUriSpecs = []; // array of uri specs
   this.flagHandlers = []; // array of arrays (handler, flag)
   this.flags = [];        // array of arrays (flag, param)
+
+  this.gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"].getService(Ci.sbIMediacoreManager);
+  this.controller = Cc['@songbirdnest.com/Songbird/ApplicationController;1'].getService(Ci.sbIApplicationController);
 }
 
 sbCommandLineHandler.prototype = {
   // there are specific formatting guidelines for help test, see nsICommandLineHandler
   helpInfo : "  -test [tests]        Run tests on the components listed in the\n" +
              "                       optional comma-separated list of tests.\n" +
-             "                       If no tests are passed in ALL tests will be run.\n\n" +
-             "  [url|path]           Local path/filename to media items to import and play,\n" +
-             "                       or URL to load in the browser.\n\n" +
-             "  -register-extensions Registers extensions and then quits.\n\n",
+             "                       If no tests are passed in ALL tests will be run.\n" +
+             "  [url|path]           Local path/filename to media items to import and\n" +
+             "                       play, or URL to load in the browser.\n" +
+             "  -register-extensions Registers extensions and then quits.\n" +
+             "  -play                Start/Resume playback at the current position.\n" +
+             "  -stop                Stop playback.\n" +
+             "  -pause               Pause playback.\n" +
+             "  -toggle-playback     Starts playback, if there is none and pauses it\n" +
+             "                       if media is currently playing.\n" +
+             "  -next                Skips to the next item in the sequence.\n" +
+             "  -previous            Goes back to the previous item in the sequence.\n" +
+             "  -mute                Mute the volume if it's not yet, else unmute it.\n" +
+             "  -volumeup            Raise the volume by 10%.\n" +
+             "  -volumedown          Lower the volume by 10%.\n",
   itemHandlers: null,
   itemUriSpecs: null,
   flagHandlers: null,
   flags: null,
+  gMM: null,
+  controller: null,
 
   handle : function (cmdLine) {
 
@@ -129,6 +143,56 @@ sbCommandLineHandler.prototype = {
     if (cmdLine.handleFlag("register-extensions", false)) {
       _debugPrint("aborting due to handle of register-extensions");
       throw Cr.NS_ERROR_ABORT;
+    }
+
+    // Player control
+    if(cmdLine.handleFlag("play", false)) {
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.play();
+        else
+            this.controller.playDefault();
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("stop", false)) {
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.stop();
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("pause", false)) {
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.pause();
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("toggle-playback", false)) {
+        if(this.gMM.status.state == this.gMM.status.STATUS_PAUSED)
+            this.gMM.playbackControl.play();
+        if(this.gMM.status.state != this.gMM.status.STATUS_PLAYING)
+            this.controller.playDefault();
+        else
+            this.gMM.playbackControl.pause();
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("next", false)) {
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.next();
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("previous", false)) {
+        if(this.gMM.playbackControl)
+            this.gMM.playbackControl.previous();
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("mute", false)) {
+        this.gMM.volumeControl.mute = !this.gMM.volumeControl.mute;
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("volumeup", false)) {
+        this.gMM.volumeControl.volume += 0.1;
+        cmdLine.preventDefault = true;
+    }
+    if(cmdLine.handleFlag("volumedown", false)) {
+        this.gMM.volumeControl.volume -= 0.1;
+        cmdLine.preventDefault = true;
     }
 
     try {
@@ -147,7 +211,7 @@ sbCommandLineHandler.prototype = {
                             .getService(Ci.nsIObserverService);
     try {
       observerService.notifyObservers (cmdLine, COMMAND_LINE_TOPIC, null);
-    } 
+    }
     catch (e) {
       Cu.reportError(e);
     }
@@ -178,19 +242,19 @@ sbCommandLineHandler.prototype = {
       catch (e) {
         exception = e;
       }
-      
+
 
       var platformStr = Cc["@mozilla.org/system-info;1"]
                         .getService(Ci.nsIPropertyBag2).getProperty("name");
-      
+
       // If we are on Mac, unfortunately the event-queue slows down to slug
-      // speed when there isn't a window open and we are shutting down. Since 
+      // speed when there isn't a window open and we are shutting down. Since
       // there isn't a window being used on these unit tests - the hybrid
       // Cocoa/Gecko event loop takes a long time (over 20 minutes) to kill the
       // 100 or so threads that get spooled up during the test cases.
-      
+
       // Unfortunately, this also happens on Windows :(
- 
+
       // To fix this problem, we will use a nasty little hack. Open up the a
       // plain window that closes itself after a couple of seconds. This fires
       // the application shutdown procedure just as if we had closed the main
@@ -201,9 +265,9 @@ sbCommandLineHandler.prototype = {
           platformStr == "Windows_NT") {
         var ww = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                  .getService(Ci.nsIWindowWatcher);
-        
-        ww.openWindow(null, 
-                      "chrome://songbird/content/xul/unitTestShutdownWin.xul", 
+
+        ww.openWindow(null,
+                      "chrome://songbird/content/xul/unitTestShutdownWin.xul",
                       "shutdownwin", "chrome", null);
       }
       else {
@@ -235,7 +299,7 @@ sbCommandLineHandler.prototype = {
     // XXX bug 2186
     var count = cmdLine.length;
       for (var i = 0; i < count; ++i) {
-        // getArgument sometimes causes an exception for the last parameter, 
+        // getArgument sometimes causes an exception for the last parameter,
         // even tho i is always below cmdLine.length ! This doesn't seem to
         // ever happen when the commandline is starting the app, but seems to
         // always do when the app is already started, and the commandline is
