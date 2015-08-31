@@ -37,9 +37,9 @@ var Application = Cc["@mozilla.org/fuel/application;1"]
                     .getService(Ci.fuelIApplication);
 
 // our namespace
-const NS = 'http://www.songbirdnest.com/lastfm#'
-const SB_NS = 'http://songbirdnest.com/data/1.0#'
-const SP_NS = 'http://songbirdnest.com/rdf/servicepane#'
+const NS = 'http://www.songbirdnest.com/lastfm#';
+const SB_NS = 'http://songbirdnest.com/data/1.0#';
+const SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
 
 // our annotations
 const ANNOTATION_SCROBBLED = NS+'scrobbled';
@@ -53,7 +53,7 @@ const PROPERTY_STATION = NS+'station';
 const PROPERTY_ARTISTPAGE = NS+'artistPage';
 
 // their namespace
-const LASTFM_NS = 'http://www.audioscrobbler.net/dtd/xspf-lastfm'
+const LASTFM_NS = 'http://www.audioscrobbler.net/dtd/xspf-lastfm';
 // their properties
 const PROPERTY_TRACKAUTH = LASTFM_NS+'trackauth';
 const PROPERTY_ALBUMID = LASTFM_NS+'albumid';
@@ -63,14 +63,8 @@ const PROPERTY_ARTISTID = LASTFM_NS+'artistid';
 const API_KEY = 'ad68d3b69dee88a912b193a35d235a5b';
 const API_SECRET = '5cb0c1f1cceb3bff561a62b718702175'; // obviously not secret
 var API_URL = 'http://ws.audioscrobbler.com/2.0/';
-var AUTH_URL = 'http://post.audioscrobbler.com/';
-
-// handshake failure types
-const HANDSHAKE_FAILURE_AUTH = true;
-const HANDSHAKE_FAILURE_OTHER = false;
 
 // different phases of Last.fm login
-const AUTH_PHASE_HANDSHAKE = 1;
 const AUTH_PHASE_TOKEN_REQUEST = 2;
 const AUTH_PHASE_WEB_LOGIN_GEO = 3;
 const AUTH_PHASE_WEB_LOGIN = 4;
@@ -97,13 +91,20 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 // import observer utils
 Cu.import("resource://app/jsmodules/ObserverUtils.jsm");
 
+// optionally scrobbled track properties, mapped to their API parameter
+const OPTIONAL_TRACK_PROPERTIES = {
+  "album": SBProperties.albumName,
+  "trackNumber": SBProperties.trackNumber,
+  "albumArtist": SBProperties.albumArtistName
+};
+
 // object to manage login state
 var Logins = {
   loginManager: Cc["@mozilla.org/login-manager;1"]
       .getService(Ci.nsILoginManager),
 
-  LOGIN_HOSTNAME: 'https://www.last.fm',
-  LOGIN_FORMURL: 'https://www.last.fm',
+  LOGIN_HOSTNAME: 'https://secure.last.fm',
+  LOGIN_FORMURL: 'https://secure.last.fm',
   LOGIN_FIELD_USERNAME: 'username',
   LOGIN_FIELD_PASSWORD: 'password',
 
@@ -140,7 +141,7 @@ var Logins = {
         this.LOGIN_FORMURL, null, username, password,
         this.LOGIN_FIELD_USERNAME, this.LOGIN_FIELD_PASSWORD));
   }
-}
+};
 
 
 // helper for enumerating enumerators. duh.
@@ -206,8 +207,8 @@ function POST(url, params, onload, onerror) {
     // don't tie it to a XUL window
     xhr.mozBackgroundRequest = true;
     // set up event handlers
-    xhr.onload = function(event) { onload(xhr); }
-    xhr.onerror = function(event) { onerror(xhr); }
+    xhr.onload = function(event) { onload(xhr); };
+    xhr.onerror = function(event) { onerror(xhr); };
     // open the connection to the url
     xhr.open('POST', url, true);
     // we're always sending url encoded parameters
@@ -256,7 +257,7 @@ function Listeners() {
   var listeners = [];
   this.add = function Listeners_add(aListener) {
     listeners.push(aListener);
-  }
+  };
   this.remove = function Listeners_remove(aListener) {
     for(;;) {
       // find our listener in the array
@@ -268,7 +269,7 @@ function Listeners() {
         return;
       }
     }
-  }
+  };
   this.each = function Listeners_each(aCallback) {
     for (var i=0; i<listeners.length; i++) {
       try {
@@ -277,29 +278,32 @@ function Listeners() {
         Cu.reportError(e);
       }
     }
-  }
+  };
 }
 
 // an object that represents a played track for sending to Last.fm
-function PlayedTrack(mediaItem, timestamp, rating, source) {
-  // apply defaults
-  if (!rating) rating = ''; // no rating
-  if (!source) source = 'P'; // user picked
-
+function PlayedTrack(mediaItem, timestamp, source) {
   // copy properties out of the media item
-  this.a = mediaItem.getProperty(SBProperties.artistName);
-  this.t = mediaItem.getProperty(SBProperties.trackName);
-  this.b = mediaItem.getProperty(SBProperties.albumName);
-  this.n = mediaItem.getProperty(SBProperties.trackNumber);
-  this.l = Math.round(parseInt(
-      mediaItem.getProperty(SBProperties.duration))/1000000);
-  // pull the musicbrainz id when we have a standard sb property for that...
-  this.m = '';
+  // Default to the MusicBrainz unknown artist name
+  this.artist = mediaItem.getProperty(SBProperties.artistName) || "[unknown]";
+  this.track = mediaItem.getProperty(SBProperties.trackName);
+  this.duration = Math.round(parseInt(
+      mediaItem.getProperty(SBProperties.duration), 10)/1000000);
+
+  // only set optional properties if they are set
+  var tempVal;
+  for(var p in OPTIONAL_TRACK_PROPERTIES) {
+    tempVal = mediaItem.getProperty(OPTIONAL_TRACK_PROPERTIES[p]);
+    if(tempVal) {
+      this[p] = tempVal;
+    }
+  }
 
   // attach info that was passed in
-  this.r = rating;
-  this.o = source;
-  this.i = timestamp;
+  if(source)
+    this.chosenByUser = source == 'P' ? 1 : 0;
+
+  this.timestamp = timestamp;
 }
 
 function sbLastFm() {
@@ -325,19 +329,11 @@ function sbLastFm() {
   // make the API key available
   this.apiKey = API_KEY;
 
-  // session info
-  this.session = null;
-  this.nowplaying_url = null;
-  this.submission_url = null;
-
   // love/ban state
   // the mediaitem guid that is being loved or banned
   this.loveTrack = null;
   // loved (true) or banned (false)
   this.love = false;
-
-  // hard failure count
-  this.hardFailures = 0;
 
   // the session key used by the last.fm "rest" web service
   this.sk = null;
@@ -350,9 +346,6 @@ function sbLastFm() {
     this._login_phase = val;
     var phase = "not actively logging in";
     switch (val) {
-      case AUTH_PHASE_HANDSHAKE:
-        phase = "handshake";
-        break;
       case AUTH_PHASE_TOKEN_REQUEST:
         phase = "authorisation token request";
         break;
@@ -377,7 +370,6 @@ function sbLastFm() {
 
   var prefsService = Cc['@mozilla.org/preferences-service;1']
                        .getService(Ci.nsIPrefBranch);
-  AUTH_URL = prefsService.getCharPref('extensions.lastfm.auth_url');
   API_URL = prefsService.getCharPref('extensions.lastfm.api_url');
 
   // the should-we-auto-login pref
@@ -533,7 +525,7 @@ function sbLastFm() {
 }
 
 // XPCOM Magic
-sbLastFm.prototype.classDescription = 'Songbird Last.fm Service'
+sbLastFm.prototype.classDescription = 'Songbird Last.fm Service';
 sbLastFm.prototype.contractID = '@songbirdnest.com/lastfm;1';
 sbLastFm.prototype.classID =
     Components.ID('13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a');
@@ -545,7 +537,7 @@ sbLastFm.prototype.QueryInterface =
 // Error reporting
 sbLastFm.prototype.log = function sbLastFm_log(message) {
   this._console.logStringMessage('[last-fm] '+message);
-}
+};
 
 sbLastFm.prototype.updateServicePaneNodes = function updateSPNodes() {
   // only show the Last.fm radio node if the user is a subscriber or if they've
@@ -557,46 +549,19 @@ sbLastFm.prototype.updateServicePaneNodes = function updateSPNodes() {
     this._servicePaneNode.hidden = true;
 
   // Hide the "Radio" node if it's empty
-  var enum = radioFolder.childNodes;
+  var enu = radioFolder.childNodes;
   var visibleFlag = false;
 
   // Iterate through elements and check if one is visible
-  while (enum.hasMoreElements()) {
-    var node = enum.getNext();
+  while (enu.hasMoreElements()) {
+    var node = enu.getNext();
     if (!node.hidden) {
       visibleFlag = true;
       break;
     }
   }
   radioFolder.hidden = !visibleFlag;
-}
-
-// failure handling
-sbLastFm.prototype.hardFailure =
-function sbLastFm_hardFailure(message) {
-  this.error =
-      'An error occurred while communicating with the Last.fm servers.';
-  this.hardFailures++;
-
-  if (this.hardFailures >= 3) {
-    // after three hard failures, try to re-handshake
-    this.log('Last.fm hard failure: '+message+'\nFalling back to handshake');
-    this.hardFailures = 0;
-    this.session = null;
-    this.handshake();
-  } else {
-    // just count and log this
-    this.log('Last.fm hard failure: ' + message);
-  }
-}
-
-sbLastFm.prototype.badSession =
-function sbLastFm_badSession() {
-  // the server rejected the current session.
-  // we need to re-handshake, but we don't care about the result
-  this.session = null;
-  this.handshake();
-}
+};
 
 // should the user be automatically logged in?
 sbLastFm.prototype.shouldAutoLogin =
@@ -605,7 +570,7 @@ function sbLastFm_shouldAutoLogin() {
          this.username &&
          this.password &&
          !this.userLoggedOut;
-}
+};
 
 sbLastFm.prototype.postHandshake =
 function sbLastFm_postHandshake() {
@@ -635,7 +600,7 @@ function sbLastFm_postHandshake() {
 
   // get loved tracks information
   this.getLovedTracks();
-}
+};
 
 sbLastFm.prototype.login = function sbLastFm_login(clearSession) {
   var self = this;
@@ -644,56 +609,41 @@ sbLastFm.prototype.login = function sbLastFm_login(clearSession) {
 
   if (clearSession) {
     dump("clearing session\n");
-    Application.prefs.setValue("extensions.lastfm.session_key", "")
+    Application.prefs.setValue("extensions.lastfm.session_key", "");
   }
 
   // grab the previously saved session key
-  self.sk = Application.prefs.getValue("extensions.lastfm.session_key", "")
+  self.sk = Application.prefs.getValue("extensions.lastfm.session_key", "");
   if (self.sk == "") {
     // no previously saved session
     self.authorise(function authorisationSuccess() {
                      self.postHandshake();
                    }, function authorisationFailure() {
                    });
-    return;
   } else {
-    self.handshake(function hsSuccess() {
-                     self.postHandshake();
-                   }, function hsFailure() {
-                     self.login_phase = null;
-                     dump("handshake with existing sk FAILURE\n");
-                     dump("resetting saved key and retrying\n");
-                     Application.prefs.setValue("extensions.lastfm.session_key",
-                                                "");
-                     self.sk = null;
-                     self.login();
-                   });
+    self.postHandshake();
   }
-}
+};
 
 // authenticate against the web services authentication process
 sbLastFm.prototype.authorise =
 function sbLastFm_authorise(onSuccess, onFailure) {
   var self = this;
+
+  Logins.set(this.username, this.password);
   this.apiAuth(function apiSuccess() {
                  dump("Last.fm Web Services Authentication process COMPLETE\n");
 
                  self.listeners.each(function(l) { l.onLoginBegins(); });
-                 self.handshake(function hsSuccess() {
-                                  dump("handshake SUCCESS\n");
-
-                                  if (typeof(onSuccess) == "function")
-                                    onSuccess();
-                                }, function hsFailure() {
-                                     dump("handshake FAILURE\n");
-                                     if (typeof(onFailure) == "function")
-                                       onFailure();
-                                });
+                 if (typeof(onSuccess) == "function")
+                   onSuccess();
                }, function apiFailure() {
                     dump("Last.fm Web Services " +
                          "Authentication process FAILED\n");
+                    if(typeof(onFailure) == "function")
+                      onFailure();
                });
-}
+};
 
 sbLastFm.prototype.cancelLogin =
 function sbLastFm_cancelLogin() {
@@ -703,11 +653,6 @@ function sbLastFm_cancelLogin() {
     return;
   }
   switch (this.login_phase) {
-    case AUTH_PHASE_HANDSHAKE:
-      phase = "handshake";
-      if (this._handshake_xhr)
-        this._handshake_xhr.abort();
-      break;
     case AUTH_PHASE_TOKEN_REQUEST:
       phase = "authorisation token request";
       if (this._token_xhr)
@@ -742,95 +687,15 @@ function sbLastFm_cancelLogin() {
   dump("CANCEL: " + phase + "\n");
   this.listeners.each(function(l) { l.onLoginCancelled(); });
   this.logout();
-}
+};
 
 // logout is pretty simple
 sbLastFm.prototype.logout =
 function sbLastFm_logout() {
-  this.session = null;
   this.sk = null;
-  this.nowplaying_url = null;
-  this.submission_url = null;
   this.loggedIn = false;
   this.updateServicePaneNodes();
-}
-
-
-// do the handshake
-sbLastFm.prototype.handshake =
-function sbLastFm_handshake(success, failure) {
-  // have default callbacks
-  if (!success) success = function() { }
-  if (!failure) failure = function(x) { }
-
-  // make the url
-  var timestamp = Math.round(Date.now()/1000).toString();
-  this.login_phase = AUTH_PHASE_HANDSHAKE;
-  dump("handshake session key: " + this.sk + "\n");
-  var hs_url = AUTH_URL + '?hs=true&p=1.2.1&c=sbd&v=1.2' +
-    '&u=' + this.username + '&t=' + timestamp + '&a=' +
-    md5(API_SECRET + timestamp) + '&api_key=' + API_KEY + '&sk=' + this.sk;
-
-  function failureOccurred(aAuthFailure, responseText) {
-    dump("handshake FAILED with code: " + aAuthFailure + "\n");
-    dump("Response text: " + responseText + "\n\n");
-    failure(aAuthFailure);
-  }
-
-  this._handshake_xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-    .createInstance();
-  this._handshake_xhr.mozBackgroundRequest = true;
-  var self = this;
-  this._handshake_xhr.onload = function(event) {
-    // loaded - check the HTTP status
-    if (self._handshake_xhr.status != 200) {
-      self.log('handshake got HTTP status: ' + self._handshake_xhr.status);
-      failureOccurred(HANDSHAKE_FAILURE_OTHER);
-      return;
-    }
-
-    // split the response text into lines and parse it
-    var response_lines = self._handshake_xhr.responseText.split('\n');
-    if (response_lines.length < 4) {
-      self.log('handshake got not enough lines: ' + response_lines.toSource());
-      failureOccurred(HANDSHAKE_FAILURE_OTHER, self._handshake_xhr.responseText);
-      return;
-    }
-    if (response_lines[0] == 'BADAUTH') {
-      self.log('handshake got authentication failure');
-      failureOccurred(HANDSHAKE_FAILURE_AUTH, self._handshake_xhr.responseText);
-      return;
-    }
-    if (response_lines[0] != 'OK') {
-      self.log('handshake got unexpected status: '+response_lines[0]);
-      failureOccurred(HANDSHAKE_FAILURE_OTHER, self._handshake_xhr.responseText);
-      return;
-    }
-    // save the results of parsing out
-    self.session = response_lines[1];
-    self.nowplaying_url = response_lines[2];
-    self.submission_url = response_lines[3];
-
-#ifdef METRICS_ENABLED
-    // increment metrics
-    self._metrics.metricsInc('lastfm', 'login', null);
-#endif
-
-    // save the credentials
-    Logins.set(self.username, self.password);
-
-    // we've sucessfully handshook
-    success();
-
-  };
-  this._handshake_xhr.onerror = function(event) {
-    // faileded
-    self.log('handshake got XMLHttpRequest error');
-    failureOccurred(HANDSHAKE_FAILURE_OTHER);
-  };
-  this._handshake_xhr.open('GET', hs_url, true);
-  this._handshake_xhr.send(null);
-}
+};
 
 // update profile data
 sbLastFm.prototype.updateProfile =
@@ -838,7 +703,7 @@ function sbLastFm_updateProfile(onSuccess, onFailure) {
   var self = this;
   this.login_phase = AUTH_PHASE_USER_INFO;
   this._info_xhr = this.apiCall("user.getInfo", {},
-    function response(success, xml, xmlText) {
+    function response(success, xmlc, xmlText) {
       if (!success) {
         dump("user.getInfo FAILED\n");
         if (typeof(onFailure) == "function")
@@ -847,7 +712,7 @@ function sbLastFm_updateProfile(onSuccess, onFailure) {
       }
 
       function text(tag) {
-        var tags = xml.getElementsByTagName(tag);
+        var tags = xmlc.getElementsByTagName(tag);
         if (tags.length) {
           return tags[0].textContent;
         } else {
@@ -855,7 +720,7 @@ function sbLastFm_updateProfile(onSuccess, onFailure) {
         }
       }
 
-      self._subscriber = (text('subscriber') == 1)
+      self._subscriber = (text('subscriber') == 1);
       if (Application.prefs.getValue("extensions.lastfm.subscriber_override",
                                      false))
         self._subscriber = true;
@@ -870,58 +735,52 @@ function sbLastFm_updateProfile(onSuccess, onFailure) {
       if (typeof(onSuccess) == "function")
         onSuccess();
     });
-}
+};
 
 
 // set now playing for the current user
 // the first argument is an array of object, each with one-letter keys
-// corresponding to the audioscrobbler submission protocol keys - ie:
-// a=artist, t=track, l=track-length, b=album, n=track-number
+// corresponding to the audioscrobbler submission protocol keys
 // the PlayedTrack object implements this
 sbLastFm.prototype.nowPlaying =
 function sbLastFm_nowPlaying(submission) {
-  var url = this.nowplaying_url;
-  var params = {s:this.session};
-  var props = 'atblnm'; // the keys we send
-  for (var j=0; j<props.length; j++) {
-    params[props[j]] = submission[props[j]];
-  }
-  // post, but don't worry about failure or success, this is best-effort
-  this.asPost(url, params, function() { }, function() { }, function() { });
-}
+  this.apiCall("track.updateNowPlaying", submission, function() {});
+};
 
 // the first argument is an array of object, each with one-letter keys
-// corresponding to the audioscrobbler submission protocol keys - ie:
-// a=artist, t=track, i=start-time, l=track-length, b=album, n=track-number
+// corresponding to the audioscrobbler submission protocol keys
 // the PlayedTrack object implements this
 sbLastFm.prototype.submit =
-function sbLastFm_submit(submissions, success) {
-  // if we don't have a session, we need to handshake first
-  if (!this.session) {
-    this.handshake();
-    return;
-  }
-
+function sbLastFm_submit(submissions, successCallback) {
   if (submissions.length == 0)
     return;
 
-  // build the submission
-  var url = this.submission_url;
-  var params = {s:this.session};
-  var props = 'brainmolt'; // the keys we send
-  for (var i=0; i<submissions.length; i++) {
-    for (var j=0; j<props.length; j++) {
-      params[props[j] + '[' + i + ']'] = submissions[i][props[j]];
+  var params = {}, callback = successCallback;
+  if(submissions.length == 1) {
+    params = submissions[0];
+  }
+  else {
+    // Recursively scrobble the tracks if we have more tracks than the API
+    // accepts at once.
+    if(submissions.length > 50) {
+      var count = 0;
+      callback = function() {
+        if(++count == 2 && typeof(successCallback) == "function") {
+          successCallback();
+        }
+      };
+      this.submit(submissions.slice(50), callback);
+      submissions = submissions.slice(0, 50);
     }
+    params = submissions;
   }
 
-  //post to AudioScrobbler
-  var self = this;
-  //dump("*** submitted: " + url + " // params: " + uneval(params) + "\n");
-  this.asPost(url, params, success,
-              function fail(msg) { self.hardFailure(msg); },
-              function badsession() { self.badSession(); });
-}
+  this.apiCall("track.scrobble", params, function response(success) {
+    if(success && typeof(callback) == "function") {
+      callback();
+    }
+  });
+};
 
 // get XML from an URL
 sbLastFm.prototype.getXML =
@@ -950,7 +809,7 @@ function sbLastFm_getXML(url, success, failure) {
   xhr.open('GET', url, true);
   xhr.send(null);
   return xhr;
-}
+};
 
 // get Last.fm radio name/value pairs from an URL
 sbLastFm.prototype.getPairs =
@@ -960,8 +819,8 @@ function sbLastFm_getPairs(url, success, failure) {
   // run in the background, since we're in xpcomland
   xhr.mozBackgroundRequest = true;
   xhr.onload = function(event) {
+    var pairs = new Object();
     try {
-      var pairs = new Object();
       var lines = xhr.responseText.split('\n');
       for (var i=0; i<lines.length; i++) {
         var m = lines[i].match(/([^=]+)=(.*)/);
@@ -981,7 +840,7 @@ function sbLastFm_getPairs(url, success, failure) {
   xhr.open('GET', url, true);
   xhr.send(null);
   return xhr;
-}
+};
 
 // get the list of tracks the user has loved
 sbLastFm.prototype.getLovedTracks =
@@ -992,27 +851,28 @@ function sbLastFm_getLovedTracks() {
   this.apiCall('user.getLovedTracks',
                { user: self.username,
                  limit: lovedLimit },
-               function response(success, xml, xmlText) {
+               function response(success, xmlc, xmlText) {
                 xmlText = xmlText.replace(
                   /<\?xml version="1.0" encoding="[uU][tT][fF]-8"\?>/, "");
                 var x = new XML(xmlText);
 
-                self.lovedTracks = new Object();
-                var i = 0;
+                if(!self.lovedTracks)
+                  self.lovedTracks = new Object();
+
                 for each (var track in x..track) {
                   var trackName = track.name.toString().toLowerCase();
                   var artistName = track.artist.name.toString().toLowerCase();
                   self.lovedTracks[trackName + "@@" + artistName] = true;
                 }
                });
-}
+};
 
 // log in to the last.fm website so that if we get directed over to web links
 // from radio links we'll already have a logged in state
 sbLastFm.prototype.webLogin =
 function sbLastFm_webLogin(success, failure) {
   var self = this;
-  var postdata = new Object;
+  var postdata = new Object();
   postdata["username"] = this.username;
   postdata["password"] = this.password;
 
@@ -1058,7 +918,7 @@ function sbLastFm_webLogin(success, failure) {
       },
       function(xhr) {
       });
-}
+};
 
 // tune the current radio session into a particular lastfm:// uri
 sbLastFm.prototype.tuneStation =
@@ -1066,7 +926,7 @@ function sbLastFm_tuneStation(station, onSuccess, onFailure) {
   var self = this;
   dump("radio.Tune, tuning to: " + station + "\n");
   this.apiCall('radio.Tune', { station: station },
-    function response(success, xml, xmlText) {
+    function response(success, xmlc, xmlText) {
       if (!success) {
         dump("Failed to tune station: " + station + "\n");
         if (typeof(onFailure) == "function")
@@ -1075,7 +935,7 @@ function sbLastFm_tuneStation(station, onSuccess, onFailure) {
       }
 
       function text(key) {
-        tags = xml.getElementsByTagName(key);
+        tags = xmlc.getElementsByTagName(key);
         if (tags.length) {
           return tags[0].textContent;
         } else {
@@ -1088,7 +948,7 @@ function sbLastFm_tuneStation(station, onSuccess, onFailure) {
       if (typeof(onSuccess) == "function")
         onSuccess();
     });
-}
+};
 
 // get more tracks from Last.fm's servers into the radio playlist
 sbLastFm.prototype.requestMoreRadio =
@@ -1154,7 +1014,7 @@ function sbLastFm_requestMoreRadio(onSuccess, onFailure) {
       if (typeof(onSuccess) == "function")
         onSuccess();
     });
-}
+};
 
 sbLastFm.prototype.saveRecentStation =
 function sbLastFm_saveRecentStation(name, stationUrl, url, sImageUrl,
@@ -1179,7 +1039,7 @@ function sbLastFm_saveRecentStation(name, stationUrl, url, sImageUrl,
   LastfmTuner.recentStations.push(thisStation);
   Application.prefs.setValue("extensions.lastfm.recent.artists",
                              this._jsonSvc.encode(recentStations));
-}
+};
 
 // begin last.fm radio playback of a particular station
 sbLastFm.prototype.radioPlay =
@@ -1282,30 +1142,7 @@ function sbLastFm_radioPlay(station) {
         dump("FAIL FAIL FAIL to authenticate.\n");
       });
   return true;
-}
-
-
-// post to audioscrobbler (the old api)
-sbLastFm.prototype.asPost =
-function sbLastFm_asPost(url, params, success, hardfailure, badsession) {
-  var self = this;
-  POST(url, params, function(xhr) {
-    /* loaded */
-    if (xhr.status != 200) {
-      hardfailure('HTTP status ' + xhr.status + ' posting to ' + url);
-    } else if (xhr.responseText.match(/^OK\n/)) {
-      success();
-    } else if (xhr.responseText.match(/^BADSESSION\n/)) {
-      self.log('Bad Session when posting to last.fm');
-      badsession();
-    } else {
-      hardfailure(xhr.responseText);
-    }
-  }, function(xhr) {
-    /* errored */
-    hardfailure('XMLHttpRequest called onerror');
-  });
-}
+};
 
 // authenticate against the new Last.fm "rest" web service APIs
 sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
@@ -1337,13 +1174,13 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
 
     self.login_phase = AUTH_PHASE_TOKEN_REQUEST;
     self._token_xhr = self.apiCall('auth.getToken', { },
-      function response(success, xml, xmlText) {
+      function response(success, xmlc, xmlText) {
         if (!success) {
           dump("auth.getToken: FAILED TO AUTHENTICATE: " + xmlText + "\n\n");
           return;
         }
 
-        var authtoken = xml.getElementsByTagName('token');
+        var authtoken = xmlc.getElementsByTagName('token');
         if (authtoken.length != 1) {
           dump("auth.getToken: FAILED TO FIND TOKEN: " + xmlText + "\n\n");
           return;
@@ -1380,7 +1217,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
           }
 
           // We're listening for the LastFM "Permissions Granted" page. It will
-          // have pathname "/api/grantaccess" on the last.fm domain or a
+          // have pathname "/api/auth" on the last.fm domain or a
           // localized version such as lastfm.fr
           var loc = e.target.location;
           if (!/last\.?fm/.test(loc.host)) {
@@ -1393,8 +1230,13 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
             return;
           }
 
-          if (loc.pathname.search(/grantaccess/i) == -1) {
-            // Ignore LastFM pages that aren't the "Permissions Granted" page.
+          if (loc.pathname.search(/api\/auth/i) == -1) {
+            // Ignore LastFM pages that aren't the auth page.
+            return;
+          }
+          else if(self.login_phase == AUTH_PHASE_TOKEN_REQUEST) {
+            // first the user has to give use access to the last.fm API
+            self.login_phase = AUTH_PHASE_APP_APPROVE;
             return;
           }
 
@@ -1406,13 +1248,13 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
           self._session_xhr = self.apiCall('auth.getSession', {
               token: authtoken
             },
-            function response(success, xml, xmlText) {
+            function response(success, xmlc, xmlText) {
               if (!success) {
                 dump("auth.getSession: FAILED TO AUTHENTICATE: " +
                   xmlText + "\n\n");
                 return;
               }
-              var keys = xml.getElementsByTagName("key");
+              var keys = xmlc.getElementsByTagName("key");
               if (keys.length != 1) {
                 dump("auth.getSession: FAILED TO AUTH. TOKEN: " +
                   xmlText + "\n\n");
@@ -1423,7 +1265,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
               dump("session key: " + self.sk + "\n");
               Application.prefs.setValue('extensions.lastfm.session_key',
                 self.sk);
-              var subscribers = xml.getElementsByTagName("subscriber");
+              var subscribers = xmlc.getElementsByTagName("subscriber");
               if (subscribers.length == 1)
                 self._subscriber = (subscribers[0].textContent == "1");
               if (Application.prefs.getValue(
@@ -1437,7 +1279,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
               if (typeof(onSuccess) == "function")
                 onSuccess();
           });
-        }
+        };
 
         // Load the user authorization page.
         var authURL = "http://" + self.geoBaseDomain + "/api/auth?api_key=" +
@@ -1455,7 +1297,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
           self.listeners.each(function(listener) {
             listener.onLoginFailed();
           });
-        }
+        };
 
         authTab.addEventListener("TabClose", self._authTabCloseListener, false);
 
@@ -1471,7 +1313,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
       listener.onLoginFailed();
     });
   }); // weblogin
-}
+};
 
 
 sbLastFm.prototype.apiCall =
@@ -1480,11 +1322,11 @@ function sbLastFm_apiCall(method, params, responseCallback) {
   // see: http://www.last.fm/api/rest
   // note: this isn't really REST.
 
-  function callback(success, xml, xmlText) {
+  function callback(success, xmlc, xmlText) {
     if (typeof(responseCallback) == 'function') {
-      responseCallback(success, xml, xmlText);
+      responseCallback(success, xmlc, xmlText);
     } else {
-      responseCallback.responseReceived(success, xml, xmlText);
+      responseCallback.responseReceived(success, xmlc, xmlText);
     }
   }
 
@@ -1496,7 +1338,7 @@ function sbLastFm_apiCall(method, params, responseCallback) {
     enumerate(params.enumerator, function(item) {
       item.QueryInterface(Ci.nsIProperty);
       post_params[item.name] = item.value;
-    })
+    });
   } else {
     // or from the object
     for (var k in params) { post_params[k] = params[k]; }
@@ -1512,7 +1354,7 @@ function sbLastFm_apiCall(method, params, responseCallback) {
   // put the key/value pairs in an array
   var sorted_params = new Array();
   for (var k in post_params) {
-    sorted_params.push(k+post_params[k])
+    sorted_params.push(k+post_params[k]);
   }
   // sort them
   sorted_params.sort();
@@ -1527,26 +1369,25 @@ function sbLastFm_apiCall(method, params, responseCallback) {
     if (!xhr.responseXML) {
       // we expect all API responses to have XML
       callback(false, null, null);
-      return;
     }
-    if (xhr.responseXML.documentElement.tagName != 'lfm' ||
+    else if (xhr.responseXML.documentElement.tagName != 'lfm' ||
         !xhr.responseXML.documentElement.hasAttribute('status')) {
       // we expect the root (document) element to be <lfm status="...">
       callback(false, xhr.responseXML, xhr.responseText);
-      return;
     }
-    if (xhr.responseXML.documentElement.getAttribute('status' == 'failed')) {
+    else if (xhr.responseXML.documentElement.getAttribute('status' == 'failed')) {
       // the server reported an error
       self.log('Last.fm Web Services Error: '+xhr.responseText);
       callback(false, xhr.responseXML, xhr.responseText);
-      return;
     }
-    // all should be good!
-    callback(true, xhr.responseXML, xhr.responseText);
+    else {
+      // all should be good!
+      callback(true, xhr.responseXML, xhr.responseText);
+    }
   }, function (xhr) {
     callback(false, null, null);
   });
-}
+};
 
 
 // try to scrobble pending tracks from playback history
@@ -1579,8 +1420,9 @@ function sbLastFm_scrobble(aEntries) {
       // don't scrobble non-audio tracks or tracks w/ missing metadata
       // scrobbled anyway so we don't try again in the future
       if (entry_list[i].item.getProperty(SBProperties.contentType) != "audio"
-          || entry_list[i].item.getProperty(SBProperties.artistName) == null
-          || entry_list[i].item.getProperty(SBProperties.trackName) == null)
+          || entry_list[i].item.getProperty(SBProperties.trackName) == null
+          || parseInt(entry_list[i].item.getProperty(SBProperties.duration), 10)
+             / 1000000 < 30)
       {
         continue;
       }
@@ -1603,14 +1445,15 @@ function sbLastFm_scrobble(aEntries) {
       scrobble_list.push(
           new PlayedTrack(entry_list[i].item,
                           Math.round(entry_list[i].timestamp/1000000),
-                          rating,
                           source));
     }
+
     // submit to the last.fm audioscrobbler api
     var self = this;
     this.submit(scrobble_list,
       function success() {
         // on success mark all these as scrobbled, love & ban as appropriate
+        var sucCbk = function response(success, xmlc) { };
         for (i=0; i<entry_list.length; i++) {
           let entry = entry_list[i];
           entry.setAnnotation(ANNOTATION_SCROBBLED, 'true');
@@ -1619,7 +1462,7 @@ function sbLastFm_scrobble(aEntries) {
             self.apiCall('track.love', {
                 track: entry.item.getProperty(SBProperties.trackName),
                 artist: entry.item.getProperty(SBProperties.artistName)
-              }, function response(success, xml) { });
+              }, sucCbk);
           } else if (entry.hasAnnotation(ANNOTATION_BAN)) {
             // Do nothing, this is handled in trackBan()
           }
@@ -1634,7 +1477,7 @@ function sbLastFm_scrobble(aEntries) {
 #endif
       });
   }
-}
+};
 
 sbLastFm.prototype.addTags =
 function sbLastFm_addTags(aMediaItem, tagString, success, failure) {
@@ -1660,7 +1503,7 @@ function sbLastFm_addTags(aMediaItem, tagString, success, failure) {
     if (typeof(failure) == "function")
       failure();
   });
-}
+};
 
 sbLastFm.prototype.removeTag =
 function sbLastFm_removeTag(aMediaItem, aTagName) {
@@ -1679,10 +1522,8 @@ function sbLastFm_removeTag(aMediaItem, aTagName) {
   }, function() {
     dump("Failed to remove tag: " + aTagName + "\n");
   });
-}
+};
 
-// Note: this web services call will eventually be deprecated and rely
-// strictly on the scrobble (see http://www.last.fm/api/submissions)
 sbLastFm.prototype.trackBan =
 function sbLastFm_trackBan(aMediaItem) {
   if (aMediaItem.getProperty(SBProperties.artistName) != null &&
@@ -1694,9 +1535,9 @@ function sbLastFm_trackBan(aMediaItem) {
     this.apiCall('track.ban', {
         track: aMediaItem.getProperty(SBProperties.trackName),
         artist: aMediaItem.getProperty(SBProperties.artistName)
-    }, function response(success, xml) { });
+    }, function response(success, xmlc) { });
   }
-}
+};
 
 // love and ban
 sbLastFm.prototype.loveBan =
@@ -1707,6 +1548,9 @@ function sbLastFm_loveBan(aMediaItem, aLove) {
   if (aMediaItem) {
     var trackName = aMediaItem.getProperty(SBProperties.trackName).toLowerCase();
     var artistName = aMediaItem.getProperty(SBProperties.artistName).toLowerCase();
+
+    if(!this.lovedTracks)
+      this.lovedTracks = new Object();
 
     if (this.lovedTracks[trackName + "@@" + artistName])
       existing = true;
@@ -1722,7 +1566,7 @@ function sbLastFm_loveBan(aMediaItem, aLove) {
   this.listeners.each(function(l) {
     l.onLoveBan(aMediaItem, aLove, existing);
   });
-}
+};
 
 // sbIPlaybackHistoryListener
 sbLastFm.prototype.onEntriesAdded =
@@ -1754,13 +1598,13 @@ function sbLastFm_onEntriesAdded(aEntries) {
                 item.setAnnotation(ANNOTATION_HIDDEN, 'true');
               });
   }
-}
+};
 sbLastFm.prototype.onEntriesUpdated =
-function sbLastFm_onEntriesUpdated(aEntries) { }
+function sbLastFm_onEntriesUpdated(aEntries) { };
 sbLastFm.prototype.onEntriesRemoved =
-function sbLastFm_onEntriesRemoved(aEntries) { }
+function sbLastFm_onEntriesRemoved(aEntries) { };
 sbLastFm.prototype.onEntriesCleared =
-function sbLastFm_onEntriesCleared() { }
+function sbLastFm_onEntriesCleared() { };
 
 
 // nsIObserver - just used for a timer callback
@@ -1784,9 +1628,9 @@ function sbLastFm_observe(subject, topic, data) {
     }
   }
   else if (topic == "songbird-library-manager-before-shutdown") {
-    this.shutdown()
+    this.shutdown();
   }
-}
+};
 
 // sbIMediacoreEventListener
 sbLastFm.prototype.onMediacoreEvent =
@@ -1833,7 +1677,7 @@ function sbLastFm_onMediacoreEvent(aEvent) {
         SBDataSetBoolValue('lastfm.radio.requesting', false);
       if (this.radio_playing) {
         // let's remove all the tracks *before* this one from the medialist
-        var view = this._mediacoreManager.sequencer.view
+        var view = this._mediacoreManager.sequencer.view;
         var pos = this._mediacoreManager.sequencer.viewPosition;
         var removals = new Array();
         for (var i=0; i<pos && i<view.length; i++) {
@@ -1851,7 +1695,7 @@ function sbLastFm_onMediacoreEvent(aEvent) {
     default:
       break;
   }
-}
+};
 
 // invoked from onMediacoreEvent above
 sbLastFm.prototype.onTrackChange =
@@ -1859,9 +1703,18 @@ function sbLastFm_onTrackChange(aItem) {
   // NOTE: This depends on the current assumption that onTrackChange will
   // be run before onEntriesAdded. Otherwise love/ban won't work.
 
-  if (aItem.getProperty(SBProperties.artistName) == null ||
-      aItem.getProperty(SBProperties.trackName) == null)
+  if (aItem.getProperty(SBProperties.trackName) == null)
   {
+    return;
+  }
+
+  // send now playing info if appropriate
+  if (this.shouldScrobble && this.loggedIn &&
+      aItem.getProperty(SBProperties.excludeFromHistory) != '1') {
+    this.nowPlaying(new PlayedTrack(aItem));
+  }
+
+  if(aItem.getProperty(SBProperties.artistName) == null) {
     return;
   }
 
@@ -1873,12 +1726,6 @@ function sbLastFm_onTrackChange(aItem) {
     this.loveBan(aItem, true);
   }
 
-  // send now playing info if appropriate
-  if (this.shouldScrobble && this.loggedIn &&
-      aItem.getProperty(SBProperties.excludeFromHistory) != '1') {
-    this.nowPlaying(new PlayedTrack(aItem));
-  }
-
   this.userTags = new Object();
   this.globalTags = new Object();
   self = this;
@@ -1887,10 +1734,10 @@ function sbLastFm_onTrackChange(aItem) {
   this.apiCall('track.getInfo', {
     track: aItem.getProperty(SBProperties.trackName),
     artist: aItem.getProperty(SBProperties.artistName)
-  }, function response(success, xml) {
+  }, function response(success, xmlc) {
     if (success) {
       // update the tagPanel with the tags for this track
-      var tagElements = xml.getElementsByTagName('tag');
+      var tagElements = xmlc.getElementsByTagName('tag');
       for (var i=0; i<tagElements.length; i++) {
         var tag = tagElements[i].childNodes[1].textContent;
         self.globalTags[tag] = false;
@@ -1902,22 +1749,22 @@ function sbLastFm_onTrackChange(aItem) {
   this.apiCall('track.getTags', {
     track: aItem.getProperty(SBProperties.trackName),
     artist: aItem.getProperty(SBProperties.artistName)
-  }, function response(success, xml) {
+  }, function response(success, xmlc) {
     if (success) {
       // update the tagPanel with the tags for this track
-      var tagElements = xml.getElementsByTagName('tag');
+      var tagElements = xmlc.getElementsByTagName('tag');
       for (var i=0; i<tagElements.length; i++) {
         var tag = tagElements[i].childNodes[1].textContent;
         self.userTags[tag] = true;
       }
     }
   });
-}
+};
 
 sbLastFm.prototype.onStop = function sbLastFm_onStop() {
   // reset the love/ban state
   this.loveBan(null, false);
-}
+};
 
 sbLastFm.prototype.shutdown = function sbLastFm_shutdown() {
   // remove all observers
@@ -1929,7 +1776,7 @@ sbLastFm.prototype.shutdown = function sbLastFm_shutdown() {
 
   // remove ourselves as a playlist history listener
   this._playbackHistory.removeListener(this);
-}
+};
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([sbLastFm]);

@@ -8,8 +8,8 @@ LDFLAGS += -Wl,--as-needed
 %:
 	dh $@ --parallel
 
+# nothing to do, as we do that with make.
 override_dh_auto_configure:
-	# nothing to do, as we do that with make.
 
 override_dh_auto_build:
 	# echo 'ac_add_options --enable-debug' >> nightingale.config
@@ -27,10 +27,10 @@ override_dh_auto_build:
 	# with a symbolic link to /usr/share/hunspell
 	rm -rf compiled/dist/xulrunner/dictionaries
 
+# This isn't a build with enabled tests.
+# dh_auto_test would make the build stop with an error warning.
+# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
 override_dh_auto_test:
-	# This isn't a build with enabled tests.
-	# dh_auto_test would make the build stop with an error warning.
-	# DON'T remove the line 'override_dh_auto_test:' to keep it disabled!
 
 override_dh_shlibdeps:
 	dh_shlibdeps -Lnightingale -l/usr/lib/nightingale/xulrunner
@@ -41,5 +41,3 @@ override_dh_auto_clean:
 override_dh_clean:
 	dh_clean nightingale.config config.log
 
-override_dh_builddeb:
-	dh_builddeb -- -Zxz -z9

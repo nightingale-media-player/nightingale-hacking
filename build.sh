@@ -90,7 +90,9 @@ case $OSTYPE in
                     md5_verify "$fname"
                 fi
                 echo "Need to extract $fname"
-                tar xvf "$fname"
+                tar --checkpoint=.100 -xf "$fname"
+                # insert a newline, since tar doesn't
+                echo
             fi
         } ; )
 

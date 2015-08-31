@@ -15,20 +15,6 @@ reflection of what our Xul 6+ releases will be like.
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=230233)](https://www.bountysource.com/trackers/230233-nightingale-media-player-nightingale-hacking?utm_source=230233&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 [![Travis CI](https://api.travis-ci.org/nightingale-media-player/nightingale-hacking.svg)](https://travis-ci.org/nightingale-media-player/nightingale-hacking)
 
-Notes
-=====
-  * To build, you need to have all of the gstreamer0.10 packages for your 
-distro, svn, wget, and git (if pulling the tree down) installed, 
-as well as the usual dependencies for building software upon your 
-distro.
-
-  * If it gets python errors, make sure you have python2 installed,
-and try the build.sh script again.
-
-  * If it doesn't play music, you'll need to copy /usr/lib/gstreamer0.10/*
-into compiled-dist-linux-[your arch]/dist/gst-plugins and then 
-rerun nightingale. It should then play music.
-
 Building
 ========
 If you're on Linux, simply run the [build.sh](build.sh) script. It will
@@ -42,9 +28,9 @@ Ubuntu and Debian users should note you'll need:
 
 More information can be gleaned from the Nightingale wiki:
 
-  * [Windows](http://tinyurl.com/ce3anjo)
-  * [Mac](http://tinyurl.com/ckca4no)
-  * [Linux](http://tinyurl.com/d569knt)
+  * [Windows](http://wiki.getnightingale.com/doku.php?id=build:windows)
+  * [Mac](http://wiki.getnightingale.com/doku.php?id=build:mac)
+  * [Linux](http://wiki.getnightingale.com/doku.php?id=build:linux)
 
 Building a Debian Package
 -------------------------
@@ -52,7 +38,7 @@ Even though this source contains a debian/ folder, do not consider it as produci
 
 Configure Options
 =================
-`ac_add_options (option here)`
+`ac_add_options (option here)` (one per line) in a `nightingale.config` file in the top source directory.
 
  option                                  | description 
 -----------------------------------------|-------------
