@@ -22,7 +22,7 @@
 # END NIGHTINGALE GPL
 #
 
-DEPTH     = ../..
+DEPTH     = ../../..
 topsrcdir = @top_srcdir@
 srcdir    = @srcdir@
 VPATH     = @srcdir@
@@ -30,17 +30,7 @@ VPATH     = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
-INSTALL_EXTENSION = 1
 
-SUBDIRS = chrome \
-          component \
-          defaults \
-          $(NULL)
-
-#JAR_MANIFEST = jar.mn
-
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(NULL)
+JAR_MANIFEST = jar.mn.in
 
 include $(topsrcdir)/build/rules.mk

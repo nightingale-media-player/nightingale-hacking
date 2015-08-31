@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay id="apple-mediakeys-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script src="firstrun.js"/>
+
+  <stringbundleset id="stringbundleset"> 
+     <stringbundle id="apple-mediakeys-strings" src="chrome://apple-mediakeys/locale/overlay.properties"/>
+  </stringbundleset>  
+
+</overlay>

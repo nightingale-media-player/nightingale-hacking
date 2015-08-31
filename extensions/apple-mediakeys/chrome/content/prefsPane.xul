@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE prefwindow SYSTEM "chrome://apple-mediakeys/locale/options.dtd">
+
+<overlay id="radio_preferences_overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefwindow id="BrowserPreferences">
+  <prefpane id="mediakeysPrefPane" label="&apple-mediakeys-prefs-overlay.label;"
+            onpaneload="onPrefPaneLoad()">
+
+    <vbox>
+        <groupbox>
+          <caption label="&apple-mediakeys.prefs.disable-itunes.groupcaption;"/>
+		  <description>&apple-mediakeys.prefs.disable-itunes.description;</description>
+		  <label class="text-link" href="http://www.thebitguru.com/projects/iTunesPatch" value="&apple-mediakeys.prefs.disable-itunes.link.label;"/>
+        </groupbox>
+        <groupbox>
+          <caption label="&apple-mediakeys.prefs.bluetooth.groupcaption;"/>
+		  <description>&apple-mediakeys.prefs.bluetooth.description;</description>
+		  <label class="text-link" href="https://github.com/jguice/mac-bt-headset-fix" value="&apple-mediakeys.prefs.bluetooth.link.label;"/>
+        </groupbox>
+      </vbox>
+    
+  </prefpane>
+</prefwindow>
+
+</overlay>

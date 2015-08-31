@@ -1,0 +1,9 @@
+<!ENTITY apple-mediakeys-prefs-overlay.label "Mac Media Keys">
+
+<!ENTITY apple-mediakeys.prefs.disable-itunes.groupcaption "Disable iTunes Launching">
+<!ENTITY apple-mediakeys.prefs.disable-itunes.description "In order to disable iTunes from launching when pressing the Play/Pause media key, download and run the patch from the external link below.">
+<!ENTITY apple-mediakeys.prefs.disable-itunes.link.label "Play Button iTunes Patch">
+
+<!ENTITY apple-mediakeys.prefs.bluetooth.groupcaption "Enable Bluetooth Control">
+<!ENTITY apple-mediakeys.prefs.bluetooth.description "In order to enable media controls on a connected Bluetooth device, download and run the application from the external link below.">
+<!ENTITY apple-mediakeys.prefs.bluetooth.link.label "Mac Bluetooth Headset Fix">
