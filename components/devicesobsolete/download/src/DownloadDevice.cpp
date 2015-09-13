@@ -2752,7 +2752,7 @@ nsresult sbDownloadSession::Initiate()
       if (NS_FAILED(rv))
       {
         NS_WARNING("Failed to set originURL, this item may be duplicated later \
-                    because it's origin cannot be tracked!");
+                    because its origin cannot be tracked!");
         return rv;
       }
     }
