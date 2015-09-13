@@ -725,7 +725,7 @@ sbBaseDeviceFirmwareHandler::OnRecover(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   * firmware image.
   *
   * If no firmware update object is passed, the handler
-  * is expected to use a firmware update it packaged as part of it's add-on.
+  * is expected to use a firmware update it packaged as part of its add-on.
   * This is to enable a device to always be recovered even if the user is
   * off line or has never updated their firmware before and have no firmware
   * update present in their cache.

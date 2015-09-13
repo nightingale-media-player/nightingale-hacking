@@ -105,7 +105,7 @@ interface sbIMediacoreEvent : nsISupports
    * \brief Sequence end.
    *
    * This event will be fired by the sequencer when it runs
-   * out of items to play from it's sequence. This event will
+   * out of items to play from its sequence. This event will
    * not be fired when the sequence repeats because of repeat
    * one or repeat all being turned on.
    *
@@ -248,7 +248,7 @@ interface sbIMediacoreEvent : nsISupports
   const unsigned long CUSTOM_EVENT_BASE = 0x40000000;
 
   /**
-   * \brief Indicates the event is an error and will have it's error member set.
+   * \brief Indicates the event is an error and will have its error member set.
    */
   const unsigned long ERROR_EVENT       = 0x80000000;
 

@@ -172,7 +172,7 @@ public:
   virtual PRBool IsRequestAborted();
 private:
   /**
-   * Protects the mProperites member and updating it's contents
+   * Protects the mProperites member and updating its contents
    */
   PRMonitor* mPropertiesLock;
 

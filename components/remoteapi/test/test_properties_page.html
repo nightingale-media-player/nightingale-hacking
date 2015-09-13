@@ -345,7 +345,7 @@ function runTest(tester) {
         // main library is all readonly
         if ( obj == "library" ) {
           try {
-            // library has it's mediaListName set specifically
+            // library has its mediaListName set specifically
             if ( stuff == "mediaListName" ) {
               var val = foo.getProperty(props[stuff]);
               tester.assertEqual( val, "&chrome://songbird/locale/songbird.properties#servicesource.library" );

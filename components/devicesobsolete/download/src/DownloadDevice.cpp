@@ -874,7 +874,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
  *
  * Get a transfer location for the specified media item. This enables
  * the device to determine where best to put this media item based on
- * it's own set of criteria.
+ * its own set of criteria.
  *
  * \param aDeviceIdentifier The device unique identifier.
  * \param aMediaItem The media item that is about to be transferred.

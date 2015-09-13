@@ -1168,7 +1168,7 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
     sbMediaListItemMapIter guidIter = mAddedItemsMap.find(listGuid);
     if (guidIter == mAddedItemsMap.end()) {
       // The media list isn't represented in the map, add a new entry for this
-      // media list using it's guid.
+      // media list using its guid.
       std::pair<sbMediaListItemMapIter, bool> insertedPair =
         mAddedItemsMap.insert(sbMediaListItemMapPair(listGuid, sbStringList()));
 

@@ -230,7 +230,7 @@ namespace
 
     /**
      * This updates the origin is in main library property in batch mode using
-     * it's own object for the enumeration.
+     * its own object for the enumeration.
      */
     NS_SCRIPTABLE NS_IMETHOD RunBatched(nsISupports *)
     {
