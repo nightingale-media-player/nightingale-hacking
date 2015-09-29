@@ -60,7 +60,8 @@ ifneq (,$(wildcard $(BUILDINFO_FILE)))
    endif
 
    ifeq (,$(SB_MOZILLA_VERSION))
-      $(error Could not derive SB_MOZILLA_VERSION)
+      #$(error Could not derive SB_MOZILLA_VERSION)
+      SB_MOZILLA_VERSION=1.9.2
    endif
 
    PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
