@@ -94,7 +94,7 @@ Example:
 
     if ( aEvent.type == 'RemoteAPIPermissionDenied' ) {
       msg = "You have opted to not configure Songbird so our webpage can interact " +
-            "with it at it's fullest. Please open tools->options and configure the " +
+            "with it at its fullest. Please open tools->options and configure the " +
             "RemoteAPI preferences to allow us XYZ permissions. " + 
             "Below are the permissions that were requested.";
             

@@ -339,7 +339,7 @@
           infoBox = infoBox.parentNode;
         }
 
-        // Get the medialist dropdown to retrieve information about it's
+        // Get the medialist dropdown to retrieve information about its
         // current selection
         var mediaListMenu = infoBox.getElementsByAttribute
                                    ("class", "name-box")[0].firstChild;

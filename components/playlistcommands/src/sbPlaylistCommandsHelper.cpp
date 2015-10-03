@@ -548,7 +548,7 @@ sbPlaylistCommandsHelper::RemoveCommandObject
                                                       aMediaListType,
                                                       aCommandObject);
     NS_ENSURE_SUCCESS(rv, rv);
-    // unregister does it's own onCommandRemoved signal, so no need here
+    // unregister does its own onCommandRemoved signal, so no need here
   }
 
   // if we want to remove from the context menu and toolbar, we can do that now
@@ -564,7 +564,7 @@ sbPlaylistCommandsHelper::RemoveCommandObject
                                                       aMediaListType,
                                                       aCommandObject);
     NS_ENSURE_SUCCESS(rv, rv);
-    // unregister does it's own onCommandRemoved signal, so no need here
+    // unregister does its own onCommandRemoved signal, so no need here
 
     rv = SetRemainingFlags(aTargetFlags, aCommandObject);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -666,7 +666,7 @@ sbPlaylistCommandsHelper::RemoveCommandObject
                                                         aMediaListType,
                                                         aCommandObject);
       NS_ENSURE_SUCCESS(rv, rv);
-      // unregister does it's own onCommandRemoved signal, so no need here
+      // unregister does its own onCommandRemoved signal, so no need here
     }
   }
   rv = SetRemainingFlags(aTargetFlags, aCommandObject);

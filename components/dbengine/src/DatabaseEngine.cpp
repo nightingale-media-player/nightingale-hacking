@@ -2033,7 +2033,7 @@ PLDHashOperator CDatabaseEngine::EnumerateIntoArrayStringKey(
   nsTArray<nsString> *stringArray = 
     reinterpret_cast< nsTArray<nsString>* >(aArray);
   
-  // No need to lock the queue here since it's access to m_QueuePool is locked
+  // No need to lock the queue here since its access to m_QueuePool is locked
   // when we are enumerating it.
 
   if(aQueue->m_AnalyzeCount > ANALYZE_QUERY_THRESHOLD) {

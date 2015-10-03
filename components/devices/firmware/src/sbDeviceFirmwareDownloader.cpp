@@ -1144,7 +1144,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
     }
   }
 
-  // Move the file to it's resting place.
+  // Move the file to its resting place.
   nsCOMPtr<nsIFile> file;
   rv = mDownloader->GetDestinationFile(getter_AddRefs(file));
   NS_ENSURE_SUCCESS(rv, rv);

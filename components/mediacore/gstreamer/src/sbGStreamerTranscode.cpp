@@ -264,7 +264,7 @@ sbGStreamerTranscode::BuildPipeline()
     goto done;
   }
 
-  // We have a pipeline, set it's main operation to transcoding.   
+  // We have a pipeline, set its main operation to transcoding.   
   SetPipelineOp(GStreamer::OP_TRANSCODING);
 
   tags = ConvertPropertyArrayToTagList(mMetadata);

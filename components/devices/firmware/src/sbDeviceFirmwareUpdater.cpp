@@ -1110,7 +1110,7 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
     // We assume there is only one device firmware handler
     // that can handle a device. In the future this may be
     // extended to put the handlers to a vote so that we may
-    // pick the one that's most certain about it's ability to
+    // pick the one that's most certain about its ability to
     // handle the device.
     if(canHandleDevice) {
       handler.forget(_retval);

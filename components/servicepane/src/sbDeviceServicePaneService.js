@@ -319,7 +319,7 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
 
   /* Add a listener to detect when a device library item's originItemGuid
    * property is updated.
-   * We use this listener to detect when a medialist has it's originItemGuid
+   * We use this listener to detect when a medialist has its originItemGuid
    * changed which will occur when the medialist is imporpied into the main
    * library and will likely mean we should remove its 'deviceonly' icon */
   var deviceUpdateListener = new DeviceLibraryItemUpdateListener();
@@ -396,9 +396,9 @@ function sbDeviceServicePane_insertChildByName(aDevice, aChild) {
   // If we are inserting a medialist node, check if it is deviceonly
   if (aChild.className.match(/medialist/) != null) {
 
-    /* The node looks like a medialist.  We'll get it's resource, check that
+    /* The node looks like a medialist.  We'll get its resource, check that
      * it's a medialist, and look for an item in the mainLibrary that has a
-     * guid matching it's originGUID.  If we can't find one, we'll label the
+     * guid matching its originGUID.  If we can't find one, we'll label the
      * node as representing a deviceonly medialist */
     var resource = this._libraryServicePane.getLibraryResourceForNode(aChild);
     if (resource instanceof Ci.sbIMediaList &&

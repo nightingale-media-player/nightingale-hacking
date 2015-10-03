@@ -563,7 +563,7 @@ MarkLists(sbLDBDSEnumerator * aSrc, sbLDBDSEnumerator * aDest)
                                     destOriginEnd,
                                     &sbLDBDSEnumerator::ItemInfo::mOriginID);
 
-    // If found then we're mark the destination as an update and get it's ID
+    // If found then we're mark the destination as an update and get its ID
     nsID foundDestID;
     bool found = false;
     if (destOriginIter != destOriginEnd) {
@@ -595,7 +595,7 @@ MarkLists(sbLDBDSEnumerator * aSrc, sbLDBDSEnumerator * aDest)
       }
     }
     // If we found a match in the destination then we need to update the
-    // source, setting it's mAction and setting the origin back to the
+    // source, setting its mAction and setting the origin back to the
     // to the destination
     if (found) {
       // Origin in source becomes destination GUID

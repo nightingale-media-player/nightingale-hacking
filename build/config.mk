@@ -26,7 +26,7 @@
 # config.mk
 #
 # This file is included in rules.mk and contains variables not set by
-# autoconf. It's primary use is to set PPDEFINES, a list of definitions that
+# autoconf. Its primary use is to set PPDEFINES, a list of definitions that
 # are passed to the preprocessor.
 ###############################################################################
 

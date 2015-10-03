@@ -1155,7 +1155,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 }
 
 /* aViewItemUID is a concatenation of a mediaitems rowid and mediaitemid from
- * it's entry in the library's database of the form "rowid-mediaitemid" */
+ * its entry in the library's database of the form "rowid-mediaitemid" */
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
                           (const nsAString& aViewItemUID,
@@ -2392,7 +2392,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
   }
 #else
   /*
-   * Cache miss, cache all GUIDs. FetchRows takes care of it's own locking.
+   * Cache miss, cache all GUIDs. FetchRows takes care of its own locking.
    */
   rv = FetchRows(0, 0);
   NS_ENSURE_SUCCESS(rv, rv);

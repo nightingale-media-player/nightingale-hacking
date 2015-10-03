@@ -67,7 +67,7 @@ protected:
   nsCOMPtr<sbIMediaItem> mItem;
   nsCOMPtr<sbIDeviceSupportsItemCallback> mCallback;
 
-  // mDevice can't be a nsRefPtr because it's multiply derived from nsISupports
+  // mDevice can't be a nsRefPtr because it's derived multiply from nsISupports
   // and the two possibilities of AddRef confuses MSVC
   sbBaseDevice* mDevice;
 

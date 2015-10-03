@@ -398,7 +398,7 @@ interface sbIMediaList : sbIMediaItem
   /*
   Method: getItemByGuid()
 
-  Get a <MediaItem> from the <MediaList> by using it's <MediaItem::guid>.
+  Get a <MediaItem> from the <MediaList> by using its <MediaItem::guid>.
 
   Prototype:
     <MediaItem> getItemByGuid(String guid);
@@ -448,7 +448,7 @@ interface sbIMediaList : sbIMediaItem
   /*
   Method: getItemByIndex()
 
-  Get a <MediaItem> from the <MediaList> by using it's index in the <MediaList>.
+  Get a <MediaItem> from the <MediaList> by using its index in the <MediaList>.
 
   Prototype:
     <MediaItem> getItemByIndex(Number index)
@@ -1039,7 +1039,7 @@ interface sbIMediaList : sbIMediaItem
     //Remove the first occurrence of the mediaitem.
     mediaList.remove(mediaItem);
 
-    ... //Now only the second occurrence remains and it's index is now 0.
+    ... //Now only the second occurrence remains and its index is now 0.
     (end)
 
   See Also:
@@ -1057,7 +1057,7 @@ interface sbIMediaList : sbIMediaItem
   /*
   Method: removeByIndex()
 
-  Remove a <MediaItem> from the <MediaList> using it's index.
+  Remove a <MediaItem> from the <MediaList> using its index.
 
   Prototype:
     removeByIndex(Number index)

@@ -1,7 +1,7 @@
 Metadata Updates
 ================
 
-When a [MediaItem](@ref sbIMediaItem) gets played, it's metadata may change because the playback
+When a [MediaItem](@ref sbIMediaItem) gets played, its metadata may change because the playback
 core is offering new metadata about this [MediaItem](@ref sbIMediaItem) that wasn't available when
 metadata was first read from it because it was added to a Library.
 

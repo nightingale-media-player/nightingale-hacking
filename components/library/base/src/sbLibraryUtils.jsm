@@ -891,7 +891,7 @@ LibraryUtils.GlobalMediaListListener.prototype = {
  * presence of the device ID property means we're dealing with an MTP
  * device
  * TODO: XXX Remove this function when x-mtp channel lands and replace
- * it's calls with item.userEditable
+ * its calls with item.userEditable
  */
 LibraryUtils.canEditMetadata = function (aItem) {
   var editable = aItem.userEditable;

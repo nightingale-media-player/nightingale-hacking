@@ -42,7 +42,7 @@ class sbDeviceLibrarySyncSettings;
 class sbDeviceLibraryMediaSyncSettings : public sbIDeviceLibraryMediaSyncSettings
 {
 public:
-  // This allows our owner to much with us within it's lock
+  // This allows our owner to much with us within its lock
   friend class sbDeviceLibrarySyncSettings;
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICELIBRARYMEDIASYNCSETTINGS;
