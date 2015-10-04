@@ -9,7 +9,7 @@ set -e
 build="release"
 buildir="$(pwd)"
 version=1.12
-deophost="https://bitbucket.org/nightingale-media-player/nightingale-deps/downloads/"
+dephost="https://bitbucket.org/nightingale-media-player/nightingale-deps/downloads/"
 
 # This variable is used to look into the mozilla dependencies to see
 # which versions (build/release) have been extracted.
