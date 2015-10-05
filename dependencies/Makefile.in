@@ -140,7 +140,6 @@ ifdef MEDIA_CORE_GST #{
                 $(NULL)
 
    GST_PLUGINS_CORE_NAMES = gstcoreelements \
-                            gstcoreindexers \
                             $(NULL)
 
    GST_PLUGINS_BASE_NAMES = gstapp \
