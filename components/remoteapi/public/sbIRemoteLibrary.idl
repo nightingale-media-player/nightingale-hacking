@@ -115,7 +115,7 @@ interface sbIRemoteLibrary : nsISupports
    *
    * This attribute controlls whether or not the library will cause the
    *   metadata to be scanned for any tracks created. If a website wants
-   *   to hand-set it's metadata then it should set this to false. By
+   *   to hand-set its metadata then it should set this to false. By
    *   default this is true. If metadat for a particular track has already
    *   been scanned, that metadata will show up automatically ( for instance
    *   for 2 items created from the same URL ).

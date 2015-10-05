@@ -142,7 +142,7 @@ sub Symbol
 #
 #       - If the <TopicType> has scope, the package will be generated from both the title and the package passed to <New()>, not
 #         just the package.
-#       - If the <TopicType> is always global, the package will be the one passed to <New()>, even though it isn't part of it's
+#       - If the <TopicType> is always global, the package will be the one passed to <New()>, even though it isn't part of its
 #         <Symbol()>.
 #       - Everything else's package will be what was passed to <New()>, even if the title has separator symbols in it.
 #

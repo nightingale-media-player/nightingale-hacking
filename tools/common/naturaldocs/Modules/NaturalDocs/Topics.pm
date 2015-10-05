@@ -36,7 +36,7 @@ our @EXPORT = ( 'TOPIC_GENERAL', 'TOPIC_GENERIC', 'TOPIC_GROUP', 'TOPIC_CLASS', 
 #
 #   Type: TopicType
 #
-#   A string representing a topic type as defined in <Topics.txt>.  It's format should be treated as opaque; use <MakeTopicType()>
+#   A string representing a topic type as defined in <Topics.txt>.  Its format should be treated as opaque; use <MakeTopicType()>
 #   to get them from topic names.  However, they can be compared for equality with string functions.
 #
 

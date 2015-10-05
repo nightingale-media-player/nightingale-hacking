@@ -9,6 +9,7 @@ set -e
 build="release"
 buildir="$(pwd)"
 version=1.12
+dephost="https://bitbucket.org/nightingale-media-player/nightingale-deps/downloads/"
 
 # This variable is used to look into the mozilla dependencies to see
 # which versions (build/release) have been extracted.
@@ -83,7 +84,7 @@ case $OSTYPE in
             if [ ! -f "$fname" ] ; then
                 # We want the new deps instead of the old ones...
                 rm -rf "$depdirn"
-                download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+                download "$dephost$fname"
             fi
             if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
                 if [ -f "$fname.md5" ] ; then
@@ -118,7 +119,7 @@ case $OSTYPE in
         if [ ! -f "$fname" ] ; then
             # We want the new deps instead of the old ones...
             rm -rf "$depdirn"
-            download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+            download "$dephost$fname"
         fi
 
         if [ ! -d "$depdirn/$mozdepver/$build" ] ; then
@@ -156,7 +157,7 @@ case $OSTYPE in
         if [ ! -f "$fname" ] ; then
             # We want the new deps instead of the old ones...
             rm -rf "$depdirn"
-            download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$fname"
+            download "$dephost$fname"
         fi
 
         if [ ! -d "$depdirn/$mozdepver/$build" ] ; then

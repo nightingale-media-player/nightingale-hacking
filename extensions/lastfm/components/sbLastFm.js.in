@@ -228,30 +228,6 @@ function POST(url, params, onload, onerror) {
   return xhr;
 }
 
-function logStringToFile(path, text, comment) {
-  dump("Logging " + comment + " to " + path + "\n");
-  var file = Cc["@mozilla.org/file/local;1"]
-                  .createInstance(Ci.nsILocalFile);
-  file.initWithPath(path);
-  var foStream = Cc["@mozilla.org/network/file-output-stream;1"]
-                  .createInstance(Ci.nsIFileOutputStream);
-
-  // use 0x02 | 0x10 to open file for appending.
-  foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
-  // write, create, truncate
-  // In a c file operation, we have no need to set file mode with or operation,
-  // directly using "r" or "w" usually.
-
-  // if you are sure there will never ever be any non-ascii text in data you
-  // can also call foStream.writeData directly
-  var converter = Cc["@mozilla.org/intl/converter-output-stream;1"]
-                    .createInstance(Ci.nsIConverterOutputStream);
-  converter.init(foStream, "UTF-8", 0, 0);
-  converter.writeString(text);
-  converter.close(); // this closes foStream
-  dump("Done logging\n");
-}
-
 // An object to track listeners
 function Listeners() {
   var listeners = [];

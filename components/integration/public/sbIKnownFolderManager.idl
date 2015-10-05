@@ -34,9 +34,9 @@
 interface sbIKnownFolderManager : nsISupports 
 {
   /**
-   * \brief Get the localized display name of the folder based on it's path.
+   * \brief Get the localized display name of the folder based on its path.
    * 
-   * Get the localicazed display name of the folder based on it's path.
+   * Get the localicazed display name of the folder based on its path.
    * For folders that are not 'known folders' this will return the leaf part
    * of the path.
    * 

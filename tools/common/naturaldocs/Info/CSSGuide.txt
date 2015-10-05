@@ -163,9 +163,9 @@ Topic: Content Structure
 
                 <CBody>
 
-                    <ClassHierarchy> (See it's section)
+                    <ClassHierarchy> (See its section)
 
-                    <Prototype> (See it's section)
+                    <Prototype> (See its section)
 
                     <p CParagraph>
                          Paragraph
@@ -196,7 +196,7 @@ Topic: Content Structure
                         </tr>
                     </table CDescriptionList>
 
-                    <Summary> (See it's section)
+                    <Summary> (See its section)
 
                </CBody>
 

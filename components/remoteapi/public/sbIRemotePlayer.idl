@@ -961,7 +961,7 @@ interface sbIRemotePlayer : nsISupports
                                                     in long aStatus);
 
   /**
-   * \brief Forces the webplaylist to rescan it's commands
+   * \brief Forces the webplaylist to rescan its commands
    */
   [noscript] void onCommandsChanged();
 

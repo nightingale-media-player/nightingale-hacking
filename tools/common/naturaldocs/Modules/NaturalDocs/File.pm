@@ -471,7 +471,7 @@ sub CreatePath #(path)
 #
 #   Parameters:
 #
-#       path - The path to start from.  It will try to remove this directory and work it's way down.
+#       path - The path to start from.  It will try to remove this directory and work its way down.
 #       limit - The path to stop at if it doesn't find any non-empty directories first.  This path will *not* be removed.
 #
 sub RemoveEmptyTree #(path, limit)

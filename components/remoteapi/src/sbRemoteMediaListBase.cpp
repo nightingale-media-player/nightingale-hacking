@@ -261,7 +261,7 @@ sbRemoteMediaListBase::ThrowJSException( JSContext *cx,
  *
  * We are argc agnostic here, so if you pass in more than 2 args
  *   we ignore them and if the second arg isn't a media item (QI-able to
- *   sbIMediaItem) then we convert it to it's boolean representation and use
+ *   sbIMediaItem) then we convert it to its boolean representation and use
  *   it as an arg to determine if we should download. We only hard fail in the
  *   case of:
  *

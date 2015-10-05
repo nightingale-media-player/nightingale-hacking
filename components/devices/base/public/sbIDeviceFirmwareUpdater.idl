@@ -54,7 +54,7 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    * \param aListener [optional] - Device listener to recieve events
    * \note The flow of events for this method is the following: 
    *       firmware check for update start, firmware check for update end. 
-   * \note The end event will contain an boolean as it's data, it will either
+   * \note The end event will contain an boolean as its data, it will either
    *       be true (update available) or false (no update for you).
    * \note Any error event that occurs will cancel this operation.
    */

@@ -759,12 +759,12 @@ function newFileURI(file)
  *   };
  *
  *   var playlist = makeMeAPlaylist();
- *   // here, playlist.getNextSong() has it's original behavior
+ *   // here, playlist.getNextSong() has its original behavior
  *   var testCase = new TestCase(testConfig);
  *   // Prior to execution of the test case, playlist.getNextSong() will
  *   // be modified to invoke the stubbed function
  *   testCase.run([playlist]);
- *   // here, playlist.getNextSong() has it's original behavior again
+ *   // here, playlist.getNextSong() has its original behavior again
  */
 function TestCase(config) {
 

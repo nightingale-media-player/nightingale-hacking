@@ -168,7 +168,7 @@ protected:
   // \brief This method looks at all the current directory entries and
   //        generates a change log of all the differences between the
   //        children that are currently stored in |aNode|.
-  // \param aNode The path node that is used for comparing it's children
+  // \param aNode The path node that is used for comparing its children
   //              against.
   // \param aNodePath The absolute path of the |aNode|.
   // \param aOutChangeArray The arrary of changes (as nodes) found during 

@@ -56,7 +56,7 @@ function runTest () {
   // That should cause watch folders to add the files...
   sleep(15000);
   
-  // Mark each item with it's original url, so we
+  // Mark each item with its original url, so we
   // can tell they update correctly
   library.enumerateAllItems({
      onEnumerationBegin: function(list) {

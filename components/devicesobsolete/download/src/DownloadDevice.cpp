@@ -874,7 +874,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
  *
  * Get a transfer location for the specified media item. This enables
  * the device to determine where best to put this media item based on
- * it's own set of criteria.
+ * its own set of criteria.
  *
  * \param aDeviceIdentifier The device unique identifier.
  * \param aMediaItem The media item that is about to be transferred.
@@ -2752,7 +2752,7 @@ nsresult sbDownloadSession::Initiate()
       if (NS_FAILED(rv))
       {
         NS_WARNING("Failed to set originURL, this item may be duplicated later \
-                    because it's origin cannot be tracked!");
+                    because its origin cannot be tracked!");
         return rv;
       }
     }

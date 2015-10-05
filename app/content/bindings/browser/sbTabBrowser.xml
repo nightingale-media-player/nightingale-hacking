@@ -1245,7 +1245,7 @@
                                                               aPriority,
                                                               aButtons);
           } else {
-            // if there is a notification object set it's text.
+            // if there is a notification object set its text.
             // this has the side effect of showing it if it was dismissed
             notification.message = aMessage;
           }
