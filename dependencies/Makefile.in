@@ -148,14 +148,8 @@ ifdef MEDIA_CORE_GST #{
                             gstaudiorate \
                             gstaudioresample \
                             gstaudiotestsrc \
-                            gstdecodebin \
-                            gstdecodebin2 \
-                            gstffmpegcolorspace \
-                            gstgdp \
                             gstogg \
-                            gstplaybin \
-                            gstqueue2 \
-                            gsttheora \
+                            gstplayback \
                             gsttypefindfunctions \
                             gstvideorate \
                             gstvideoscale \
