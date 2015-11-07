@@ -61,9 +61,9 @@ AppleMediaKeysFirstRun.Controller = {
   
   },
   
-   firstrun : function() {
+  firstrun : function() {
     var welcomeTitle = this._strings.getString("WelcomeTitle");
-	var welcomeMsg = this._strings.getString("WelcomeMessage");
+    var welcomeMsg = this._strings.getString("WelcomeMessage");
     var promptService = Cc['@mozilla.org/embedcomp/prompt-service;1']
                           .getService(Ci.nsIPromptService);
     promptService.alert(null, welcomeTitle, welcomeMsg);
