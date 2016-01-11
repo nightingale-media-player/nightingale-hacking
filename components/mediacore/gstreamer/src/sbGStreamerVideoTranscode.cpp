@@ -1355,7 +1355,7 @@ sbGStreamerVideoTranscoder::GetRawAudioCaps(GstCaps **aResultCaps)
           "endianness", G_TYPE_INT, endianness,
           "width", G_TYPE_INT, sampleDepth,
           "rate", G_TYPE_INT, outputRate,
-          "channels", G_TYPE_INT, outputChannels);
+          "channels", G_TYPE_INT, outputChannels, NULL);
   }
   else {
     caps = gst_caps_new_simple ("audio/x-raw-int",
@@ -1364,7 +1364,7 @@ sbGStreamerVideoTranscoder::GetRawAudioCaps(GstCaps **aResultCaps)
           "depth", G_TYPE_INT, sampleDepth,
           "rate", G_TYPE_INT, outputRate,
           "channels", G_TYPE_INT, outputChannels,
-          "signed", G_TYPE_BOOLEAN, sampleDepth != 8);
+          "signed", G_TYPE_BOOLEAN, sampleDepth != 8, NULL);
   }
 
   *aResultCaps = caps;
