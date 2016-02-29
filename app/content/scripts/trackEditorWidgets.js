@@ -41,7 +41,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 /******************************************************************************
  *
- * \class TrackEditorWidgetBase 
+ * \class TrackEditorWidgetBase
  * \brief Base wrapper for UI elements that need to observe a track editor
  *        property value
  *
@@ -55,29 +55,29 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
  *****************************************************************************/
 function TrackEditorWidgetBase(element) {
   this._element = element;
-  
+
   TrackEditor.state.addPropertyListener(this.property, this);
 }
-TrackEditorWidgetBase.prototype = {  
+TrackEditorWidgetBase.prototype = {
   // The DOM element that this object is responsible for
   _element: null,
-  
+
   get property() {
     return this._element.getAttribute("property");
   },
-  
+
   get element() {
     return this._element;
   },
-  
+
   get disabled() {
     return this._element.disabled;
   },
-  
+
   set disabled(val) {
     this._element.disabled = val;
   },
-  
+
   onTrackEditorPropertyChange: function TrackEditorWidgetBase_onTrackEditorPropertyChange() {
     var value = TrackEditor.state.getPropertyValue(this.property);
     if (value != this._element.value) {
@@ -92,71 +92,117 @@ TrackEditorWidgetBase.prototype = {
 
 /******************************************************************************
  *
- * \class TrackEditorLabel 
- * \brief Extends TrackEditorWidgetBase for label elements that should 
+ * \class TrackEditorLabel
+ * \brief Extends TrackEditorWidgetBase for label elements that should
  *        reflect propert information
  *
- * If the label has a property-type="label" attribute it will receive the 
+ * If the label has a property-type="label" attribute it will receive the
  * title associated with the property attribute. Otherwise the label will
  * receive the current editor display value for property.
  *
  *****************************************************************************/
 function TrackEditorLabel(element) {
-  
-  // If requested, just show the title of the property
-  if (element.hasAttribute("property-type") && 
-      element.getAttribute("property-type") == "label") {
 
+  // If requested, just show the title of the property
+  if (element.hasAttribute("property-type")) {
     var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
     var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
-    element.setAttribute("value", propInfo.displayName);
+
+    if(element.getAttribute("property-type") == "label") {
+      element.setAttribute("value", propInfo.displayName);
+    }
+    else if(element.getAttribute("property-type") == "unit") {
+      var unitConverter = propInfo.unitConverter;
+      var units = unitConverter.units;
+      var unit;
+
+      while(units.hasMoreElements()) {
+        unit = units.getNext().QueryInterface(Ci.sbIPropertyUnit);
+        if(unit.id == unitConverter.nativeUnitId) {
+          break;
+        }
+      }
+
+      if(unit) {
+        var stringBundle = new SBStringBundle(unitConverter.stringBundle);
+
+        var string = unit.shortName || unit.name;
+        string = stringBundle.get(string.substr(1, string.length), string);
+
+        element.setAttribute("value", string);
+      }
+    }
 
   } else {
-    // Otherwise, this label should show the value of the 
+    // Otherwise, this label should show the value of the
     // property, so call the parent constructor
     TrackEditorWidgetBase.call(this, element);
   }
 }
 TrackEditorLabel.prototype = {
-  __proto__: TrackEditorWidgetBase.prototype
+  __proto__: TrackEditorWidgetBase.prototype,
+
+  onTrackEditorPropertyChange: function TrackEditorLabel_onTrackEditorPropertyChange() {
+    var value = TrackEditor.state.getPropertyValue(this.property);
+
+    if(!value) {
+      var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(Ci.sbIPropertyManager);
+      var propInfo = propMan.getPropertyInfo(this.property);
+      if(propInfo.type == "number") {
+        value = 0;
+      } else if(propInfo.type == "datetime") {
+        value = SBString("trackeditor.date.never");
+      } else {
+        value = SBFormattedString(
+          "mediamanager.nonexistingproperty."+propInfo.localizationKey,
+          [SBString("mediamanager.nonexistingproperty.empty")]
+        );
+      }
+    }
+
+    if (value != this._element.value) {
+      this._element.value = value;
+    }
+  }
 }
 
 
 /******************************************************************************
  *
- * \class TrackEditorURILabel 
+ * \class TrackEditorURILabel
  * \brief Extends TrackEditorLabel for label elements containing URLs
  *
- * If the label has a property-type="label" attribute it will receive the 
+ * If the label has a property-type="label" attribute it will receive the
  * title associated with the property attribute. Otherwise the label will
  * receive the current editor display value for property.
  *
  *****************************************************************************/
 function TrackEditorURILabel(element) {
   TrackEditorLabel.call(this, element);
-  
+
   this._button = document.createElement("button");
   this._button.setAttribute("class", "goto-url");
-  
+
   var self = this;
-  this._button.addEventListener("command", 
+  this._button.addEventListener("command",
       function() { self.onButtonCommand(); }, false);
-  
+
   element.parentNode.insertBefore(this._button, element.nextSibling);
 }
 TrackEditorURILabel.prototype = {
   __proto__: TrackEditorLabel.prototype,
   _ioService: Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService),
-  
+
   onTrackEditorPropertyChange: function TrackEditorWidgetBase_onTrackEditorPropertyChange() {
     var value = TrackEditor.state.getPropertyValue(this.property);
-    
+
     var formattedValue = value;
     try {
       // reformat the URI as a native file path
       var ioService = Cc["@mozilla.org/network/io-service;1"]
-                        .getService(Ci.nsIIOService); 
+                        .getService(Ci.nsIIOService);
       var uri = ioService.newURI(value, null, null);
       if (uri.scheme == "file") {
         formattedValue = uri.QueryInterface(Ci.nsIFileURL).file.path;
@@ -165,21 +211,21 @@ TrackEditorURILabel.prototype = {
     catch(e) {
       /* it's okay, we just leave formattedValue == value in this case */
     }
-    
+
     if (formattedValue != this._element.value) {
       this._element.value = formattedValue;
     }
-  
+
     if (value != this._button.value) {
       this._button.value = value;
     }
   },
-  
+
   onButtonCommand: function()
   {
     this.loadOrRevealURI(this._button.value);
   },
-  
+
   loadOrRevealURI: function(uriLocation)
   {
     var uri = this._ioService.newURI(uriLocation, null, null);
@@ -190,11 +236,11 @@ TrackEditorURILabel.prototype = {
       this.promptAndLoadURI(uriLocation);
     }
   },
-  
+
   revealURI: function(uri) {
-    // Cribbed from mozilla/toolkit/mozapps/downloads/content/downloads.js 
+    // Cribbed from mozilla/toolkit/mozapps/downloads/content/downloads.js
     var f = uri.QueryInterface(Ci.nsIFileURL).file.QueryInterface(Ci.nsILocalFile);
-    
+
     try {
       // Show the directory containing the file and select the file
       f.reveal();
@@ -204,7 +250,7 @@ TrackEditorURILabel.prototype = {
       let parent = f.parent.QueryInterface(Ci.nsILocalFile);
       if (!parent)
         return;
-  
+
       try {
         // "Double click" the parent directory to show where the file should be
         parent.launch();
@@ -215,17 +261,17 @@ TrackEditorURILabel.prototype = {
       }
     }
   },
-  
+
   promptAndLoadURI: function(uriLocation) {
     var properties = TrackEditor.state.getEnabledProperties();
-    
+
     var edits = 0;
     for (var i = 0; i < properties.length; i++) {
       if (TrackEditor.state.isPropertyEdited(properties[i])) {
         edits++;
       }
     }
-    
+
     var items = TrackEditor.state.selectedItems;
     if (items.length == 0 || edits == 0) {
       // No need to muck about with prompts. Just banish the window.
@@ -233,10 +279,10 @@ TrackEditorURILabel.prototype = {
       window.close();
       return;
     }
-    
+
     // This is not a local file, so open it in a new tab and dismiss
     // the track editor. (Prompt first.)
-    
+
     var titleMessage = SBString("trackeditor.closewarning.title");
     var dialogMessage = SBString("trackeditor.closewarning.message");
     var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
@@ -244,9 +290,9 @@ TrackEditorURILabel.prototype = {
     var flags = prompts.BUTTON_TITLE_DONT_SAVE * prompts.BUTTON_POS_0 +
           prompts.BUTTON_TITLE_CANCEL          * prompts.BUTTON_POS_1 +
           prompts.BUTTON_TITLE_OK              * prompts.BUTTON_POS_2;
-    
+
     try {
-      var button = prompts.confirmEx(window, titleMessage, dialogMessage, flags, 
+      var button = prompts.confirmEx(window, titleMessage, dialogMessage, flags,
            null, null, null, null, {});
       switch (button) {
         case 0:
@@ -265,7 +311,7 @@ TrackEditorURILabel.prototype = {
 
 /******************************************************************************
  *
- * \class TrackEditorOriginLabel 
+ * \class TrackEditorOriginLabel
  * \brief Extends TrackEditorURILabel for the originPage property.
  *        Basically the same, except with originPage{Title, Image} for display.
  *
@@ -276,7 +322,7 @@ function TrackEditorOriginLabel(element) {
 }
 TrackEditorOriginLabel.prototype = {
   __proto__: TrackEditorURILabel.prototype,
-  
+
   onTrackEditorPropertyChange: function (property) {
     // NB: no property value ==> all properties liable to have changed
     if (property == SBProperties.originPage      || !property) {
@@ -289,15 +335,15 @@ TrackEditorOriginLabel.prototype = {
       this.onTrackEditorPageImagePropertyChange();
     }
   },
-  
+
   onTrackEditorPagePropertyChange: function() {
     var value = TrackEditor.state.getPropertyValue(this.property);
-    
+
     var formattedValue = value;
     try {
       // reformat the URI as a native file path
       var ioService = Cc["@mozilla.org/network/io-service;1"]
-                        .getService(Ci.nsIIOService); 
+                        .getService(Ci.nsIIOService);
       var uri = ioService.newURI(value, null, null);
       if (uri.scheme == "file") {
         formattedValue = uri.QueryInterface(Ci.nsIFileURL).file.path;
@@ -306,19 +352,19 @@ TrackEditorOriginLabel.prototype = {
     catch(e) {
       /* it's okay, we just leave formattedValue == value in this case */
     }
-    
+
     if (value != this._button.value) {
       this._button.value = value;
     }
   },
-  
+
   onTrackEditorPageTitlePropertyChange: function() {
     var title = TrackEditor.state.getPropertyValue(SBProperties.originPageTitle);
     if (title != this._element.title) {
       this._element.value = title;
     }
   },
-  
+
   onTrackEditorPageImagePropertyChange: function() {
     // TODO: this
   }
@@ -326,43 +372,43 @@ TrackEditorOriginLabel.prototype = {
 
 /******************************************************************************
  *
- * \class TrackEditorInputWidget 
+ * \class TrackEditorInputWidget
  * \brief Extends TrackEditorWidgetBase to provide a base for widgets that
  *        need to read from AND write back to the track editor state.
  *
  * Wraps the given element to manage the readonly attribute based on
- * track editor state and a checkbox.  Synchronizes readonly state between 
+ * track editor state and a checkbox.  Synchronizes readonly state between
  * all input elements for a given property.
- * 
- * Assumes widgets with .value and .readonly accessors and a 
+ *
+ * Assumes widgets with .value and .readonly accessors and a
  * property attribute.
  *
  *****************************************************************************/
 function TrackEditorInputWidget(element) {
-  
-  // Otherwise, this label should show the value of the 
+
+  // Otherwise, this label should show the value of the
   // property, so call the parent constructor
-  TrackEditorWidgetBase.call(this, element);  
-  
+  TrackEditorWidgetBase.call(this, element);
+
   TrackEditor.state.addSelectionListener(this);
-  
-  // Create preceding checkbox to enable/disable when 
+
+  // Create preceding checkbox to enable/disable when
   // multiple tracks are selected
   this._createCheckbox();
 }
 TrackEditorInputWidget.prototype = {
-  __proto__: TrackEditorWidgetBase.prototype, 
-  
+  __proto__: TrackEditorWidgetBase.prototype,
+
   // Checkbox used to enable/disable the input widget
   // when multiple tracks are selected
   _checkbox: null,
-  
+
   _createCheckbox: function() {
     var hbox = document.createElement("hbox");
     this._element.parentNode.replaceChild(hbox, this._element);
     var flex = this._element.getAttribute("flex");
     this._checkbox = document.createElement("checkbox");
-    
+
     // In order for tabbing to work in the desired order
     // we need to apply tabindex to all elements.
     if (this._element.hasAttribute("tabindex")) {
@@ -372,44 +418,44 @@ TrackEditorInputWidget.prototype = {
     this._checkbox.hidden = true;
 
     var self = this;
-    this._checkbox.addEventListener("command", 
+    this._checkbox.addEventListener("command",
       function() { self.onCheckboxCommand(); }, false);
-    
+
     hbox.appendChild(this._checkbox);
     if (flex) {
       hbox.setAttribute("flex", flex);
     }
     hbox.appendChild(this._element);
   },
-  
+
   set disabled(val) {
     this._checkbox.disabled = val;
     this._element.disabled = val;
   },
-  
+
   get hidden() {
     return this._element.parentNode.hidden;
   },
-  
+
   set hidden(val) {
     this._element.parentNode.hidden = val;
   },
-  
+
   onCheckboxCommand: function() {
     TrackEditor.state.setPropertyEnabled(this.property, this._checkbox.checked);
     if (this._checkbox.checked) {
       this._elementStack.focus();
     }
   },
-  
+
   onTrackEditorSelectionChange: function() {
-    this._checkbox.hidden = TrackEditor.state.selectedItems.length <= 1; 
-    
+    this._checkbox.hidden = TrackEditor.state.selectedItems.length <= 1;
+
     // If none of the selected items can be modified, disable all editing
     if (TrackEditor.state.isDisabled) {
       this._checkbox.disabled = true;
       this._element.setAttribute("readonly", "true");
-      this._element.setAttribute("tooltiptext", 
+      this._element.setAttribute("tooltiptext",
                                  SBString("trackeditor.tooltip.readonly"));
     } else {
       this._checkbox.disabled = false;
@@ -418,10 +464,10 @@ TrackEditorInputWidget.prototype = {
       this._element.removeAttribute("tooltiptext");
     }
   },
-  
+
   onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
     TrackEditorWidgetBase.prototype.onTrackEditorPropertyChange.call(this);
-    
+
     this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
   }
 }
@@ -429,7 +475,7 @@ TrackEditorInputWidget.prototype = {
 
 /******************************************************************************
  *
- * \class TrackEditorTextbox 
+ * \class TrackEditorTextbox
  * \brief Extends TrackEditorInputWidget to add textbox specific details
  *
  * Binds the given textbox to track editor state for a property, and mananges
@@ -437,9 +483,9 @@ TrackEditorInputWidget.prototype = {
  *
  *****************************************************************************/
 function TrackEditorTextbox(element) {
-  
-  TrackEditorInputWidget.call(this, element);  
-  
+
+  TrackEditorInputWidget.call(this, element);
+
   var self = this;
   element.addEventListener("input",
           function() { self.onUserInput(); }, false);
@@ -447,26 +493,26 @@ function TrackEditorTextbox(element) {
   var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                  .getService(Ci.sbIPropertyManager);
   var propInfo = propMan.getPropertyInfo(this.property);
-  if (propInfo instanceof Ci.sbINumberPropertyInfo || 
+  if (propInfo instanceof Ci.sbINumberPropertyInfo ||
       this._element.getAttribute("isnumeric") == "true") {
     this._isNumeric = true;
     this._minValue = propInfo.minValue;
     this._maxValue = propInfo.maxValue;
     this._maxDigits = new String(this._maxValue).length;
-    
+
     element.addEventListener("keypress",
             function(evt) { self.onKeypress(evt); }, false);
   }
 }
 TrackEditorTextbox.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
-  
+
   // If set true, filter out non-numeric input
-  _isNumeric: false, 
-  _minValue: 0, 
+  _isNumeric: false,
+  _minValue: 0,
   _maxValue: 0,
   _maxDigits: 0,
-  
+
   onUserInput: function() {
     var self = this;
     // Defer updating the model by a tick.  This is necessary because
@@ -474,18 +520,18 @@ TrackEditorTextbox.prototype = {
     // when undoing from empty state to a previous value.  html:textarea
     // sends oninput with value==previous, where html:input sends oninput
     // with value=="".  This bug has been filed as BMO 433574.
-    setTimeout(function() { 
+    setTimeout(function() {
         var value = self._element.value;
         TrackEditor.state.setPropertyValue(self.property, value);
-        
+
         // Auto-enable property write-back
         if (!TrackEditor.state.isPropertyEnabled(self.property)) {
           TrackEditor.state.setPropertyEnabled(self.property, true);
         }
       }, 0 );
   },
-  
-  onKeypress: function(evt) {    
+
+  onKeypress: function(evt) {
     // If numeric, suppress all other keys.
     // TODO/NOTE: THIS DOES NOT WORK FOR NEGATIVE VALUES!
     if (this._isNumeric) {
@@ -500,7 +546,7 @@ TrackEditorTextbox.prototype = {
       }
     }
   },
-  
+
   onTrackEditorSelectionChange: function TrackEditorTextbox_onTrackEditorSelectionChange() {
     TrackEditorInputWidget.prototype.onTrackEditorSelectionChange.call(this);
 
@@ -508,7 +554,7 @@ TrackEditorTextbox.prototype = {
       this._configureAutoComplete();
     }
   },
-  
+
   onTrackEditorPropertyChange: function TrackEditorTextbox_onTrackEditorPropertyChange() {
     TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
 
@@ -518,7 +564,7 @@ TrackEditorTextbox.prototype = {
     if (TrackEditor.state.hasMultipleValuesForProperty(this.property)) {
       this._element.setAttribute("tooltiptext", SBString("trackeditor.tooltip.multiple"));
     }
-    else if (this._element.getAttribute("tooltiptext") == 
+    else if (this._element.getAttribute("tooltiptext") ==
              SBString("trackeditor.tooltip.multiple")) {
       this._element.removeAttribute("tooltiptext");
     }
@@ -530,7 +576,7 @@ TrackEditorTextbox.prototype = {
       }
     } else {
       if (this._element.hasAttribute("edited")) {
-        this._element.removeAttribute("edited"); 
+        this._element.removeAttribute("edited");
       }
 
       // If this is the original un-edited value, set it as the
@@ -541,7 +587,7 @@ TrackEditorTextbox.prototype = {
         this._element.reset();
       }
     }
-    
+
     // Indicate if this property is known to be invalid
     if (TrackEditor.state.isPropertyInvalidated(this.property)) {
       if (!this._element.hasAttribute("invalid")) {
@@ -553,7 +599,7 @@ TrackEditorTextbox.prototype = {
       this._element.removeAttribute("tooltiptext");
     }
   },
-  
+
   _configureAutoComplete: function TrackEditorTextbox__configureAutoComplete() {
     // Set the autocompletesearchparam attribute of the
     // autocomplete textbox to 'property;guid', where
@@ -565,11 +611,11 @@ TrackEditorTextbox.prototype = {
     // the one whom the displayed list belongs to.
     // In addition, textboxes that have a defaultdistinctproperties
     // attribute need to have that value appended to the
-    // search param attribute as well. 
-    if (!TrackEditor.mediaListView) 
+    // search param attribute as well.
+    if (!TrackEditor.mediaListView)
       return;
     var library = TrackEditor.mediaListView.mediaList.library;
-    if (!library) 
+    if (!library)
       return;
     var libraryGuid = library.guid;
 
@@ -599,41 +645,6 @@ TrackEditorTextbox.prototype = {
       }
       this._element.setAttribute("autocompletesearchparam", param);
     }
-    
-    // Grr, autocomplete textboxes don't handle tabindex, so we have to 
-    // get our hands dirty.  Filed as Moz Bug 432886.
-    this._element.inputField.tabIndex = this._element.tabIndex;
-    
-    // And we need to fix the dropdown not showing up...
-    // (Songbird bug 9149, same moz bug)
-    var marker = this._element
-                     .ownerDocument
-                     .getAnonymousElementByAttribute(this._element,
-                                                     "anonid",
-                                                     "historydropmarker");
-    if ("showPopup" in marker) {
-      // only hack the method if it's the same
-
-      // here is the expected function...
-      function showPopup() {
-        var textbox = document.getBindingParent(this);
-        textbox.showHistoryPopup();
-      };
-      
-      // and we compare it with uneval to make sure the existing one is expected
-      if (uneval(showPopup) == uneval(marker.showPopup)) {
-        // the existing function looks like what we expect
-        marker.showPopup = function showPopup_hacked() {
-          var textbox = document.getBindingParent(this);
-          setTimeout(function(){
-            textbox.showHistoryPopup();
-          }, 0);
-        }
-      } else {
-        // the function does not match; this should not happen in practice
-        dump("trackEditor - autocomplete marker showPopup mismatch!\n");
-      }
-    }
   }
 }
 
@@ -653,9 +664,9 @@ TrackEditorTextbox.prototype = {
  *
  *****************************************************************************/
 function TrackEditorRating(element) {
-  
-  TrackEditorInputWidget.call(this, element);  
-  
+
+  TrackEditorInputWidget.call(this, element);
+
   var self = this;
   element.addEventListener("input",
           function() { self.onUserInput(); }, false);
@@ -663,7 +674,7 @@ function TrackEditorRating(element) {
 
 TrackEditorRating.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
-  
+
   onUserInput: function() {
     var value = this._element.value;
     TrackEditor.state.setPropertyValue(this.property, value);
@@ -673,19 +684,19 @@ TrackEditorRating.prototype = {
       TrackEditor.state.setPropertyEnabled(this.property, true);
     }
   },
-  
+
   onTrackEditorPropertyChange: function TrackEditorRating_onTrackEditorPropertyChange() {
     var property = this.property;
-    
+
     // Indicate if this property has been edited
-    if (TrackEditor.state.isPropertyEdited(this.property)) 
+    if (TrackEditor.state.isPropertyEdited(this.property))
     {
       if (!this._element.hasAttribute("edited")) {
         this._element.setAttribute("edited", "true");
       }
     } else if (this._element.hasAttribute("edited")) {
-      this._element.removeAttribute("edited"); 
-    } 
+      this._element.removeAttribute("edited");
+    }
 
     TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
 
@@ -697,3 +708,82 @@ TrackEditorRating.prototype = {
   }
 }
 
+/******************************************************************************
+ *
+ * \class TrackEditorImage
+ * \brief Extends TrackEditorWidgetBase for image elements that should
+ *        reflect property information
+ *
+ * An image element with a proprty attribute it will receive the
+ * src attribute associated with the property attribute.
+ *
+ *****************************************************************************/
+function TrackEditorImage(element) {
+  TrackEditorWidgetBase.call(this, element);
+}
+
+TrackEditorImage.prototype = {
+  __proto__: TrackEditorWidgetBase.prototype,
+
+  onTrackEditorPropertyChange: function() {
+    var value = TrackEditor.state.getPropertyValue(this.property);
+
+    if(value != this._element.src) {
+        this._element.src = value;
+    }
+  }
+}
+
+/******************************************************************************
+ *
+ * \class TrackEditorDescription
+ * \brief Extends TrackEditorWidgetBase for description elements that should
+ *        reflect property information
+ *
+ * A description element with a proprty attribute it will receive the
+ * text content associated with the property attribute.
+ *
+ *****************************************************************************/
+function TrackEditorDescription(element) {
+  TrackEditorWidgetBase.call(this, element);
+}
+
+TrackEditorDescription.prototype = {
+  __proto__: TrackEditorWidgetBase.prototype,
+
+  onTrackEditorPropertyChange: function() {
+    var value = TrackEditor.state.getPropertyValue(this.property);
+
+    if(value != this._element.textContent) {
+        this._element.textContent = value;
+    }
+  }
+}
+
+/******************************************************************************
+ *
+ * \class TrackEditorFileTypeLabel
+ * \brief Extends TrackEditorWidgetBase for a special label with the file type
+ *        as value
+ *
+ *****************************************************************************/
+function TrackEditorFileTypeLabel(element) {
+  TrackEditorWidgetBase.call(this, element);
+}
+
+TrackEditorFileTypeLabel.prototype = {
+  __proto__: TrackEditorWidgetBase.prototype,
+
+  onTrackEditorPropertyChange: function() {
+    var uri = TrackEditor.state.getPropertyValue(SBProperties.contentURL);
+    var extension = uri.split(".").pop();
+
+    var mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService);
+
+    var value = mimeService.getTypeFromExtension(extension);
+
+    if(value != this._element.textContent) {
+        this._element.textContent = value;
+    }
+  }
+}
