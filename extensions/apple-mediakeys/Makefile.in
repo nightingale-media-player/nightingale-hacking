@@ -32,11 +32,15 @@ include $(DEPTH)/build/autodefs.mk
 IS_EXTENSION = 1
 INSTALL_EXTENSION = 1
 
-SUBDIRS = component \
+SUBDIRS = chrome \
+          component \
+          defaults \
           $(NULL)
 
 #JAR_MANIFEST = jar.mn
 
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR)
+CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
+             $(SONGBIRD_PREFERENCESDIR) \
+             $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -22,13 +22,16 @@
 # END NIGHTINGALE GPL
 #
 
-# the name of the extension - used to name the XPI file.
-EXTENSION_NAME = apple-mediakeys
-# the uuid of the extension - used internally by songbird to identify the
-# extension.
-EXTENSION_UUID = $(EXTENSION_NAME)@getnightingale.com
+DEPTH     = ../../../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+  
+include $(DEPTH)/build/autodefs.mk
 
-EXTENSION_VER = 1.6.0
-EXTENSION_MIN_VER = $(SB_MILESTONE)
-EXTENSION_MAX_VER = $(SB_MILESTONE)
+IS_EXTENSION = 1
 
+SONGBIRD_PREFS = $(srcdir)/prefs.js \
+                 $(NULL)
+
+include $(topsrcdir)/build/rules.mk

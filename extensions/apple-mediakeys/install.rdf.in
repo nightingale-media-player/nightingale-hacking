@@ -40,6 +40,9 @@
     <!-- the architecture (operating system and CPU type) of the extension.
          it will be filled in by the build system -->
     <em:targetPlatform>@EXTENSION_ARCH@</em:targetPlatform>
+	
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
 
   </Description>
 

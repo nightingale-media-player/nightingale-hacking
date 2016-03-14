@@ -36,7 +36,7 @@ DISABLE_DEADLY_WARNINGS = 1
 # the name of our component
 DYNAMIC_LIB = sbMacRemoteController
 
-CMM_SRCS = SBAppleRemoteListener.mm         \
+CMM_SRCS = HIDRemote.mm                     \
            sbAppleRemoteService.mm          \
            sbAppleRemoteModule.mm           \
            $(NULL)

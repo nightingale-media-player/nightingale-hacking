@@ -42,7 +42,7 @@ try {
   shouldAutoEnable = 
     gPrefService.getBoolPref("extensions.apple-remote.autoenable");
 
-  if (shouldAutoEnable && gRemoteControlService.isSupported) {
+  if (shouldAutoEnable && !gRemoteControlService.isCandelairRequired) {
     gRemoteControlService.startListening();
     isListening = true;
 
@@ -65,7 +65,7 @@ catch (e) {
 // If the current machine doesn't support the apple remote, don't
 // enable the menu item.
 
-if (!gRemoteControlService.isSupported) {
+if (gRemoteControlService.isCandelairRequired) {
   // HACK: Set a timeout to find the menuitem..
   setTimeout(
     function() { 

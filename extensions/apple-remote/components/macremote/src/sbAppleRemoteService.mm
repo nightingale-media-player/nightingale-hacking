@@ -26,7 +26,8 @@
 
 #include "sbAppleRemoteService.h"
 
-#import "SBAppleRemoteListener.h"
+#import "HIDRemote.h"
+#import <Cocoa/Cocoa.h>
 #include "nsCOMPtr.h"
 #include "sbIMediacoreManager.h"
 #include "sbIMediacoreStatus.h"
@@ -35,16 +36,18 @@
 
 #define MAX_VOLUME  1
 
-@interface AppleRemoteDelegate : NSObject
+@interface AppleRemoteDelegate : NSObject <HIDRemoteDelegate>
 {
-  SBAppleRemoteListener* mAppleRemote;
+  HIDRemote* mAppleRemote;
   sbAppleRemoteService *mOwner;  // weak
+  HIDRemote			 *hidRemote;
 }
 
 - (id)initWithCallback:(sbAppleRemoteService *)aCallback;
-
-- (void)startListening;
-- (void)stopListening;
+- (void)dealloc;
+- (BOOL)startRemoteControl;
+- (void)stopRemoteControl;
+- (void)hidRemote:(HIDRemote *)hidRemote eventWithButton:(HIDRemoteButtonCode)buttonCode isPressed:(BOOL)isPressed fromHardwareWithAttributes:(NSMutableDictionary *)attributes;
 
 @end
 
@@ -54,7 +57,16 @@
 - (id)initWithCallback:(sbAppleRemoteService *)aCallback
 {
   if ((self = [super init])) {
-    mAppleRemote = [[SBAppleRemoteListener alloc] initWithDelegate: self];
+    mAppleRemote = [[HIDRemote alloc] init];
+    // Our application doesn't need these  button codes. Share this information with everybody else
+      [mAppleRemote setUnusedButtonCodes:[NSArray arrayWithObjects:
+		                                                  [NSNumber numberWithInt:(int)kHIDRemoteButtonCodeMenuHold],
+		                                                  [NSNumber numberWithInt:(int)kHIDRemoteButtonCodeUpHold],
+		                                                  [NSNumber numberWithInt:(int)kHIDRemoteButtonCodeDownHold],
+		                                                  [NSNumber numberWithInt:(int)kHIDRemoteButtonCodeCenterHold],
+		                                                  [NSNumber numberWithInt:(int)kHIDRemoteButtonCodePlayHold],
+														 nil]
+	  ];
     mOwner = aCallback;
   }
   
@@ -63,52 +75,110 @@
 
 - (void)dealloc
 {
+  [mAppleRemote stopRemoteControl];
+  [mAppleRemote setDelegate:nil];
   [mAppleRemote release];
   [super dealloc];
 }
 
-- (void)startListening
+#pragma mark -- Start and stop remote control support --
+- (BOOL)startRemoteControl
 {
-  [mAppleRemote startListening];
+  HIDRemoteMode remoteMode;
+
+  remoteMode = kHIDRemoteModeExclusive;
+	
+  // Check whether the installation of Candelair is required to reliably operate in this mode
+  if ([HIDRemote isCandelairInstallationRequiredForRemoteMode:remoteMode])
+  {
+    // Reliable usage of the remote in this mode under this operating system version requires the Candelair driver to be installed. Let's inform the user about it.
+	//TODO: Support this by implementing an informative pop-up window.
+	NSAlert *alert;
+		
+	if ((alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Candelair driver installation necessary", @"")
+		                  defaultButton:NSLocalizedString(@"Download", @"")
+			              alternateButton:NSLocalizedString(@"More information", @"")
+					      otherButton:NSLocalizedString(@"Cancel", @"")
+						  informativeTextWithFormat:NSLocalizedString(@"An additional driver needs to be installed before %@ can reliably access the remote under the OS version installed on your computer.", @""), [[NSBundle mainBundle] objectForInfoDictionaryKey:(id)kCFBundleNameKey]]) != nil)
+		{
+		  switch ([alert runModal])
+		    {
+		      case NSAlertDefaultReturn:
+	            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.candelair.com/download/"]];
+			    break;
+			   
+		      case NSAlertAlternateReturn:
+		        [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://www.candelair.com/"]];
+			    break;
+		    }
+		}
+  } 
+  else
+  { 
+    // Candelair is either already installed or not required under this OS release => proceed!
+	if (remoteMode == kHIDRemoteModeExclusive)
+	  {
+	    // When used in exclusive, non-auto mode, enable exclusive lock lending. This isn't required but there are good reasons to do this. 
+	    [mAppleRemote setExclusiveLockLendingEnabled:YES];
+	  }
+		
+	  // Start remote control
+	  [mAppleRemote setDelegate:self];
+	  
+	  if ([mAppleRemote startRemoteControl:remoteMode])
+		{
+		    // Start was successful
+			return (YES);
+		} 
+	  else
+		{
+		    // Start failed
+			//TODO: Support this by implementing an informative pop-up window.
+			NSLog(@"Couldn't start HIDRemote");
+		}
+  }
+  return (NO);
 }
 
-- (void)stopListening
+- (void)stopRemoteControl
 {
-  [mAppleRemote stopListening];
+  [mAppleRemote stopRemoteControl];
 }
 
-- (void)onButtonPressed:(EAppleRemoteButton)aButton isHold:(BOOL)aIsHold
+#pragma mark -- Handle remote control events --
+- (void)hidRemote:(HIDRemote *)hidRemote eventWithButton:(HIDRemoteButtonCode)buttonCode isPressed:(BOOL)isPressed fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 {
   // Process this event right away
-  if (!aIsHold) {
-    switch (aButton) {
-      case ePlusButton:
-        mOwner->OnVolumeUpPressed();
+  if (isPressed) {
+    switch (buttonCode) {
+      case kHIDRemoteButtonCodeUp:
+        mOwner->OnVolumeUp();
         break;
-      case eMinusButton:
-        mOwner->OnVolumeDownPressed();
+      case kHIDRemoteButtonCodeDown:
+        mOwner->OnVolumeDown();
         break;
-      case eMenuButton:
-        mOwner->OnMenuButtonPressed();
+      case kHIDRemoteButtonCodeMenu:
+        mOwner->OnMenuButton();
         break;
-      case ePlayButton:
-        mOwner->OnPlayButtonPressed();
+      case kHIDRemoteButtonCodePlay:
+        mOwner->OnPlayButton();
         break;
-      case eRightButton:
-        mOwner->OnNextTrackReleased();
+      case kHIDRemoteButtonCodeCenter:
+        mOwner->OnPlayButton();
         break;
-      case eLeftButton:
-        mOwner->OnPrevTrackReleased();
-        break;      
+      case kHIDRemoteButtonCodeRight:
+        mOwner->OnNextTrack();
+        break;
+      case kHIDRemoteButtonCodeLeft:
+        mOwner->OnPrevTrack();
+        break;
+
+      default:
+        break;		
     }
   }
   else {
   }
-}
-
-- (void)onButtonReleased:(EAppleRemoteButton)aButton
-{
-  // TODO: support this...
 }
 
 @end
@@ -132,27 +202,27 @@ sbAppleRemoteService::~sbAppleRemoteService()
 NS_IMETHODIMP
 sbAppleRemoteService::StartListening()
 {
-  [mDelegate startListening];
+  [mDelegate startRemoteControl];
   return NS_OK;
 }
 
 NS_IMETHODIMP 
 sbAppleRemoteService::StopListening()
 {
-  [mDelegate stopListening];
+  [mDelegate stopRemoteControl];
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbAppleRemoteService::GetIsSupported(PRBool *aIsSupported)
+sbAppleRemoteService::GetIsCandelairRequired(PRBool *aIsCandelairRequired)
 {
-  NS_ENSURE_ARG_POINTER(aIsSupported);
-  *aIsSupported = [SBAppleRemoteListener isRemoteAvailable];
+  NS_ENSURE_ARG_POINTER(aIsCandelairRequired);
+  *aIsCandelairRequired = [HIDRemote isCandelairInstallationRequiredForRemoteMode:(HIDRemoteMode)kHIDRemoteModeExclusive];
   return NS_OK;
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnPlayButtonPressed()
+sbAppleRemoteService::OnPlayButton()
 {
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager = 
@@ -194,14 +264,14 @@ sbAppleRemoteService::OnPlayButtonPressed()
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnMenuButtonPressed()
+sbAppleRemoteService::OnMenuButton()
 {
   // XXXkreeger Show the library?
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnVolumeUpPressed()
+sbAppleRemoteService::OnVolumeUp()
 {
   nsresult rv;
   nsCOMPtr<sbIMediacoreVolumeControl> volControl;
@@ -220,7 +290,7 @@ sbAppleRemoteService::OnVolumeUpPressed()
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnVolumeDownPressed()
+sbAppleRemoteService::OnVolumeDown()
 {
   nsresult rv;
   nsCOMPtr<sbIMediacoreVolumeControl> volControl;
@@ -239,14 +309,14 @@ sbAppleRemoteService::OnVolumeDownPressed()
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnNextTrackPressed()
+sbAppleRemoteService::OnNextTrackHold()
 {
   // TODO: Support scanning...
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnNextTrackReleased()
+sbAppleRemoteService::OnNextTrack()
 {
   nsresult rv;
   nsCOMPtr<sbIMediacoreSequencer> sequencer;
@@ -257,13 +327,13 @@ sbAppleRemoteService::OnNextTrackReleased()
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnPrevTrackPressed()
+sbAppleRemoteService::OnPrevTrackHold()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
-sbAppleRemoteService::OnPrevTrackReleased()
+sbAppleRemoteService::OnPrevTrack()
 {
   nsresult rv;
   nsCOMPtr<sbIMediacoreSequencer> sequencer;

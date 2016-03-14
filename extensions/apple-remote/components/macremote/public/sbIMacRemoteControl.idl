@@ -35,5 +35,5 @@ interface sbIAppleRemoteService : nsISupports
 {
   void startListening();
   void stopListening();
-  readonly attribute boolean isSupported;
+  readonly attribute boolean isCandelairRequired;
 };
