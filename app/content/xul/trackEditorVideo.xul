@@ -61,12 +61,121 @@
   </hbox>
 
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
-    <tabs id="trackeditor-tabs" hidden="true">
+    <tabs id="trackeditor-tabs">
+      <tab label="&trackeditor.tab.summary.title;" id="summary"/>
       <tab label="&trackeditor.tab.edit.title;" id="edit"/>
       <tab label="&trackeditor.tab.advanced.title;" />
     </tabs>
 
     <tabpanels id="trackeditor-tabpanels" flex="1">
+      <vbox flex="1" id="summary-tab">
+        <hbox flex="1">
+
+          <div id="album-art" height="128" width="128">
+            <image
+                id="primaryImageURL"
+                height="128"
+                width="128"
+                property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
+            <html:box/>
+          </div>
+          <vbox flex="1" id="mainSection">
+            <label property="http://songbirdnest.com/data/1.0#trackName" crop="end"/>
+            <label width="40" property="http://songbirdnest.com/data/1.0#duration" crop="end"/>
+            <label id="artistName" property="http://songbirdnest.com/data/1.0#artistName" crop="end"/>
+            <label id="albumName" property="http://songbirdnest.com/data/1.0#albumName" crop="end"/>
+          </vbox>
+        </hbox>
+
+        <hbox id="main-block">
+
+          <vbox id="left-column">
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#playCount"/>
+              <label property="http://songbirdnest.com/data/1.0#playCount" crop="end" />
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+              <label property="http://songbirdnest.com/data/1.0#lastPlayTime" crop="end" />
+            </hbox>
+
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#skipCount"/>
+              <label property="http://songbirdnest.com/data/1.0#skipCount" crop="end" />
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+              <label property="http://songbirdnest.com/data/1.0#lastSkipTime" crop="end" />
+            </hbox>
+
+
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#contentLength"/>
+              <label property="http://songbirdnest.com/data/1.0#contentLength" crop="end" />
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#bitRate"/>
+              <label property="http://songbirdnest.com/data/1.0#bitRate" crop="end" />
+              <label>kbps</label>
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#sampleRate"/>
+              <label property="http://songbirdnest.com/data/1.0#sampleRate" crop="end" />
+              <label>kHz</label>
+            </hbox>
+
+
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#recordLabelName"/>
+              <label property="http://songbirdnest.com/data/1.0#recordLabelName" crop="end" />
+            </hbox>
+          </vbox>
+
+          <vbox id="right-column">
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#updated"/>
+              <label property="http://songbirdnest.com/data/1.0#updated" crop="end" />
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#created"/>
+              <label property="http://songbirdnest.com/data/1.0#created" crop="end" />
+            </hbox>
+            <hbox>
+
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#originPage"/>
+              <label property="http://songbirdnest.com/data/1.0#originPage" crop="end" />
+            </hbox>
+
+            <!--TODO filetype -->
+
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#softwareVendor"/>
+              <label property="http://songbirdnest.com/data/1.0#softwareVendor" crop="end" />
+            </hbox>
+
+          </vbox>
+        </hbox>
+
+        <!--TODO make this multiline, so it shows the full path -->
+        <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#contentURL"/>
+              <label property="http://songbirdnest.com/data/1.0#contentURL" flex="1" />
+        </hbox>
+      </vbox>
+
       <vbox id="info-tab">
         <grid>
           <columns>
@@ -149,21 +258,21 @@
         <row>
           <menubar className="advanced-menubar" flex="1" orient="horizontal" align="right">
             <menu label="&trackeditor.tab.advanced.title;">
-              <menupopup id="menupopup"> 
+              <menupopup id="menupopup">
               </menupopup>
             </menu>
           </menubar>
         </row>
 
         <grid id="advanced-tab-grid" style="overflow:auto" flex="1">
-          
+
           <columns>
             <column class="advanced_left_column"/>
             <column class="advanced_right_column" flex="2"/>
           </columns>
 
           <rows>
-            
+
             <row property="http://songbirdnest.com/data/1.0#ordinal" class="advTabRowElements">
               <label property-type="label" crop="end"
                      property="http://songbirdnest.com/data/1.0#ordinal"/>
@@ -326,7 +435,7 @@
             <row property="http://songbirdnest.com/data/1.0#bpm" class="advTabRowElements">
               <label property-type="label" crop="end"
                      property="http://songbirdnest.com/data/1.0#bpm"/>
-              <textbox property="http://songbirdnest.com/data/1.0#bpm" 
+              <textbox property="http://songbirdnest.com/data/1.0#bpm"
                        flex="1"
                        class="long-number-input" />
             </row>
