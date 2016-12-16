@@ -122,6 +122,10 @@ window#mainplayer {
   Mostly vanilla elements that act as the starting point for rules to follow.
 ******************************************************************************/
 
+* {
+  -moz-appearance: none;
+}
+
 wizard,
 dialog,
 window,
@@ -285,7 +289,7 @@ menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
   background-image: none;
   background-color:rgb(255,255,255) !important;
 }
--­panel[type="autocomplete"],
+-è¨ˆanel[type="autocomplete"],
 .autocomplete-history-popup {
   -moz-appearance: none;
   padding: 0;

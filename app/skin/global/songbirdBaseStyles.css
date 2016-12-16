@@ -34,16 +34,3 @@ Additional Songbird specific rules for the global skin.
 
 *******************************************************************************
 */ 
-
-
-
-/*
-  Remove the platform-native styling from all elements.  This allows
-  us to begin applying our own look and feel.
-  
-  For more information see http://developer.mozilla.org/en/docs/CSS:-moz-appearance 
-*/
-
-* {
-  -moz-appearance: none !important;
-}

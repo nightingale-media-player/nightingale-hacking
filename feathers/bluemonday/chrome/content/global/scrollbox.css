@@ -53,17 +53,19 @@
   list-style-image:url("chrome://songbird/skin/base-elements/button-scroll-down.png");
 }
 
-
+/*!!! XULR 2+ replace with -moz-appearance: button-arrow-up and "-down */
 .autorepeatbutton-up {
-  list-style-image: url("chrome://songbird/skin/menu/menu-spin-up.png");
+  list-style-image:  url("jar:resource:///xulrunner/chrome/classic.jar!/skin/classic/global/arrow/arrow-up.gif");
 }
 .autorepeatbutton-down {
-  list-style-image:  url("chrome://songbird/skin/menu/menu-spin-down.png");
+  list-style-image:  url("jar:resource:///xulrunner/chrome/classic.jar!/skin/classic/global/arrow/arrow-dn.gif");
 }
 
-.autorepeatbutton-up,
-.autorepeatbutton-down {
-  -moz-image-region:rect(0px 9px 9px 0px);
+.autorepeatbutton-up[disabled="true"] {
+  list-style-image:  url("jar:resource:///xulrunner/chrome/classic.jar!/skin/classic/global/arrow/arrow-up-dis.gif");
+}
+.autorepeatbutton-down[disabled="true"] {
+  list-style-image:  url("jar:resource:///xulrunner/chrome/classic.jar!/skin/classic/global/arrow/arrow-dn-dis.gif");
 }
 
 .scrollbutton-up[orient="horizontal"],
@@ -81,9 +83,7 @@
 
 
 .autorepeatbutton-up[orient="horizontal"][disabled="true"],
-.autorepeatbutton-down[orient="horizontal"][disabled="true"],
-.autorepeatbutton-up[disabled="true"],
-.autorepeatbutton-down[disabled="true"] {
+.autorepeatbutton-down[orient="horizontal"][disabled="true"] {
   opacity:0.5;
 }
 
@@ -103,7 +103,25 @@
 }
 
 autorepeatbutton {
-  -moz-box-align:center;
-  -moz-box-pack:center;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  margin-top: 1px;
+  margin-bottom: 2px;
+  -moz-margin-start: 1px;
+  -moz-margin-end: 2px;
+
+  border: 1px solid transparent;
+  padding: 1px;
 }
+
+autorepeatbutton:not([disabled="true"]):hover,
+autorepeatbutton:not([disabled="true"]):hover:active {
+  margin: 1px;
+  border: 1px inset ThreeDFace;
+  padding-top: 2px;
+  padding-bottom: 1px;
+  -moz-padding-start: 2px;
+  -moz-padding-end: 1px;
+}
+
 

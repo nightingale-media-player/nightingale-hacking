@@ -27,8 +27,8 @@
 
 
 description,
-label,
-menu,
+/*label,
+menu,*/
 treechildren::-moz-tree-cell-text {
   font-size:11px;
 }
@@ -238,13 +238,6 @@ treecolpicker > .tree-columnpicker-icon {
   opacity: 1.0 !important;
 }
 
-
-
-menubar > menu {
-  background-color:transparent;
-  padding:4px 8px !important;
-}
-
 menulist {
   min-width:0px;
   min-height:0px;
@@ -367,22 +360,6 @@ DATEPICKER see the RICHLISTBOX for box styles
 */
 .datepicker-gridlabel[selected="true"] {
 }
-
-
-/** 
-*******************************************************************************
-MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
-*******************************************************************************
-*/
-
-
-menuitem > label,
-menupopup > menu > label,
-popup > menu > label {
-  padding:0;
-  margin:0;
-}
-
 
 /** 
 *******************************************************************************
